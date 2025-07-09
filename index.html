@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LanRhyme的个人网站</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        /* Define base variables for light theme (从日志分析器代码中复制并调整) */
+        :root {
+            --bg-primary: rgba(243, 244, 246, 0.8); /* 主背景色，半透明用于背景模糊效果 */
+            --text-primary: #1f2937; /* 主文本色 */
+            --card-bg: rgba(255, 255, 255, 0.65); /* 卡片背景色，半透明 */
+            --card-border: rgba(255, 255, 255, 0.2); /* 卡片边框色 */
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); /* 卡片阴影 */
+            --amethyst-color: #357e3b; /* 主题强调色 (绿色系) */
+            --highlight-bg: rgba(203, 228, 194, 0.3); /* 文本高亮背景色 */
+            --blob-gradient-start: rgba(143, 204, 102, 0.2); /* Blob 渐变开始色 */
+            --blob-gradient-end: rgba(120, 154, 75, 0.2); /* Blob 渐变结束色 */
+            --footer-bg: #fff; /* 页脚背景色 */
+            --footer-text: #4b5563; /* 页脚文本色 */
+            --footer-link: #10B981; /* 页脚链接色 */
+            --footer-link-hover: #059669; /* 页脚链接悬停色 */
+
+            /* Custom menu colors */
+            --menu-bg: rgba(255, 255, 255, 0.7);
+            --menu-border: rgba(0, 0, 0, 0.1);
+            --menu-item-text: #374151;
+            --menu-item-icon: #6b7280;
+            --menu-item-hover-bg: #f3f4f6;
+            --menu-divider: #e5e7eb;
+            --menu-header-text: #9ca3af;
+
+            /* Specific elements based on their existing classes */
+            --text-gray-800: #1f2937;
+            --text-gray-700: #374151;
+            --text-gray-600: #4b5563;
+            --text-gray-500: #6b7280;
+            --text-gray-200: #e5e7eb;
+            --text-red-400: #f87171;
+            --border-gray-300: #d1d5db;
+            --focus-ring-green-500: #3d581a;
+            --placeholder-text-color: #6b7280;
+
+            /* Button colors (reusing amethyst-dark) */
+            --btn-bg-color: #4b814e;
+            --btn-hover-bg-color: #286516;
+            --btn-text-color: white;
+            --btn-icon-color: #d2e7d2;
+            --theme-toggle-icon-color: #4b5563;
+
+            /* Error card backgrounds (保留，以防其他页面或未来使用) */
+            --bg-red-50: #fef2f2; --text-red-700: #b91c1c; --bg-red-100: #fee2e2; --text-red-800: #991b1b;
+            --bg-yellow-50: #fffbeb; --text-yellow-700: #a16207; --bg-yellow-100: #fef3c7; --text-yellow-800: #854d09;
+            --bg-blue-50: #eff6ff; --text-blue-700: #1d4ed8; --bg-blue-100: #dbeafe; --text-blue-800: #1e40af;
+
+            /* New Nav variables based on provided style.css */
+            --nav-item-width: 100px;
+            --nav-item-height: 36px; /* Slightly increased for better appearance */
+            --nav-item-border-width: 4px;
+            /* Use amethyst color for the tracker */
+            --main-color: var(--amethyst-color);
+        }
+
+        /* Dark theme variables (从日志分析器代码中复制并调整) */
+        .dark-mode {
+            --bg-primary: #1a202c;
+            --text-primary: #e2e8f0;
+            --card-bg: rgba(45, 55, 72, 0.75);
+            --card-border: rgba(60, 70, 80, 0.2);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --amethyst-color: #2c752f;
+            --highlight-bg: rgba(68, 143, 85, 0.3);
+            --blob-gradient-start: rgba(60, 120, 80, 0.2);
+            --blob-gradient-end: rgba(40, 80, 60, 0.2);
+            --footer-bg: #2d3748;
+            --footer-text: #cbd5e0;
+            --footer-link: #81c784;
+            --footer-link-hover: #66bb6a;
+
+            /* Custom menu colors for dark mode */
+            --menu-bg: rgba(45, 55, 72, 0.75);
+            --menu-border: rgba(255, 255, 255, 0.1);
+            --menu-item-text: #e2e8f0;
+            --menu-item-icon: #a0aec0;
+            --menu-item-hover-bg: #4a5568;
+            --menu-divider: #4a5568;
+            --menu-header-text: #a0aec0;
+
+            /* Specific elements for dark mode */
+            --text-gray-800: #e2e8f0;
+            --text-gray-700: #cbd5e0;
+            --text-gray-600: #a0aec0;
+            --text-gray-500: #718096;
+            --text-gray-200: #a0aec0;
+            --text-red-400: #fca5a5;
+            --border-gray-300: #4a5568;
+            --focus-ring-green-500: #68d391;
+            --placeholder-text-color: #a0aec0;
+
+            --btn-bg-color: #327a34;
+            --btn-hover-bg-color: #235e26;
+            --btn-text-color: white;
+            --btn-icon-color: #A5D6A7;
+            --theme-toggle-icon-color: #a0aec0;
+
+            /* Error card backgrounds for dark mode */
+            --bg-red-50: #4a1919; --text-red-700: #ef4444; --bg-red-100: #6b2f2f; --text-red-800: #fca5a5;
+            --bg-yellow-50: #4a3219; --text-yellow-700: #facc15; --bg-yellow-100: #6b4d2f; --text-yellow-800: #fde68a;
+            --bg-blue-50: #192d4a; --text-blue-700: #60a5fa; --bg-blue-100: #2f4d6b; --text-blue-800: #93c5fd;
+        }
+
+        /* Apply variables */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            scroll-behavior: smooth; /* 添加平滑滚动 */
+        }
+        .glassmorphism {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        .amethyst-dark {
+            background-color: var(--btn-bg-color);
+        }
+        .amethyst-dark:hover {
+            background-color: var(--btn-hover-bg-color);
+        }
+        .amethyst-dark .text-green-600 { /* For icons inside amethyst-dark button */
+            color: var(--btn-icon-color);
+        }
+        /* Applied to the w-10 h-10 container in nav and section headers */
+        .amethyst-bg {
+            background-color: var(--amethyst-color);
+        }
+        .amethyst-bg .text-green-600 {
+            color: var(--btn-icon-color);
+        }
+
+        .highlight-text {
+            position: relative;
+            display: inline-block;
+        }
+        .highlight-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: var(--highlight-bg);
+            z-index: -1;
+        }
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--blob-gradient-start) 0%, var(--blob-gradient-end) 100%);
+            filter: blur(60px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: blob-movement 15s infinite linear;
+        }
+
+        /* 渐显动画 */
+        .anim-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .anim-card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 背景模糊图像 */
+        .mc-bg-blur { /* 重命名以适应个人网站，但类名沿用 */
+            position: fixed;
+            z-index: -1;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            filter: blur(16px) brightness(0.7); /* Light mode filter */
+            transition: filter 0.3s ease;
+        }
+        .dark-mode .mc-bg-blur {
+            filter: blur(16px) brightness(0.3) saturate(1.2); /* Darker and slightly more saturated for dark mode */
+        }
+
+        /* 动画 */
+        @keyframes blob-movement {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(5%, -10%) scale(1.3); }
+            66% { transform: translate(-15%, 5%) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Custom Right Click Menu Styles (now from CRCMenu.css) */
+        #custom-menu {
+            display: none;
+            position: fixed;
+            background: var(--menu-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 0;
+            z-index: 9999;
+            min-width: 180px;
+            overflow: hidden;
+            transition: all 0.2s ease-out;
+            transform-origin: top left;
+            opacity: 0;
+            transform: scale(0.95);
+            border: 1px solid var(--menu-border);
+            user-select: none;
+        }
+        .dark-mode #custom-menu {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+        }
+        #custom-menu.visible { opacity: 1; transform: scale(1); }
+        #custom-menu.hiding { opacity: 0; transform: scale(0.95); }
+        .menu-item { display: flex; align-items: center; padding: 0.75rem 1.25rem; cursor: pointer; transition: all 0.2s ease; color: var(--menu-item-text); }
+        .menu-item:hover { background-color: var(--menu-item-hover-bg); border-radius: 15px; }
+        .menu-divider { border-top: 1px solid var(--menu-divider); margin: 0.25rem 0; }
+        .menu-header { padding: 0.5rem 1.25rem; font-size: 0.875rem; color: var(--menu-header-text); text-transform: uppercase; font-weight: 500; }
+
+        /* Tailwind overrides using variables (从日志分析器代码中复制) */
+        .text-gray-800 { color: var(--text-gray-800) !important; }
+        .text-gray-700 { color: var(--text-gray-700) !important; }
+        .text-gray-600 { color: var(--text-gray-600) !important; }
+        .text-gray-500 { color: var(--text-gray-500) !important; }
+        .text-gray-200 { color: var(--text-gray-200) !important; }
+        .text-red-400 { color: var(--text-red-400) !important; }
+
+        #theme-toggle .text-gray-700 {
+            color: var(--theme-toggle-icon-color);
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        footer a {
+            color: var(--footer-link);
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: var(--footer-link-hover);
+        }
+
+        /* 响应式调整 (添加一些基础的响应式调整) */
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            header .flex.items-center:last-child {
+                margin-top: 10px;
+            }
+            header .nav {
+                margin-top: 15px;
+            }
+
+            .hero-section h2 {
+                font-size: 3.5rem;
+            }
+            .hero-section p {
+                font-size: 1.5rem;
+            }
+
+            section h3 {
+                font-size: 3rem;
+            }
+
+            #about .flex-col {
+                flex-direction: column;
+            }
+            #about .md:w-1/3, #about .md:w-2/3 {
+                width: 100%;
+            }
+            /* 个人卡片在小屏幕下的调整 */
+            .me-card {
+                position: static; /* Revert to normal flow for small screens */
+                width: 90%; /* Take up more width */
+                margin: 30px auto; /* Center it */
+                left: auto; /* Reset left property */
+                top: auto; /* Reset top property */
+                z-index: auto; /* Reset z-index */
+            }
+            .right-content-area {
+                margin-left: auto; /* Reset margin-left for small screens */
+                max-width: 100%; /* Take full width */
+                padding: 1rem; /* Adjust padding for smaller screens */
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-section h2 {
+                font-size: 2.5rem;
+            }
+            .hero-section p {
+                font-size: 1.2rem;
+            }
+            section h3 {
+                font-size: 2.5rem;
+            }
+            .amethyst-dark {
+                padding: 0.75rem 1.5rem;
+            }
+            .card img {
+                height: 180px; /* 减小图片高度 */
+            }
+            #contact .flex-wrap {
+                flex-wrap: wrap;
+            }
+            #contact a {
+                margin-bottom: 1rem;
+            }
+        }
+        /* 个人卡片样式 */
+        .me-card {
+            width: 320px; /* 宽度 */
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            /* 沿用 glassmorphism 样式 */
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            /* New styles for fixed positioning */
+            position: fixed; /* Make it fixed to the viewport */
+            top: 100px; /* Offset from top to clear navbar */
+            left: 50px; /* Offset from left edge */
+            z-index: 99; /* Ensure it's above other content */
+            margin-bottom: 30px; /* Keep some margin if screen is short */
+        }
+        .borderbefore::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px; /* 顶部线条宽度 */
+            height: 4px;
+            background-color: var(--amethyst-color); /* 使用主题强调色 */
+            border-radius: 2px;
+            margin-top: -2px; /* 稍微突出卡片 */
+        }
+        .mecar-title {
+            margin-bottom: 20px;
+        }
+        .me-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 15px; /* 居中并留白 */
+            border: 3px solid var(--amethyst-color); /* 头像边框 */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .me-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .mecar-title h3 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-gray-800);
+            margin-bottom: 5px;
+        }
+        .me-hover span {
+            font-size: 0.9rem;
+            color: var(--text-gray-600);
+            padding: 5px 10px;
+            border-radius: 15px;
+            background-color: rgba(0,0,0,0.05); /* 轻微背景 */
+            transition: all 0.3s ease;
+        }
+        .me-hover:hover span {
+            background-color: var(--amethyst-color); /* 悬停时背景色 */
+            color: white; /* 悬停时文字颜色 */
+            transform: translateY(-3px); /* 向上浮动效果 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 添加阴影 */
+        }
+        .me-info p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-gray-700);
+            margin-bottom: 10px;
+        }
+        .me-info a {
+            color: var(--footer-link);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .me-info a:hover {
+            color: var(--footer-link-hover);
+            text-decoration: underline;
+        }
+        .me-info strong {
+            color: var(--text-gray-800);
+        }
+        .me-social-links {
+            margin-top: 20px;
+        }
+        .me-social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: var(--text-gray-600);
+            font-size: 1.5rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .me-social-links a:hover {
+            color: var(--amethyst-color);
+            transform: scale(1.2);
+        }
+        .me-social-links a i {
+            color: inherit;
+        }
+        /* 右侧主内容区域 */
+        .right-content-area {
+            margin-left: 390px; /* 给左侧个人卡片留出空间 (320px 宽度 + 70px 间距) */
+            max-width: calc(100% - 400px); /* 确保内容不会溢出 */
+            padding: 2rem;
+            flex-grow: 1; /* 允许其增长以填充剩余空间 */
+        }
+        /* 主页头部导航样式 */
+        .nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: var(--card-bg); /* Use card-bg variable */
+            border-radius: 50px;
+            box-shadow: var(--card-shadow); /* Use card-shadow variable */
+            border: 1px solid var(--card-border); /* Use card-border variable */
+            padding: 0 10px;
+            height: 50px;
+        }
+        .nav-item {
+            position: relative;
+            width: var(--nav-item-width);
+            height: var(--nav-item-height);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-gray-700); /* Use text-gray-700 variable */
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-item:hover {
+            color: var(--amethyst-color); /* Use amethyst-color variable */
+        }
+        .nav-item .icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        .tracker {
+            position: absolute;
+            left: 0;
+            width: var(--nav-item-width);
+            height: var(--nav-item-height);
+            background-color: var(--main-color); /* Use main-color variable */
+            border-radius: 30px;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        /* 页面加载时的导航条动画 */
+        .nav.onload .tracker {
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        /* 主题切换按钮 */
+        #theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+        #theme-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        #theme-toggle i {
+            color: var(--text-gray-700);
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        /* 其他通用样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+        .text-center { text-align: center; }
+        .text-5xl { font-size: 3rem; }
+        .font-extrabold { font-weight: 800; }
+        .mb-4 { margin-bottom: 1rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-gray-600 { color: var(--text-gray-600); }
+        .grid { display: grid; }
+        .gap-8 { gap: 2rem; }
+        .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .p-6 { padding: 1.5rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .h-16 { height: 4rem; }
+        .w-16 { width: 4rem; }
+        .rounded-full { border-radius: 9999px; }
+        .text-white { color: white; }
+        .text-2xl { font-size: 1.5rem; }
+        .font-semibold { font-weight: 600; }
+        .mt-4 { margin-top: 1rem; }
+        .text-gray-700 { color: var(--text-gray-700); }
+        .leading-relaxed { line-height: 1.625; }
+        .mt-8 { margin-top: 2rem; }
+        .space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-right: calc(1rem * var(--tw-space-x-reverse)); margin-left: calc(1rem * (1 - var(--tw-space-x-reverse))); }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .rounded-md { border-radius: 0.375rem; }
+        .hover\\:bg-green-700:hover { background-color: #047857; }
+        .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 0.15s; }
+        .duration-300 { transition-duration: 0.3s; }
+        .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        .pt-16 { padding-top: 4rem; }
+        .pb-16 { padding-bottom: 4rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .h-0\\.5 { height: 0.125rem; }
+        .w-24 { width: 6rem; }
+        .bg-green-500 { background-color: #22c55e; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(1rem * var(--tw-space-y-reverse)); margin-bottom: calc(1rem * (1 - var(--tw-space-y-reverse))); }
+        .border { border-width: 1px; }
+        .border-gray-300 { border-color: var(--border-gray-300); }
+        .p-4 { padding: 1rem; }
+        .focus\\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .focus\\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+        .focus\\:ring-green-500:focus { --tw-ring-color: var(--focus-ring-green-500); }
+        .w-full { width: 100%; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .h-32 { height: 8rem; }
+        .resize-y { resize: vertical; }
+        .placeholder-gray-500::placeholder { color: var(--placeholder-text-color); }
+        .flex-col { flex-direction: column; }
+        .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0.5rem * var(--tw-space-y-reverse)); margin-bottom: calc(0.5rem * (1 - var(--tw-space-y-reverse))); }
+        .md\\:flex-row { flex-direction: row; }
+        .md\\:space-y-0 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0px * var(--tw-space-y-reverse)); margin-bottom: calc(0px * (1 - var(--tw-space-y-reverse))); }
+        .md\\:space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-right: calc(1rem * var(--tw-space-x-reverse)); margin-left: calc(1rem * (1 - var(--tw-space-x-reverse))); }
+        .md\\:w-1\\/3 { width: 33.333333%; }
+        .md\\:w-2\\/3 { width: 66.666667%; }
+        .list-disc { list-style-type: disc; }
+        .list-inside { list-style-position: inside; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .font-bold { font-weight: 700; }
+        .bg-gray-100 { background-color: #f3f4f6; }
+        .p-6 { padding: 1.5rem; }
+        .text-center { text-align: center; }
+        .text-sm { font-size: 0.875rem; }
+        .text-gray-500 { color: var(--text-gray-500); }
+        .flex-wrap { flex-wrap: wrap; }
+        .justify-center { justify-content: center; }
+        .gap-4 { gap: 1rem; }
+        .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .py-2\\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+        .inline-flex { display: inline-flex; }
+        .items-center { align-items: center; }
+        .bg-gray-800 { background-color: #1f2937; }
+        .text-gray-200 { color: var(--text-gray-200); }
+        .rounded-full { border-radius: 9999px; }
+        .text-base { font-size: 1rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .hover\\:bg-gray-700:hover { background-color: #374151; }
+        .hover\\:text-white:hover { color: white; }
+        .transition { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 0.15s; }
+        .text-red-400 { color: var(--text-red-400); }
+
+        /* Chart.js 容器样式 */
+        .chart-container {
+            position: relative;
+            height: 300px; /* 或者您希望的任何固定高度 */
+            width: 100%; /* 宽度占满父容器 */
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark-mode-aware">
+    <div class="blob" style="top: 10%; left: 5%;"></div>
+    <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+    <div class="mc-bg-blur" id="bg-blur"></div>
+
+    <div class="min-h-screen flex flex-col items-center relative z-10">
+        <header class="w-full py-4 px-6 flex justify-center items-center relative z-20">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center">
+                    <img src="https://avatars.githubusercontent.com/u/73663673?v=4" alt="LanRhyme Logo" class="h-10 w-10 rounded-full mr-3">
+                    <h1 class="text-2xl font-bold text-gray-800">LanRhyme</h1>
+                </div>
+                <nav class="nav">
+                    <div class="tracker" id="tracker"></div>
+                    <a href="#home" class="nav-item active" data-target="0">
+                        <i class="fa fa-home icon"></i>
+                        <span>主页</span>
+                    </a>
+                    <a href="#about" class="nav-item" data-target="1">
+                        <i class="fa fa-user icon"></i>
+                        <span>关于</span>
+                    </a>
+                    <a href="#projects" class="nav-item" data-target="2">
+                        <i class="fa fa-folder-open icon"></i>
+                        <span>项目</span>
+                    </a>
+                    <a href="#blog" class="nav-item" data-target="3">
+                        <i class="fa fa-blog icon"></i>
+                        <span>博客</span>
+                    </a>
+                    <a href="#contact" class="nav-item" data-target="4">
+                        <i class="fa fa-envelope icon"></i>
+                        <span>联系</span>
+                    </a>
+                </nav>
+                <div id="theme-toggle">
+                    <i class="fa fa-sun text-gray-700"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow w-full flex justify-center items-start pt-10">
+            <div class="me-card borderbefore">
+                <div class="me-image">
+                    <img src="https://avatars.githubusercontent.com/u/73663673?v=4" alt="Your Name">
+                </div>
+                <div class="mecar-title">
+                    <h3 class="text-gray-800">LanRhyme</h3>
+                    <p class="text-gray-600">Web Developer & Enthusiast</p>
+                </div>
+                <div class="me-info">
+                    <p><strong>邮箱:</strong> <a href="mailto:i@lanrhyme.com" class="text-green-600 hover:underline">i@lanrhyme.com</a></p>
+                    <p><strong>坐标:</strong> Earth</p>
+                    <p><strong>GitHub:</strong> <span id="githubInfo" class="text-gray-700">加载中...</span></p>
+                    <p id="yiyanInfo" class="text-gray-600 font-bold mt-4 cursor-pointer">“点击获取每日一言”</p>
+                </div>
+                <div class="me-social-links">
+                    <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="right-content-area flex flex-col items-center">
+                <section id="home" class="py-16 text-center w-full anim-card">
+                    <h2 class="text-5xl font-extrabold mb-4 text-gray-800">你好，我是 <span class="highlight-text">LanRhyme</span></h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">一名热衷于创造和探索的<br>全栈开发人员</p>
+                    <div class="mt-8 flex justify-center space-x-4">
+                        <a href="#projects" class="amethyst-dark text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                            <i class="fa fa-folder-open mr-2"></i> 查看我的项目
+                        </a>
+                        <a href="#contact" class="bg-gray-800 text-gray-200 py-2 px-4 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-300 ease-in-out">
+                            <i class="fa fa-envelope mr-2"></i> 联系我
+                        </a>
+                    </div>
+                </section>
+
+                <section id="about" class="py-16 w-full anim-card">
+                    <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">关于我</h3>
+                    <div class="h-0.5 w-24 bg-green-500 mx-auto mb-8"></div>
+                    <div class="glassmorphism p-8 rounded-lg shadow-lg flex flex-col md:flex-row items-start md:space-x-8 space-y-8 md:space-y-0">
+                        <div class="md:w-1/3 text-center">
+                            <div class="amethyst-bg w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-code text-white text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold mb-2 text-gray-800">技术栈</h4>
+                            <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+                                <li><strong>前端:</strong> Vue, React, Angular, Tailwind CSS</li>
+                                <li><strong>后端:</strong> Node.js, Python, Java</li>
+                                <li><strong>数据库:</strong> MongoDB, MySQL, PostgreSQL</li>
+                                <li><strong>云平台:</strong> AWS, Azure, Google Cloud</li>
+                            </ul>
+                        </div>
+                        <div class="md:w-2/3 text-gray-700 leading-relaxed">
+                            <p class="mb-4">
+                                我是一名充满激情的全栈开发人员，致力于构建用户友好且性能卓越的Web应用程序。我拥有从前端界面设计到后端逻辑开发，再到数据库管理的全面技能。
+                            </p>
+                            <p class="mb-4">
+                                我的编程之旅始于对解决问题和创造新事物的热爱。我享受将想法变为现实的过程，并不断学习最新的技术和最佳实践来提升我的技能。
+                            </p>
+                            <p>
+                                无论是独立开发还是团队协作，我都能积极投入，并乐于分享知识，共同成长。我相信持续学习是成功的关键，并总是寻求新的挑战来拓宽我的技术视野。
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="projects" class="py-16 w-full anim-card">
+                    <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">我的项目</h3>
+                    <div class="h-0.5 w-24 bg-green-500 mx-auto mb-8"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg text-center">
+                            <img src="https://via.placeholder.com/400x250/22c55e/ffffff?text=项目+1" alt="项目 1" class="w-full h-48 object-cover rounded-md mb-4">
+                            <h4 class="text-2xl font-semibold mb-2 text-gray-800">项目名称 1</h4>
+                            <p class="text-gray-700 leading-relaxed mb-4">这是一个描述项目1的简短说明，展示了其主要功能和亮点。</p>
+                            <a href="#" target="_blank" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-external-link-alt mr-2"></i> 查看项目
+                            </a>
+                        </div>
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg text-center">
+                            <img src="https://via.placeholder.com/400x250/34d399/ffffff?text=项目+2" alt="项目 2" class="w-full h-48 object-cover rounded-md mb-4">
+                            <h4 class="text-2xl font-semibold mb-2 text-gray-800">项目名称 2</h4>
+                            <p class="text-gray-700 leading-relaxed mb-4">这是另一个项目的简短说明，强调了其创新性或解决的问题。</p>
+                            <a href="#" target="_blank" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-external-link-alt mr-2"></i> 查看项目
+                            </a>
+                        </div>
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg text-center">
+                            <img src="https://via.placeholder.com/400x250/84cc16/ffffff?text=项目+3" alt="项目 3" class="w-full h-48 object-cover rounded-md mb-4">
+                            <h4 class="text-2xl font-semibold mb-2 text-gray-800">项目名称 3</h4>
+                            <p class="text-gray-700 leading-relaxed mb-4">第三个项目的详细介绍，突出其技术挑战和解决方案。</p>
+                            <a href="#" target="_blank" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-external-link-alt mr-2"></i> 查看项目
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="blog" class="py-16 w-full anim-card">
+                    <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">我的博客</h3>
+                    <div class="h-0.5 w-24 bg-green-500 mx-auto mb-8"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg">
+                            <h4 class="text-xl font-semibold mb-2 text-gray-800">博客文章标题 1</h4>
+                            <p class="text-gray-600 text-sm mb-3">发布日期: 2023年10月26日</p>
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                这是一篇关于Web开发最新趋势的博客文章摘要。
+                            </p>
+                            <a href="#" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center text-sm hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-book-open mr-2"></i> 阅读更多
+                            </a>
+                        </div>
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg">
+                            <h4 class="text-xl font-semibold mb-2 text-gray-800">博客文章标题 2</h4>
+                            <p class="text-gray-600 text-sm mb-3">发布日期: 2023年9月15日</p>
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                深入探讨了JavaScript中的异步编程。
+                            </p>
+                            <a href="#" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center text-sm hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-book-open mr-2"></i> 阅读更多
+                            </a>
+                        </div>
+                        <div class="glassmorphism p-6 rounded-lg shadow-lg">
+                            <h4 class="text-xl font-semibold mb-2 text-gray-800">博客文章标题 3</h4>
+                            <p class="text-gray-600 text-sm mb-3">发布日期: 2023年8月01日</p>
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                构建响应式网站的技巧和最佳实践。
+                            </p>
+                            <a href="#" class="amethyst-dark text-white py-2 px-4 rounded-md inline-flex items-center text-sm hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                <i class="fa fa-book-open mr-2"></i> 阅读更多
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="contact" class="py-16 w-full anim-card">
+                    <h3 class="text-4xl font-bold text-center mb-4 text-gray-800">联系我</h3>
+                    <div class="h-0.5 w-24 bg-green-500 mx-auto mb-8"></div>
+                    <div class="glassmorphism p-8 rounded-lg shadow-lg">
+                        <p class="text-center text-lg text-gray-700 mb-6">
+                            如果您有任何问题、合作意向或只是想打个招呼，请随时通过以下方式联系我：
+                        </p>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">姓名:</label>
+                                <input type="text" id="name" name="name"
+                                    class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    placeholder="您的姓名">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">邮箱:</label>
+                                <input type="email" id="email" name="email"
+                                    class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    placeholder="您的邮箱">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-gray-700 text-sm font-bold mb-2">消息:</label>
+                                <textarea id="message" name="message" rows="5"
+                                    class="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 h-32 resize-y"
+                                    placeholder="您的消息"></textarea>
+                            </div>
+                            <div class="flex justify-center">
+                                <button type="submit"
+                                    class="amethyst-dark text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-300 ease-in-out">
+                                    <i class="fa fa-paper-plane mr-2"></i> 发送消息
+                                </button>
+                            </div>
+                        </form>
+                        <div class="mt-8 text-center">
+                            <p class="text-gray-700 mb-4">或通过以下平台找到我:</p>
+                            <div class="flex flex-wrap justify-center gap-4">
+                                <a href="https://github.com/LanRhyme" target="_blank"
+                                    class="bg-gray-800 text-gray-200 px-5 py-2.5 rounded-full inline-flex items-center text-base hover:bg-gray-700 hover:text-white transition">
+                                    <i class="fab fa-github mr-2"></i> GitHub
+                                </a>
+                                <a href="#" target="_blank"
+                                    class="bg-blue-600 text-white px-5 py-2.5 rounded-full inline-flex items-center text-base hover:bg-blue-700 transition">
+                                    <i class="fab fa-twitter mr-2"></i> Twitter
+                                </a>
+                                <a href="#" target="_blank"
+                                    class="bg-blue-800 text-white px-5 py-2.5 rounded-full inline-flex items-center text-base hover:bg-blue-900 transition">
+                                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer class="w-full text-center py-6 mt-10">
+            <p class="text-sm text-gray-500">© 2023 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
+        </footer>
+    </div>
+
+    <div id="custom-menu">
+        <div class="menu-header">常规操作</div>
+        <div class="menu-item" id="back-item" onclick="backAction()">
+            <i class="fa fa-arrow-left"></i>
+            <span>返回</span>
+        </div>
+        <div class="menu-item" id="refresh-item" onclick="refreshAction()">
+            <i class="fa fa-refresh"></i>
+            <span>刷新</span>
+        </div>
+
+        <div class="menu-divider"></div>
+        <div class="menu-header">编辑操作</div>
+        <div class="menu-item" id="copy-item" onclick="copyAction()">
+            <i class="fa fa-copy"></i>
+            <span>复制</span>
+        </div>
+        <div class="menu-item" id="paste-item" onclick="pasteAction()">
+            <i class="fa fa-paste"></i>
+            <span>粘贴</span>
+        </div>
+
+        <div class="menu-divider"></div>
+        <div class="menu-header">链接操作</div>
+        <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
+            <i class="fa fa-external-link"></i>
+            <span>在新标签页打开</span>
+        </div>
+        <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
+            <i class="fa fa-link"></i>
+            <span>复制链接地址</span>
+        </div>
+
+        <div class="menu-divider"></div>
+        <div class="menu-header">其他操作</div>
+        <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
+            <i class="fa fa-home"></i>
+            <span>返回主页</span>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.fa-sun');
+        const moonIcon = themeToggle.querySelector('.fa-moon');
+
+        // Initialize theme based on localStorage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || savedTheme === null) { // Default to dark if no theme is saved
+            document.documentElement.classList.add('dark-mode');
+            if (sunIcon) {
+                sunIcon.classList.remove('fa-sun');
+                sunIcon.classList.add('fa-moon');
+            }
+        } else if (savedTheme === 'light') {
+            // If theme is explicitly light, keep it light. The class is not added by default.
+        }
+
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark-mode');
+            if (document.documentElement.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                if (sunIcon) {
+                    sunIcon.classList.remove('fa-sun');
+                    sunIcon.classList.add('fa-moon');
+                }
+            } else {
+                localStorage.setItem('theme', 'light');
+                if (sunIcon) {
+                    sunIcon.classList.remove('fa-moon');
+                    sunIcon.classList.add('fa-sun');
+                }
+            }
+        });
+
+        // Navigation smooth scroll and active state
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('section');
+        const tracker = document.getElementById('tracker');
+
+        function updateTracker(activeIndex) {
+            const activeItem = navItems[activeIndex];
+            if (activeItem) {
+                tracker.style.transform = `translateX(${activeItem.offsetLeft}px)`;
+                tracker.style.width = `${activeItem.offsetWidth}px`;
+                tracker.style.height = `${activeItem.offsetHeight}px`; // Ensure tracker height matches nav-item height
+            }
+        }
+
+        navItems.forEach((item, index) => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                updateTracker(index);
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 70, // Adjust for fixed header
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            let currentActiveIndex = 0;
+            sections.forEach((section, index) => {
+                const sectionTop = section.offsetTop - 100; // Adjust for header height
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                    currentActiveIndex = index;
+                }
+            });
+
+            navItems.forEach((item, index) => {
+                if (index === currentActiveIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            updateTracker(currentActiveIndex);
+        });
+
+        // Initial tracker position on load
+        window.addEventListener('load', () => {
+            const initialActiveItem = document.querySelector('.nav-item.active');
+            if (initialActiveItem) {
+                const initialIndex = Array.from(navItems).indexOf(initialActiveItem);
+                updateTracker(initialIndex);
+                // Add onload class to trigger animation if needed (after initial position set)
+                document.querySelector('.nav').classList.add('onload');
+            }
+
+            // Trigger anim-card fade in
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.anim-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+
+        // GitHub Info and Daily Quote (一言) from existing index.html
+        async function updateGitHubInfo() {
+            try {
+                const userRes = await fetch('https://api.github.com/users/LanRhyme');
+                const userJson = await userRes.json();
+                const repoCount = userJson.public_repos;
+
+                const reposRes = await fetch('https://api.github.com/users/LanRhyme/repos?per_page=100'); // Fetch more repos
+                const reposJson = await reposRes.json();
+
+                let totalCommits = 0;
+                for (const repo of reposJson) {
+                    const commitsRes = await fetch(repo.commits_url.replace('{/sha}', ''));
+                    const commitsJson = await commitsRes.json();
+                    if (Array.isArray(commitsJson)) {
+                        totalCommits += commitsJson.length;
+                    }
+                }
+
+                document.getElementById('githubInfo').textContent =
+                    `Repositories: ${repoCount} | Commits: ${totalCommits}`;
+            } catch (e) {
+                document.getElementById('githubInfo').textContent = '获取失败';
+            }
+        }
+        updateGitHubInfo();
+
+        async function updateYiYan() {
+            try {
+                const res = await fetch('https://api.btstu.cn/yan/api.php?charset=utf-8&encode=text');
+                let text = await res.text();
+                const isMobile = /Android|webOS|iPhone|iPod|BlackBerry|iPad|Windows Phone/i.test(navigator.userAgent);
+                if (!isMobile && text.length > 15) {
+                    let result = '';
+                    for (let i = 0; i < text.length; i += 15) {
+                        result += text.slice(i, i + 15) + '\n';
+                    }
+                    text = result.trim();
+                }
+                document.getElementById('yiyanInfo').textContent = `“${text}”`;
+            } catch (e) {
+                    document.getElementById('yiyanInfo').textContent = '一言获取失败';
+            }
+        }
+        document.getElementById('yiyanInfo').addEventListener('click', updateYiYan);
+
+
+        // Right Click Menu JavaScript (Combined from CRCMenu.js and All-Custom Right-Click-Menu.html)
+        const customMenu = document.getElementById('custom-menu');
+        const backItem = document.getElementById('back-item');
+        const refreshItem = document.getElementById('refresh-item');
+        const copyItem = document.getElementById('copy-item');
+        const pasteItem = document.getElementById('paste-item');
+        const openInNewTabItem = document.getElementById('open-in-new-tab-item');
+        const copyLinkItem = document.getElementById('copy-link-item');
+        const backToHomeItem = document.getElementById('back-to-home-item');
+
+        let isMenuVisible = false;
+        let currentTarget = null;
+        let selectedText = '';
+        let isAnimating = false;
+        let menuOpenTime = 0;
+        let focusedElementBeforeMenu = null;
+        let scrollTimer = null;
+        let touchStartY = 0;
+
+        document.addEventListener('wheel', handleScroll, { passive: true });
+
+        document.addEventListener('touchstart', (e) => {
+            if (isMenuVisible) {
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isMenuVisible) {
+                const touchY = e.touches[0].clientY;
+                const diff = Math.abs(touchY - touchStartY);
+                if (diff > 5) {
+                    hideMenu();
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        function handleScroll() {
+            if (isMenuVisible) {
+                if (scrollTimer) {
+                    clearTimeout(scrollTimer);
+                }
+                scrollTimer = setTimeout(() => {
+                    hideMenu();
+                }, 50);
+            }
+        }
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            focusedElementBeforeMenu = document.activeElement;
+            const now = Date.now();
+            const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
+            selectedText = window.getSelection().toString();
+            currentTarget = e.target.closest('a');
+            updateMenuItemsVisibility();
+
+            customMenu.style.display = 'block';
+            const menuRect = customMenu.getBoundingClientRect();
+            customMenu.style.display = 'none';
+
+            const menuWidth = menuRect.width;
+            const menuHeight = menuRect.height;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const clickX = e.clientX;
+            const clickY = e.clientY;
+
+            let left = clickX;
+            if (clickX + menuWidth > viewportWidth) {
+                left = Math.max(0, viewportWidth - menuWidth);
+            }
+
+            let top = clickY;
+            if (clickY + menuHeight > viewportHeight) {
+                top = Math.max(0, clickY - menuHeight);
+            }
+
+            if (isNewOpen) {
+                showMenu(left, top);
+            } else {
+                moveMenu(left, top);
+            }
+            menuOpenTime = now;
+        });
+
+        function showMenu(left, top) {
+            if (isAnimating) return;
+            isAnimating = true;
+            customMenu.style.position = 'fixed';
+            customMenu.style.left = `${left}px`;
+            customMenu.style.top = `${top}px`;
+            customMenu.style.display = 'block';
+            customMenu.classList.remove('hiding');
+            requestAnimationFrame(() => {
+                customMenu.classList.add('visible');
+                setTimeout(() => {
+                    isAnimating = false;
+                    isMenuVisible = true;
+                }, 150);
+            });
+        }
+
+        function moveMenu(left, top) {
+            if (isAnimating) return;
+            isAnimating = true;
+            customMenu.style.position = 'fixed';
+            customMenu.style.left = `${left}px`;
+            customMenu.style.top = `${top}px`;
+            setTimeout(() => {
+                isAnimating = false;
+            }, 150);
+        }
+
+        document.addEventListener('click', (e) => {
+            if (isMenuVisible && !customMenu.contains(e.target)) {
+                hideMenu();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMenuVisible) {
+                hideMenu();
+            }
+        });
+
+        function hideMenu() {
+            if (!isMenuVisible || isAnimating) return;
+            isAnimating = true;
+            customMenu.classList.remove('visible');
+            customMenu.classList.add('hiding');
+            setTimeout(() => {
+                customMenu.style.display = 'none';
+                isAnimating = false;
+                isMenuVisible = false;
+                if (focusedElementBeforeMenu && typeof focusedElementBeforeMenu.focus === 'function') {
+                    focusedElementBeforeMenu.focus();
+                }
+            }, 150);
+        }
+
+        function updateMenuItemsVisibility() {
+            const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            const hasSelectedText = selectedText.length > 0;
+            const isLink = currentTarget && currentTarget.tagName === 'A';
+
+            backItem.style.display = 'flex';
+            refreshItem.style.display = 'flex';
+
+            copyItem.style.display = hasSelectedText || isInputOrTextarea ? 'flex' : 'none';
+            pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
+
+            openInNewTabItem.style.display = isLink ? 'flex' : 'none';
+            copyLinkItem.style.display = isLink ? 'flex' : 'none';
+            backToHomeItem.style.display = 'flex';
+        }
+
+        function backAction() {
+            window.history.back();
+            hideMenu();
+        }
+
+        function refreshAction() {
+            window.location.reload();
+            hideMenu();
+        }
+
+        function fallbackCopyText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; // Avoid scrolling to bottom
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function copyAction() {
+            if (selectedText) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(selectedText).catch((err) => {
+                        fallbackCopyText(selectedText);
+                    });
+                } else {
+                    fallbackCopyText(selectedText);
+                }
+            } else if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                document.activeElement.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                }
+            }
+            hideMenu();
+        }
+
+        function pasteAction() {
+            const targetElement = document.activeElement;
+            if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
+
+                const wasFocused = document.activeElement === targetElement;
+                if (!wasFocused) {
+                    targetElement.focus();
+                }
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.readText().then((clipboardText) => {
+                        if (typeof targetElement.execCommand === 'function') {
+                            document.execCommand('insertText', false, clipboardText);
+                        } else if (targetElement.setRangeText) {
+                            const start = targetElement.selectionStart;
+                            const end = targetElement.selectionEnd;
+                            targetElement.setRangeText(clipboardText, start, end, 'end');
+                        }
+
+                        if (!wasFocused) {
+                            targetElement.blur();
+                        }
+                    }).catch((err) => {
+                    });
+                }
+            }
+            hideMenu();
+        }
+
+        function openInNewTabAction() {
+            if (currentTarget) {
+                window.open(currentTarget.href, '_blank');
+            }
+            hideMenu();
+        }
+
+        function copyLinkAction() {
+            if (currentTarget) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(currentTarget.href).catch((err) => {
+                        fallbackCopyText(currentTarget.href);
+                    });
+                } else {
+                    fallbackCopyText(currentTarget.href);
+                }
+            }
+            hideMenu();
+        }
+
+        function backToHomeAction() {
+            window.location.href = '/';
+            hideMenu();
+        }
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+
+</html>
