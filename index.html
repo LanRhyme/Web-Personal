@@ -7,6 +7,9 @@
     <title>LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* --- Light Theme Variables (Green Palette) --- */
@@ -111,8 +114,11 @@
         .nav {
             display: flex;
             flex-direction: row;
-            padding: 5px;
+            /* Adjusted padding to control vertical alignment */
+            padding: 5px 0;
             height: auto;
+            position: relative;
+            /* Ensure tracker position is relative to nav */
         }
 
         .nav-item {
@@ -141,9 +147,9 @@
 
         .tracker {
             position: absolute;
-            top: 5px;
-            /* Adjusted from 5px to 5px, assuming padding is 5px, this keeps it aligned */
-            left: 5px;
+            top: 0;
+            /* Aligned to the top of the .nav container */
+            left: 0;
             height: 40px;
             background-color: var(--amethyst-color);
             border-radius: 12px;
@@ -443,10 +449,48 @@
                 margin-left: 0;
             }
         }
+
+        /* --- Entrance Animation --- */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.6s ease-in-out;
+            opacity: 1;
+            /* Starts visible */
+            pointer-events: all;
+        }
+
+        #page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Content fade-in animation */
+        .content-container {
+            transition: opacity 1s ease-in;
+            opacity: 0;
+            /* Starts hidden */
+        }
     </style>
 </head>
 
-<body>
+<body class="content-container">
+    <div id="page-loader">
+        <div class="butterfly-loader">
+            <div class="butterfly" style="top: 20%; left: 10%;"></div>
+            <div class="butterfly" style="top: 60%; left: 70%;"></div>
+            <div class="butterfly" style="top: 40%; left: 40%;"></div>
+        </div>
+    </div>
+
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
     <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
@@ -498,6 +542,8 @@
                         <p>Developer & Painter</p>
                     </div>
                     <div class="me-info text-left text-sm space-y-2">
+                        <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span
+                                id="currentTime">加载中...</span></p>
                         <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
                                 href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
                         <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
@@ -527,6 +573,12 @@
                                 class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
                                 <i class="fa fa-envelope mr-2"></i> 联系我
                             </a>
+                        </div>
+                    </section>
+
+                    <section id="pinned-content" class="w-full mt-10 anim-fade-in-up" style="animation-delay: 0.2s;">
+                        <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
+                        <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
                         </div>
                     </section>
                 </main>
@@ -577,6 +629,20 @@
     </div>
 
     <script>
+        // Configuration for pinned items
+        const pinnedItemsConfig = [
+            {
+                title: "我的博客",
+                description: "分享编程、绘画和生活感悟。",
+                link: "https://blog.lanrhyme.com"
+            },
+            {
+                title: "作品集",
+                description: "查看我的绘画和开发作品。",
+                link: "https://portfolio.lanrhyme.com"
+            }
+        ];
+
         document.addEventListener('DOMContentLoaded', () => {
             // --- Theme Toggle ---
             const themeToggle = document.getElementById('theme-toggle');
@@ -622,8 +688,24 @@
                 moveTracker(activeItem);
             });
 
+            // Delay initial tracker position calculation slightly to ensure layout is stable
             window.addEventListener('resize', () => moveTracker(document.querySelector('.nav-item.active')));
             setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 50);
+
+            // --- Current Time Display ---
+            const currentTimeSpan = document.getElementById('currentTime');
+            function updateCurrentTime() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                currentTimeSpan.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            if (currentTimeSpan) {
+                updateCurrentTime();
+                setInterval(updateCurrentTime, 1000);
+            }
+
 
             // --- Animation on Load & API Calls ---
             const animatedElements = document.querySelectorAll('.anim-fade-in-up');
@@ -642,6 +724,34 @@
             const updateYiYan = () => { if (yiyanInfo) { fetch('https://v1.hitokoto.cn/?encode=text').then(res => res.text()).then(text => { yiyanInfo.textContent = `“${text}”`; }).catch(() => { yiyanInfo.textContent = '一言获取失败'; }); } };
             updateYiYan();
             yiyanInfo?.addEventListener('click', updateYiYan);
+
+            // --- Entrance Animation Logic ---
+            const pageLoader = document.getElementById('page-loader');
+            const contentContainer = document.querySelector('body');
+
+            window.addEventListener('load', () => {
+                // Ensure all content is loaded, then hide loader and show content
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                    contentContainer.style.opacity = '1';
+                }, 1000); // Matches the transition duration
+            });
+
+            // --- Pinned Content Rendering ---
+            const pinnedCardsContainer = document.getElementById('pinned-cards-container');
+            if (pinnedCardsContainer) {
+                pinnedItemsConfig.forEach(item => {
+                    const cardHtml = `
+                        <a href="${item.link}" target="_blank" class="solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300">
+                            <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
+                        </a>
+                    `;
+                    pinnedCardsContainer.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            }
+
         });
 
         /* --- Right-Click Menu Script (from CRCMenu.js) --- */
