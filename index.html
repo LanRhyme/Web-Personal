@@ -134,6 +134,16 @@
             font-weight: 500;
             transition: color 0.3s ease;
             z-index: 1;
+            border-radius: 9999px;
+            /* Added for fully rounded buttons */
+        }
+
+        /* New rule for the inner content wrapper of nav-item */
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Spacing between icon and text */
         }
 
         .nav-item.active {
@@ -142,13 +152,12 @@
 
         .nav-item .icon {
             font-size: 1.2rem;
-            margin-right: 8px;
         }
 
         .tracker {
             position: absolute;
-            top: 0;
-            /* Aligned to the top of the .nav container */
+            top: 5px;
+            /* Adjusted from 0 to 5px to align with nav's padding */
             left: 0;
             height: 40px;
             background-color: var(--amethyst-color);
@@ -410,6 +419,26 @@
             z-index: -1;
         }
 
+        /* Pinned card animation */
+        .card-bounce {
+            animation: cardBounce 0.3s ease-out;
+        }
+
+        @keyframes cardBounce {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
         @media (max-width: 992px) {
             .header-card {
                 flex-direction: column !important;
@@ -499,24 +528,34 @@
                 <nav class="nav">
                     <div class="tracker" id="tracker"></div>
                     <a href="/" class="nav-item active">
-                        <i class="fa fa-home icon"></i>
-                        <span>主页</span>
+                        <span class="nav-item-content">
+                            <i class="fa fa-home icon"></i>
+                            <span>主页</span>
+                        </span>
                     </a>
                     <a href="/about.html" class="nav-item">
-                        <i class="fa fa-user icon"></i>
-                        <span>项目</span>
+                        <span class="nav-item-content">
+                            <i class="fa fa-user icon"></i>
+                            <span>项目</span>
+                        </span>
                     </a>
                     <a href="/services.html" class="nav-item">
-                        <i class="fa fa-briefcase icon"></i>
-                        <span>约稿</span>
+                        <span class="nav-item-content">
+                            <i class="fa fa-briefcase icon"></i>
+                            <span>约稿</span>
+                        </span>
                     </a>
                     <a href="/tools.html" class="nav-item">
-                        <i class="fa fa-tools icon"></i>
-                        <span>工具</span>
+                        <span class="nav-item-content">
+                            <i class="fa fa-tools icon"></i>
+                            <span>工具</span>
+                        </span>
                     </a>
                     <a href="/contact.html" class="nav-item">
-                        <i class="fa fa-envelope icon"></i>
-                        <span>联系</span>
+                        <span class="nav-item-content">
+                            <i class="fa fa-envelope icon"></i>
+                            <span>联系</span>
+                        </span>
                     </a>
                 </nav>
                 <div id="theme-toggle">
@@ -543,7 +582,8 @@
                         <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
                         <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
                                 id="githubInfo">加载中...</span></p>
-                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition">“点击获取每日一言”</p>
+                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center">
+                            “点击获取每日一言”</p>
                     </div>
                     <div class="me-social-links mt-4">
                         <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
@@ -570,7 +610,7 @@
                         </div>
                     </section>
 
-                    <section id="pinned-content" class="w-full mt-0 anim-fade-in-up" style="animation-delay: 0.2s;">
+                    <section id="pinned-content" class="w-full mt-6 anim-fade-in-up" style="animation-delay: 0.2s;">
                         <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
                         <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
                         </div>
@@ -652,6 +692,8 @@
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
 
+            let currentActiveNavItem = document.querySelector('.nav-item.active');
+
             function moveTracker(element) {
                 if (element) {
                     tracker.style.width = `${element.offsetWidth}px`;
@@ -659,18 +701,31 @@
                 }
             }
 
+            // Initial position of the tracker
+            setTimeout(() => moveTracker(currentActiveNavItem), 50);
+            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
+
+
             navItems.forEach(item => {
-                item.addEventListener('mouseenter', () => moveTracker(item));
+                item.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default link behavior for now, allowing JS to handle
+
+                    // Remove active from previous and add to current
+                    if (currentActiveNavItem) {
+                        currentActiveNavItem.classList.remove('active');
+                    }
+                    item.classList.add('active');
+                    currentActiveNavItem = item;
+
+                    moveTracker(item);
+
+                    // Optional: Programmatically navigate after animation if desired
+                    // window.location.href = item.href;
+                });
             });
 
-            document.querySelector('.nav').addEventListener('mouseleave', () => {
-                const activeItem = document.querySelector('.nav-item.active');
-                moveTracker(activeItem);
-            });
+            // Removed mouseleave event as per user request to animate only on click
 
-            // Delay initial tracker position calculation slightly to ensure layout is stable
-            window.addEventListener('resize', () => moveTracker(document.querySelector('.nav-item.active')));
-            setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 50);
 
             // --- Current Time Display ---
             const currentTimeSpan = document.getElementById('currentTime');
@@ -699,9 +754,29 @@
             }, { threshold: 0.1 });
             animatedElements.forEach(el => observer.observe(el));
             const githubInfo = document.getElementById('githubInfo');
-            if (githubInfo) { fetch('https://api.github.com/users/LanRhyme').then(res => res.json()).then(data => { githubInfo.textContent = `${data.public_repos} Repos | ${data.followers} Followers`; }).catch(() => { githubInfo.textContent = '获取失败'; }); }
+            if (githubInfo) {
+                fetch('https://api.github.com/users/LanRhyme')
+                    .then(res => res.json())
+                    .then(data => {
+                        githubInfo.textContent = `${data.public_repos} Repos | ${data.followers} Followers`;
+                    })
+                    .catch(() => {
+                        githubInfo.textContent = '获取失败';
+                    });
+            }
             const yiyanInfo = document.getElementById('yiyanInfo');
-            const updateYiYan = () => { if (yiyanInfo) { fetch('https://v1.hitokoto.cn/?encode=text').then(res => res.text()).then(text => { yiyanInfo.textContent = `“${text}”`; }).catch(() => { yiyanInfo.textContent = '一言获取失败'; }); } };
+            const updateYiYan = () => {
+                if (yiyanInfo) {
+                    fetch('https://v1.hitokoto.cn/?encode=text')
+                        .then(res => res.text())
+                        .then(text => {
+                            yiyanInfo.textContent = `“${text}”`;
+                        })
+                        .catch(() => {
+                            yiyanInfo.textContent = '一言获取失败';
+                        });
+                }
+            };
             updateYiYan();
             yiyanInfo?.addEventListener('click', updateYiYan);
 
@@ -725,13 +800,37 @@
                     .then(response => response.json())
                     .then(pinnedItemsConfig => {
                         pinnedItemsConfig.forEach(item => {
-                            const cardHtml = `
-                                <a href="${item.link}" target="_blank" class="solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300">
-                                    <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
-                                </a>
+                            const cardAnchor = document.createElement('a');
+
+                            let finalLink = item.link;
+                            // Prepend https:// if it's a domain without protocol
+                            if (finalLink && !finalLink.startsWith('http://') && !finalLink.startsWith('https://') && !finalLink.startsWith('//')) {
+                                finalLink = `https://${finalLink}`;
+                            }
+
+                            if (finalLink) {
+                                cardAnchor.href = finalLink;
+                                cardAnchor.target = "_blank";
+                            } else {
+                                cardAnchor.href = "javascript:void(0);"; // Prevents navigation for empty links
+                            }
+                            cardAnchor.className = "solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300";
+                            cardAnchor.innerHTML = `
+                                <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
                             `;
-                            pinnedCardsContainer.insertAdjacentHTML('beforeend', cardHtml);
+                            // Add click animation
+                            cardAnchor.addEventListener('click', (e) => {
+                                // Only prevent default if the link is empty OR if the link starts with javascript:void(0)
+                                if (!item.link || cardAnchor.href.includes("javascript:void(0)")) {
+                                    e.preventDefault();
+                                }
+                                cardAnchor.classList.add('card-bounce');
+                                setTimeout(() => {
+                                    cardAnchor.classList.remove('card-bounce');
+                                }, 300); // Match animation duration
+                            });
+                            pinnedCardsContainer.appendChild(cardAnchor);
                         });
                     })
                     .catch(error => console.error('Error fetching pinned items:', error));
