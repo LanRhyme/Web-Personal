@@ -41,6 +41,7 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
+            --bg-image: url('img/background10-light.jpg');
         }
 
         /* --- Dark Theme Variables (Green Palette) --- */
@@ -75,6 +76,7 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
+            --bg-image: url('img/background10-dark.jpg');
         }
 
         body {
@@ -96,13 +98,12 @@
         .header-card {
             background: var(--nav-bg);
             backdrop-filter: blur(12px);
-            border-radius: 16px;
+            border-radius: 20px;
+            /* Increased border-radius */
             border: 1px solid var(--nav-border);
             box-shadow: var(--nav-shadow);
             display: flex;
-            /* <-- Ensures horizontal layout for children */
             flex-direction: row;
-            /* <-- Explicitly horizontal */
             align-items: center;
             justify-content: space-between;
         }
@@ -141,6 +142,7 @@
         .tracker {
             position: absolute;
             top: 5px;
+            /* Adjusted from 5px to 5px, assuming padding is 5px, this keeps it aligned */
             left: 5px;
             height: 40px;
             background-color: var(--amethyst-color);
@@ -220,9 +222,11 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            background-image: url('img/background10.jpg');
+            background-image: var(--bg-image);
+            /* Dynamic background */
             background-position: center;
             background-size: cover;
+            transition: background-image 0.3s ease;
         }
 
         .blob {
@@ -265,13 +269,32 @@
             transform: translateY(0);
         }
 
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+            max-width: 1200px;
+            /* Max width for content to keep it centered */
+            margin: 0 auto;
+            /* Center the wrapper */
+            flex-wrap: wrap;
+            /* Allow wrapping on smaller screens */
+        }
+
         .me-card {
             width: 320px;
             padding: 20px;
             text-align: center;
-            position: fixed;
-            top: 120px;
-            left: 50px;
+            /* Removed fixed positioning */
+            margin-right: 30px;
+            /* Space between card and content */
+            position: relative;
+            /* Changed to relative for flow */
+            top: 0;
+            left: 0;
             z-index: 10;
         }
 
@@ -293,12 +316,15 @@
             border-radius: 50%;
             margin: 0 auto 15px;
             border: 3px solid var(--amethyst-color);
+            overflow: hidden;
+            /* Ensure image doesn't overflow border-radius */
         }
 
         .me-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* Ensures image covers the area, cropping if necessary */
         }
 
         .me-info a,
@@ -327,9 +353,10 @@
         }
 
         .right-content-area {
-            margin-left: 390px;
-            max-width: calc(100% - 440px);
-            padding: 2rem;
+            max-width: 700px;
+            /* Adjusted max-width */
+            padding: 0;
+            /* Remove redundant padding as main-content-wrapper has it */
             flex-grow: 1;
         }
 
@@ -383,35 +410,28 @@
             z-index: -1;
         }
 
-        @media (max-width: 1200px) {
-            .me-card {
-                left: 20px;
-                width: 280px;
-            }
-
-            .right-content-area {
-                margin-left: 320px;
-                max-width: calc(100% - 340px);
-            }
-        }
-
         @media (max-width: 992px) {
             .header-card {
                 flex-direction: column !important;
+                padding: 10px;
+            }
+
+            .main-content-wrapper {
+                flex-direction: column;
+                align-items: center;
             }
 
             .me-card {
-                position: relative;
                 width: 90%;
-                margin: 30px auto;
-                left: auto;
-                top: auto;
+                margin: 30px auto 0 auto;
+                /* Center card and add top margin */
+                margin-right: auto;
+                /* Remove right margin when stacked */
             }
 
             .right-content-area {
-                margin-left: auto;
-                max-width: 100%;
                 padding: 1rem;
+                max-width: 100%;
             }
 
             .nav {
@@ -435,8 +455,7 @@
         <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
             <div class="container mx-auto header-card p-2">
                 <div class="flex items-center">
-                    <img src="https://avatars.githubusercontent.com/u/73663673?v=4" alt="LanRhyme Logo"
-                        class="h-10 w-10 rounded-full ml-3 mr-3">
+                    <img src="img/avatar.jpg" alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover">
                     <h1 class="text-2xl font-bold">LanRhyme</h1>
                 </div>
                 <nav class="nav">
@@ -447,11 +466,11 @@
                     </a>
                     <a href="/about.html" class="nav-item">
                         <i class="fa fa-user icon"></i>
-                        <span>关于</span>
+                        <span>项目</span>
                     </a>
                     <a href="/services.html" class="nav-item">
                         <i class="fa fa-briefcase icon"></i>
-                        <span>服务</span>
+                        <span>约稿</span>
                     </a>
                     <a href="/tools.html" class="nav-item">
                         <i class="fa fa-tools icon"></i>
@@ -469,47 +488,49 @@
         </header>
 
         <div class="flex-grow w-full flex justify-center items-start pt-10">
-            <aside class="me-card solid-card anim-fade-in-up">
-                <div class="me-image">
-                    <img src="https://avatars.githubusercontent.com/u/73663673?v=4" alt="LanRhyme Avatar">
-                </div>
-                <div class="mb-4">
-                    <h3 class="text-2xl font-bold">LanRhyme</h3>
-                    <p>Web Developer & Enthusiast</p>
-                </div>
-                <div class="me-info text-left text-sm space-y-2">
-                    <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
-                            href="mailto:i@lanrhyme.com">i@lanrhyme.com</a></p>
-                    <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth</p>
-                    <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
-                            id="githubInfo">加载中...</span></p>
-                    <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition">“点击获取每日一言”</p>
-                </div>
-                <div class="me-social-links mt-4">
-                    <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
-                            class="fab fa-github"></i></a>
-                    <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                </div>
-            </aside>
-
-            <main class="right-content-area flex flex-col items-center">
-                <section id="home" class="py-16 text-center w-full anim-fade-in-up" style="animation-delay: 0.1s;">
-                    <h2 class="text-5xl font-extrabold mb-4">你好，我是 <span
-                            class="highlight-text relative inline-block">LanRhyme</span></h2>
-                    <p class="text-xl leading-relaxed">一名热衷于创造和探索的<br>全栈开发人员</p>
-                    <div class="mt-8 flex justify-center space-x-4">
-                        <a href="/services.html"
-                            class="amethyst-dark-button py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center">
-                            <i class="fa fa-briefcase mr-2"></i> 查看我的服务
-                        </a>
-                        <a href="/contact.html"
-                            class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
-                            <i class="fa fa-envelope mr-2"></i> 联系我
-                        </a>
+            <div class="main-content-wrapper">
+                <aside class="me-card solid-card anim-fade-in-up">
+                    <div class="me-image">
+                        <img src="img/avatar.jpg" alt="LanRhyme Avatar">
                     </div>
-                </section>
-            </main>
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-bold">LanRhyme</h3>
+                        <p>Developer & Painter</p>
+                    </div>
+                    <div class="me-info text-left text-sm space-y-2">
+                        <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
+                                href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
+                        <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
+                        <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
+                                id="githubInfo">加载中...</span></p>
+                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition">“点击获取每日一言”</p>
+                    </div>
+                    <div class="me-social-links mt-4">
+                        <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
+                                class="fab fa-github"></i></a>
+                        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </aside>
+
+                <main class="right-content-area flex flex-col items-center">
+                    <section id="home" class="py-16 text-center w-full anim-fade-in-up" style="animation-delay: 0.1s;">
+                        <h2 class="text-5xl font-extrabold mb-4">你好，我是 <span
+                                class="highlight-text relative inline-block">LanRhyme</span></h2>
+                        <p class="text-xl leading-relaxed">一名热衷于创造和探索的<br>开发者、画师</p>
+                        <div class="mt-8 flex justify-center space-x-4">
+                            <a href="/services.html"
+                                class="amethyst-dark-button py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center">
+                                <i class="fa fa-briefcase mr-2"></i> 约稿
+                            </a>
+                            <a href="/contact.html"
+                                class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
+                                <i class="fa fa-envelope mr-2"></i> 联系我
+                            </a>
+                        </div>
+                    </section>
+                </main>
+            </div>
         </div>
 
         <footer class="w-full text-center py-6 mt-10">
@@ -605,7 +626,6 @@
             setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 50);
 
             // --- Animation on Load & API Calls ---
-            // ... (Same as previous version) ...
             const animatedElements = document.querySelectorAll('.anim-fade-in-up');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
