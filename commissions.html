@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LanRhyme的个人网站</title>
+    <title>项目 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -527,7 +527,7 @@
                 </div>
                 <nav class="nav">
                     <div class="tracker" id="tracker"></div>
-                    <a href="/" class="nav-item active">
+                    <a href="/" class="nav-item">
                         <span class="nav-item-content">
                             <i class="fa fa-home icon"></i>
                             <span>主页</span>
@@ -594,26 +594,10 @@
                 </aside>
 
                 <main class="right-content-area flex flex-col items-center">
-                    <section id="home" class="py-16 text-center w-full anim-fade-in-up" style="animation-delay: 0.1s;">
-                        <h2 class="text-5xl font-extrabold mb-4">你好，我是 <span
-                                class="highlight-text relative inline-block">LanRhyme</span></h2>
-                        <p class="text-xl leading-relaxed">一名热衷于创造和探索的<br>开发者、画师</p>
-                        <div class="mt-8 flex justify-center space-x-4">
-                            <a href="/commissions.html"
-                                class="amethyst-dark-button py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center">
-                                <i class="fa fa-briefcase mr-2"></i> 约稿
-                            </a>
-                            <a href="/contact.html"
-                                class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
-                                <i class="fa fa-envelope mr-2"></i> 联系我
-                            </a>
-                        </div>
-                    </section>
-
-                    <section id="pinned-content" class="w-full mt-6 anim-fade-in-up" style="animation-delay: 0.2s;">
-                        <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
-                        <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
-                        </div>
+                    <section id="page-content" class="py-16 text-center w-full anim-fade-in-up"
+                        style="animation-delay: 0.1s;">
+                        <h2 class="text-5xl font-extrabold mb-4">项目</h2>
+                        <p class="text-xl leading-relaxed">这里是你的项目内容。</p>
                     </section>
                 </main>
             </div>
@@ -691,8 +675,7 @@
             // --- Navigation Tracker ---
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
-
-            let currentActiveNavItem = document.querySelector('.nav-item.active');
+            let currentActiveNavItem = null; // Initialize to null
 
             function moveTracker(element) {
                 if (element) {
@@ -701,30 +684,42 @@
                 }
             }
 
-            // Initial position of the tracker
-            setTimeout(() => moveTracker(currentActiveNavItem), 50);
-            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
+            // Function to set the active nav item based on the current URL
+            function setActiveNavItem() {
+                // Normalize current path for comparison (e.g., / -> /index.html)
+                const currentPath = window.location.pathname === '/' ? '/index.html' : window.location.pathname;
 
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    const itemPath = new URL(item.href).pathname; // Get pathname from href
+
+                    if (itemPath === currentPath) {
+                        item.classList.add('active');
+                        currentActiveNavItem = item;
+                        moveTracker(item); // Move tracker to the active item on page load
+                    }
+                });
+            }
+
+            // Call on DOMContentLoaded to set initial active item and tracker position
+            setActiveNavItem();
+            // Also call on resize to adjust tracker position if layout changes
+            window.addEventListener('resize', setActiveNavItem);
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default link behavior for now, allowing JS to handle
+                    e.preventDefault(); // Prevent default link behavior initially
 
-                    // Remove active from previous and add to current
-                    if (currentActiveNavItem) {
-                        currentActiveNavItem.classList.remove('active');
-                    }
-                    item.classList.add('active');
+                    // Temporarily set currentActiveNavItem for immediate tracker animation feedback
                     currentActiveNavItem = item;
-
                     moveTracker(item);
 
-                    // Programmatically navigate after animation
-                    window.location.href = item.href;
+                    // Programmatically navigate after a small delay for animation
+                    setTimeout(() => {
+                        window.location.href = item.href;
+                    }, 300); // Small delay to allow tracker animation to start
                 });
             });
-
-            // Removed mouseleave event as per user request to animate only on click
 
 
             // --- Current Time Display ---
@@ -753,6 +748,8 @@
                 });
             }, { threshold: 0.1 });
             animatedElements.forEach(el => observer.observe(el));
+
+            // GitHub Info (kept in template for consistency, can be removed if not needed on sub-pages)
             const githubInfo = document.getElementById('githubInfo');
             if (githubInfo) {
                 fetch('https://api.github.com/users/LanRhyme')
@@ -764,6 +761,8 @@
                         githubInfo.textContent = '获取失败';
                     });
             }
+
+            // YiYan (Daily Quote) (kept in template for consistency, can be removed if not needed on sub-pages)
             const yiyanInfo = document.getElementById('yiyanInfo');
             const updateYiYan = () => {
                 if (yiyanInfo) {
@@ -785,57 +784,12 @@
             const contentContainer = document.querySelector('body');
 
             window.addEventListener('load', () => {
-                // Ensure all content is loaded, then hide loader and show content
                 pageLoader.classList.add('hidden');
                 setTimeout(() => {
                     pageLoader.style.display = 'none';
                     contentContainer.style.opacity = '1';
-                }, 1000); // Matches the transition duration
+                }, 1000);
             });
-
-            // --- Pinned Content Rendering ---
-            const pinnedCardsContainer = document.getElementById('pinned-cards-container');
-            if (pinnedCardsContainer) {
-                fetch('pinned-items.json') // Fetch from the new JSON file
-                    .then(response => response.json())
-                    .then(pinnedItemsConfig => {
-                        pinnedItemsConfig.forEach(item => {
-                            const cardAnchor = document.createElement('a');
-
-                            let finalLink = item.link;
-                            // Prepend https:// if it's a domain without protocol
-                            if (finalLink && !finalLink.startsWith('http://') && !finalLink.startsWith('https://') && !finalLink.startsWith('//')) {
-                                finalLink = `https://${finalLink}`;
-                            }
-
-                            if (finalLink) {
-                                cardAnchor.href = finalLink;
-                                cardAnchor.target = "_blank";
-                            } else {
-                                cardAnchor.href = "javascript:void(0);"; // Prevents navigation for empty links
-                            }
-                            cardAnchor.className = "solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300";
-                            cardAnchor.innerHTML = `
-                                <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
-                            `;
-                            // Add click animation
-                            cardAnchor.addEventListener('click', (e) => {
-                                // Only prevent default if the link is empty OR if the link starts with javascript:void(0)
-                                if (!item.link || cardAnchor.href.includes("javascript:void(0)")) {
-                                    e.preventDefault();
-                                }
-                                cardAnchor.classList.add('card-bounce');
-                                setTimeout(() => {
-                                    cardAnchor.classList.remove('card-bounce');
-                                }, 300); // Match animation duration
-                            });
-                            pinnedCardsContainer.appendChild(cardAnchor);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching pinned items:', error));
-            }
-
         });
 
         /* --- Right-Click Menu Script (from CRCMenu.js) --- */
