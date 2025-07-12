@@ -101,8 +101,8 @@
         .header-card {
             background: var(--nav-bg);
             backdrop-filter: blur(12px);
-            border-radius: 20px;
-            /* Increased border-radius */
+            border-radius: 9999px;
+            /* Changed to fully rounded */
             border: 1px solid var(--nav-border);
             box-shadow: var(--nav-shadow);
             display: flex;
@@ -198,12 +198,6 @@
 
         .menu-item:hover {
             background-color: var(--menu-item-hover-bg);
-        }
-
-        .menu-item i {
-            width: 1.5rem;
-            margin-right: 0.75rem;
-            color: var(--menu-item-icon);
         }
 
         .menu-divider {
@@ -576,7 +570,7 @@
                         </div>
                     </section>
 
-                    <section id="pinned-content" class="w-full mt-10 anim-fade-in-up" style="animation-delay: 0.2s;">
+                    <section id="pinned-content" class="w-full mt-0 anim-fade-in-up" style="animation-delay: 0.2s;">
                         <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
                         <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
                         </div>
@@ -629,20 +623,6 @@
     </div>
 
     <script>
-        // Configuration for pinned items
-        const pinnedItemsConfig = [
-            {
-                title: "我的博客",
-                description: "分享编程、绘画和生活感悟。",
-                link: "https://blog.lanrhyme.com"
-            },
-            {
-                title: "作品集",
-                description: "查看我的绘画和开发作品。",
-                link: "https://portfolio.lanrhyme.com"
-            }
-        ];
-
         document.addEventListener('DOMContentLoaded', () => {
             // --- Theme Toggle ---
             const themeToggle = document.getElementById('theme-toggle');
@@ -741,15 +721,20 @@
             // --- Pinned Content Rendering ---
             const pinnedCardsContainer = document.getElementById('pinned-cards-container');
             if (pinnedCardsContainer) {
-                pinnedItemsConfig.forEach(item => {
-                    const cardHtml = `
-                        <a href="${item.link}" target="_blank" class="solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300">
-                            <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
-                        </a>
-                    `;
-                    pinnedCardsContainer.insertAdjacentHTML('beforeend', cardHtml);
-                });
+                fetch('pinned-items.json') // Fetch from the new JSON file
+                    .then(response => response.json())
+                    .then(pinnedItemsConfig => {
+                        pinnedItemsConfig.forEach(item => {
+                            const cardHtml = `
+                                <a href="${item.link}" target="_blank" class="solid-card p-5 w-72 flex flex-col items-center text-center hover:scale-105 transition duration-300">
+                                    <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">${item.description}</p>
+                                </a>
+                            `;
+                            pinnedCardsContainer.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching pinned items:', error));
             }
 
         });
