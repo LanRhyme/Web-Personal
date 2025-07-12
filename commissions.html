@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>项目 - LanRhyme的个人网站</title>
+    <title>约稿 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -162,8 +162,12 @@
             height: 40px;
             background-color: var(--amethyst-color);
             border-radius: 12px;
-            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             z-index: 0;
+            /* Removed initial transition and visibility: hidden */
+        }
+
+        .tracker.has-transition {
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
         /* --- Right-Click Menu (CRCMenu.css integrated and adapted) --- */
@@ -473,47 +477,15 @@
             }
         }
 
-        /* --- Entrance Animation --- */
-        #page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.6s ease-in-out;
-            opacity: 1;
-            /* Starts visible */
-            pointer-events: all;
-        }
-
-        #page-loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Content fade-in animation */
+        /* Content fade-in animation (for general use) */
         .content-container {
-            transition: opacity 1s ease-in;
-            opacity: 0;
-            /* Starts hidden */
+            opacity: 1;
+            /* Always visible for non-index pages */
         }
     </style>
 </head>
 
 <body class="content-container">
-    <div id="page-loader">
-        <div class="butterfly-loader">
-            <div class="butterfly" style="top: 20%; left: 10%;"></div>
-            <div class="butterfly" style="top: 60%; left: 70%;"></div>
-            <div class="butterfly" style="top: 40%; left: 40%;"></div>
-        </div>
-    </div>
-
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
     <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
@@ -536,7 +508,7 @@
                     <a href="/projects.html" class="nav-item">
                         <span class="nav-item-content">
                             <i class="fa fa-user icon"></i>
-                            <span>项目</span>
+                            <span>约稿</span>
                         </span>
                     </a>
                     <a href="/commissions.html" class="nav-item">
@@ -577,7 +549,7 @@
                     <div class="me-info text-left text-sm space-y-2">
                         <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span
                                 id="currentTime">加载中...</span></p>
-                        <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
+                        <p><strong><i class="fa fab fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
                                 href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
                         <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
                         <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
@@ -596,8 +568,8 @@
                 <main class="right-content-area flex flex-col items-center">
                     <section id="page-content" class="py-16 text-center w-full anim-fade-in-up"
                         style="animation-delay: 0.1s;">
-                        <h2 class="text-5xl font-extrabold mb-4">项目</h2>
-                        <p class="text-xl leading-relaxed">这里是你的项目内容。</p>
+                        <h2 class="text-5xl font-extrabold mb-4">约稿</h2>
+                        <p class="text-xl leading-relaxed">这里是你的约稿内容。</p>
                     </section>
                 </main>
             </div>
@@ -675,7 +647,7 @@
             // --- Navigation Tracker ---
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = null; // Initialize to null
+            let currentActiveNavItem = null;
 
             function moveTracker(element) {
                 if (element) {
@@ -684,40 +656,65 @@
                 }
             }
 
-            // Function to set the active nav item based on the current URL
             function setActiveNavItem() {
-                // Normalize current path for comparison (e.g., / -> /index.html)
                 const currentPath = window.location.pathname === '/' ? '/index.html' : window.location.pathname;
 
+                let initialActiveItem = null;
                 navItems.forEach(item => {
-                    item.classList.remove('active');
-                    const itemPath = new URL(item.href).pathname; // Get pathname from href
-
+                    const itemPath = new URL(item.href).pathname;
                     if (itemPath === currentPath) {
-                        item.classList.add('active');
-                        currentActiveNavItem = item;
-                        moveTracker(item); // Move tracker to the active item on page load
+                        initialActiveItem = item;
                     }
                 });
+
+                if (initialActiveItem) {
+                    tracker.style.width = `${initialActiveItem.offsetWidth}px`;
+                    tracker.style.transform = `translateX(${initialActiveItem.offsetLeft}px)`;
+                    initialActiveItem.classList.add('active'); // Set active class immediately
+                }
+
+                // After initial positioning, enable transitions for future clicks
+                // Use requestAnimationFrame or a small setTimeout to ensure the initial positioning
+                // is rendered before the transition property is added.
+                requestAnimationFrame(() => {
+                    tracker.classList.add('has-transition');
+                });
+
+
+                // Set the initial active item for currentActiveNavItem variable
+                currentActiveNavItem = initialActiveItem;
             }
 
-            // Call on DOMContentLoaded to set initial active item and tracker position
-            setActiveNavItem();
-            // Also call on resize to adjust tracker position if layout changes
-            window.addEventListener('resize', setActiveNavItem);
+            setActiveNavItem(); // Call on DOMContentLoaded to set initial active item and tracker position
+            window.addEventListener('resize', setActive => {
+                // Remove transition during resize to prevent unwanted animations
+                tracker.classList.remove('has-transition');
+                setActiveNavItem();
+                // Re-add transition after a short delay to allow resize to complete
+                requestAnimationFrame(() => {
+                    tracker.classList.add('has-transition');
+                });
+            });
+
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault(); // Prevent default link behavior initially
 
-                    // Temporarily set currentActiveNavItem for immediate tracker animation feedback
-                    currentActiveNavItem = item;
+                    // Remove active from previous and add to current IMMEDIATELY for text color change
+                    if (currentActiveNavItem) {
+                        currentActiveNavItem.classList.remove('active');
+                    }
+                    item.classList.add('active');
+                    currentActiveNavItem = item; // Update global active item
+
+                    // Move tracker with transition
                     moveTracker(item);
 
-                    // Programmatically navigate after a small delay for animation
+                    // Programmatically navigate after animation delay
                     setTimeout(() => {
                         window.location.href = item.href;
-                    }, 300); // Small delay to allow tracker animation to start
+                    }, 400); // Match or slightly exceed tracker transition time
                 });
             });
 
@@ -779,17 +776,9 @@
             updateYiYan();
             yiyanInfo?.addEventListener('click', updateYiYan);
 
-            // --- Entrance Animation Logic ---
-            const pageLoader = document.getElementById('page-loader');
-            const contentContainer = document.querySelector('body');
-
-            window.addEventListener('load', () => {
-                pageLoader.classList.add('hidden');
-                setTimeout(() => {
-                    pageLoader.style.display = 'none';
-                    contentContainer.style.opacity = '1';
-                }, 1000);
-            });
+            // Removed entrance animation logic for non-index pages
+            // const pageLoader = document.getElementById('page-loader'); // This element is removed
+            // const contentContainer = document.querySelector('body'); // body is now always visible
         });
 
         /* --- Right-Click Menu Script (from CRCMenu.js) --- */
