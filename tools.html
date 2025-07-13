@@ -82,11 +82,20 @@
             --bg-image: url('img/background10-dark.jpg');
         }
 
+        /* Essential for sticky footer */
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .solid-card {
@@ -102,23 +111,20 @@
             background: var(--nav-bg);
             backdrop-filter: blur(12px);
             border-radius: 9999px;
-            /* Changed to fully rounded */
             border: 1px solid var(--nav-border);
             box-shadow: var(--nav-shadow);
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
+            padding: 8px 16px;
         }
 
         .nav {
             display: flex;
-            flex-direction: row;
-            /* Adjusted padding to control vertical alignment */
             padding: 5px 0;
             height: auto;
             position: relative;
-            /* Ensure tracker position is relative to nav */
         }
 
         .nav-item {
@@ -135,15 +141,12 @@
             transition: color 0.3s ease;
             z-index: 1;
             border-radius: 9999px;
-            /* Added for fully rounded buttons */
         }
 
-        /* New rule for the inner content wrapper of nav-item */
         .nav-item-content {
             display: flex;
             align-items: center;
             gap: 8px;
-            /* Spacing between icon and text */
         }
 
         .nav-item.active {
@@ -156,18 +159,10 @@
 
         .tracker {
             position: absolute;
-            top: 5px;
-            /* Adjusted from 0 to 5px to align with nav's padding */
-            left: 0;
-            height: 40px;
             background-color: var(--amethyst-color);
             border-radius: 12px;
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             z-index: 0;
-            /* Removed initial transition and visibility: hidden */
-        }
-
-        .tracker.has-transition {
-            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
         /* --- Right-Click Menu (CRCMenu.css integrated and adapted) --- */
@@ -236,7 +231,6 @@
             height: 100vh;
             pointer-events: none;
             background-image: var(--bg-image);
-            /* Dynamic background */
             background-position: center;
             background-size: cover;
             transition: background-image 0.3s ease;
@@ -282,30 +276,25 @@
             transform: translateY(0);
         }
 
-        .main-content-wrapper {
+        .page-content {
+            flex-grow: 1;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            width: 100%;
             padding: 2rem;
             box-sizing: border-box;
             max-width: 1200px;
-            /* Max width for content to keep it centered */
             margin: 0 auto;
-            /* Center the wrapper */
             flex-wrap: wrap;
-            /* Allow wrapping on smaller screens */
         }
 
         .me-card {
             width: 320px;
             padding: 20px;
             text-align: center;
-            /* Removed fixed positioning */
             margin-right: 30px;
-            /* Space between card and content */
             position: relative;
-            /* Changed to relative for flow */
             top: 0;
             left: 0;
             z-index: 10;
@@ -330,14 +319,12 @@
             margin: 0 auto 15px;
             border: 3px solid var(--amethyst-color);
             overflow: hidden;
-            /* Ensure image doesn't overflow border-radius */
         }
 
         .me-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Ensures image covers the area, cropping if necessary */
         }
 
         .me-info a,
@@ -367,9 +354,7 @@
 
         .right-content-area {
             max-width: 700px;
-            /* Adjusted max-width */
             padding: 0;
-            /* Remove redundant padding as main-content-wrapper has it */
             flex-grow: 1;
         }
 
@@ -400,6 +385,7 @@
             color: var(--footer-text);
             transition: background-color 0.3s ease, color 0.3s ease;
             border-top: 1px solid var(--card-border);
+            width: 100%;
         }
 
         .amethyst-dark-button {
@@ -442,14 +428,118 @@
             }
         }
 
+        /* --- Entrance Animation --- */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .content-container {
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        body.content-loaded {
+            opacity: 1;
+        }
+
+        /* --- Mobile Navigation Styles --- */
+        #mobile-menu-button {
+            display: none;
+            color: var(--text-primary);
+            background-color: transparent;
+            border: none;
+            z-index: 21;
+        }
 
         @media (max-width: 992px) {
             .header-card {
-                flex-direction: column !important;
-                padding: 10px;
+                flex-direction: row !important;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                border-radius: 24px;
             }
 
-            .main-content-wrapper {
+            .nav {
+                display: flex;
+                order: 99;
+                width: 100%;
+                margin-top: 0;
+                padding: 0;
+                flex-direction: column;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, margin-top 0.3s ease-out;
+                position: relative;
+            }
+
+            .nav-item {
+                width: 100%;
+                margin-bottom: 8px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .nav-item.active {
+                color: var(--nav-item-active-text);
+            }
+
+            .tracker {
+                display: none;
+                position: absolute;
+                left: 0;
+                width: 100%;
+                background-color: var(--amethyst-color);
+                border-radius: 12px;
+                transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+                z-index: 0;
+            }
+
+            #theme-toggle {
+                display: none;
+            }
+
+            #mobile-menu-button {
+                display: block;
+            }
+
+            .header-card.is-open {
+                padding-bottom: 15px;
+                border-radius: 24px;
+            }
+
+            .header-card.is-open .nav {
+                max-height: 300px;
+                margin-top: 15px;
+            }
+
+            .header-card.is-open .tracker {
+                display: block;
+            }
+
+            .header-card.is-open #theme-toggle {
+                display: flex;
+                margin: 15px auto 5px;
+            }
+
+            .page-content {
                 flex-direction: column;
                 align-items: center;
             }
@@ -457,35 +547,95 @@
             .me-card {
                 width: 90%;
                 margin: 30px auto 0 auto;
-                /* Center card and add top margin */
                 margin-right: auto;
-                /* Remove right margin when stacked */
             }
 
             .right-content-area {
                 padding: 1rem;
                 max-width: 100%;
             }
-
-            .nav {
-                margin-top: 15px;
-            }
-
-            #theme-toggle {
-                margin-top: 10px;
-                margin-left: 0;
-            }
         }
 
-        /* Content fade-in animation (for general use) */
-        .content-container {
-            opacity: 0.3;
-            /* Always visible for non-index pages */
+        /* Specific styles for the tools page cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 1000px;
+            /* Adjust as needed */
+            margin: 0 auto;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .tool-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            height: 100%;
+            /* Ensure cards in a row have similar height */
+        }
+
+        .tool-card .tool-icon {
+            font-size: 3rem;
+            /* Larger icons */
+            margin-bottom: 16px;
+            color: var(--amethyst-color);
+            /* Use theme accent color for icons */
+        }
+
+        .tool-card h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            font-size: 1rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+            flex-grow: 1;
+            /* Allow description to take available space */
+            margin-bottom: 16px;
+        }
+
+        .tool-card .tool-link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            /* Fully rounded button */
+            background-color: var(--amethyst-color);
+            color: var(--nav-item-active-text);
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .tool-card .tool-link-button:hover {
+            background-color: var(--amethyst-color-hover);
+            transform: translateY(-2px);
+            /* Slight lift on hover */
+        }
+
+        .tool-card .tool-link-button i {
+            font-size: 1rem;
         }
     </style>
 </head>
 
 <body class="content-container">
+    <div id="page-loader">
+        <div class="butterfly-loader">
+            <div class="butterfly" style="top: 20%; left: 10%;"></div>
+            <div class="butterfly" style="top: 60%; left: 70%;"></div>
+            <div class="butterfly" style="top: 40%; left: 40%;"></div>
+        </div>
+    </div>
+
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
     <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
@@ -513,66 +663,42 @@
                     </a>
                     <a href="/commissions.html" class="nav-item">
                         <span class="nav-item-content">
-                            <i class="fa fa-briefcase icon"></i>
+                            <i class="fa-solid fa-pencil icon"></i>
                             <span>约稿</span>
                         </span>
                     </a>
-                    <a href="/tools.html" class="nav-item">
+                    <a href="/tools.html" class="nav-item active">
                         <span class="nav-item-content">
                             <i class="fa fa-tools icon"></i>
                             <span>工具</span>
                         </span>
                     </a>
-                    <a href="/contact.html" class="nav-item">
+                    <a href="/works.html" class="nav-item">
                         <span class="nav-item-content">
-                            <i class="fa fa-envelope icon"></i>
-                            <span>联系</span>
+                            <i class="fa-solid fa-image icon"></i>
+                            <span>作品</span>
                         </span>
                     </a>
                 </nav>
                 <div id="theme-toggle">
                     <i class="fa fa-sun text-xl"></i>
                 </div>
+                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
+                    <i class="fa fa-bars"></i>
+                </button>
             </div>
         </header>
 
-        <div class="flex-grow w-full flex justify-center items-start pt-10">
-            <div class="main-content-wrapper">
-                <aside class="me-card solid-card anim-fade-in-up">
-                    <div class="me-image">
-                        <img src="img/avatar.jpg" alt="LanRhyme Avatar">
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="text-2xl font-bold">LanRhyme</h3>
-                        <p>Developer & Painter</p>
-                    </div>
-                    <div class="me-info text-left text-sm space-y-2">
-                        <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span
-                                id="currentTime">加载中...</span></p>
-                        <p><strong><i class="fa fab fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
-                                href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
-                        <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
-                        <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
-                                id="githubInfo">加载中...</span></p>
-                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center">
-                            “点击获取每日一言”</p>
-                    </div>
-                    <div class="me-social-links mt-4">
-                        <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
-                                class="fab fa-github"></i></a>
-                        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </aside>
+        <div class="page-content">
+            <main class="right-content-area flex flex-col items-center w-full">
+                <section id="tools-section" class="py-16 text-center w-full anim-fade-in-up">
+                    <h2 class="text-5xl font-extrabold mb-8">我的工具箱</h2>
+                    <p class="text-xl leading-relaxed mb-12">这里收集了我开发或日常使用的工具和资源</p>
 
-                <main class="right-content-area flex flex-col items-center">
-                    <section id="page-content" class="py-16 text-center w-full anim-fade-in-up"
-                        style="animation-delay: 0.1s;">
-                        <h2 class="text-5xl font-extrabold mb-4">工具</h2>
-                        <p class="text-xl leading-relaxed">没写...</p>
-                    </section>
-                </main>
-            </div>
+                    <div id="tools-grid-container" class="tools-grid">
+                    </div>
+                </section>
+            </main>
         </div>
 
         <footer class="w-full text-center py-6 mt-10">
@@ -647,94 +773,53 @@
             // --- Navigation Tracker ---
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = null;
+
+            let currentActiveNavItem = document.querySelector('.nav-item.active');
 
             function moveTracker(element) {
-                if (element) {
-                    tracker.style.width = `${element.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
-                }
-            }
+                if (element && tracker) {
+                    const isMobile = window.innerWidth <= 992;
 
-            function setActiveNavItem() {
-                const currentPath = window.location.pathname === '/' ? '/index.html' : window.location.pathname;
-
-                let initialActiveItem = null;
-                navItems.forEach(item => {
-                    const itemPath = new URL(item.href).pathname;
-                    if (itemPath === currentPath) {
-                        initialActiveItem = item;
+                    if (isMobile) {
+                        tracker.style.top = `${element.offsetTop}px`;
+                        tracker.style.height = `${element.offsetHeight}px`;
+                        tracker.style.left = `0`;
+                        tracker.style.width = `100%`;
+                        tracker.style.transform = `translateY(0)`;
+                    } else {
+                        tracker.style.width = `${element.offsetWidth}px`;
+                        tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                        tracker.style.top = `5px`;
+                        tracker.style.height = `40px`;
                     }
-                });
-
-                if (initialActiveItem) {
-                    tracker.style.width = `${initialActiveItem.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${initialActiveItem.offsetLeft}px)`;
-                    initialActiveItem.classList.add('active'); // Set active class immediately
                 }
-
-                // After initial positioning, enable transitions for future clicks
-                // Use requestAnimationFrame or a small setTimeout to ensure the initial positioning
-                // is rendered before the transition property is added.
-                requestAnimationFrame(() => {
-                    tracker.classList.add('has-transition');
-                });
-
-
-                // Set the initial active item for currentActiveNavItem variable
-                currentActiveNavItem = initialActiveItem;
             }
 
-            setActiveNavItem(); // Call on DOMContentLoaded to set initial active item and tracker position
-            window.addEventListener('resize', setActive => {
-                // Remove transition during resize to prevent unwanted animations
-                tracker.classList.remove('has-transition');
-                setActiveNavItem();
-                // Re-add transition after a short delay to allow resize to complete
-                requestAnimationFrame(() => {
-                    tracker.classList.add('has-transition');
-                });
-            });
+            // Initial position of the tracker
+            setTimeout(() => moveTracker(currentActiveNavItem), 50);
+            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
 
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default link behavior initially
+                    e.preventDefault();
 
-                    // Remove active from previous and add to current IMMEDIATELY for text color change
                     if (currentActiveNavItem) {
                         currentActiveNavItem.classList.remove('active');
                     }
                     item.classList.add('active');
-                    currentActiveNavItem = item; // Update global active item
+                    currentActiveNavItem = item;
 
-                    // Move tracker with transition
                     moveTracker(item);
 
-                    // Programmatically navigate after animation delay
                     setTimeout(() => {
                         window.location.href = item.href;
-                    }, 400); // Match or slightly exceed tracker transition time
+                    }, 150);
                 });
             });
 
 
-            // --- Current Time Display ---
-            const currentTimeSpan = document.getElementById('currentTime');
-            function updateCurrentTime() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                currentTimeSpan.textContent = `${hours}:${minutes}:${seconds}`;
-            }
-            if (currentTimeSpan) {
-                updateCurrentTime();
-                setInterval(updateCurrentTime, 1000);
-            }
-
-
-            // --- Animation on Load & API Calls ---
+            // --- Animation on Load ---
             const animatedElements = document.querySelectorAll('.anim-fade-in-up');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -746,39 +831,94 @@
             }, { threshold: 0.1 });
             animatedElements.forEach(el => observer.observe(el));
 
-            // GitHub Info (kept in template for consistency, can be removed if not needed on sub-pages)
-            const githubInfo = document.getElementById('githubInfo');
-            if (githubInfo) {
-                fetch('https://api.github.com/users/LanRhyme')
-                    .then(res => res.json())
-                    .then(data => {
-                        githubInfo.textContent = `${data.public_repos} Repos | ${data.followers} Followers`;
+
+            // --- Entrance Animation Logic ---
+            const pageLoader = document.getElementById('page-loader');
+            const bodyElement = document.querySelector('body');
+
+            window.addEventListener('load', () => {
+                if (pageLoader) {
+                    pageLoader.classList.add('hidden');
+                    setTimeout(() => {
+                        pageLoader.style.display = 'none';
+                    }, 300);
+                }
+                if (bodyElement) {
+                    bodyElement.classList.add('content-loaded');
+                }
+            });
+
+            // --- Tool Cards Rendering ---
+            const toolsGridContainer = document.getElementById('tools-grid-container');
+            if (toolsGridContainer) {
+                fetch('tools.json')
+                    .then(response => response.json())
+                    .then(tools => {
+                        tools.forEach(tool => {
+                            const toolCardAnchor = document.createElement('a');
+                            let finalLink = tool.link;
+                            if (finalLink && !finalLink.startsWith('http://') && !finalLink.startsWith('https://') && !finalLink.startsWith('//')) {
+                                finalLink = `https://${finalLink}`;
+                            }
+
+                            if (finalLink) {
+                                toolCardAnchor.href = finalLink;
+                                toolCardAnchor.target = "_blank";
+                            } else {
+                                toolCardAnchor.href = "javascript:void(0);";
+                            }
+
+                            toolCardAnchor.className = "solid-card tool-card hover:scale-105 transition duration-300 anim-fade-in-up";
+                            toolCardAnchor.style.animationDelay = `${0.1 + tools.indexOf(tool) * 0.05}s`; // Stagger animation
+
+                            toolCardAnchor.innerHTML = `
+                                <i class="${tool.icon} tool-icon"></i>
+                                <h4>${tool.title}</h4>
+                                <p>${tool.description}</p>
+                                <div class="tool-link-button">
+                                    <i class="fa fa-external-link-alt"></i>
+                                    <span>访问</span>
+                                </div>
+                            `;
+
+                            toolCardAnchor.addEventListener('click', (e) => {
+                                if (!tool.link || toolCardAnchor.href.includes("javascript:void(0)")) {
+                                    e.preventDefault();
+                                }
+                                toolCardAnchor.classList.add('card-bounce');
+                                setTimeout(() => {
+                                    toolCardAnchor.classList.remove('card-bounce');
+                                }, 300);
+                            });
+                            toolsGridContainer.appendChild(toolCardAnchor);
+                            observer.observe(toolCardAnchor); // Observe new elements
+                        });
                     })
-                    .catch(() => {
-                        githubInfo.textContent = '获取失败';
-                    });
+                    .catch(error => console.error('Error fetching tools:', error));
             }
 
-            // YiYan (Daily Quote) (kept in template for consistency, can be removed if not needed on sub-pages)
-            const yiyanInfo = document.getElementById('yiyanInfo');
-            const updateYiYan = () => {
-                if (yiyanInfo) {
-                    fetch('https://v1.hitokoto.cn/?encode=text')
-                        .then(res => res.text())
-                        .then(text => {
-                            yiyanInfo.textContent = `“${text}”`;
-                        })
-                        .catch(() => {
-                            yiyanInfo.textContent = '一言获取失败';
-                        });
-                }
-            };
-            updateYiYan();
-            yiyanInfo?.addEventListener('click', updateYiYan);
 
-            // Removed entrance animation logic for non-index pages
-            // const pageLoader = document.getElementById('page-loader'); // This element is removed
-            // const contentContainer = document.querySelector('body'); // body is now always visible
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const headerCard = document.querySelector('.header-card');
+            const nav = document.querySelector('.nav');
+            const menuIcon = mobileMenuButton.querySelector('i');
+
+            mobileMenuButton.addEventListener('click', () => {
+                headerCard.classList.toggle('is-open');
+                const isOpen = headerCard.classList.contains('is-open');
+                menuIcon.classList.toggle('fa-bars', !isOpen);
+                menuIcon.classList.toggle('fa-times', isOpen);
+
+                if (isOpen) {
+                    const activeNavItem = nav.querySelector('.nav-item.active');
+                    if (activeNavItem) {
+                        setTimeout(() => moveTracker(activeNavItem), 300);
+                    }
+                } else {
+                    tracker.style.display = 'none';
+                }
+            });
         });
 
         /* --- Right-Click Menu Script (from CRCMenu.js) --- */

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作品 - LanRhyme的个人网站</title>
+    <title>项目 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,173 +187,308 @@
             transform: translateY(0);
         }
 
-        .mc-bg-container, .blob, #page-loader, .content-container, body.content-loaded, #custom-menu, .menu-item, .menu-divider, .menu-header, #theme-toggle {
-            /* Copied all utility styles from index.html for consistency */
-        }
-        .mc-bg-container { position: fixed; z-index: -2; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; background-image: var(--bg-image); background-position: center; background-size: cover; transition: background-image 0.3s ease; }
-        .blob { position: absolute; width: 300px; height: 300px; background: linear-gradient(135deg, var(--blob-gradient-start) 0%, var(--blob-gradient-end) 100%); filter: blur(60px); border-radius: 50%; z-index: -1; animation: blob-movement 15s infinite linear; }
-        @keyframes blob-movement { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(5%, -10%) scale(1.3); } 66% { transform: translate(-15%, 5%) scale(0.9); } 100% { transform: translate(0, 0) scale(1); } }
-        #page-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease-in-out; opacity: 1; pointer-events: all; }
-        #page-loader.hidden { opacity: 0; pointer-events: none; }
-        .content-container { opacity: 0; transition: opacity 1s ease-in; }
-        body.content-loaded { opacity: 1; }
-        #custom-menu { display: none; position: fixed; background: var(--menu-bg); backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); padding: 0.5rem 0; z-index: 9999; min-width: 180px; overflow: hidden; transition: all 0.2s ease-out; transform-origin: top left; opacity: 0; transform: scale(0.95); border: 1px solid var(--menu-border); user-select: none; }
-        #custom-menu.visible { opacity: 1; transform: scale(1); }
-        #custom-menu.hiding { opacity: 0; transform: scale(0.95); }
-        .menu-item { display: flex; align-items: center; padding: 0.75rem 1.25rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; color: var(--menu-item-text); }
-        .menu-item:hover { background-color: var(--menu-item-hover-bg); }
-        .menu-divider { border-top: 1px solid var(--menu-divider); margin: 0.25rem 0; }
-        .menu-header { padding: 0.5rem 1.25rem; font-size: 0.875rem; color: var(--menu-header-text); text-transform: uppercase; font-weight: 500; }
-        #theme-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; cursor: pointer; transition: all 0.3s ease; margin-left: 20px; border-radius: 50%; background-color: var(--card-bg); border: 1px solid var(--card-border); }
-        #theme-toggle:hover { transform: scale(1.1); }
-        #theme-toggle i { color: var(--theme-toggle-icon-color); }
-        #mobile-menu-button { display: none; }
-
-        /* --- 新增：作品画廊样式 --- */
-        #works-gallery {
-            column-count: 3;
-            column-gap: 1.5rem;
-        }
-
-        @media (max-width: 1024px) {
-            #works-gallery { column-count: 2; }
-        }
-
-        @media (max-width: 640px) {
-            #works-gallery { column-count: 1; }
-        }
-
-        .work-item {
-            margin-bottom: 1.5rem;
-            break-inside: avoid;
-            position: relative;
-            overflow: hidden;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            background-color: var(--card-border);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .work-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-
-        .work-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 16px;
-        }
-        
-        .work-item .overlay {
-            position: absolute;
-            bottom: 0;
+        .mc-bg-container {
+            position: fixed;
+            z-index: -2;
+            top: 0;
             left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
-            color: white;
-            padding: 2.5rem 1rem 1rem 1rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background-image: var(--bg-image);
+            background-position: center;
+            background-size: cover;
+            transition: background-image 0.3s ease;
         }
 
-        .work-item:hover .overlay {
-            opacity: 1;
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--blob-gradient-start) 0%, var(--blob-gradient-end) 100%);
+            filter: blur(60px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: blob-movement 15s infinite linear;
         }
 
-        .work-item .overlay .title {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .work-item .overlay .description {
-            font-size: 0.9rem;
+        @keyframes blob-movement {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(5%, -10%) scale(1.3);
+            }
+
+            66% {
+                transform: translate(-15%, 5%) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
         }
 
-        /* --- 新增：灯箱 (Lightbox) 样式 --- */
-        #lightbox {
+        #page-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
+            background: var(--bg-primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0s 0.3s;
-        }
-
-        #lightbox.visible {
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
             opacity: 1;
-            visibility: visible;
-            transition-delay: 0s;
+            pointer-events: all;
         }
 
-        #lightbox img {
-            max-width: 90vw;
-            max-height: 85vh;
-            object-fit: contain;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        
-        #lightbox.visible img {
-            transform: scale(1);
+        #page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .lightbox-btn {
-            position: absolute;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 2.5rem;
+        .content-container {
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        body.content-loaded {
+            opacity: 1;
+        }
+
+        #theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
-            padding: 1rem;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
         }
-        .lightbox-btn:hover {
-            color: white;
+
+        #theme-toggle:hover {
             transform: scale(1.1);
         }
 
-        #lightbox-close { top: 20px; right: 20px; font-size: 2rem; }
-        #lightbox-prev { top: 50%; left: 20px; transform: translateY(-50%); }
-        #lightbox-next { top: 50%; right: 20px; transform: translateY(-50%); }
+        #theme-toggle i {
+            color: var(--theme-toggle-icon-color);
+        }
 
+        /* --- 右键菜单样式 --- */
+        #custom-menu {
+            display: none;
+            position: fixed;
+            background: var(--menu-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 0;
+            z-index: 9999;
+            min-width: 180px;
+            overflow: hidden;
+            transition: all 0.2s ease-out;
+            transform-origin: top left;
+            opacity: 0;
+            transform: scale(0.95);
+            border: 1px solid var(--menu-border);
+            user-select: none;
+        }
+
+        #custom-menu.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #custom-menu.hiding {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--menu-item-text);
+        }
+
+        .menu-item:hover {
+            background-color: var(--menu-item-hover-bg);
+        }
+
+        .menu-divider {
+            border-top: 1px solid var(--menu-divider);
+            margin: 0.25rem 0;
+        }
+
+        .menu-header {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            color: var(--menu-header-text);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* --- 项目卡片样式 --- */
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-image-container {
+            width: 100%;
+            padding-top: 56.25%;
+            position: relative;
+            background-color: var(--card-border);
+        }
+
+        .project-image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-tags {
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        .project-tag {
+            display: inline-block;
+            background-color: var(--highlight-bg);
+            color: var(--amethyst-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-links a {
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .project-links a:hover {
+            color: var(--amethyst-color);
+        }
 
         /* --- 移动端响应式设计 --- */
+        #mobile-menu-button {
+            display: none;
+        }
+
         @media (max-width: 992px) {
-            .header-card { flex-direction: row !important; justify-content: space-between; align-items: center; flex-wrap: wrap; border-radius: 24px; }
-            .nav { display: flex; order: 99; width: 100%; margin-top: 0; padding: 0; flex-direction: column; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, margin-top 0.3s ease-out; position: relative; }
-            .nav-item { width: 100%; margin-bottom: 8px; position: relative; z-index: 1; }
-            .nav-item.active { color: var(--nav-item-active-text); }
-            .tracker { display: none; position: absolute; left: 0; width: 100%; background-color: var(--amethyst-color); border-radius: 12px; transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1); z-index: 0; }
-            #theme-toggle { display: none; }
-            #mobile-menu-button { display: block; color: var(--text-primary); background-color: transparent; border: none; z-index: 21; }
-            .header-card.is-open { padding-bottom: 15px; border-radius: 24px; }
-            .header-card.is-open .nav { max-height: 300px; margin-top: 15px; }
-            .header-card.is-open .tracker { display: block; }
-            .header-card.is-open #theme-toggle { display: flex; margin: 15px auto 5px; }
-            .page-content { flex-direction: column; align-items: center; }
+            .header-card {
+                flex-direction: row !important;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                border-radius: 24px;
+            }
+
+            .nav {
+                display: flex;
+                order: 99;
+                width: 100%;
+                margin-top: 0;
+                padding: 0;
+                flex-direction: column;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, margin-top 0.3s ease-out;
+                position: relative;
+            }
+
+            .nav-item {
+                width: 100%;
+                margin-bottom: 8px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .tracker {
+                display: none;
+                position: absolute;
+                left: 0;
+                width: 100%;
+                background-color: var(--amethyst-color);
+                border-radius: 12px;
+                transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+                z-index: 0;
+            }
+
+            #theme-toggle {
+                display: none;
+            }
+
+            /* 修复点: 默认隐藏桌面版按钮 */
+            #mobile-menu-button {
+                display: block;
+                color: var(--text-primary);
+                background-color: transparent;
+                border: none;
+                z-index: 21;
+            }
+
+            .header-card.is-open {
+                padding-bottom: 15px;
+                border-radius: 24px;
+            }
+
+            .header-card.is-open .nav {
+                max-height: 300px;
+                margin-top: 15px;
+            }
+
+            .header-card.is-open .tracker {
+                display: block;
+            }
+
+            .header-card.is-open #theme-toggle {
+                display: flex;
+                margin: 15px auto 5px;
+            }
+
+            /* 修复点: 在展开菜单中显示按钮 */
+            .page-content {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 
 <body class="content-container">
     <div id="page-loader">
-        </div>
+    </div>
 
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
@@ -371,8 +506,8 @@
                     <a href="/" class="nav-item">
                         <span class="nav-item-content"><i class="fa fa-home icon"></i><span>主页</span></span>
                     </a>
-                    <a href="/projects.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-user icon"></i><span>项目</span></span>
+                    <a href="/projects.html" class="nav-item active"> <span class="nav-item-content"><i
+                                class="fa fa-user icon"></i><span>项目</span></span>
                     </a>
                     <a href="/commissions.html" class="nav-item">
                         <span class="nav-item-content"><i class="fa-solid fa-pencil icon"></i><span>约稿</span></span>
@@ -380,7 +515,8 @@
                     <a href="/tools.html" class="nav-item">
                         <span class="nav-item-content"><i class="fa fa-tools icon"></i><span>工具</span></span>
                     </a>
-                    <a href="/works.html" class="nav-item active"> <span class="nav-item-content"><i class="fa-solid fa-image icon"></i><span>作品</span></span>
+                    <a href="/works.html" class="nav-item">
+                        <span class="nav-item-content"><i class="fa-solid fa-image icon"></i><span>作品</span></span>
                     </a>
                 </nav>
                 <div id="theme-toggle">
@@ -394,15 +530,15 @@
 
         <div class="page-content w-full">
             <main class="w-full">
-                <section id="works-intro" class="text-center mb-12 anim-fade-in-up">
-                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的作品集</h2>
+                <section id="projects-intro" class="text-center mb-12 anim-fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的项目</h2>
                     <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                        光与影的交织，色彩与情感的碰撞。这里是我想象力的乐园。
+                        这里是我引以为豪的创造，每一个项目都承载着我的思考、学习和成长的足迹
                     </p>
                 </section>
 
-                <section id="works-gallery" class="anim-fade-in-up" style="animation-delay: 0.2s;">
-                    </section>
+                <section id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </section>
             </main>
         </div>
 
@@ -410,21 +546,48 @@
             <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
         </footer>
     </div>
-    
-    <div id="custom-menu">
-        </div>
 
-    <div id="lightbox">
-        <button id="lightbox-close" class="lightbox-btn"><i class="fas fa-times"></i></button>
-        <button id="lightbox-prev" class="lightbox-btn"><i class="fas fa-chevron-left"></i></button>
-        <button id="lightbox-next" class="lightbox-btn"><i class="fas fa-chevron-right"></i></button>
-        <img id="lightbox-image" src="" alt="Enlarged work">
+    <div id="custom-menu">
+        <div class="menu-header">常规操作</div>
+        <div class="menu-item" id="back-item" onclick="backAction()">
+            <i class="fa fa-arrow-left"></i>
+            <span>返回</span>
+        </div>
+        <div class="menu-item" id="refresh-item" onclick="refreshAction()">
+            <i class="fa fa-refresh"></i>
+            <span>刷新</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-header">编辑操作</div>
+        <div class="menu-item" id="copy-item" onclick="copyAction()">
+            <i class="fa fa-copy"></i>
+            <span>复制</span>
+        </div>
+        <div class="menu-item" id="paste-item" onclick="pasteAction()">
+            <i class="fa fa-paste"></i>
+            <span>粘贴</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-header">链接操作</div>
+        <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
+            <i class="fa fa-external-link"></i>
+            <span>在新标签页打开</span>
+        </div>
+        <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
+            <i class="fa fa-link"></i>
+            <span>复制链接地址</span>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-header">其他操作</div>
+        <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
+            <i class="fa fa-home"></i>
+            <span>返回主页</span>
+        </div>
     </div>
 
     <script>
-        // 脚本部分包含从 index.html 继承的全部功能，并增加了新的画廊和灯箱逻辑
         document.addEventListener('DOMContentLoaded', () => {
-            // --- 继承自 index.html 的脚本 ---
+            // --- Theme Toggle ---
             const themeToggle = document.getElementById('theme-toggle');
             const themeIcon = themeToggle.querySelector('i');
             const savedTheme = localStorage.getItem('theme') || 'light';
@@ -446,6 +609,7 @@
                 applyTheme(newTheme);
             });
 
+            // --- Navigation Tracker ---
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
             let currentActiveNavItem = document.querySelector('.nav-item.active');
@@ -453,25 +617,61 @@
                 if (!element || !tracker) return;
                 const isMobile = window.innerWidth <= 992;
                 if (isMobile) {
-                    if (document.querySelector('.header-card.is-open')) { tracker.style.display = 'block'; tracker.style.top = `${element.offsetTop}px`; tracker.style.height = `${element.offsetHeight}px`; tracker.style.left = `0`; tracker.style.width = `100%`; tracker.style.transform = `translateY(0)`; } else { tracker.style.display = 'none'; }
-                } else { tracker.style.display = 'block'; tracker.style.width = `${element.offsetWidth}px`; tracker.style.transform = `translateX(${element.offsetLeft}px)`; tracker.style.top = `5px`; tracker.style.height = `40px`; }
+                    if (document.querySelector('.header-card.is-open')) {
+                        tracker.style.display = 'block';
+                        tracker.style.top = `${element.offsetTop}px`;
+                        tracker.style.height = `${element.offsetHeight}px`;
+                        tracker.style.left = `0`;
+                        tracker.style.width = `100%`;
+                        tracker.style.transform = `translateY(0)`;
+                    } else {
+                        tracker.style.display = 'none';
+                    }
+                } else {
+                    tracker.style.display = 'block';
+                    tracker.style.width = `${element.offsetWidth}px`;
+                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                    tracker.style.top = `5px`;
+                    tracker.style.height = `40px`;
+                }
             }
             setTimeout(() => moveTracker(currentActiveNavItem), 50);
             window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
             navItems.forEach(item => {
-                item.addEventListener('click', (e) => { e.preventDefault(); if (currentActiveNavItem) currentActiveNavItem.classList.remove('active'); item.classList.add('active'); currentActiveNavItem = item; moveTracker(item); setTimeout(() => { window.location.href = item.href; }, 150); });
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentActiveNavItem) currentActiveNavItem.classList.remove('active');
+                    item.classList.add('active');
+                    currentActiveNavItem = item;
+                    moveTracker(item);
+                    setTimeout(() => { window.location.href = item.href; }, 150);
+                });
             });
 
+            // --- Entrance Animation ---
             const pageLoader = document.getElementById('page-loader');
             const bodyElement = document.querySelector('body');
-            window.addEventListener('load', () => { if (pageLoader) { pageLoader.classList.add('hidden'); setTimeout(() => { pageLoader.style.display = 'none'; }, 300); } if (bodyElement) { bodyElement.classList.add('content-loaded'); } });
-            
+            window.addEventListener('load', () => {
+                if (pageLoader) {
+                    pageLoader.classList.add('hidden');
+                    setTimeout(() => { pageLoader.style.display = 'none'; }, 300);
+                }
+                if (bodyElement) {
+                    bodyElement.classList.add('content-loaded');
+                }
+            });
             const animatedElements = document.querySelectorAll('.anim-fade-in-up');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
             }, { threshold: 0.1 });
             animatedElements.forEach(el => observer.observe(el));
 
+            // --- Mobile Menu Toggle (修复) ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const headerCard = document.querySelector('.header-card');
             const menuIcon = mobileMenuButton.querySelector('i');
@@ -480,99 +680,119 @@
                 const isOpen = headerCard.classList.contains('is-open');
                 menuIcon.classList.toggle('fa-bars', !isOpen);
                 menuIcon.classList.toggle('fa-times', isOpen);
-                if (isOpen) { setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 300); } else { if (window.innerWidth <= 992) tracker.style.display = 'none'; }
+                // 修复点: 切换菜单时，重新计算tracker位置
+                if (isOpen) {
+                    setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 300);
+                } else {
+                    if (window.innerWidth <= 992) tracker.style.display = 'none';
+                }
             });
 
-            // --- 新增：画廊和灯箱脚本 ---
-            const gallery = document.getElementById('works-gallery');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImage = document.getElementById('lightbox-image');
-            const lightboxClose = document.getElementById('lightbox-close');
-            const lightboxPrev = document.getElementById('lightbox-prev');
-            const lightboxNext = document.getElementById('lightbox-next');
-
-            let worksData = [];
-            let currentIndex = 0;
-
-            if (gallery) {
-                fetch('works.json')
+            // --- 从 JSON 加载项目卡片 ---
+            const projectsGrid = document.getElementById('projects-grid');
+            if (projectsGrid) {
+                fetch('projects.json')
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
                     })
-                    .then(data => {
-                        worksData = data;
-                        data.forEach((work, index) => {
-                            const workItem = document.createElement('div');
-                            workItem.className = 'work-item';
-                            workItem.innerHTML = `
-                                <img src="${work.image}" alt="${work.title}" loading="lazy">
-                                <div class="overlay">
-                                    <div class="title">${work.title}</div>
-                                    <div class="description">${work.description}</div>
-                                </div>
-                            `;
-                            
-                            workItem.addEventListener('click', () => {
-                                showLightbox(index);
-                            });
-
-                            gallery.appendChild(workItem);
+                    .then(projects => {
+                        projects.forEach((project, index) => {
+                            const card = document.createElement('div');
+                            card.className = 'project-card solid-card anim-fade-in-up';
+                            card.style.animationDelay = `${index * 0.1}s`;
+                            const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
+                            let linksHTML = '';
+                            if (project.live_url) linksHTML += `<a href="${project.live_url}" target="_blank" class="mr-4 text-lg" aria-label="Live Demo"><i class="fa fa-external-link"></i></a>`;
+                            if (project.source_url) linksHTML += `<a href="${project.source_url}" target="_blank" class="text-lg" aria-label="Source Code"><i class="fab fa-github"></i></a>`;
+                            card.innerHTML = `<div class="project-image-container"><img src="${project.image}" alt="${project.title}"></div><div class="project-card-content"><div class="flex justify-between items-start mb-2"><h3 class="text-xl font-bold">${project.title}</h3><div class="project-links text-right flex-shrink-0 ml-4">${linksHTML}</div></div><p class="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">${project.description}</p><div class="project-tags">${tagsHTML}</div></div>`;
+                            projectsGrid.appendChild(card);
                         });
+                        document.querySelectorAll('.project-card.anim-fade-in-up').forEach(el => observer.observe(el));
                     })
                     .catch(error => {
-                        console.error('无法加载作品文件:', error);
-                        gallery.innerHTML = `<p class="text-center col-span-full">作品加载失败，请检查 'works.json' 文件。</p>`;
+                        console.error('无法加载项目文件:', error);
+                        projectsGrid.innerHTML = `<p class="text-center col-span-full">项目加载失败，请检查 'projects.json' 文件。</p>`;
                     });
             }
-
-            function showLightbox(index) {
-                currentIndex = index;
-                lightboxImage.src = worksData[currentIndex].image;
-                lightbox.classList.add('visible');
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
-            }
-
-            function hideLightbox() {
-                lightbox.classList.remove('visible');
-                document.body.style.overflow = '';
-            }
-
-            function showPrev() {
-                currentIndex = (currentIndex > 0) ? currentIndex - 1 : worksData.length - 1;
-                lightboxImage.src = worksData[currentIndex].image;
-            }
-
-            function showNext() {
-                currentIndex = (currentIndex < worksData.length - 1) ? currentIndex + 1 : 0;
-                lightboxImage.src = worksData[currentIndex].image;
-            }
-
-            lightboxClose.addEventListener('click', hideLightbox);
-            lightboxPrev.addEventListener('click', showPrev);
-            lightboxNext.addEventListener('click', showNext);
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightbox) { // 点击背景关闭
-                    hideLightbox();
-                }
-            });
-            document.addEventListener('keydown', (e) => {
-                if (lightbox.classList.contains('visible')) {
-                    if (e.key === 'Escape') hideLightbox();
-                    if (e.key === 'ArrowLeft') showPrev();
-                    if (e.key === 'ArrowRight') showNext();
-                }
-            });
-
         });
 
-        // 继承右键菜单脚本 (与 index.html 相同)
+        /* --- 新增：右键菜单脚本 --- */
         const customMenu = document.getElementById('custom-menu');
-        if (customMenu) {
-            // 复制 index.html 中完整的右键菜单逻辑到这里
-            // 为保持简洁，此处省略重复代码，实际使用时请将 index.html 的右键菜单 JS 逻辑完整复制过来
-            // 例如：const backItem = ...; function showMenu(...) ... 等
+        const backItem = document.getElementById('back-item');
+        const refreshItem = document.getElementById('refresh-item');
+        const copyItem = document.getElementById('copy-item');
+        const pasteItem = document.getElementById('paste-item');
+        const openInNewTabItem = document.getElementById('open-in-new-tab-item');
+        const copyLinkItem = document.getElementById('copy-link-item');
+        const backToHomeItem = document.getElementById('back-to-home-item');
+        let isMenuVisible = false, currentTarget = null, selectedText = '', isAnimating = false, menuOpenTime = 0, focusedElementBeforeMenu = null;
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            focusedElementBeforeMenu = document.activeElement;
+            const now = Date.now();
+            const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
+            selectedText = window.getSelection().toString().trim();
+            currentTarget = e.target.closest('a');
+            updateMenuItemsVisibility();
+            const menuWidth = customMenu.offsetWidth, menuHeight = customMenu.offsetHeight, viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
+            let left = e.clientX;
+            if (e.clientX + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 5;
+            let top = e.clientY;
+            if (e.clientY + menuHeight > viewportHeight) top = e.clientY - menuHeight;
+            if (isNewOpen) showMenu(left, top);
+            else moveMenu(left, top);
+            menuOpenTime = now;
+        });
+        function showMenu(left, top) {
+            if (isAnimating) return;
+            isAnimating = true;
+            customMenu.style.left = `${left}px`;
+            customMenu.style.top = `${top}px`;
+            customMenu.style.display = 'block';
+            customMenu.classList.remove('hiding');
+            requestAnimationFrame(() => {
+                customMenu.classList.add('visible');
+                setTimeout(() => { isAnimating = false; isMenuVisible = true; }, 150);
+            });
+        }
+        function moveMenu(left, top) { customMenu.style.left = `${left}px`; customMenu.style.top = `${top}px`; }
+        function hideMenu() {
+            if (!isMenuVisible || isAnimating) return;
+            isAnimating = true;
+            customMenu.classList.remove('visible');
+            customMenu.classList.add('hiding');
+            setTimeout(() => { customMenu.style.display = 'none'; isAnimating = false; isMenuVisible = false; }, 150);
+        }
+        document.addEventListener('click', (e) => { if (isMenuVisible && !customMenu.contains(e.target)) hideMenu(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isMenuVisible) hideMenu(); });
+        window.addEventListener('scroll', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
+        window.addEventListener('resize', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
+        function updateMenuItemsVisibility() {
+            const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            copyItem.style.display = selectedText.length > 0 ? 'flex' : 'none';
+            pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
+            openInNewTabItem.style.display = !!currentTarget ? 'flex' : 'none';
+            copyLinkItem.style.display = !!currentTarget ? 'flex' : 'none';
+        }
+        function backAction() { window.history.back(); hideMenu(); }
+        function refreshAction() { window.location.reload(); hideMenu(); }
+        function copyAction() { if (selectedText) navigator.clipboard.writeText(selectedText); hideMenu(); }
+        function openInNewTabAction() { if (currentTarget) window.open(currentTarget.href, '_blank'); hideMenu(); }
+        function copyLinkAction() { if (currentTarget) navigator.clipboard.writeText(currentTarget.href); hideMenu(); }
+        function backToHomeAction() { window.location.href = '/'; hideMenu(); }
+        async function pasteAction() {
+            const targetElement = focusedElementBeforeMenu;
+            if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    targetElement.focus();
+                    document.execCommand('insertText', false, text);
+                } catch (err) { console.error('Failed to read clipboard contents: ', err); }
+            }
+            hideMenu();
         }
     </script>
 </body>
+
 </html>

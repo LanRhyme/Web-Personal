@@ -1,51 +1,41 @@
 [
     {
-        "image": "img/project-placeholder-1.png",
-        "title": "个人网站 V1",
-        "description": "这是我个人网站的第一个版本，基于原生 HTML、CSS 和 JavaScript 构建，旨在展示我的个人信息、项目和作品。",
+        "image": "img-projects/minecraftlog.png",
+        "title": "Minecraft-iOS日志分析器",
+        "description": "基于Web的Minecraft日志分析工具，提供日志上传、基础信息提取、错误统计和AI智能分析功能",
         "tags": [
-            "HTML",
-            "CSS",
+            "HTML5/CSS3",
+            "Tailwind CSS",
             "JavaScript",
-            "UI/UX"
+            "Node.js"
         ],
-        "live_url": "https://lanrhyme.com",
-        "source_url": "https://github.com/LanRhyme/LanRhyme.github.io"
+        "live_url": "https://mclog.xiaohe520.top/",
+        "source_url": "https://github.com/LanRhyme/Web-MinecraftLogAnalyzer"
     },
     {
-        "image": "img/project-placeholder-2.png",
-        "title": "绘画作品集",
-        "description": "一个在线画廊，用于展示我的数字绘画和插画作品。使用 Masonry.js 瀑布流布局以获得最佳视觉效果。",
+        "image": "img-projects/geminichat.png",
+        "title": "GeminiChatPlugin",
+        "description": "GeminiChatPlugin 是一个基于 Paper 1.21 的 Minecraft 服务器插件，允许玩家通过聊天与 Gemini AI 进行交互。插件支持预设配置，玩家可以切换不同的预设以改变 AI 的行为",
         "tags": [
-            "绘画",
-            "插画",
-            "设计"
-        ],
-        "live_url": "/works.html",
-        "source_url": ""
-    },
-    {
-        "image": "img/project-placeholder-3.png",
-        "title": "在线工具箱",
-        "description": "开发的一系列实用在线小工具，例如 JSON 格式化、颜色选择器等，旨在提高开发效率。",
-        "tags": [
-            "Vue.js",
-            "Web API",
-            "开发工具"
-        ],
-        "live_url": "/tools.html",
-        "source_url": ""
-    },
-    {
-        "image": "img/project-placeholder-4.png",
-        "title": "博客系统",
-        "description": "一个基于 Node.js 和 Express 构建的轻量级博客系统，支持 Markdown 编辑和文章分类。",
-        "tags": [
-            "Node.js",
-            "Express",
-            "MongoDB"
+            "Minecraft",
+            "服务器",
+            "插件",
+            "paper"
         ],
         "live_url": "",
-        "source_url": "https://github.com/LanRhyme/blog-system"
+        "source_url": "https://github.com/LanRhyme/GeminiChatPlugin"
+    },
+    {
+        "image": "img-projects/viod.png",
+        "title": "VoidFallProtectionPlugin",
+        "description": "VoidFallProtection 是一个用于 Minecraft 服务器的插件，旨在保护玩家免受虚空掉落造成的伤害",
+        "tags": [
+            "Minecraft",
+            "服务器",
+            "插件",
+            "paper"
+        ],
+        "live_url": "",
+        "source_url": "https://github.com/LanRhyme/VoidFallProtectionPlugin"
     }
 ]

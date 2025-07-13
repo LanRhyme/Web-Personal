@@ -1,32 +1,11 @@
 {
     "priceList": [
         {
-            "title": "半身像",
-            "image": "img/commission_bust.jpg",
-            "price": "¥ 200起",
-            "description": "精美半身像，适合头像或社交媒体展示。",
-            "requirements": "提供清晰的照片或详细的角色描述。"
-        },
-        {
-            "title": "全身像",
-            "image": "img/commission_fullbody.jpg",
-            "price": "¥ 500起",
-            "description": "包含完整人物形象，可用于插画或角色设计。",
-            "requirements": "详细的人物设定，包括服装、姿势和背景要求。"
-        },
-        {
-            "title": "简单场景插画",
-            "image": "img/commission_scene.jpg",
-            "price": "¥ 800起",
-            "description": "人物与简单背景的插画。",
-            "requirements": "场景氛围、主要元素和构图要求。"
-        },
-        {
-            "title": "Q版人物",
-            "image": "img/commission_chibi.jpg",
-            "price": "¥ 150起",
-            "description": "可爱的Q版风格，适用于表情包或小挂件。",
-            "requirements": "角色特征和所需表情。"
+            "title": "半身",
+            "image": "works/插画12-1.png",
+            "price": "¥ 35",
+            "description": "适合配饰较多的设定",
+            "requirements": "不接无配饰＋花纹怪"
         }
     ]
 }
