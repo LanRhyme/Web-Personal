@@ -82,11 +82,23 @@
             --bg-image: url('img/background10-dark.jpg');
         }
 
+        /* Essential for sticky footer */
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            /* Make body a flex container */
+            flex-direction: column;
+            /* Stack children vertically */
+            min-height: 100vh;
+            /* Ensure body takes at least full viewport height */
         }
 
         .solid-card {
@@ -109,6 +121,8 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
+            padding: 8px 16px;
+            /* Added padding to header-card */
         }
 
         .nav {
@@ -156,13 +170,10 @@
 
         .tracker {
             position: absolute;
-            top: 5px;
-            /* Adjusted from 0 to 5px to align with nav's padding */
-            left: 0;
-            height: 40px;
+            /* Removed fixed top/left here, handled by JS/media queries */
             background-color: var(--amethyst-color);
             border-radius: 12px;
-            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             z-index: 0;
         }
 
@@ -278,30 +289,28 @@
             transform: translateY(0);
         }
 
-        .main-content-wrapper {
+        /* The main content wrapper, now with flex-grow */
+        .page-content {
+            flex-grow: 1;
+            /* This pushes the footer down */
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            width: 100%;
             padding: 2rem;
             box-sizing: border-box;
             max-width: 1200px;
-            /* Max width for content to keep it centered */
             margin: 0 auto;
-            /* Center the wrapper */
             flex-wrap: wrap;
-            /* Allow wrapping on smaller screens */
         }
+
 
         .me-card {
             width: 320px;
             padding: 20px;
             text-align: center;
-            /* Removed fixed positioning */
             margin-right: 30px;
-            /* Space between card and content */
             position: relative;
-            /* Changed to relative for flow */
             top: 0;
             left: 0;
             z-index: 10;
@@ -326,14 +335,12 @@
             margin: 0 auto 15px;
             border: 3px solid var(--amethyst-color);
             overflow: hidden;
-            /* Ensure image doesn't overflow border-radius */
         }
 
         .me-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Ensures image covers the area, cropping if necessary */
         }
 
         .me-info a,
@@ -363,9 +370,7 @@
 
         .right-content-area {
             max-width: 700px;
-            /* Adjusted max-width */
             padding: 0;
-            /* Remove redundant padding as main-content-wrapper has it */
             flex-grow: 1;
         }
 
@@ -396,6 +401,8 @@
             color: var(--footer-text);
             transition: background-color 0.3s ease, color 0.3s ease;
             border-top: 1px solid var(--card-border);
+            width: 100%;
+            /* Ensure footer spans full width */
         }
 
         .amethyst-dark-button {
@@ -463,10 +470,16 @@
 
         /* Content fade-in animation */
         .content-container {
-            transition: opacity 1s ease-in;
+            /* This class is now applied to body, not a container */
             opacity: 0;
-            /* Starts hidden */
+            transition: opacity 1s ease-in;
         }
+
+        body.content-loaded {
+            /* This needs to be applied to body directly */
+            opacity: 1;
+        }
+
 
         /* --- Mobile Navigation Styles --- */
         #mobile-menu-button {
@@ -492,22 +505,48 @@
             }
 
             .nav {
-                display: none;
+                display: flex;
+                /* Keep flex for vertical alignment */
                 order: 99;
                 width: 100%;
-                margin-top: 15px;
+                margin-top: 0;
+                /* Reset margin-top for animation */
                 padding: 0;
                 flex-direction: column;
+                max-height: 0;
+                /* Initially hidden */
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, margin-top 0.3s ease-out;
+                /* Animation for expand */
+                position: relative;
+                /* Add relative positioning for the tracker */
             }
 
             .nav-item {
                 width: 100%;
                 margin-bottom: 8px;
+                position: relative;
+                /* Ensure nav-item is positioned for tracker */
+                z-index: 1;
+                /* Ensure text is above tracker */
+            }
+
+            .nav-item.active {
+                color: var(--nav-item-active-text);
             }
 
             .tracker {
                 display: none;
-                /* Hide horizontal tracker on mobile */
+                /* Initially hidden on mobile */
+                position: absolute;
+                left: 0;
+                width: 100%;
+                /* Tracker should span full width of nav-item on mobile */
+                background-color: var(--amethyst-color);
+                border-radius: 12px;
+                transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+                /* Changed width to height */
+                z-index: 0;
             }
 
             #theme-toggle {
@@ -521,8 +560,23 @@
             }
 
             /* When menu is open */
+            .header-card.is-open {
+                padding-bottom: 15px;
+                /* Add padding when open */
+                border-radius: 24px;
+                /* Ensure consistent border-radius */
+            }
+
             .header-card.is-open .nav {
-                display: flex;
+                max-height: 300px;
+                /* Sufficient height to show all items */
+                margin-top: 15px;
+                /* Margin to separate from logo/button */
+            }
+
+            .header-card.is-open .tracker {
+                display: block;
+                /* Show tracker when mobile nav is open */
             }
 
             .header-card.is-open #theme-toggle {
@@ -532,7 +586,8 @@
             }
 
             /* --- Original untouched rules --- */
-            .main-content-wrapper {
+            .page-content {
+                /* Changed from .main-content-wrapper */
                 flex-direction: column;
                 align-items: center;
             }
@@ -587,7 +642,7 @@
                     </a>
                     <a href="/commissions.html" class="nav-item">
                         <span class="nav-item-content">
-                            <i class="fa fa-briefcase icon"></i>
+                            <i class="fa-solid fa-pencil icon"></i>
                             <span>约稿</span>
                         </span>
                     </a>
@@ -597,10 +652,10 @@
                             <span>工具</span>
                         </span>
                     </a>
-                    <a href="/contact.html" class="nav-item">
+                    <a href="/works.html" class="nav-item">
                         <span class="nav-item-content">
-                            <i class="fa fa-envelope icon"></i>
-                            <span>联系</span>
+                            <i class="fa-solid fa-image icon"></i>
+                            <span>作品</span>
                         </span>
                     </a>
                 </nav>
@@ -613,59 +668,63 @@
             </div>
         </header>
 
-        <div class="flex-grow w-full flex justify-center items-start pt-10">
-            <div class="main-content-wrapper">
-                <aside class="me-card solid-card anim-fade-in-up">
-                    <div class="me-image">
-                        <img src="img/avatar.jpg" alt="LanRhyme Avatar">
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="text-2xl font-bold">LanRhyme</h3>
-                        <p>Developer & Painter</p>
-                    </div>
-                    <div class="me-info text-left text-sm space-y-2">
-                        <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span
-                                id="currentTime">加载中...</span></p>
-                        <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
-                                href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
-                        <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
-                        <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
-                                id="githubInfo">加载中...</span></p>
-                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center">
-                            “点击获取每日一言”</p>
-                    </div>
-                    <div class="me-social-links mt-4">
-                        <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
-                                class="fab fa-github"></i></a>
-                        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </aside>
+        <div class="page-content">
+            <aside class="me-card solid-card anim-fade-in-up">
+                <div class="me-image">
+                    <img src="img/avatar.jpg" alt="LanRhyme Avatar">
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold">LanRhyme</h3>
+                    <p>Developer & Painter</p>
+                    <p class="font-bold text-center">今天转瞬即逝，而又永恒</p>
+                </div>
+                <div class="me-info text-left text-sm space-y-2">
+                    <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span id="currentTime">加载中...</span>
+                    </p>
+                    <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
+                            href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
+                    <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth</p>
+                    <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
+                            id="githubInfo">加载中...</span></p>
+                    <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center">
+                        “点击获取每日一言”</p>
+                </div>
+                <div class="me-social-links mt-4">
+                    <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
+                            class="fab fa-github"></i></a>
+                    <a href="https://space.bilibili.com/496901387" target="_blank" aria-label="Bilibili"><i
+                            class="fab fa-bilibili"></i></a>
+                    <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </aside>
 
-                <main class="right-content-area flex flex-col items-center">
-                    <section id="home" class="py-16 text-center w-full anim-fade-in-up" style="animation-delay: 0.1s;">
-                        <h2 class="text-5xl font-extrabold mb-4">Hello，I'm <span
-                                class="highlight-text relative inline-block">LanRhyme</span></h2>
-                        <p class="text-xl leading-relaxed">一名热衷于创造和探索的<br>开发者、画师</p>
-                        <div class="mt-8 flex justify-center space-x-4">
-                            <a href="/commissions.html"
-                                class="amethyst-dark-button py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center">
-                                <i class="fa fa-briefcase mr-2"></i> 约稿
-                            </a>
-                            <a href="/contact.html"
-                                class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
-                                <i class="fa fa-envelope mr-2"></i> 联系我
-                            </a>
-                        </div>
-                    </section>
+            <main class="right-content-area flex flex-col items-center">
+                <section id="home" class="py-16 text-center w-full anim-fade-in-up" style="animation-delay: 0.1s;">
+                    <h2 class="text-5xl font-extrabold mb-4">Hello，I'm <span
+                            class="highlight-text relative inline-block">LanRhyme</span></h2>
+                    <p class="text-xl leading-relaxed">一名热衷于创造和探索的<br>开发者、画师</p>
+                    <div class="mt-8 flex justify-center space-x-4">
+                        <a href="/commissions.html"
+                            class="amethyst-dark-button py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center">
+                            <i class="fa-solid fa-pencil mr-2"></i> 约稿
+                        </a>
+                        <a href="/contact.html"
+                            class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
+                            <i class="fa-solid fa-image mr-2"></i> 作品
+                        </a>
+                        <a href="/projects.html"
+                            class="solid-card py-2 px-5 rounded-md transition-colors duration-300 inline-flex items-center font-medium">
+                            <i class="fa fa-user mr-2"></i> 项目
+                        </a>
+                    </div>
+                </section>
 
-                    <section id="pinned-content" class="w-full mt-6 anim-fade-in-up" style="animation-delay: 0.2s;">
-                        <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
-                        <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
-                        </div>
-                    </section>
-                </main>
-            </div>
+                <section id="pinned-content" class="w-full mt-6 anim-fade-in-up" style="animation-delay: 0.2s;">
+                    <h3 class="text-3xl font-bold mb-6 text-center">置顶</h3>
+                    <div id="pinned-cards-container" class="flex flex-wrap justify-center gap-6">
+                    </div>
+                </section>
+            </main>
         </div>
 
         <footer class="w-full text-center py-6 mt-10">
@@ -745,8 +804,20 @@
 
             function moveTracker(element) {
                 if (element && tracker) {
-                    tracker.style.width = `${element.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                    const isMobile = window.innerWidth <= 992; // Assuming 992px is the breakpoint
+
+                    if (isMobile) {
+                        tracker.style.top = `${element.offsetTop}px`;
+                        tracker.style.height = `${element.offsetHeight}px`;
+                        tracker.style.left = `0`; // Always start from left
+                        tracker.style.width = `100%`; // Span full width of nav item
+                        tracker.style.transform = `translateY(0)`; // Reset horizontal transform
+                    } else {
+                        tracker.style.width = `${element.offsetWidth}px`;
+                        tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                        tracker.style.top = `5px`; // Reset vertical position
+                        tracker.style.height = `40px`; // Reset height
+                    }
                 }
             }
 
@@ -831,7 +902,7 @@
 
             // --- Entrance Animation Logic (FIXED) ---
             const pageLoader = document.getElementById('page-loader');
-            const contentContainer = document.querySelector('body');
+            const bodyElement = document.querySelector('body'); // Now targets the body
 
             window.addEventListener('load', () => {
                 if (pageLoader) {
@@ -841,9 +912,9 @@
                         pageLoader.style.display = 'none';
                     }, 300); // Matches the 0.3s CSS transition
                 }
-                if (contentContainer) {
-                    // Fade in the main content
-                    contentContainer.style.opacity = '1';
+                if (bodyElement) {
+                    // Fade in the main content by adding a class to the body
+                    bodyElement.classList.add('content-loaded');
                 }
             });
 
@@ -893,13 +964,27 @@
             // --- Mobile Menu Toggle ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const headerCard = document.querySelector('.header-card');
+            const nav = document.querySelector('.nav'); // Get the nav element
             const menuIcon = mobileMenuButton.querySelector('i');
 
             mobileMenuButton.addEventListener('click', () => {
                 headerCard.classList.toggle('is-open');
                 const isOpen = headerCard.classList.contains('is-open');
                 menuIcon.classList.toggle('fa-bars', !isOpen);
-                menuIcon.classList.toggle('fa-times', isOpen); // 'fa-times' is the 'X' icon in Font Awesome
+                menuIcon.classList.toggle('fa-times', isOpen);
+
+                // When opening, re-position tracker for mobile view
+                if (isOpen) {
+                    // Find the current active item within the nav (after it becomes visible)
+                    const activeNavItem = nav.querySelector('.nav-item.active');
+                    if (activeNavItem) {
+                        // Delay to allow CSS max-height transition to complete and elements to render
+                        setTimeout(() => moveTracker(activeNavItem), 300); // Match max-height transition
+                    }
+                } else {
+                    // Hide tracker when menu closes on mobile
+                    tracker.style.display = 'none';
+                }
             });
 
         });

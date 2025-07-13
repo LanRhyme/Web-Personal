@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>约稿 - LanRhyme的个人网站</title>
+    <title>LanRhyme的约稿页面</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,11 +82,23 @@
             --bg-image: url('img/background10-dark.jpg');
         }
 
+        /* Essential for sticky footer */
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            /* Make body a flex container */
+            flex-direction: column;
+            /* Stack children vertically */
+            min-height: 100vh;
+            /* Ensure body takes at least full viewport height */
         }
 
         .solid-card {
@@ -109,6 +121,8 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
+            padding: 8px 16px;
+            /* Added padding to header-card */
         }
 
         .nav {
@@ -156,18 +170,11 @@
 
         .tracker {
             position: absolute;
-            top: 5px;
-            /* Adjusted from 0 to 5px to align with nav's padding */
-            left: 0;
-            height: 40px;
+            /* Removed fixed top/left here, handled by JS/media queries */
             background-color: var(--amethyst-color);
             border-radius: 12px;
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             z-index: 0;
-            /* Removed initial transition and visibility: hidden */
-        }
-
-        .tracker.has-transition {
-            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
         /* --- Right-Click Menu (CRCMenu.css integrated and adapted) --- */
@@ -282,30 +289,30 @@
             transform: translateY(0);
         }
 
-        .main-content-wrapper {
+        /* The main content wrapper, now with flex-grow */
+        .page-content {
+            flex-grow: 1;
+            /* This pushes the footer down */
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            width: 100%;
             padding: 2rem;
             box-sizing: border-box;
-            max-width: 1200px;
-            /* Max width for content to keep it centered */
+            max-width: 1400px;
+            /* Increased max-width for more horizontal space */
             margin: 0 auto;
-            /* Center the wrapper */
             flex-wrap: wrap;
-            /* Allow wrapping on smaller screens */
+            /* Allow wrapping for smaller screens */
         }
+
 
         .me-card {
             width: 320px;
             padding: 20px;
             text-align: center;
-            /* Removed fixed positioning */
             margin-right: 30px;
-            /* Space between card and content */
             position: relative;
-            /* Changed to relative for flow */
             top: 0;
             left: 0;
             z-index: 10;
@@ -330,14 +337,12 @@
             margin: 0 auto 15px;
             border: 3px solid var(--amethyst-color);
             overflow: hidden;
-            /* Ensure image doesn't overflow border-radius */
         }
 
         .me-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Ensures image covers the area, cropping if necessary */
         }
 
         .me-info a,
@@ -365,12 +370,25 @@
             transform: scale(1.2);
         }
 
+        /* Adjusted for the new layout */
+        .left-sidebar {
+            width: 100%;
+            /* Default to full width on small screens */
+            flex-shrink: 0;
+            /* Prevent sidebar from shrinking below its content */
+            margin-right: 2rem;
+            /* Spacing between sidebar and main content */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
         .right-content-area {
-            max-width: 700px;
-            /* Adjusted max-width */
-            padding: 0;
-            /* Remove redundant padding as main-content-wrapper has it */
             flex-grow: 1;
+            /* Allows it to take remaining space */
+            min-width: 0;
+            /* Important for flex items to prevent overflow */
+            padding: 0;
         }
 
         #theme-toggle {
@@ -400,6 +418,8 @@
             color: var(--footer-text);
             transition: background-color 0.3s ease, color 0.3s ease;
             border-top: 1px solid var(--card-border);
+            width: 100%;
+            /* Ensure footer spans full width */
         }
 
         .amethyst-dark-button {
@@ -442,50 +462,290 @@
             }
         }
 
+        /* --- Entrance Animation --- */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+            /* Starts visible */
+            pointer-events: all;
+        }
+
+        #page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Content fade-in animation */
+        .content-container {
+            /* This class is now applied to body, not a container */
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        body.content-loaded {
+            /* This needs to be applied to body directly */
+            opacity: 1;
+        }
+
+
+        /* --- Mobile Navigation Styles --- */
+        #mobile-menu-button {
+            display: none;
+            /* Hidden on desktop */
+            color: var(--text-primary);
+            background-color: transparent;
+            border: none;
+            z-index: 21;
+            /* Ensure it's above other header content */
+        }
 
         @media (max-width: 992px) {
+
+            /* --- Mobile Header --- */
             .header-card {
-                flex-direction: column !important;
-                padding: 10px;
-            }
-
-            .main-content-wrapper {
-                flex-direction: column;
+                flex-direction: row !important;
+                justify-content: space-between;
                 align-items: center;
-            }
-
-            .me-card {
-                width: 90%;
-                margin: 30px auto 0 auto;
-                /* Center card and add top margin */
-                margin-right: auto;
-                /* Remove right margin when stacked */
-            }
-
-            .right-content-area {
-                padding: 1rem;
-                max-width: 100%;
+                flex-wrap: wrap;
+                border-radius: 24px;
+                /* Adjust rounding for a more contained look */
             }
 
             .nav {
-                margin-top: 15px;
+                display: flex;
+                /* Keep flex for vertical alignment */
+                order: 99;
+                width: 100%;
+                margin-top: 0;
+                /* Reset margin-top for animation */
+                padding: 0;
+                flex-direction: column;
+                max-height: 0;
+                /* Initially hidden */
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, margin-top 0.3s ease-out;
+                /* Animation for expand */
+                position: relative;
+                /* Add relative positioning for the tracker */
+            }
+
+            .nav-item {
+                width: 100%;
+                margin-bottom: 8px;
+                position: relative;
+                /* Ensure nav-item is positioned for tracker */
+                z-index: 1;
+                /* Ensure text is above tracker */
+            }
+
+            .nav-item.active {
+                color: var(--nav-item-active-text);
+            }
+
+            .tracker {
+                display: none;
+                /* Initially hidden on mobile */
+                position: absolute;
+                left: 0;
+                width: 100%;
+                /* Tracker should span full width of nav-item on mobile */
+                background-color: var(--amethyst-color);
+                border-radius: 12px;
+                transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+                /* Changed width to height */
+                z-index: 0;
             }
 
             #theme-toggle {
-                margin-top: 10px;
-                margin-left: 0;
+                display: none;
+                /* Hide default theme toggle */
+            }
+
+            #mobile-menu-button {
+                display: block;
+                /* Show hamburger button */
+            }
+
+            /* When menu is open */
+            .header-card.is-open {
+                padding-bottom: 15px;
+                /* Add padding when open */
+                border-radius: 24px;
+                /* Ensure consistent border-radius */
+            }
+
+            .header-card.is-open .nav {
+                max-height: 300px;
+                /* Sufficient height to show all items */
+                margin-top: 15px;
+                /* Margin to separate from logo/button */
+            }
+
+            .header-card.is-open .tracker {
+                display: block;
+                /* Show tracker when mobile nav is open */
+            }
+
+            .header-card.is-open #theme-toggle {
+                display: flex;
+                margin: 15px auto 5px;
+                /* Center it below the nav */
+            }
+
+            /* --- Original untouched rules --- */
+            .page-content {
+                /* Changed from .main-content-wrapper */
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+                /* Space between stacked sections */
+            }
+
+            .left-sidebar {
+                width: 100%;
+                /* Take full width on small screens */
+                margin-right: 0;
+                /* Remove right margin on small screens */
+            }
+
+            .right-content-area {
+                max-width: 100%;
+                /* Take full width on small screens */
+            }
+
+            .me-card {
+                /* This rule is now irrelevant as me-card is removed from this page */
+                width: 90%;
+                margin: 30px auto 0 auto;
+                margin-right: auto;
             }
         }
 
-        /* Content fade-in animation (for general use) */
-        .content-container {
-            opacity: 1;
-            /* Always visible for non-index pages */
+        /* Specific styles for commissions page */
+        .commission-section {
+            width: 100%;
+            /* Sections inside sidebar will take full width of sidebar */
+            margin-bottom: 0;
+            /* Sections inside sidebar will use gap of sidebar */
+        }
+
+        .commission-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .platform-grid,
+        .invite-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            /* Made cards smaller */
+            gap: 0.75rem;
+            /* Reduced gap */
+        }
+
+        .platform-card,
+        .invite-card {
+            padding: 1rem;
+            /* Reduced padding */
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .platform-card:hover,
+        .invite-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-card h4,
+        .invite-card h4 {
+            font-size: 1.15rem;
+            /* Adjusted font size for smaller cards */
+        }
+
+        .platform-card .text-sm,
+        .invite-card .text-sm {
+            font-size: 0.75rem;
+            /* Adjusted font size for smaller cards */
+        }
+
+        /* New: Smaller icons for platform and invite cards */
+        .platform-card i,
+        .invite-card i {
+            font-size: 1.875rem;
+            /* text-3xl */
+            margin-bottom: 0.5rem;
+            /* Adjusted margin */
+        }
+
+
+        .price-list-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .price-list-item img {
+            width: 100%;
+            max-width: 250px;
+            /* Limit image size */
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Removed .payment-qr-codes specific styles as it's now a modal */
+
+
+        @media (min-width: 993px) {
+
+            /* Apply sidebar layout on larger screens */
+            .page-content {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+                flex-wrap: nowrap;
+                /* Explicitly prevent wrapping on desktop */
+            }
+
+            .left-sidebar {
+                width: 350px;
+                /* Fixed width for the left sidebar on desktop */
+                flex-shrink: 0;
+                /* Prevent sidebar from shrinking */
+            }
+
+            .right-content-area {
+                flex-grow: 1;
+                min-width: 0;
+                /* Ensure it can shrink if needed */
+            }
         }
     </style>
 </head>
 
 <body class="content-container">
+    <div id="page-loader">
+        <div class="butterfly-loader">
+            <div class="butterfly" style="top: 20%; left: 10%;"></div>
+            <div class="butterfly" style="top: 60%; left: 70%;"></div>
+            <div class="butterfly" style="top: 40%; left: 40%;"></div>
+        </div>
+    </div>
+
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
     <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
@@ -511,9 +771,9 @@
                             <span>项目</span>
                         </span>
                     </a>
-                    <a href="/commissions.html" class="nav-item">
+                    <a href="/commissions.html" class="nav-item active">
                         <span class="nav-item-content">
-                            <i class="fa fa-briefcase icon"></i>
+                            <i class="fa-solid fa-pencil icon"></i>
                             <span>约稿</span>
                         </span>
                     </a>
@@ -523,61 +783,110 @@
                             <span>工具</span>
                         </span>
                     </a>
-                    <a href="/contact.html" class="nav-item">
+                    <a href="/works.html" class="nav-item">
                         <span class="nav-item-content">
-                            <i class="fa fa-envelope icon"></i>
-                            <span>联系</span>
+                            <i class="fa-solid fa-image icon"></i>
+                            <span>作品</span>
                         </span>
                     </a>
                 </nav>
                 <div id="theme-toggle">
                     <i class="fa fa-sun text-xl"></i>
                 </div>
+                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
+                    <i class="fa fa-bars"></i>
+                </button>
             </div>
         </header>
 
-        <div class="flex-grow w-full flex justify-center items-start pt-10">
-            <div class="main-content-wrapper">
-                <aside class="me-card solid-card anim-fade-in-up">
-                    <div class="me-image">
-                        <img src="img/avatar.jpg" alt="LanRhyme Avatar">
+        <div class="page-content">
+            <div class="left-sidebar">
+                <section id="commission-platforms" class="commission-section anim-fade-in-up"
+                    style="animation-delay: 0.1s;">
+                    <h2 class="text-3xl font-bold mb-4 text-center">约稿平台</h2>
+                    <div class="platform-grid">
+                        <a href="https://space.bilibili.com/496901387" target="_blank" class="platform-card solid-card">
+                            <i class="fab fa-bilibili mb-3 text-amethyst-color"></i>
+                            <h4 class="text-xl font-semibold">Bilibili 工坊</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">通过B站私信联系</p>
+                        </a>
+                        <a href="#" target="_blank" class="platform-card solid-card">
+                            <i class="fa-solid fa-palette mb-3 text-amethyst-color"></i>
+                            <h4 class="text-xl font-semibold">画加</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">即将开通</p>
+                        </a>
                     </div>
-                    <div class="mb-4">
-                        <h3 class="text-2xl font-bold">LanRhyme</h3>
-                        <p>Developer & Painter</p>
-                    </div>
-                    <div class="me-info text-left text-sm space-y-2">
-                        <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span
-                                id="currentTime">加载中...</span></p>
-                        <p><strong><i class="fa fab fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a
-                                href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
-                        <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth China ZheJiang</p>
-                        <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span
-                                id="githubInfo">加载中...</span></p>
-                        <p id="yiyanInfo" class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center">
-                            “点击获取每日一言”</p>
-                    </div>
-                    <div class="me-social-links mt-4">
-                        <a href="https://github.com/LanRhyme" target="_blank" aria-label="GitHub"><i
-                                class="fab fa-github"></i></a>
-                        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </aside>
+                </section>
 
-                <main class="right-content-area flex flex-col items-center">
-                    <section id="page-content" class="py-16 text-center w-full anim-fade-in-up"
-                        style="animation-delay: 0.1s;">
-                        <h2 class="text-5xl font-extrabold mb-4">约稿</h2>
-                        <p class="text-xl leading-relaxed">没写...</p>
-                    </section>
-                </main>
+                <section id="commission-invitations" class="commission-section anim-fade-in-up"
+                    style="animation-delay: 0.2s;">
+                    <h2 class="text-3xl font-bold mb-4 text-center">向我发起邀请</h2>
+                    <div class="invite-grid">
+                        <div class="invite-card solid-card">
+                            <i class="fab fa-qq mb-3 text-amethyst-color"></i>
+                            <h4 class="text-xl font-semibold">QQ 私聊</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">QQ 号: 123456789</p>
+                        </div>
+                        <div class="invite-card solid-card">
+                            <i class="fab fa-weixin mb-3 text-amethyst-color"></i>
+                            <h4 class="text-xl font-semibold">微信私聊</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">微信 ID: LanRhyme_Wx</p>
+                        </div>
+                        <div class="invite-card solid-card">
+                            <i class="fa-solid fa-envelope mb-3 text-amethyst-color"></i>
+                            <h4 class="text-xl font-semibold">邮箱</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">i@lanrhyme.com</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="commission-payment" class="commission-section anim-fade-in-up"
+                    style="animation-delay: 0.3s;">
+                    <h2 class="text-3xl font-bold mb-4 text-center">支付</h2>
+                    <div class="flex justify-center">
+                        <button id="show-payment-button" class="amethyst-dark-button py-3 px-8 rounded-full text-lg">
+                            点击显示收款码
+                        </button>
+                    </div>
+                </section>
             </div>
+
+            <main class="right-content-area flex flex-col items-center">
+                <section id="commission-price-list" class="commission-section anim-fade-in-up"
+                    style="animation-delay: 0.4s;">
+                    <h2 class="text-4xl font-bold mb-6 text-center">报价单</h2>
+                    <div id="price-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+                </section>
+            </main>
         </div>
 
         <footer class="w-full text-center py-6 mt-10">
             <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
         </footer>
+    </div>
+
+    <div id="payment-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000] hidden">
+        <div class="solid-card p-8 relative max-w-sm w-full mx-4">
+            <button id="close-modal-button"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-6 text-center">我的收款码</h3>
+            <div class="flex flex-col items-center gap-6">
+                <div>
+                    <p class="text-lg font-semibold mb-2">微信支付</p>
+                    <img src="img/wechat_qr.png" alt="WeChat Pay QR Code"
+                        class="w-48 h-48 border border-card-border rounded-lg">
+                </div>
+                <div>
+                    <p class="text-lg font-semibold mb-2">支付宝支付</p>
+                    <img src="img/alipay_qr.png" alt="Alipay QR Code"
+                        class="w-48 h-48 border border-card-border rounded-lg">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="custom-menu">
@@ -647,91 +956,52 @@
             // --- Navigation Tracker ---
             const navItems = document.querySelectorAll('.nav-item');
             const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = null;
+
+            let currentActiveNavItem = document.querySelector('.nav-item.active');
 
             function moveTracker(element) {
-                if (element) {
-                    tracker.style.width = `${element.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
-                }
-            }
+                if (element && tracker) {
+                    const isMobile = window.innerWidth <= 992; // Assuming 992px is the breakpoint
 
-            function setActiveNavItem() {
-                const currentPath = window.location.pathname === '/' ? '/index.html' : window.location.pathname;
-
-                let initialActiveItem = null;
-                navItems.forEach(item => {
-                    const itemPath = new URL(item.href).pathname;
-                    if (itemPath === currentPath) {
-                        initialActiveItem = item;
+                    if (isMobile) {
+                        tracker.style.top = `${element.offsetTop}px`;
+                        tracker.style.height = `${element.offsetHeight}px`;
+                        tracker.style.left = `0`; // Always start from left
+                        tracker.style.width = `100%`; // Span full width of nav item
+                        tracker.style.transform = `translateY(0)`; // Reset horizontal transform
+                    } else {
+                        tracker.style.width = `${element.offsetWidth}px`;
+                        tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                        tracker.style.top = `5px`; // Reset vertical position
+                        tracker.style.height = `40px`; // Reset height
                     }
-                });
-
-                if (initialActiveItem) {
-                    tracker.style.width = `${initialActiveItem.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${initialActiveItem.offsetLeft}px)`;
-                    initialActiveItem.classList.add('active'); // Set active class immediately
                 }
-
-                // After initial positioning, enable transitions for future clicks
-                // Use requestAnimationFrame or a small setTimeout to ensure the initial positioning
-                // is rendered before the transition property is added.
-                requestAnimationFrame(() => {
-                    tracker.classList.add('has-transition');
-                });
-
-
-                // Set the initial active item for currentActiveNavItem variable
-                currentActiveNavItem = initialActiveItem;
             }
 
-            setActiveNavItem(); // Call on DOMContentLoaded to set initial active item and tracker position
-            window.addEventListener('resize', setActive => {
-                // Remove transition during resize to prevent unwanted animations
-                tracker.classList.remove('has-transition');
-                setActiveNavItem();
-                // Re-add transition after a short delay to allow resize to complete
-                requestAnimationFrame(() => {
-                    tracker.classList.add('has-transition');
-                });
-            });
+            // Initial position of the tracker
+            setTimeout(() => moveTracker(currentActiveNavItem), 50);
+            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
 
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default link behavior initially
+                    // Temporarily prevent navigation to allow animation to be seen
+                    e.preventDefault();
 
-                    // Remove active from previous and add to current IMMEDIATELY for text color change
                     if (currentActiveNavItem) {
                         currentActiveNavItem.classList.remove('active');
                     }
                     item.classList.add('active');
-                    currentActiveNavItem = item; // Update global active item
+                    currentActiveNavItem = item;
 
-                    // Move tracker with transition
                     moveTracker(item);
 
-                    // Programmatically navigate after animation delay
+                    // Navigate after a short delay
                     setTimeout(() => {
                         window.location.href = item.href;
-                    }, 400); // Match or slightly exceed tracker transition time
+                    }, 150);
                 });
             });
-
-
-            // --- Current Time Display ---
-            const currentTimeSpan = document.getElementById('currentTime');
-            function updateCurrentTime() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                currentTimeSpan.textContent = `${hours}:${minutes}:${seconds}`;
-            }
-            if (currentTimeSpan) {
-                updateCurrentTime();
-                setInterval(updateCurrentTime, 1000);
-            }
 
 
             // --- Animation on Load & API Calls ---
@@ -746,39 +1016,94 @@
             }, { threshold: 0.1 });
             animatedElements.forEach(el => observer.observe(el));
 
-            // GitHub Info (kept in template for consistency, can be removed if not needed on sub-pages)
-            const githubInfo = document.getElementById('githubInfo');
-            if (githubInfo) {
-                fetch('https://api.github.com/users/LanRhyme')
-                    .then(res => res.json())
-                    .then(data => {
-                        githubInfo.textContent = `${data.public_repos} Repos | ${data.followers} Followers`;
-                    })
-                    .catch(() => {
-                        githubInfo.textContent = '获取失败';
-                    });
-            }
+            // --- Entrance Animation Logic (FIXED) ---
+            const pageLoader = document.getElementById('page-loader');
+            const bodyElement = document.querySelector('body'); // Now targets the body
 
-            // YiYan (Daily Quote) (kept in template for consistency, can be removed if not needed on sub-pages)
-            const yiyanInfo = document.getElementById('yiyanInfo');
-            const updateYiYan = () => {
-                if (yiyanInfo) {
-                    fetch('https://v1.hitokoto.cn/?encode=text')
-                        .then(res => res.text())
-                        .then(text => {
-                            yiyanInfo.textContent = `“${text}”`;
-                        })
-                        .catch(() => {
-                            yiyanInfo.textContent = '一言获取失败';
-                        });
+            window.addEventListener('load', () => {
+                if (pageLoader) {
+                    pageLoader.classList.add('hidden');
+                    // Remove loader from the DOM after transition
+                    setTimeout(() => {
+                        pageLoader.style.display = 'none';
+                    }, 300); // Matches the 0.3s CSS transition
                 }
-            };
-            updateYiYan();
-            yiyanInfo?.addEventListener('click', updateYiYan);
+                if (bodyElement) {
+                    // Fade in the main content by adding a class to the body
+                    bodyElement.classList.add('content-loaded');
+                }
+            });
 
-            // Removed entrance animation logic for non-index pages
-            // const pageLoader = document.getElementById('page-loader'); // This element is removed
-            // const contentContainer = document.querySelector('body'); // body is now always visible
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const headerCard = document.querySelector('.header-card');
+            const nav = document.querySelector('.nav'); // Get the nav element
+            const menuIcon = mobileMenuButton.querySelector('i');
+
+            mobileMenuButton.addEventListener('click', () => {
+                headerCard.classList.toggle('is-open');
+                const isOpen = headerCard.classList.contains('is-open');
+                menuIcon.classList.toggle('fa-bars', !isOpen);
+                menuIcon.classList.toggle('fa-times', isOpen);
+
+                // When opening, re-position tracker for mobile view
+                if (isOpen) {
+                    // Find the current active item within the nav (after it becomes visible)
+                    const activeNavItem = nav.querySelector('.nav-item.active');
+                    if (activeNavItem) {
+                        // Delay to allow CSS max-height transition to complete and elements to render
+                        setTimeout(() => moveTracker(activeNavItem), 300); // Match max-height transition
+                    }
+                } else {
+                    // Hide tracker when menu closes on mobile
+                    tracker.style.display = 'none';
+                }
+            });
+
+            // --- Payment Button Toggle (MODIFIED FOR MODAL) ---
+            const showPaymentButton = document.getElementById('show-payment-button');
+            const paymentModal = document.getElementById('payment-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+
+            showPaymentButton.addEventListener('click', () => {
+                paymentModal.classList.remove('hidden');
+                // No need to change button text as it's a modal
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                paymentModal.classList.add('hidden');
+            });
+
+            // Close modal when clicking outside of it
+            paymentModal.addEventListener('click', (e) => {
+                if (e.target === paymentModal) {
+                    paymentModal.classList.add('hidden');
+                }
+            });
+
+
+            // --- Load Price List from JSON ---
+            const priceListContainer = document.getElementById('price-list-container');
+
+            if (priceListContainer) {
+                fetch('commissions.json')
+                    .then(response => response.json())
+                    .then(commissionData => {
+                        commissionData.priceList.forEach(item => {
+                            const priceItemDiv = document.createElement('div');
+                            priceItemDiv.className = 'price-list-item solid-card';
+                            priceItemDiv.innerHTML = `
+                                ${item.image ? `<img src="${item.image}" alt="${item.title}">` : ''}
+                                <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
+                                <p class="text-lg font-bold text-amethyst-color mb-2">${item.price}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">${item.description}</p>
+                                ${item.requirements ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>要求:</strong> ${item.requirements}</p>` : ''}
+                            `;
+                            priceListContainer.appendChild(priceItemDiv);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching commission data:', error));
+            }
         });
 
         /* --- Right-Click Menu Script (from CRCMenu.js) --- */
@@ -876,7 +1201,7 @@
 
         function updateMenuItemsVisibility() {
             const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
-            const hasSelectedText = selectedText.length > 0;
+            const hasSelectedText = window.getSelection().toString().trim().length > 0; /* Directly check selection for real-time update */
             const isLink = !!currentTarget;
 
             copyItem.style.display = hasSelectedText ? 'flex' : 'none';

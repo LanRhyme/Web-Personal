@@ -1,0 +1,51 @@
+[
+    {
+        "image": "img/project-placeholder-1.png",
+        "title": "个人网站 V1",
+        "description": "这是我个人网站的第一个版本，基于原生 HTML、CSS 和 JavaScript 构建，旨在展示我的个人信息、项目和作品。",
+        "tags": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "UI/UX"
+        ],
+        "live_url": "https://lanrhyme.com",
+        "source_url": "https://github.com/LanRhyme/LanRhyme.github.io"
+    },
+    {
+        "image": "img/project-placeholder-2.png",
+        "title": "绘画作品集",
+        "description": "一个在线画廊，用于展示我的数字绘画和插画作品。使用 Masonry.js 瀑布流布局以获得最佳视觉效果。",
+        "tags": [
+            "绘画",
+            "插画",
+            "设计"
+        ],
+        "live_url": "/works.html",
+        "source_url": ""
+    },
+    {
+        "image": "img/project-placeholder-3.png",
+        "title": "在线工具箱",
+        "description": "开发的一系列实用在线小工具，例如 JSON 格式化、颜色选择器等，旨在提高开发效率。",
+        "tags": [
+            "Vue.js",
+            "Web API",
+            "开发工具"
+        ],
+        "live_url": "/tools.html",
+        "source_url": ""
+    },
+    {
+        "image": "img/project-placeholder-4.png",
+        "title": "博客系统",
+        "description": "一个基于 Node.js 和 Express 构建的轻量级博客系统，支持 Markdown 编辑和文章分类。",
+        "tags": [
+            "Node.js",
+            "Express",
+            "MongoDB"
+        ],
+        "live_url": "",
+        "source_url": "https://github.com/LanRhyme/blog-system"
+    }
+]
