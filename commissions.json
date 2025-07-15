@@ -2,7 +2,12 @@
     "priceList": [
         {
             "title": "半身",
-            "image": "works/插画12-1.png",
+            "images": [
+                "works/插画15.png",
+                "works/插画16.png",
+                "works/插画12-1.png",
+                "works/work-1.png"
+            ],
             "price": "¥ 35",
             "description": "适合配饰较多的设定",
             "requirements": "不接无配饰＋花纹怪"
