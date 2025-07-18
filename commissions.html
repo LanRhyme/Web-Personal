@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>约稿-LanRhyme的个人网页</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -44,7 +44,7 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
-            --bg-image: url('img/background10-light.jpg');
+            /*--bg-image: url('img/background10.jpg');*/
         }
 
         /* --- Dark Theme Variables (Green Palette) --- */
@@ -79,7 +79,6 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
-            --bg-image: url('img/background10-dark.jpg');
         }
 
         /* Essential for sticky footer */
@@ -242,7 +241,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            background-image: var(--bg-image);
+            /*background-image: var(--bg-image);*/
             /* Dynamic background */
             background-position: center;
             background-size: cover;
@@ -743,402 +742,403 @@
 </head>
 
 <body class="content-container">
-    <div id="page-loader">
-        <div class="butterfly-loader">
-            <div class="butterfly" style="top: 20%; left: 10%;"></div>
-            <div class="butterfly" style="top: 60%; left: 70%;"></div>
-            <div class="butterfly" style="top: 40%; left: 40%;"></div>
-        </div>
+<div id="page-loader">
+    <div class="butterfly-loader">
+        <div class="butterfly" style="top: 20%; left: 10%;"></div>
+        <div class="butterfly" style="top: 60%; left: 70%;"></div>
+        <div class="butterfly" style="top: 40%; left: 40%;"></div>
     </div>
+</div>
 
-    <div class="mc-bg-container"></div>
-    <div class="blob" style="top: 10%; left: 5%;"></div>
-    <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+<div class="mc-bg-container"></div>
+<div class="blob" style="top: 10%; left: 5%;"></div>
+<div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
 
-    <div class="min-h-screen flex flex-col items-center relative z-10">
-        <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
-            <div class="container mx-auto header-card p-2">
-                <div class="flex items-center">
-                    <img src="img/avatar.jpg" alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover">
-                    <h1 class="text-2xl font-bold">LanRhyme</h1>
-                </div>
-                <nav class="nav">
-                    <div class="tracker" id="tracker"></div>
-                    <a href="/" class="nav-item">
+<div class="min-h-screen flex flex-col items-center relative z-10">
+    <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
+        <div class="container mx-auto header-card p-2">
+            <div class="flex items-center">
+                <img alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover" src="img/avatar.jpg">
+                <h1 class="text-2xl font-bold">LanRhyme</h1>
+            </div>
+            <nav class="nav">
+                <div class="tracker" id="tracker"></div>
+                <a class="nav-item" href="/">
                         <span class="nav-item-content">
                             <i class="fa fa-home icon"></i>
                             <span>主页</span>
                         </span>
-                    </a>
-                    <a href="/projects.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/projects.html">
                         <span class="nav-item-content">
                             <i class="fa fa-user icon"></i>
                             <span>项目</span>
                         </span>
-                    </a>
-                    <a href="/commissions.html" class="nav-item active">
+                </a>
+                <a class="nav-item active" href="/commissions.html">
                         <span class="nav-item-content">
                             <i class="fa-solid fa-pencil icon"></i>
                             <span>约稿</span>
                         </span>
-                    </a>
-                    <a href="/tools.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/tools.html">
                         <span class="nav-item-content">
                             <i class="fa fa-tools icon"></i>
                             <span>工具</span>
                         </span>
-                    </a>
-                    <a href="/works.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/works.html">
                         <span class="nav-item-content">
                             <i class="fa-solid fa-image icon"></i>
                             <span>作品</span>
                         </span>
-                    </a>
-                </nav>
-                <div id="theme-toggle">
-                    <i class="fa fa-sun text-xl"></i>
-                </div>
-                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
-                    <i class="fa fa-bars"></i>
-                </button>
+                </a>
+            </nav>
+            <div id="theme-toggle">
+                <i class="fa fa-sun text-xl"></i>
             </div>
-        </header>
-
-        <div class="page-content">
-            <div class="left-sidebar">
-                <section id="commission-platforms" class="commission-section anim-fade-in-up"
-                    style="animation-delay: 0.1s;">
-                    <h2 class="text-3xl font-bold mb-4 text-center">约稿平台</h2>
-                    <div class="platform-grid">
-                        <a href="https://b23.tv/YLg5WYo" target="_blank" class="platform-card solid-card">
-                            <i class="fab fa-bilibili"></i>
-                            <h4>Bilibili 工坊</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
-                        </a>
-                        <div class="platform-card solid-card disabled">
-                            <i class="fa-solid fa-palette"></i>
-                            <h4>画加</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">暂未入驻</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="commission-invitations" class="commission-section anim-fade-in-up"
-                    style="animation-delay: 0.2s;">
-                    <h2 class="text-3xl font-bold mb-4 text-center">向我发起邀请</h2>
-                    <div class="platform-grid">
-                        <a href="https://b23.tv/YLg5WYo" target="_blank" class="platform-card solid-card">
-                            <i class="fab fa-bilibili"></i>
-                            <h4>B站私信</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
-                        </a>
-                        <a href="https://qm.qq.com/q/5jATjlQd4A" target="_blank" class="platform-card solid-card">
-                            <i class="fab fa-qq"></i>
-                            <h4>QQ群</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">687671385</p>
-                        </a>
-                    </div>
-                </section>
-
-                <section id="commission-payment" class="commission-section anim-fade-in-up"
-                    style="animation-delay: 0.3s;">
-                    <h2 class="text-3xl font-bold mb-4 text-center">支付</h2>
-                    <div class="flex justify-center">
-                        <button id="show-payment-button"
-                            class="amethyst-dark-button py-3 px-8 rounded-full text-lg transition-transform hover:scale-105">
-                            点击显示收款码
-                        </button>
-                    </div>
-                </section>
-            </div>
-
-            <main class="right-content-area flex flex-col items-center">
-                <section id="commission-price-list" class="commission-section anim-fade-in-up"
-                    style="animation-delay: 0.4s;">
-                    <h2 class="text-4xl font-bold mb-6 text-center">报价单</h2>
-                    <div id="price-list-container"
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    </div>
-                </section>
-            </main>
-        </div>
-
-        <footer class="w-full text-center py-6 mt-10">
-            <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
-        </footer>
-    </div>
-
-    <div id="payment-modal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000] hidden">
-        <div class="solid-card p-8 relative max-w-sm w-full mx-4">
-            <button id="close-modal-button"
-                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl">
-                <i class="fas fa-times"></i>
+            <button class="lg:hidden text-xl p-2 rounded-md mr-2" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
             </button>
-            <h3 class="text-2xl font-bold mb-6 text-center">我的收款码</h3>
-            <div class="flex flex-col items-center gap-6">
-                <div>
-                    <p class="text-lg font-semibold mb-2">微信支付</p>
-                    <img src="img/wx.jpg" alt="WeChat Pay QR Code"
-                        class="w-48 h-48 border border-card-border rounded-lg">
+        </div>
+    </header>
+
+    <div class="page-content">
+        <div class="left-sidebar">
+            <section class="commission-section anim-fade-in-up" id="commission-platforms"
+                     style="animation-delay: 0.1s;">
+                <h2 class="text-3xl font-bold mb-4 text-center">约稿平台</h2>
+                <div class="platform-grid">
+                    <a class="platform-card solid-card" href="https://b23.tv/YLg5WYo" target="_blank">
+                        <i class="fab fa-bilibili"></i>
+                        <h4>Bilibili 工坊</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
+                    </a>
+                    <div class="platform-card solid-card disabled">
+                        <i class="fa-solid fa-palette"></i>
+                        <h4>画加</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">暂未入驻</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-lg font-semibold mb-2">支付宝支付</p>
-                    <img src="img/zfb.jpg" alt="Alipay QR Code" class="w-48 h-48 border border-card-border rounded-lg">
+            </section>
+
+            <section class="commission-section anim-fade-in-up" id="commission-invitations"
+                     style="animation-delay: 0.2s;">
+                <h2 class="text-3xl font-bold mb-4 text-center">向我发起邀请</h2>
+                <div class="platform-grid">
+                    <a class="platform-card solid-card" href="https://b23.tv/YLg5WYo" target="_blank">
+                        <i class="fab fa-bilibili"></i>
+                        <h4>B站私信</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
+                    </a>
+                    <a class="platform-card solid-card" href="https://qm.qq.com/q/5jATjlQd4A" target="_blank">
+                        <i class="fab fa-qq"></i>
+                        <h4>QQ群</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">687671385</p>
+                    </a>
                 </div>
+            </section>
+
+            <section class="commission-section anim-fade-in-up" id="commission-payment"
+                     style="animation-delay: 0.3s;">
+                <h2 class="text-3xl font-bold mb-4 text-center">支付</h2>
+                <div class="flex justify-center">
+                    <button class="amethyst-dark-button py-3 px-8 rounded-full text-lg transition-transform hover:scale-105"
+                            id="show-payment-button">
+                        点击显示收款码
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <main class="right-content-area flex flex-col items-center">
+            <section class="commission-section anim-fade-in-up" id="commission-price-list"
+                     style="animation-delay: 0.4s;">
+                <h2 class="text-4xl font-bold mb-6 text-center">报价单</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+                     id="price-list-container">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="w-full text-center py-6 mt-10">
+        <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
+    </footer>
+</div>
+
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000] hidden"
+     id="payment-modal">
+    <div class="solid-card p-8 relative max-w-sm w-full mx-4">
+        <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
+                id="close-modal-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-2xl font-bold mb-6 text-center">我的收款码</h3>
+        <div class="flex flex-col items-center gap-6">
+            <div>
+                <p class="text-lg font-semibold mb-2">微信支付</p>
+                <img alt="WeChat Pay QR Code" class="w-48 h-48 border border-card-border rounded-lg"
+                     src="img/wx.jpg">
+            </div>
+            <div>
+                <p class="text-lg font-semibold mb-2">支付宝支付</p>
+                <img alt="Alipay QR Code" class="w-48 h-48 border border-card-border rounded-lg" src="img/zfb.jpg">
             </div>
         </div>
     </div>
+</div>
 
-    <div id="image-modal">
-        <div id="image-modal-content">
-            <button id="close-image-modal"><i class="fas fa-times"></i></button>
-            <img src="" alt="Enlarged Image" id="modal-image">
-        </div>
+<div id="image-modal">
+    <div id="image-modal-content">
+        <button id="close-image-modal"><i class="fas fa-times"></i></button>
+        <img alt="Enlarged Image" id="modal-image" src="">
     </div>
+</div>
 
 
-    <div id="custom-menu">
-        <div class="menu-header">常规操作</div>
-        <div class="menu-item" id="back-item" onclick="backAction()">
-            <i class="fa fa-arrow-left"></i>
-            <span>返回</span>
-        </div>
-        <div class="menu-item" id="refresh-item" onclick="refreshAction()">
-            <i class="fa fa-refresh"></i>
-            <span>刷新</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">编辑操作</div>
-        <div class="menu-item" id="copy-item" onclick="copyAction()">
-            <i class="fa fa-copy"></i>
-            <span>复制</span>
-        </div>
-        <div class="menu-item" id="paste-item" onclick="pasteAction()">
-            <i class="fa fa-paste"></i>
-            <span>粘贴</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">链接操作</div>
-        <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
-            <i class="fa fa-external-link"></i>
-            <span>在新标签页打开</span>
-        </div>
-        <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
-            <i class="fa fa-link"></i>
-            <span>复制链接地址</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">其他操作</div>
-        <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
-            <i class="fa fa-home"></i>
-            <span>返回主页</span>
-        </div>
+<div id="custom-menu">
+    <div class="menu-header">常规操作</div>
+    <div class="menu-item" id="back-item" onclick="backAction()">
+        <i class="fa fa-arrow-left"></i>
+        <span>返回</span>
     </div>
+    <div class="menu-item" id="refresh-item" onclick="refreshAction()">
+        <i class="fa fa-refresh"></i>
+        <span>刷新</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">编辑操作</div>
+    <div class="menu-item" id="copy-item" onclick="copyAction()">
+        <i class="fa fa-copy"></i>
+        <span>复制</span>
+    </div>
+    <div class="menu-item" id="paste-item" onclick="pasteAction()">
+        <i class="fa fa-paste"></i>
+        <span>粘贴</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">链接操作</div>
+    <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
+        <i class="fa fa-external-link"></i>
+        <span>在新标签页打开</span>
+    </div>
+    <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
+        <i class="fa fa-link"></i>
+        <span>复制链接地址</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">其他操作</div>
+    <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
+        <i class="fa fa-home"></i>
+        <span>返回主页</span>
+    </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Theme Toggle ---
-            const themeToggle = document.getElementById('theme-toggle');
-            if (themeToggle) {
-                const themeIcon = themeToggle.querySelector('i');
-                const savedTheme = localStorage.getItem('theme') || 'light';
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Theme Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            const themeIcon = themeToggle.querySelector('i');
+            const savedTheme = localStorage.getItem('theme') || 'light';
 
-                const applyTheme = (theme) => {
-                    if (theme === 'dark') {
-                        document.documentElement.classList.add('dark-mode');
-                        if (themeIcon) {
-                            themeIcon.classList.remove('fa-sun');
-                            themeIcon.classList.add('fa-moon');
-                        }
-                    } else {
-                        document.documentElement.classList.remove('dark-mode');
-                        if (themeIcon) {
-                            themeIcon.classList.remove('fa-moon');
-                            themeIcon.classList.add('fa-sun');
-                        }
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                    if (themeIcon) {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
                     }
-                };
-                applyTheme(savedTheme);
-
-                themeToggle.addEventListener('click', () => {
-                    const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
-                    localStorage.setItem('theme', newTheme);
-                    applyTheme(newTheme);
-                });
-            }
-
-
-            // --- Navigation Tracker ---
-            const navItems = document.querySelectorAll('.nav-item');
-            const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = document.querySelector('.nav-item.active');
-
-            function moveTracker(element) {
-                if (element && tracker) {
-                    const isMobile = window.innerWidth <= 992;
-                    if (isMobile) {
-                        tracker.style.display = 'block';
-                        tracker.style.top = `${element.offsetTop}px`;
-                        tracker.style.height = `${element.offsetHeight}px`;
-                        tracker.style.left = '0';
-                        tracker.style.width = '100%';
-                        tracker.style.transform = 'translateY(0)';
-                    } else {
-                        tracker.style.display = 'block';
-                        tracker.style.width = `${element.offsetWidth}px`;
-                        tracker.style.transform = `translateX(${element.offsetLeft}px)`;
-                        tracker.style.top = '5px';
-                        tracker.style.height = '40px';
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                    if (themeIcon) {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
                     }
                 }
-            }
-            if (currentActiveNavItem) {
-                setTimeout(() => moveTracker(currentActiveNavItem), 50);
-                window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
-            }
+            };
+            applyTheme(savedTheme);
 
-
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (currentActiveNavItem) {
-                        currentActiveNavItem.classList.remove('active');
-                    }
-                    item.classList.add('active');
-                    currentActiveNavItem = item;
-                    moveTracker(item);
-                    setTimeout(() => {
-                        window.location.href = item.href;
-                    }, 150);
-                });
+            themeToggle.addEventListener('click', () => {
+                const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
             });
+        }
 
 
-            // --- Animation on Load ---
-            const animatedElements = document.querySelectorAll('.anim-fade-in-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            animatedElements.forEach(el => observer.observe(el));
+        // --- Navigation Tracker ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const tracker = document.getElementById('tracker');
+        let currentActiveNavItem = document.querySelector('.nav-item.active');
 
-            // --- Entrance Animation Logic ---
-            const pageLoader = document.getElementById('page-loader');
-            const bodyElement = document.querySelector('body');
-
-            window.addEventListener('load', () => {
-                if (pageLoader) {
-                    pageLoader.classList.add('hidden');
-                    setTimeout(() => {
-                        pageLoader.style.display = 'none';
-                    }, 300);
+        function moveTracker(element) {
+            if (element && tracker) {
+                const isMobile = window.innerWidth <= 992;
+                if (isMobile) {
+                    tracker.style.display = 'block';
+                    tracker.style.top = `${element.offsetTop}px`;
+                    tracker.style.height = `${element.offsetHeight}px`;
+                    tracker.style.left = '0';
+                    tracker.style.width = '100%';
+                    tracker.style.transform = 'translateY(0)';
+                } else {
+                    tracker.style.display = 'block';
+                    tracker.style.width = `${element.offsetWidth}px`;
+                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                    tracker.style.top = '5px';
+                    tracker.style.height = '40px';
                 }
-                if (bodyElement) {
-                    bodyElement.classList.add('content-loaded');
+            }
+        }
+
+        if (currentActiveNavItem) {
+            setTimeout(() => moveTracker(currentActiveNavItem), 50);
+            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
+        }
+
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentActiveNavItem) {
+                    currentActiveNavItem.classList.remove('active');
+                }
+                item.classList.add('active');
+                currentActiveNavItem = item;
+                moveTracker(item);
+                setTimeout(() => {
+                    window.location.href = item.href;
+                }, 150);
+            });
+        });
+
+
+        // --- Animation on Load ---
+        const animatedElements = document.querySelectorAll('.anim-fade-in-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
                 }
             });
+        }, {threshold: 0.1});
+        animatedElements.forEach(el => observer.observe(el));
 
-            // --- Mobile Menu Toggle ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const headerCard = document.querySelector('.header-card');
-            const menuIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
+        // --- Entrance Animation Logic ---
+        const pageLoader = document.getElementById('page-loader');
+        const bodyElement = document.querySelector('body');
 
-            if (mobileMenuButton && headerCard && menuIcon) {
-                mobileMenuButton.addEventListener('click', () => {
-                    headerCard.classList.toggle('is-open');
-                    const isOpen = headerCard.classList.contains('is-open');
-                    menuIcon.classList.toggle('fa-bars', !isOpen);
-                    menuIcon.classList.toggle('fa-times', isOpen);
-
-                    if (isOpen) {
-                        const activeNavItem = headerCard.querySelector('.nav-item.active');
-                        if (activeNavItem) {
-                            setTimeout(() => moveTracker(activeNavItem), 300);
-                        }
-                    } else {
-                        if (tracker) tracker.style.display = 'none';
-                    }
-                });
+        window.addEventListener('load', () => {
+            if (pageLoader) {
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
             }
+            if (bodyElement) {
+                bodyElement.classList.add('content-loaded');
+            }
+        });
+
+        // --- Mobile Menu Toggle ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const headerCard = document.querySelector('.header-card');
+        const menuIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
+
+        if (mobileMenuButton && headerCard && menuIcon) {
+            mobileMenuButton.addEventListener('click', () => {
+                headerCard.classList.toggle('is-open');
+                const isOpen = headerCard.classList.contains('is-open');
+                menuIcon.classList.toggle('fa-bars', !isOpen);
+                menuIcon.classList.toggle('fa-times', isOpen);
+
+                if (isOpen) {
+                    const activeNavItem = headerCard.querySelector('.nav-item.active');
+                    if (activeNavItem) {
+                        setTimeout(() => moveTracker(activeNavItem), 300);
+                    }
+                } else {
+                    if (tracker) tracker.style.display = 'none';
+                }
+            });
+        }
 
 
-            // --- Payment Button Toggle (MODAL) ---
-            const showPaymentButton = document.getElementById('show-payment-button');
-            const paymentModal = document.getElementById('payment-modal');
-            const closeModalButton = document.getElementById('close-modal-button');
+        // --- Payment Button Toggle (MODAL) ---
+        const showPaymentButton = document.getElementById('show-payment-button');
+        const paymentModal = document.getElementById('payment-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
 
-            if (showPaymentButton && paymentModal && closeModalButton) {
-                showPaymentButton.addEventListener('click', () => {
-                    paymentModal.classList.remove('hidden');
-                });
+        if (showPaymentButton && paymentModal && closeModalButton) {
+            showPaymentButton.addEventListener('click', () => {
+                paymentModal.classList.remove('hidden');
+            });
 
-                closeModalButton.addEventListener('click', () => {
+            closeModalButton.addEventListener('click', () => {
+                paymentModal.classList.add('hidden');
+            });
+
+            paymentModal.addEventListener('click', (e) => {
+                if (e.target === paymentModal) {
                     paymentModal.classList.add('hidden');
-                });
+                }
+            });
+        }
 
-                paymentModal.addEventListener('click', (e) => {
-                    if (e.target === paymentModal) {
-                        paymentModal.classList.add('hidden');
+
+        // --- Image Modal Logic ---
+        const imageModal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeImageModalButton = document.getElementById('close-image-modal');
+
+        function openImageModal(src) {
+            modalImage.src = src;
+            imageModal.classList.add('visible');
+        }
+
+        function closeImageModal() {
+            imageModal.classList.remove('visible');
+        }
+
+        if (imageModal && modalImage && closeImageModalButton) {
+            closeImageModalButton.addEventListener('click', closeImageModal);
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal || e.target === modalImage) { // Also close if clicking on the image itself
+                    closeImageModal();
+                }
+            });
+        }
+
+
+        // --- Load Price List from JSON with Multi-Image Support ---
+        const priceListContainer = document.getElementById('price-list-container');
+
+        if (priceListContainer) {
+            fetch('commissions.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                });
-            }
+                    return response.json();
+                })
+                .then(commissionData => {
+                    commissionData.priceList.forEach(item => {
+                        const priceItemDiv = document.createElement('div');
+                        priceItemDiv.className = 'price-list-item solid-card';
 
-
-            // --- Image Modal Logic ---
-            const imageModal = document.getElementById('image-modal');
-            const modalImage = document.getElementById('modal-image');
-            const closeImageModalButton = document.getElementById('close-image-modal');
-
-            function openImageModal(src) {
-                modalImage.src = src;
-                imageModal.classList.add('visible');
-            }
-
-            function closeImageModal() {
-                imageModal.classList.remove('visible');
-            }
-
-            if (imageModal && modalImage && closeImageModalButton) {
-                closeImageModalButton.addEventListener('click', closeImageModal);
-                imageModal.addEventListener('click', (e) => {
-                    if (e.target === imageModal || e.target === modalImage) { // Also close if clicking on the image itself
-                        closeImageModal();
-                    }
-                });
-            }
-
-
-            // --- Load Price List from JSON with Multi-Image Support ---
-            const priceListContainer = document.getElementById('price-list-container');
-
-            if (priceListContainer) {
-                fetch('commissions.json')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(commissionData => {
-                        commissionData.priceList.forEach(item => {
-                            const priceItemDiv = document.createElement('div');
-                            priceItemDiv.className = 'price-list-item solid-card';
-
-                            let imagesHTML = '';
-                            if (Array.isArray(item.images) && item.images.length > 0) {
-                                const mainImageSrc = item.images[0];
-                                const thumbnailsHTML = item.images.map((imgSrc, index) => `
+                        let imagesHTML = '';
+                        if (Array.isArray(item.images) && item.images.length > 0) {
+                            const mainImageSrc = item.images[0];
+                            const thumbnailsHTML = item.images.map((imgSrc, index) => `
                                     <img src="${imgSrc}" alt="${item.title} thumbnail ${index + 1}" 
                                          class="commission-thumbnail ${index === 0 ? 'active' : ''}"
                                          data-src="${imgSrc}">
                                 `).join('');
 
-                                imagesHTML = `
+                            imagesHTML = `
                                     <div class="commission-image-gallery">
                                         <img src="${mainImageSrc}" alt="${item.title}" class="commission-main-image">
                                         <div class="commission-thumbnails">
@@ -1146,107 +1146,126 @@
                                         </div>
                                     </div>
                                 `;
-                            }
+                        }
 
-                            priceItemDiv.innerHTML = `
+                        priceItemDiv.innerHTML = `
                                 ${imagesHTML}
                                 <h4 class="text-xl font-semibold mb-2">${item.title}</h4>
                                 <p class="text-lg font-bold text-amethyst-color mb-2">${item.price}</p>
                                 <p class="text-sm text-gray-600 dark:text-gray-300">${item.description}</p>
                                 ${item.requirements ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><strong>要求:</strong> ${item.requirements}</p>` : ''}
                             `;
-                            priceListContainer.appendChild(priceItemDiv);
-                        });
-
-                        // Attach event listeners for main images AFTER they are added to the DOM
-                        document.querySelectorAll('.commission-main-image').forEach(img => {
-                            img.addEventListener('click', (event) => {
-                                openImageModal(event.target.src);
-                            });
-                        });
-
-                    })
-                    .catch(error => {
-                        console.error('Error fetching or parsing commission data:', error);
-                        priceListContainer.innerHTML = '<p>无法加载报价单，请稍后重试。</p>';
+                        priceListContainer.appendChild(priceItemDiv);
                     });
 
-                priceListContainer.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('commission-thumbnail')) {
-                        const thumbnail = e.target;
-                        const card = thumbnail.closest('.price-list-item');
-                        if (card) {
-                            const mainImage = card.querySelector('.commission-main-image');
-                            if (mainImage) {
-                                const newSrc = thumbnail.dataset.src;
-                                mainImage.style.opacity = '0';
-                                setTimeout(() => {
-                                    mainImage.src = newSrc;
-                                    mainImage.style.opacity = '1';
-                                }, 150);
+                    // Attach event listeners for main images AFTER they are added to the DOM
+                    document.querySelectorAll('.commission-main-image').forEach(img => {
+                        img.addEventListener('click', (event) => {
+                            openImageModal(event.target.src);
+                        });
+                    });
 
-                                const allThumbnailsInCard = card.querySelectorAll('.commission-thumbnail');
-                                allThumbnailsInCard.forEach(t => t.classList.remove('active'));
-                                thumbnail.classList.add('active');
-                            }
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing commission data:', error);
+                    priceListContainer.innerHTML = '<p>无法加载报价单，请稍后重试。</p>';
+                });
+
+            priceListContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('commission-thumbnail')) {
+                    const thumbnail = e.target;
+                    const card = thumbnail.closest('.price-list-item');
+                    if (card) {
+                        const mainImage = card.querySelector('.commission-main-image');
+                        if (mainImage) {
+                            const newSrc = thumbnail.dataset.src;
+                            mainImage.style.opacity = '0';
+                            setTimeout(() => {
+                                mainImage.src = newSrc;
+                                mainImage.style.opacity = '1';
+                            }, 150);
+
+                            const allThumbnailsInCard = card.querySelectorAll('.commission-thumbnail');
+                            allThumbnailsInCard.forEach(t => t.classList.remove('active'));
+                            thumbnail.classList.add('active');
                         }
                     }
-                });
-            }
-        });
-
-        /* --- Right-Click Menu Script --- */
-        const customMenu = document.getElementById('custom-menu');
-        let isMenuVisible = false;
-        let currentTarget = null;
-        if (customMenu) {
-            document.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-                selectedText = window.getSelection().toString().trim();
-                currentTarget = e.target.closest('a');
-                // update menu item visibility, etc.
-                const menuWidth = customMenu.offsetWidth;
-                const menuHeight = customMenu.offsetHeight;
-                let left = e.clientX;
-                let top = e.clientY;
-                // adjust position if out of viewport
-                customMenu.style.left = `${left}px`;
-                customMenu.style.top = `${top}px`;
-                customMenu.style.display = 'block';
-                isMenuVisible = true;
-            });
-            document.addEventListener('click', (e) => {
-                if (isMenuVisible && !customMenu.contains(e.target)) {
-                    customMenu.style.display = 'none';
-                    isMenuVisible = false;
                 }
             });
-            // other menu functions...
         }
+    });
 
-        // Placeholder functions for right-click menu actions (if not already defined elsewhere)
-        function backAction() { console.log('Back action'); history.back(); }
-        function refreshAction() { console.log('Refresh action'); location.reload(); }
-        function copyAction() { console.log('Copy action'); /* Implement copy logic */ }
-        function pasteAction() { console.log('Paste action'); /* Implement paste logic */ }
-        function openInNewTabAction() {
-            console.log('Open in new tab action');
-            if (currentTarget && currentTarget.href) {
-                window.open(currentTarget.href, '_blank');
+    /* --- Right-Click Menu Script --- */
+    const customMenu = document.getElementById('custom-menu');
+    let isMenuVisible = false;
+    let currentTarget = null;
+    if (customMenu) {
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            selectedText = window.getSelection().toString().trim();
+            currentTarget = e.target.closest('a');
+            // update menu item visibility, etc.
+            const menuWidth = customMenu.offsetWidth;
+            const menuHeight = customMenu.offsetHeight;
+            let left = e.clientX;
+            let top = e.clientY;
+            // adjust position if out of viewport
+            customMenu.style.left = `${left}px`;
+            customMenu.style.top = `${top}px`;
+            customMenu.style.display = 'block';
+            isMenuVisible = true;
+        });
+        document.addEventListener('click', (e) => {
+            if (isMenuVisible && !customMenu.contains(e.target)) {
+                customMenu.style.display = 'none';
+                isMenuVisible = false;
             }
+        });
+        // other menu functions...
+    }
+
+    // Placeholder functions for right-click menu actions (if not already defined elsewhere)
+    function backAction() {
+        console.log('Back action');
+        history.back();
+    }
+
+    function refreshAction() {
+        console.log('Refresh action');
+        location.reload();
+    }
+
+    function copyAction() {
+        console.log('Copy action'); /* Implement copy logic */
+    }
+
+    function pasteAction() {
+        console.log('Paste action'); /* Implement paste logic */
+    }
+
+    function openInNewTabAction() {
+        console.log('Open in new tab action');
+        if (currentTarget && currentTarget.href) {
+            window.open(currentTarget.href, '_blank');
         }
-        function copyLinkAction() {
-            console.log('Copy link action');
-            if (currentTarget && currentTarget.href) {
-                navigator.clipboard.writeText(currentTarget.href).then(() => {
-                    console.log('Link copied to clipboard');
-                }).catch(err => {
-                    console.error('Failed to copy link: ', err);
-                });
-            }
+    }
+
+    function copyLinkAction() {
+        console.log('Copy link action');
+        if (currentTarget && currentTarget.href) {
+            navigator.clipboard.writeText(currentTarget.href).then(() => {
+                console.log('Link copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy link: ', err);
+            });
         }
-        function backToHomeAction() { console.log('Back to home action'); window.location.href = '/'; }
-    </script>
+    }
+
+    function backToHomeAction() {
+        console.log('Back to home action');
+        window.location.href = '/';
+    }
+</script>
 </body>
 
 </html>

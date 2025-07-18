@@ -1,22 +1,32 @@
 [
-    {
-        "image": "works/work-1.png",
-        "title": "",
-        "description": "小动物 练习"
-    },
-    {
-        "image": "works/插画12-1.png",
-        "title": "",
-        "description": "小动物 练习"
-    },
-    {
-        "image": "works/插画15.png",
-        "title": "",
-        "description": "小动物 练习"
-    },
-    {
-        "image": "works/插画16.png",
-        "title": "",
-        "description": "小动物 练习"
-    }
+  {
+    "id": "work-1",
+    "image": "works/work-1.png",
+    "title": "",
+    "description": "小动物 稿件"
+  },
+  {
+    "id": "work-2",
+    "image": "works/插画12-1.png",
+    "title": "",
+    "description": "小动物 练习"
+  },
+  {
+    "id": "work-3",
+    "image": "works/插画15.png",
+    "title": "",
+    "description": "小动物 练习"
+  },
+  {
+    "id": "work-4",
+    "image": "works/插画16.png",
+    "title": "",
+    "description": "小动物 练习"
+  },
+  {
+    "id": "work-5",
+    "image": "works/插画.png",
+    "title": "",
+    "description": "小动物 练习"
+  }
 ]

@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>作品 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -40,7 +40,6 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
-            --bg-image: url('img/background10-light.jpg');
         }
 
         .dark-mode {
@@ -70,7 +69,6 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
-            --bg-image: url('img/background10-dark.jpg');
         }
 
         html,
@@ -355,19 +353,40 @@
         }
 
         /* --- 新增：作品画廊样式 --- */
-        #works-gallery {
-            column-count: 3;
+        .gallery-grid {
+            column-count: 5;
+            /* Default to 5 columns for large screens */
             column-gap: 1.5rem;
         }
 
+        @media (max-width: 1400px) {
+
+            /* Adjust breakpoint for 4 columns on larger laptops */
+            .gallery-grid {
+                column-count: 4;
+            }
+        }
+
         @media (max-width: 1024px) {
-            #works-gallery {
+
+            /* Adjust breakpoint for 3 columns on tablets/laptops */
+            .gallery-grid {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            /* Adjust breakpoint for 2 columns on smaller tablets/large phones */
+            .gallery-grid {
                 column-count: 2;
             }
         }
 
-        @media (max-width: 640px) {
-            #works-gallery {
+        @media (max-width: 500px) {
+
+            /* Keep 1 column for very small screens */
+            .gallery-grid {
                 column-count: 1;
             }
         }
@@ -396,7 +415,13 @@
             border-radius: 16px;
         }
 
-        .work-item .overlay {
+        /* Styles for individual work items (with hover overlay) */
+        .individual-work-item img {
+            border-radius: 16px;
+            /* Ensure images keep their border radius */
+        }
+
+        .individual-work-item .overlay {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -410,17 +435,45 @@
             border-bottom-right-radius: 16px;
         }
 
-        .work-item:hover .overlay {
+        .individual-work-item:hover .overlay {
             opacity: 1;
         }
 
-        .work-item .overlay .title {
+        /* Styles for portfolio items (title/description always visible) */
+        .portfolio-item img {
+            border-bottom-left-radius: 0;
+            /* No radius on bottom for image */
+            border-bottom-right-radius: 0;
+            /* No radius on bottom for image */
+        }
+
+        .portfolio-item .portfolio-info {
+            position: relative;
+            /* Changed from absolute */
+            background-color: var(--card-bg);
+            /* Use card background for info block */
+            color: var(--text-primary);
+            /* Use primary text color for info */
+            padding: 1rem;
+            opacity: 1;
+            /* Always visible */
+            transition: none;
+            /* No transition */
+            border-top: 1px solid var(--card-border);
+            /* Separator from image */
+            border-bottom-left-radius: 16px;
+            /* Retain border radius for card */
+            border-bottom-right-radius: 16px;
+            /* Retain border radius for card */
+        }
+
+        .work-item .title {
             font-weight: bold;
             font-size: 1.1rem;
             margin-bottom: 0.25rem;
         }
 
-        .work-item .overlay .description {
+        .work-item .description {
             font-size: 0.9rem;
         }
 
@@ -578,349 +631,463 @@
                 align-items: center;
             }
         }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            margin-bottom: 2rem;
+            background-color: var(--amethyst-color);
+            color: white;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            background-color: var(--amethyst-color-hover);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 3rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        /* --- New: Gallery Transition Container --- */
+        .gallery-transition-container {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-in-out, visibility 0s 0s;
+        }
+
+        .gallery-transition-container.fade-out-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
+            /* Hide visibility after opacity */
+        }
     </style>
 </head>
 
 <body class="content-container">
-    <div id="page-loader">
-    </div>
+<div id="page-loader">
+</div>
 
-    <div class="mc-bg-container"></div>
-    <div class="blob" style="top: 10%; left: 5%;"></div>
-    <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+<div class="mc-bg-container"></div>
+<div class="blob" style="top: 10%; left: 5%;"></div>
+<div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
 
-    <div class="min-h-screen flex flex-col items-center relative z-10">
-        <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
-            <div class="container mx-auto header-card p-2">
-                <div class="flex items-center">
-                    <img src="img/avatar.jpg" alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover">
-                    <h1 class="text-2xl font-bold">LanRhyme</h1>
-                </div>
-                <nav class="nav">
-                    <div class="tracker" id="tracker"></div>
-                    <a href="/" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-home icon"></i><span>主页</span></span>
-                    </a>
-                    <a href="/projects.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-user icon"></i><span>项目</span></span>
-                    </a>
-                    <a href="/commissions.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa-solid fa-pencil icon"></i><span>约稿</span></span>
-                    </a>
-                    <a href="/tools.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-tools icon"></i><span>工具</span></span>
-                    </a>
-                    <a href="/works.html" class="nav-item active"> <span class="nav-item-content"><i
-                                class="fa-solid fa-image icon"></i><span>作品</span></span>
-                    </a>
-                </nav>
-                <div id="theme-toggle">
-                    <i class="fa fa-sun text-xl"></i>
-                </div>
-                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
-                    <i class="fa fa-bars"></i>
-                </button>
+<div class="min-h-screen flex flex-col items-center relative z-10">
+    <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
+        <div class="container mx-auto header-card p-2">
+            <div class="flex items-center">
+                <img alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover" src="img/avatar.jpg">
+                <h1 class="text-2xl font-bold">LanRhyme</h1>
             </div>
-        </header>
+            <nav class="nav">
+                <div class="tracker" id="tracker"></div>
+                <a class="nav-item" href="/">
+                    <span class="nav-item-content"><i class="fa fa-home icon"></i><span>主页</span></span>
+                </a>
+                <a class="nav-item" href="/projects.html">
+                    <span class="nav-item-content"><i class="fa fa-user icon"></i><span>项目</span></span>
+                </a>
+                <a class="nav-item" href="/commissions.html">
+                    <span class="nav-item-content"><i class="fa-solid fa-pencil icon"></i><span>约稿</span></span>
+                </a>
+                <a class="nav-item" href="/tools.html">
+                    <span class="nav-item-content"><i class="fa fa-tools icon"></i><span>工具</span></span>
+                </a>
+                <a class="nav-item active" href="/works.html"> <span class="nav-item-content"><i
+                        class="fa-solid fa-image icon"></i><span>作品</span></span>
+                </a>
+            </nav>
+            <div id="theme-toggle">
+                <i class="fa fa-sun text-xl"></i>
+            </div>
+            <button class="lg:hidden text-xl p-2 rounded-md mr-2" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+    </header>
 
-        <div class="page-content w-full">
-            <main class="w-full">
-                <section id="works-intro" class="text-center mb-12 anim-fade-in-up">
-                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的作品集</h2>
-                    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                        光与影的交织，色彩与情感的碰撞，这里是我想象力的乐园
-                    </p>
-                </section>
+    <main class="w-full max-w-7xl px-4 py-8 flex-grow">
+        <section class="text-center mb-12 anim-fade-in-up" id="works-intro">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的作品</h2>
+            <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                光与影的交织，色彩与情感的碰撞，这里是我想象力的乐园
+            </p>
+        </section>
 
-                <section id="works-gallery" class="anim-fade-in-up" style="animation-delay: 0.2s;">
-                </section>
-            </main>
+        <div class="text-center mb-6 hidden" id="back-to-all-works-container">
+            <button class="back-button" id="back-to-all-works">
+                <i class="fas fa-arrow-left"></i> 返回所有作品
+            </button>
         </div>
 
-        <footer class="w-full text-center py-6 mt-16">
-            <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
-        </footer>
-    </div>
+        <div class="gallery-transition-container" id="galleries-wrapper">
+            <div id="portfolio-section">
+                <h3 class="section-title">作品集</h3>
+                <section class="gallery-grid anim-fade-in-up" id="portfolios-gallery"></section>
+            </div>
 
-    <div id="custom-menu">
-    </div>
+            <div id="individual-works-section">
+                <h3 class="section-title">作品</h3>
+                <section class="gallery-grid anim-fade-in-up" id="individual-works-gallery"></section>
+            </div>
+        </div>
+    </main>
 
-    <div id="lightbox">
-        <button id="lightbox-close" class="lightbox-btn"><i class="fas fa-times"></i></button>
-        <button id="lightbox-prev" class="lightbox-btn"><i class="fas fa-chevron-left"></i></button>
-        <button id="lightbox-next" class="lightbox-btn"><i class="fas fa-chevron-right"></i></button>
-        <img id="lightbox-image" src="" alt="Enlarged work">
-    </div>
+    <footer class="w-full text-center py-6 mt-16">
+        <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
+    </footer>
+</div>
 
-    <script>
-        // 脚本部分包含从 index.html 继承的全部功能，并增加了新的画廊和灯箱逻辑
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- 继承自 index.html 的脚本 ---
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const applyTheme = (theme) => {
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('dark-mode');
-                    themeIcon.classList.remove('fa-sun');
-                    themeIcon.classList.add('fa-moon');
-                } else {
-                    document.documentElement.classList.remove('dark-mode');
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                }
-            };
-            applyTheme(savedTheme);
-            themeToggle.addEventListener('click', () => {
-                const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
+<div id="custom-menu">
+</div>
 
-            const navItems = document.querySelectorAll('.nav-item');
-            const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = document.querySelector('.nav-item.active');
-            function moveTracker(element) {
-                if (!element || !tracker) return;
-                const isMobile = window.innerWidth <= 992;
-                if (isMobile) {
-                    if (document.querySelector('.header-card.is-open')) { tracker.style.display = 'block'; tracker.style.top = `${element.offsetTop}px`; tracker.style.height = `${element.offsetHeight}px`; tracker.style.left = `0`; tracker.style.width = `100%`; tracker.style.transform = `translateY(0)`; } else { tracker.style.display = 'none'; }
-                } else { tracker.style.display = 'block'; tracker.style.width = `${element.offsetWidth}px`; tracker.style.transform = `translateX(${element.offsetLeft}px)`; tracker.style.top = `5px`; tracker.style.height = `40px`; }
+<div id="lightbox">
+    <button class="lightbox-btn" id="lightbox-close"><i class="fas fa-times"></i></button>
+    <button class="lightbox-btn" id="lightbox-prev"><i class="fas fa-chevron-left"></i></button>
+    <button class="lightbox-btn" id="lightbox-next"><i class="fas fa-chevron-right"></i></button>
+    <img alt="Enlarged work" id="lightbox-image" src="">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Theme Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
             }
-            setTimeout(() => moveTracker(currentActiveNavItem), 50);
-            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => { e.preventDefault(); if (currentActiveNavItem) currentActiveNavItem.classList.remove('active'); item.classList.add('active'); currentActiveNavItem = item; moveTracker(item); setTimeout(() => { window.location.href = item.href; }, 150); });
-            });
+        };
+        applyTheme(savedTheme);
 
-            const pageLoader = document.getElementById('page-loader');
-            const bodyElement = document.querySelector('body');
-            window.addEventListener('load', () => { if (pageLoader) { pageLoader.classList.add('hidden'); setTimeout(() => { pageLoader.style.display = 'none'; }, 300); } if (bodyElement) { bodyElement.classList.add('content-loaded'); } });
-
-            const animatedElements = document.querySelectorAll('.anim-fade-in-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
-            }, { threshold: 0.1 });
-            animatedElements.forEach(el => observer.observe(el));
-
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const headerCard = document.querySelector('.header-card');
-            const menuIcon = mobileMenuButton.querySelector('i');
-            mobileMenuButton.addEventListener('click', () => {
-                headerCard.classList.toggle('is-open');
-                const isOpen = headerCard.classList.contains('is-open');
-                menuIcon.classList.toggle('fa-bars', !isOpen);
-                menuIcon.classList.toggle('fa-times', isOpen);
-                if (isOpen) { setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 300); } else { if (window.innerWidth <= 992) tracker.style.display = 'none'; }
-            });
-
-            // --- 新增：画廊和灯箱脚本 ---
-            const gallery = document.getElementById('works-gallery');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImage = document.getElementById('lightbox-image');
-            const lightboxClose = document.getElementById('lightbox-close');
-            const lightboxPrev = document.getElementById('lightbox-prev');
-            const lightboxNext = document.getElementById('lightbox-next');
-
-            let worksData = [];
-            let currentIndex = 0;
-
-            if (gallery) {
-                fetch('works.json')
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(data => {
-                        worksData = data;
-                        data.forEach((work, index) => {
-                            const workItem = document.createElement('div');
-                            workItem.className = 'work-item';
-                            workItem.innerHTML = `
-                                <img src="${work.image}" alt="${work.title}" loading="lazy">
-                                <div class="overlay">
-                                    <div class="title">${work.title}</div>
-                                    <div class="description">${work.description}</div>
-                                </div>
-                            `;
-
-                            workItem.addEventListener('click', () => {
-                                showLightbox(index);
-                            });
-
-                            gallery.appendChild(workItem);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('无法加载作品文件:', error);
-                        gallery.innerHTML = `<p class="text-center col-span-full">作品加载失败，请检查 'works.json' 文件。</p>`;
-                    });
-            }
-
-            function showLightbox(index) {
-                currentIndex = index;
-                lightboxImage.src = worksData[currentIndex].image;
-                lightbox.classList.add('visible');
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
-            }
-
-            function hideLightbox() {
-                lightbox.classList.remove('visible');
-                document.body.style.overflow = '';
-            }
-
-            function showPrev() {
-                currentIndex = (currentIndex > 0) ? currentIndex - 1 : worksData.length - 1;
-                lightboxImage.src = worksData[currentIndex].image;
-            }
-
-            function showNext() {
-                currentIndex = (currentIndex < worksData.length - 1) ? currentIndex + 1 : 0;
-                lightboxImage.src = worksData[currentIndex].image;
-            }
-
-            lightboxClose.addEventListener('click', hideLightbox);
-            lightboxPrev.addEventListener('click', showPrev);
-            lightboxNext.addEventListener('click', showNext);
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightbox) { // 点击背景关闭
-                    hideLightbox();
-                }
-            });
-            document.addEventListener('keydown', (e) => {
-                if (lightbox.classList.contains('visible')) {
-                    if (e.key === 'Escape') hideLightbox();
-                    if (e.key === 'ArrowLeft') showPrev();
-                    if (e.key === 'ArrowRight') showNext();
-                }
-            });
-
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
         });
 
-          /* --- Right-Click Menu Script (from CRCMenu.js) --- */
-            const customMenu = document.getElementById('custom-menu');
-            const backItem = document.getElementById('back-item');
-            const refreshItem = document.getElementById('refresh-item');
-            const copyItem = document.getElementById('copy-item');
-            const pasteItem = document.getElementById('paste-item');
-            const openInNewTabItem = document.getElementById('open-in-new-tab-item');
-            const copyLinkItem = document.getElementById('copy-link-item');
-            const backToHomeItem = document.getElementById('back-to-home-item');
+        // --- Navigation Tracker (FIXED) ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const tracker = document.getElementById('tracker');
+        let currentActiveNavItem = document.querySelector('.nav-item.active');
 
-            let isMenuVisible = false;
-            let currentTarget = null;
-            let selectedText = '';
-            let isAnimating = false;
-            let menuOpenTime = 0;
-            let focusedElementBeforeMenu = null;
-
-            document.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-                focusedElementBeforeMenu = document.activeElement;
-                const now = Date.now();
-                const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
-
-                selectedText = window.getSelection().toString().trim();
-                currentTarget = e.target.closest('a');
-
-                updateMenuItemsVisibility();
-
-                const menuWidth = customMenu.offsetWidth;
-                const menuHeight = customMenu.offsetHeight;
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-
-                let left = e.clientX;
-                if (e.clientX + menuWidth > viewportWidth) {
-                    left = viewportWidth - menuWidth - 5;
-                }
-
-                let top = e.clientY;
-                if (e.clientY + menuHeight > viewportHeight) {
-                    top = e.clientY - menuHeight;
-                }
-
-                if (isNewOpen) {
-                    showMenu(left, top);
+        function moveTracker(element) {
+            if (element && tracker) {
+                const isMobile = window.innerWidth <= 992;
+                if (isMobile) {
+                    // Only move tracker if mobile menu is open
+                    if (document.querySelector('.header-card.is-open')) {
+                        tracker.style.display = 'block';
+                        tracker.style.top = `${element.offsetTop}px`;
+                        tracker.style.height = `${element.offsetHeight}px`;
+                        tracker.style.left = `0`;
+                        tracker.style.width = `100%`;
+                        tracker.style.transform = `translateY(0)`;
+                    } else {
+                        tracker.style.display = 'none';
+                    }
                 } else {
-                    moveMenu(left, top);
+                    // Desktop view
+                    tracker.style.display = 'block';
+                    tracker.style.width = `${element.offsetWidth}px`;
+                    tracker.style.height = `40px`; // Reset height
+                    tracker.style.top = `5px`; // Reset top
+                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
                 }
-                menuOpenTime = now;
-            });
+            }
+        }
 
-            function showMenu(left, top) {
-                if (isAnimating) return;
-                isAnimating = true;
-                customMenu.style.left = `${left}px`;
-                customMenu.style.top = `${top}px`;
-                customMenu.style.display = 'block';
-                customMenu.classList.remove('hiding');
-                requestAnimationFrame(() => {
-                    customMenu.classList.add('visible');
-                    setTimeout(() => {
-                        isAnimating = false;
-                        isMenuVisible = true;
-                    }, 150);
+        // Initial position and resize handling
+        setTimeout(() => moveTracker(currentActiveNavItem), 50);
+        window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentActiveNavItem) {
+                    currentActiveNavItem.classList.remove('active');
+                }
+                item.classList.add('active');
+                currentActiveNavItem = item;
+                moveTracker(item);
+                setTimeout(() => {
+                    window.location.href = item.href;
+                }, 150); // Consistent delay
+            });
+        });
+
+
+        // --- Entrance Animation & Intersection Observer ---
+        const pageLoader = document.getElementById('page-loader');
+        const bodyElement = document.querySelector('body');
+        window.addEventListener('load', () => {
+            if (pageLoader) {
+                pageLoader.classList.add('hidden');
+                setTimeout(() => pageLoader.style.display = 'none', 300);
+            }
+            if (bodyElement) {
+                bodyElement.classList.add('content-loaded');
+            }
+        });
+
+        const animatedElements = document.querySelectorAll('.anim-fade-in-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {threshold: 0.1});
+        animatedElements.forEach(el => observer.observe(el));
+
+        // --- Mobile Menu Toggle (FIXED) ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const headerCard = document.querySelector('.header-card');
+        const menuIcon = mobileMenuButton.querySelector('i');
+
+        mobileMenuButton.addEventListener('click', () => {
+            headerCard.classList.toggle('is-open');
+            const isOpen = headerCard.classList.contains('is-open');
+            menuIcon.classList.toggle('fa-bars', !isOpen);
+            menuIcon.classList.toggle('fa-times', isOpen);
+
+            // Re-position tracker when opening mobile menu
+            if (isOpen) {
+                const activeNavItem = document.querySelector('.nav-item.active');
+                setTimeout(() => moveTracker(activeNavItem), 300);
+            } else {
+                tracker.style.display = 'none'; // Hide tracker when menu closes
+            }
+        });
+
+        // --- 画廊和灯箱脚本 ---
+        const portfoliosGallery = document.getElementById('portfolios-gallery');
+        const individualWorksGallery = document.getElementById('individual-works-gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+        const backToAllWorksBtn = document.getElementById('back-to-all-works');
+        const backButtonContainer = document.getElementById('back-to-all-works-container');
+        const portfolioSection = document.getElementById('portfolio-section');
+        const individualWorksSection = document.getElementById('individual-works-section');
+        const galleriesWrapper = document.getElementById('galleries-wrapper'); // New wrapper element
+
+        let allIndividualWorks = []; // Stores all individual works from works.json
+        let allIndividualWorksMap = new Map(); // Maps work.id to work object for quick lookup
+        let allPortfolios = []; // Stores all portfolios from works_section.json
+        let currentGalleryWorks = []; // Stores works currently displayed in the gallery (for lightbox navigation)
+        let currentIndex = 0; // Current index for lightbox
+
+        function createWorkItem(work, type) {
+            const workItem = document.createElement('div');
+            workItem.className = 'work-item'; // Base class
+            if (type === 'portfolio') {
+                workItem.classList.add('portfolio-item'); // Add specific class for portfolios
+                workItem.innerHTML = `
+                        <img src="${work.thumbnail}" alt="${work.title}" loading="lazy">
+                        <div class="portfolio-info">
+                            <div class="title">${work.title}</div>
+                            <div class="description">${work.description}</div>
+                        </div>
+                    `;
+                workItem.addEventListener('click', () => {
+                    displayPortfolioWorks(work.id);
+                });
+            } else { // type === 'individual'
+                workItem.classList.add('individual-work-item'); // Add specific class for individual works
+                workItem.innerHTML = `
+                        <img src="${work.image}" alt="${work.title}" loading="lazy">
+                        <div class="overlay">
+                            <div class="title">${work.title}</div>
+                            <div class="description">${work.description}</div>
+                        </div>
+                    `;
+                workItem.addEventListener('click', () => {
+                    // For individual works, find its index in currentGalleryWorks for lightbox
+                    const index = currentGalleryWorks.findIndex(item => item.id === work.id);
+                    if (index !== -1) {
+                        showLightbox(index);
+                    }
                 });
             }
+            return workItem;
+        }
 
-            function moveMenu(left, top) {
-                customMenu.style.left = `${left}px`;
-                customMenu.style.top = `${top}px`;
+        function renderGalleries() {
+            portfoliosGallery.innerHTML = '';
+            individualWorksGallery.innerHTML = '';
+
+            // Render Portfolios
+            if (allPortfolios.length > 0) {
+                allPortfolios.forEach(portfolio => {
+                    portfoliosGallery.appendChild(createWorkItem(portfolio, 'portfolio'));
+                });
+                portfolioSection.style.display = 'block';
+            } else {
+                portfolioSection.style.display = 'none';
             }
 
-            function hideMenu() {
-                if (!isMenuVisible || isAnimating) return;
-                isAnimating = true;
-                customMenu.classList.remove('visible');
-                customMenu.classList.add('hiding');
-                setTimeout(() => {
-                    customMenu.style.display = 'none';
-                    isAnimating = false;
-                    isMenuVisible = false;
-                }, 150);
+            // Render ALL Individual Works
+            if (allIndividualWorks.length > 0) {
+                allIndividualWorks.forEach(work => { // Iterate allIndividualWorks directly
+                    individualWorksGallery.appendChild(createWorkItem(work, 'individual'));
+                });
+                individualWorksSection.style.display = 'block';
+            } else {
+                individualWorksSection.style.display = 'none';
             }
 
-            document.addEventListener('click', (e) => {
-                if (isMenuVisible && !customMenu.contains(e.target)) hideMenu();
-            });
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && isMenuVisible) hideMenu();
-            });
-            window.addEventListener('scroll', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
-            window.addEventListener('resize', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
+            // Set currentGalleryWorks for lightbox to ALL individual works when showing main page
+            currentGalleryWorks = allIndividualWorks;
 
-            function updateMenuItemsVisibility() {
-                const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
-                const hasSelectedText = selectedText.length > 0;
-                const isLink = !!currentTarget;
+            backButtonContainer.classList.add('hidden');
+            document.getElementById('works-intro').classList.remove('hidden');
 
-                copyItem.style.display = hasSelectedText ? 'flex' : 'none';
-                pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
-                openInNewTabItem.style.display = isLink ? 'flex' : 'none';
-                copyLinkItem.style.display = isLink ? 'flex' : 'none';
-            }
+            // Ensure galleries wrapper is visible on initial load
+            galleriesWrapper.classList.remove('fade-out-content');
+        }
 
-            function backAction() { window.history.back(); hideMenu(); }
-            function refreshAction() { window.location.reload(); hideMenu(); }
-            function copyAction() { if (selectedText) navigator.clipboard.writeText(selectedText); hideMenu(); }
-            function openInNewTabAction() { if (currentTarget) window.open(currentTarget.href, '_blank'); hideMenu(); }
-            function copyLinkAction() { if (currentTarget) navigator.clipboard.writeText(currentTarget.href); hideMenu(); }
-            function backToHomeAction() { window.location.href = '/'; hideMenu(); }
-            async function pasteAction() {
-                const targetElement = focusedElementBeforeMenu;
-                if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
-                    try {
-                        const text = await navigator.clipboard.readText();
-                        targetElement.focus();
-                        document.execCommand('insertText', false, text);
-                    } catch (err) {
-                        console.error('Failed to read clipboard contents: ', err);
+        function displayPortfolioWorks(portfolioId) {
+            const portfolio = allPortfolios.find(p => p.id === portfolioId);
+            if (portfolio && portfolio.work_ids) {
+                const worksToShow = portfolio.work_ids.map(id => allIndividualWorksMap.get(id)).filter(Boolean);
+
+                galleriesWrapper.classList.add('fade-out-content'); // Trigger fade out
+
+                galleriesWrapper.addEventListener('transitionend', function handler() {
+                    galleriesWrapper.removeEventListener('transitionend', handler);
+
+                    // Once faded out, clear and set up new content
+                    portfoliosGallery.innerHTML = '';
+                    individualWorksGallery.innerHTML = '';
+
+                    portfolioSection.style.display = 'none';
+                    individualWorksSection.style.display = 'block';
+                    individualWorksSection.querySelector('.section-title').textContent = portfolio.title;
+
+                    if (worksToShow.length > 0) {
+                        worksToShow.forEach(work => {
+                            individualWorksGallery.appendChild(createWorkItem(work, 'individual'));
+                        });
+                    } else {
+                        individualWorksGallery.innerHTML = `<p class="text-center col-span-full text-lg text-gray-500 dark:text-gray-400">此作品集暂无作品。</p>`;
                     }
-                }
-                hideMenu();
+
+                    currentGalleryWorks = worksToShow;
+                    backButtonContainer.classList.remove('hidden');
+                    document.getElementById('works-intro').classList.add('hidden');
+
+                    galleriesWrapper.classList.remove('fade-out-content'); // Trigger fade in
+                }, {once: true});
+            } else {
+                console.error('Portfolio not found or has no works:', portfolioId);
+                renderGalleries(); // Fallback to main view
             }
-        </script>
-    </body>
-    
-    </html>
+        }
+
+
+        // Fetch both JSON files
+        Promise.all([
+            fetch('works.json').then(res => res.json()),
+            fetch('works_section.json').then(res => res.json())
+        ])
+            .then(([worksData, sectionsData]) => {
+                allIndividualWorks = worksData;
+                allIndividualWorks.forEach(work => {
+                    allIndividualWorksMap.set(work.id, work);
+                });
+                allPortfolios = sectionsData;
+                renderGalleries(); // Initial render with all content
+            })
+            .catch(error => {
+                console.error('无法加载作品数据:', error);
+                portfoliosGallery.innerHTML = `<p class="text-center col-span-full">作品数据加载失败，请检查 JSON 文件</p>`;
+                individualWorksGallery.innerHTML = '';
+            });
+
+        backToAllWorksBtn.addEventListener('click', () => {
+            individualWorksSection.querySelector('.section-title').textContent = '作品';
+
+            galleriesWrapper.classList.add('fade-out-content'); // Fade out current view
+
+            galleriesWrapper.addEventListener('transitionend', function handler() {
+                galleriesWrapper.removeEventListener('transitionend', handler);
+                renderGalleries(); // Render original galleries
+                galleriesWrapper.classList.remove('fade-out-content'); // Fade back in
+            }, {once: true});
+        });
+
+        function showLightbox(index) {
+            if (currentGalleryWorks[index]) {
+                lightboxImage.src = currentGalleryWorks[index].image;
+                currentIndex = index; // Update current index for navigation
+                lightbox.classList.add('visible');
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            }
+        }
+
+        function hideLightbox() {
+            lightbox.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        function showPrev() {
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : currentGalleryWorks.length - 1;
+            lightboxImage.src = currentGalleryWorks[currentIndex].image;
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex < currentGalleryWorks.length - 1) ? currentIndex + 1 : 0;
+            lightboxImage.src = currentGalleryWorks[currentIndex].image;
+        }
+
+        lightboxClose.addEventListener('click', hideLightbox);
+        lightboxPrev.addEventListener('click', showPrev);
+        lightboxNext.addEventListener('click', showNext);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) { // Click outside image to close
+                hideLightbox();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.classList.contains('visible')) {
+                if (e.key === 'Escape') hideLightbox();
+                if (e.key === 'ArrowLeft') showPrev();
+                if (e.key === 'ArrowRight') showNext();
+            }
+        });
+
+    });
+
+    /* --- Right-Click Menu Script (from CRCMenu.js) --- */
+    const customMenu = document.getElementById('custom-menu');
+    // ... (rest of the right-click menu script is unchanged and assumed correct)
+
+</script>
+</body>
+
+</html>

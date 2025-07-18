@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>项目 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -40,7 +40,7 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
-            --bg-image: url('img/background10-light.jpg');
+            /*--bg-image: url('img/background10.jpg');*/
         }
 
         .dark-mode {
@@ -70,7 +70,6 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
-            --bg-image: url('img/background10-dark.jpg');
         }
 
         html,
@@ -195,7 +194,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            background-image: var(--bg-image);
+            /*background-image: var(--bg-image);*/
             background-position: center;
             background-size: cover;
             transition: background-image 0.3s ease;
@@ -487,312 +486,370 @@
 </head>
 
 <body class="content-container">
-    <div id="page-loader">
-    </div>
+<div id="page-loader">
+</div>
 
-    <div class="mc-bg-container"></div>
-    <div class="blob" style="top: 10%; left: 5%;"></div>
-    <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+<div class="mc-bg-container"></div>
+<div class="blob" style="top: 10%; left: 5%;"></div>
+<div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
 
-    <div class="min-h-screen flex flex-col items-center relative z-10">
-        <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
-            <div class="container mx-auto header-card p-2">
-                <div class="flex items-center">
-                    <img src="img/avatar.jpg" alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover">
-                    <h1 class="text-2xl font-bold">LanRhyme</h1>
-                </div>
-                <nav class="nav">
-                    <div class="tracker" id="tracker"></div>
-                    <a href="/" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-home icon"></i><span>主页</span></span>
-                    </a>
-                    <a href="/projects.html" class="nav-item active"> <span class="nav-item-content"><i
-                                class="fa fa-user icon"></i><span>项目</span></span>
-                    </a>
-                    <a href="/commissions.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa-solid fa-pencil icon"></i><span>约稿</span></span>
-                    </a>
-                    <a href="/tools.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa fa-tools icon"></i><span>工具</span></span>
-                    </a>
-                    <a href="/works.html" class="nav-item">
-                        <span class="nav-item-content"><i class="fa-solid fa-image icon"></i><span>作品</span></span>
-                    </a>
-                </nav>
-                <div id="theme-toggle">
-                    <i class="fa fa-sun text-xl"></i>
-                </div>
-                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
-                    <i class="fa fa-bars"></i>
-                </button>
+<div class="min-h-screen flex flex-col items-center relative z-10">
+    <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
+        <div class="container mx-auto header-card p-2">
+            <div class="flex items-center">
+                <img alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover" src="img/avatar.jpg">
+                <h1 class="text-2xl font-bold">LanRhyme</h1>
             </div>
-        </header>
-
-        <div class="page-content w-full">
-            <main class="w-full">
-                <section id="projects-intro" class="text-center mb-12 anim-fade-in-up">
-                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的项目</h2>
-                    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                        这里是我引以为豪的创造，每一个项目都承载着我的思考、学习和成长的足迹
-                    </p>
-                </section>
-
-                <section id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                </section>
-            </main>
+            <nav class="nav">
+                <div class="tracker" id="tracker"></div>
+                <a class="nav-item" href="/">
+                    <span class="nav-item-content"><i class="fa fa-home icon"></i><span>主页</span></span>
+                </a>
+                <a class="nav-item active" href="/projects.html"> <span class="nav-item-content"><i
+                        class="fa fa-user icon"></i><span>项目</span></span>
+                </a>
+                <a class="nav-item" href="/commissions.html">
+                    <span class="nav-item-content"><i class="fa-solid fa-pencil icon"></i><span>约稿</span></span>
+                </a>
+                <a class="nav-item" href="/tools.html">
+                    <span class="nav-item-content"><i class="fa fa-tools icon"></i><span>工具</span></span>
+                </a>
+                <a class="nav-item" href="/works.html">
+                    <span class="nav-item-content"><i class="fa-solid fa-image icon"></i><span>作品</span></span>
+                </a>
+            </nav>
+            <div id="theme-toggle">
+                <i class="fa fa-sun text-xl"></i>
+            </div>
+            <button class="lg:hidden text-xl p-2 rounded-md mr-2" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
         </div>
+    </header>
 
-        <footer class="w-full text-center py-6 mt-16">
-            <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
-        </footer>
+    <div class="page-content w-full">
+        <main class="w-full">
+            <section class="text-center mb-12 anim-fade-in-up" id="projects-intro">
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的项目</h2>
+                <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    这里是我引以为豪的创造，每一个项目都承载着我的思考、学习和成长的足迹
+                </p>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+            </section>
+        </main>
     </div>
 
-    <div id="custom-menu">
-        <div class="menu-header">常规操作</div>
-        <div class="menu-item" id="back-item" onclick="backAction()">
-            <i class="fa fa-arrow-left"></i>
-            <span>返回</span>
-        </div>
-        <div class="menu-item" id="refresh-item" onclick="refreshAction()">
-            <i class="fa fa-refresh"></i>
-            <span>刷新</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">编辑操作</div>
-        <div class="menu-item" id="copy-item" onclick="copyAction()">
-            <i class="fa fa-copy"></i>
-            <span>复制</span>
-        </div>
-        <div class="menu-item" id="paste-item" onclick="pasteAction()">
-            <i class="fa fa-paste"></i>
-            <span>粘贴</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">链接操作</div>
-        <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
-            <i class="fa fa-external-link"></i>
-            <span>在新标签页打开</span>
-        </div>
-        <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
-            <i class="fa fa-link"></i>
-            <span>复制链接地址</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">其他操作</div>
-        <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
-            <i class="fa fa-home"></i>
-            <span>返回主页</span>
-        </div>
+    <footer class="w-full text-center py-6 mt-16">
+        <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
+    </footer>
+</div>
+
+<div id="custom-menu">
+    <div class="menu-header">常规操作</div>
+    <div class="menu-item" id="back-item" onclick="backAction()">
+        <i class="fa fa-arrow-left"></i>
+        <span>返回</span>
     </div>
+    <div class="menu-item" id="refresh-item" onclick="refreshAction()">
+        <i class="fa fa-refresh"></i>
+        <span>刷新</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">编辑操作</div>
+    <div class="menu-item" id="copy-item" onclick="copyAction()">
+        <i class="fa fa-copy"></i>
+        <span>复制</span>
+    </div>
+    <div class="menu-item" id="paste-item" onclick="pasteAction()">
+        <i class="fa fa-paste"></i>
+        <span>粘贴</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">链接操作</div>
+    <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
+        <i class="fa fa-external-link"></i>
+        <span>在新标签页打开</span>
+    </div>
+    <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
+        <i class="fa fa-link"></i>
+        <span>复制链接地址</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">其他操作</div>
+    <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
+        <i class="fa fa-home"></i>
+        <span>返回主页</span>
+    </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Theme Toggle ---
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const applyTheme = (theme) => {
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('dark-mode');
-                    themeIcon.classList.remove('fa-sun');
-                    themeIcon.classList.add('fa-moon');
-                } else {
-                    document.documentElement.classList.remove('dark-mode');
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                }
-            };
-            applyTheme(savedTheme);
-            themeToggle.addEventListener('click', () => {
-                const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Theme Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        };
+        applyTheme(savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
 
-            // --- Navigation Tracker ---
-            const navItems = document.querySelectorAll('.nav-item');
-            const tracker = document.getElementById('tracker');
-            let currentActiveNavItem = document.querySelector('.nav-item.active');
-            function moveTracker(element) {
-                if (!element || !tracker) return;
-                const isMobile = window.innerWidth <= 992;
-                if (isMobile) {
-                    if (document.querySelector('.header-card.is-open')) {
-                        tracker.style.display = 'block';
-                        tracker.style.top = `${element.offsetTop}px`;
-                        tracker.style.height = `${element.offsetHeight}px`;
-                        tracker.style.left = `0`;
-                        tracker.style.width = `100%`;
-                        tracker.style.transform = `translateY(0)`;
-                    } else {
-                        tracker.style.display = 'none';
-                    }
-                } else {
+        // --- Navigation Tracker ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const tracker = document.getElementById('tracker');
+        let currentActiveNavItem = document.querySelector('.nav-item.active');
+
+        function moveTracker(element) {
+            if (!element || !tracker) return;
+            const isMobile = window.innerWidth <= 992;
+            if (isMobile) {
+                if (document.querySelector('.header-card.is-open')) {
                     tracker.style.display = 'block';
-                    tracker.style.width = `${element.offsetWidth}px`;
-                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
-                    tracker.style.top = `5px`;
-                    tracker.style.height = `40px`;
-                }
-            }
-            setTimeout(() => moveTracker(currentActiveNavItem), 50);
-            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (currentActiveNavItem) currentActiveNavItem.classList.remove('active');
-                    item.classList.add('active');
-                    currentActiveNavItem = item;
-                    moveTracker(item);
-                    setTimeout(() => { window.location.href = item.href; }, 150);
-                });
-            });
-
-            // --- Entrance Animation ---
-            const pageLoader = document.getElementById('page-loader');
-            const bodyElement = document.querySelector('body');
-            window.addEventListener('load', () => {
-                if (pageLoader) {
-                    pageLoader.classList.add('hidden');
-                    setTimeout(() => { pageLoader.style.display = 'none'; }, 300);
-                }
-                if (bodyElement) {
-                    bodyElement.classList.add('content-loaded');
-                }
-            });
-            const animatedElements = document.querySelectorAll('.anim-fade-in-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            animatedElements.forEach(el => observer.observe(el));
-
-            // --- Mobile Menu Toggle (修复) ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const headerCard = document.querySelector('.header-card');
-            const menuIcon = mobileMenuButton.querySelector('i');
-            mobileMenuButton.addEventListener('click', () => {
-                headerCard.classList.toggle('is-open');
-                const isOpen = headerCard.classList.contains('is-open');
-                menuIcon.classList.toggle('fa-bars', !isOpen);
-                menuIcon.classList.toggle('fa-times', isOpen);
-                // 修复点: 切换菜单时，重新计算tracker位置
-                if (isOpen) {
-                    setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 300);
+                    tracker.style.top = `${element.offsetTop}px`;
+                    tracker.style.height = `${element.offsetHeight}px`;
+                    tracker.style.left = `0`;
+                    tracker.style.width = `100%`;
+                    tracker.style.transform = `translateY(0)`;
                 } else {
-                    if (window.innerWidth <= 992) tracker.style.display = 'none';
+                    tracker.style.display = 'none';
+                }
+            } else {
+                tracker.style.display = 'block';
+                tracker.style.width = `${element.offsetWidth}px`;
+                tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                tracker.style.top = `5px`;
+                tracker.style.height = `40px`;
+            }
+        }
+
+        setTimeout(() => moveTracker(currentActiveNavItem), 50);
+        window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentActiveNavItem) currentActiveNavItem.classList.remove('active');
+                item.classList.add('active');
+                currentActiveNavItem = item;
+                moveTracker(item);
+                setTimeout(() => {
+                    window.location.href = item.href;
+                }, 150);
+            });
+        });
+
+        // --- Entrance Animation ---
+        const pageLoader = document.getElementById('page-loader');
+        const bodyElement = document.querySelector('body');
+        window.addEventListener('load', () => {
+            if (pageLoader) {
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+            }
+            if (bodyElement) {
+                bodyElement.classList.add('content-loaded');
+            }
+        });
+        const animatedElements = document.querySelectorAll('.anim-fade-in-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
                 }
             });
+        }, {threshold: 0.1});
+        animatedElements.forEach(el => observer.observe(el));
 
-            // --- 从 JSON 加载项目卡片 ---
-            const projectsGrid = document.getElementById('projects-grid');
-            if (projectsGrid) {
-                fetch('projects.json')
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(projects => {
-                        projects.forEach((project, index) => {
-                            const card = document.createElement('div');
-                            card.className = 'project-card solid-card anim-fade-in-up';
-                            card.style.animationDelay = `${index * 0.1}s`;
-                            const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
-                            let linksHTML = '';
-                            if (project.live_url) linksHTML += `<a href="${project.live_url}" target="_blank" class="mr-4 text-lg" aria-label="Live Demo"><i class="fa fa-external-link"></i></a>`;
-                            if (project.source_url) linksHTML += `<a href="${project.source_url}" target="_blank" class="text-lg" aria-label="Source Code"><i class="fab fa-github"></i></a>`;
-                            card.innerHTML = `<div class="project-image-container"><img src="${project.image}" alt="${project.title}"></div><div class="project-card-content"><div class="flex justify-between items-start mb-2"><h3 class="text-xl font-bold">${project.title}</h3><div class="project-links text-right flex-shrink-0 ml-4">${linksHTML}</div></div><p class="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">${project.description}</p><div class="project-tags">${tagsHTML}</div></div>`;
-                            projectsGrid.appendChild(card);
-                        });
-                        document.querySelectorAll('.project-card.anim-fade-in-up').forEach(el => observer.observe(el));
-                    })
-                    .catch(error => {
-                        console.error('无法加载项目文件:', error);
-                        projectsGrid.innerHTML = `<p class="text-center col-span-full">项目加载失败，请检查 'projects.json' 文件。</p>`;
+        // --- Mobile Menu Toggle (修复) ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const headerCard = document.querySelector('.header-card');
+        const menuIcon = mobileMenuButton.querySelector('i');
+        mobileMenuButton.addEventListener('click', () => {
+            headerCard.classList.toggle('is-open');
+            const isOpen = headerCard.classList.contains('is-open');
+            menuIcon.classList.toggle('fa-bars', !isOpen);
+            menuIcon.classList.toggle('fa-times', isOpen);
+            // 修复点: 切换菜单时，重新计算tracker位置
+            if (isOpen) {
+                setTimeout(() => moveTracker(document.querySelector('.nav-item.active')), 300);
+            } else {
+                if (window.innerWidth <= 992) tracker.style.display = 'none';
+            }
+        });
+
+        // --- 从 JSON 加载项目卡片 ---
+        const projectsGrid = document.getElementById('projects-grid');
+        if (projectsGrid) {
+            fetch('projects.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(projects => {
+                    projects.forEach((project, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'project-card solid-card anim-fade-in-up';
+                        card.style.animationDelay = `${index * 0.1}s`;
+                        const tagsHTML = project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('');
+                        let linksHTML = '';
+                        if (project.live_url) linksHTML += `<a href="${project.live_url}" target="_blank" class="mr-4 text-lg" aria-label="Live Demo"><i class="fa fa-external-link"></i></a>`;
+                        if (project.source_url) linksHTML += `<a href="${project.source_url}" target="_blank" class="text-lg" aria-label="Source Code"><i class="fab fa-github"></i></a>`;
+                        card.innerHTML = `<div class="project-image-container"><img src="${project.image}" alt="${project.title}"></div><div class="project-card-content"><div class="flex justify-between items-start mb-2"><h3 class="text-xl font-bold">${project.title}</h3><div class="project-links text-right flex-shrink-0 ml-4">${linksHTML}</div></div><p class="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">${project.description}</p><div class="project-tags">${tagsHTML}</div></div>`;
+                        projectsGrid.appendChild(card);
                     });
-            }
-        });
+                    document.querySelectorAll('.project-card.anim-fade-in-up').forEach(el => observer.observe(el));
+                })
+                .catch(error => {
+                    console.error('无法加载项目文件:', error);
+                    projectsGrid.innerHTML = `<p class="text-center col-span-full">项目加载失败，请检查 'projects.json' 文件。</p>`;
+                });
+        }
+    });
 
-        /* --- 新增：右键菜单脚本 --- */
-        const customMenu = document.getElementById('custom-menu');
-        const backItem = document.getElementById('back-item');
-        const refreshItem = document.getElementById('refresh-item');
-        const copyItem = document.getElementById('copy-item');
-        const pasteItem = document.getElementById('paste-item');
-        const openInNewTabItem = document.getElementById('open-in-new-tab-item');
-        const copyLinkItem = document.getElementById('copy-link-item');
-        const backToHomeItem = document.getElementById('back-to-home-item');
-        let isMenuVisible = false, currentTarget = null, selectedText = '', isAnimating = false, menuOpenTime = 0, focusedElementBeforeMenu = null;
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-            focusedElementBeforeMenu = document.activeElement;
-            const now = Date.now();
-            const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
-            selectedText = window.getSelection().toString().trim();
-            currentTarget = e.target.closest('a');
-            updateMenuItemsVisibility();
-            const menuWidth = customMenu.offsetWidth, menuHeight = customMenu.offsetHeight, viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
-            let left = e.clientX;
-            if (e.clientX + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 5;
-            let top = e.clientY;
-            if (e.clientY + menuHeight > viewportHeight) top = e.clientY - menuHeight;
-            if (isNewOpen) showMenu(left, top);
-            else moveMenu(left, top);
-            menuOpenTime = now;
+    /* --- 新增：右键菜单脚本 --- */
+    const customMenu = document.getElementById('custom-menu');
+    const backItem = document.getElementById('back-item');
+    const refreshItem = document.getElementById('refresh-item');
+    const copyItem = document.getElementById('copy-item');
+    const pasteItem = document.getElementById('paste-item');
+    const openInNewTabItem = document.getElementById('open-in-new-tab-item');
+    const copyLinkItem = document.getElementById('copy-link-item');
+    const backToHomeItem = document.getElementById('back-to-home-item');
+    let isMenuVisible = false, currentTarget = null, selectedText = '', isAnimating = false, menuOpenTime = 0,
+        focusedElementBeforeMenu = null;
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        focusedElementBeforeMenu = document.activeElement;
+        const now = Date.now();
+        const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
+        selectedText = window.getSelection().toString().trim();
+        currentTarget = e.target.closest('a');
+        updateMenuItemsVisibility();
+        const menuWidth = customMenu.offsetWidth, menuHeight = customMenu.offsetHeight,
+            viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
+        let left = e.clientX;
+        if (e.clientX + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 5;
+        let top = e.clientY;
+        if (e.clientY + menuHeight > viewportHeight) top = e.clientY - menuHeight;
+        if (isNewOpen) showMenu(left, top);
+        else moveMenu(left, top);
+        menuOpenTime = now;
+    });
+
+    function showMenu(left, top) {
+        if (isAnimating) return;
+        isAnimating = true;
+        customMenu.style.left = `${left}px`;
+        customMenu.style.top = `${top}px`;
+        customMenu.style.display = 'block';
+        customMenu.classList.remove('hiding');
+        requestAnimationFrame(() => {
+            customMenu.classList.add('visible');
+            setTimeout(() => {
+                isAnimating = false;
+                isMenuVisible = true;
+            }, 150);
         });
-        function showMenu(left, top) {
-            if (isAnimating) return;
-            isAnimating = true;
-            customMenu.style.left = `${left}px`;
-            customMenu.style.top = `${top}px`;
-            customMenu.style.display = 'block';
-            customMenu.classList.remove('hiding');
-            requestAnimationFrame(() => {
-                customMenu.classList.add('visible');
-                setTimeout(() => { isAnimating = false; isMenuVisible = true; }, 150);
-            });
-        }
-        function moveMenu(left, top) { customMenu.style.left = `${left}px`; customMenu.style.top = `${top}px`; }
-        function hideMenu() {
-            if (!isMenuVisible || isAnimating) return;
-            isAnimating = true;
-            customMenu.classList.remove('visible');
-            customMenu.classList.add('hiding');
-            setTimeout(() => { customMenu.style.display = 'none'; isAnimating = false; isMenuVisible = false; }, 150);
-        }
-        document.addEventListener('click', (e) => { if (isMenuVisible && !customMenu.contains(e.target)) hideMenu(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isMenuVisible) hideMenu(); });
-        window.addEventListener('scroll', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
-        window.addEventListener('resize', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
-        function updateMenuItemsVisibility() {
-            const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
-            copyItem.style.display = selectedText.length > 0 ? 'flex' : 'none';
-            pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
-            openInNewTabItem.style.display = !!currentTarget ? 'flex' : 'none';
-            copyLinkItem.style.display = !!currentTarget ? 'flex' : 'none';
-        }
-        function backAction() { window.history.back(); hideMenu(); }
-        function refreshAction() { window.location.reload(); hideMenu(); }
-        function copyAction() { if (selectedText) navigator.clipboard.writeText(selectedText); hideMenu(); }
-        function openInNewTabAction() { if (currentTarget) window.open(currentTarget.href, '_blank'); hideMenu(); }
-        function copyLinkAction() { if (currentTarget) navigator.clipboard.writeText(currentTarget.href); hideMenu(); }
-        function backToHomeAction() { window.location.href = '/'; hideMenu(); }
-        async function pasteAction() {
-            const targetElement = focusedElementBeforeMenu;
-            if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
-                try {
-                    const text = await navigator.clipboard.readText();
-                    targetElement.focus();
-                    document.execCommand('insertText', false, text);
-                } catch (err) { console.error('Failed to read clipboard contents: ', err); }
+    }
+
+    function moveMenu(left, top) {
+        customMenu.style.left = `${left}px`;
+        customMenu.style.top = `${top}px`;
+    }
+
+    function hideMenu() {
+        if (!isMenuVisible || isAnimating) return;
+        isAnimating = true;
+        customMenu.classList.remove('visible');
+        customMenu.classList.add('hiding');
+        setTimeout(() => {
+            customMenu.style.display = 'none';
+            isAnimating = false;
+            isMenuVisible = false;
+        }, 150);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (isMenuVisible && !customMenu.contains(e.target)) hideMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isMenuVisible) hideMenu();
+    });
+    window.addEventListener('scroll', () => {
+        if (isMenuVisible) hideMenu();
+    }, {passive: true});
+    window.addEventListener('resize', () => {
+        if (isMenuVisible) hideMenu();
+    }, {passive: true});
+
+    function updateMenuItemsVisibility() {
+        const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+        copyItem.style.display = selectedText.length > 0 ? 'flex' : 'none';
+        pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
+        openInNewTabItem.style.display = !!currentTarget ? 'flex' : 'none';
+        copyLinkItem.style.display = !!currentTarget ? 'flex' : 'none';
+    }
+
+    function backAction() {
+        window.history.back();
+        hideMenu();
+    }
+
+    function refreshAction() {
+        window.location.reload();
+        hideMenu();
+    }
+
+    function copyAction() {
+        if (selectedText) navigator.clipboard.writeText(selectedText);
+        hideMenu();
+    }
+
+    function openInNewTabAction() {
+        if (currentTarget) window.open(currentTarget.href, '_blank');
+        hideMenu();
+    }
+
+    function copyLinkAction() {
+        if (currentTarget) navigator.clipboard.writeText(currentTarget.href);
+        hideMenu();
+    }
+
+    function backToHomeAction() {
+        window.location.href = '/';
+        hideMenu();
+    }
+
+    async function pasteAction() {
+        const targetElement = focusedElementBeforeMenu;
+        if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
+            try {
+                const text = await navigator.clipboard.readText();
+                targetElement.focus();
+                document.execCommand('insertText', false, text);
+            } catch (err) {
+                console.error('Failed to read clipboard contents: ', err);
             }
-            hideMenu();
         }
-    </script>
+        hideMenu();
+    }
+</script>
 </body>
 
 </html>

@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>工具 - LanRhyme的个人网站</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -44,7 +44,7 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
-            --bg-image: url('img/background10-light.jpg');
+            /*--bg-image: url('img/background10.jpg');*/
         }
 
         /* --- Dark Theme Variables (Green Palette) --- */
@@ -79,7 +79,6 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
-            --bg-image: url('img/background10-dark.jpg');
         }
 
         /* Essential for sticky footer */
@@ -230,7 +229,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            background-image: var(--bg-image);
+            /*background-image: var(--bg-image);*/
             background-position: center;
             background-size: cover;
             transition: background-image 0.3s ease;
@@ -628,250 +627,250 @@
 </head>
 
 <body class="content-container">
-    <div id="page-loader">
-        <div class="butterfly-loader">
-            <div class="butterfly" style="top: 20%; left: 10%;"></div>
-            <div class="butterfly" style="top: 60%; left: 70%;"></div>
-            <div class="butterfly" style="top: 40%; left: 40%;"></div>
-        </div>
+<div id="page-loader">
+    <div class="butterfly-loader">
+        <div class="butterfly" style="top: 20%; left: 10%;"></div>
+        <div class="butterfly" style="top: 60%; left: 70%;"></div>
+        <div class="butterfly" style="top: 40%; left: 40%;"></div>
     </div>
+</div>
 
-    <div class="mc-bg-container"></div>
-    <div class="blob" style="top: 10%; left: 5%;"></div>
-    <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+<div class="mc-bg-container"></div>
+<div class="blob" style="top: 10%; left: 5%;"></div>
+<div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
 
-    <div class="min-h-screen flex flex-col items-center relative z-10">
-        <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
-            <div class="container mx-auto header-card p-2">
-                <div class="flex items-center">
-                    <img src="img/avatar.jpg" alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover">
-                    <h1 class="text-2xl font-bold">LanRhyme</h1>
-                </div>
-                <nav class="nav">
-                    <div class="tracker" id="tracker"></div>
-                    <a href="/" class="nav-item">
+<div class="min-h-screen flex flex-col items-center relative z-10">
+    <header class="w-full py-4 px-6 flex justify-center items-center sticky top-4 z-20">
+        <div class="container mx-auto header-card p-2">
+            <div class="flex items-center">
+                <img alt="LanRhyme Logo" class="h-10 w-10 rounded-full ml-3 mr-3 object-cover" src="img/avatar.jpg">
+                <h1 class="text-2xl font-bold">LanRhyme</h1>
+            </div>
+            <nav class="nav">
+                <div class="tracker" id="tracker"></div>
+                <a class="nav-item" href="/">
                         <span class="nav-item-content">
                             <i class="fa fa-home icon"></i>
                             <span>主页</span>
                         </span>
-                    </a>
-                    <a href="/projects.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/projects.html">
                         <span class="nav-item-content">
                             <i class="fa fa-user icon"></i>
                             <span>项目</span>
                         </span>
-                    </a>
-                    <a href="/commissions.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/commissions.html">
                         <span class="nav-item-content">
                             <i class="fa-solid fa-pencil icon"></i>
                             <span>约稿</span>
                         </span>
-                    </a>
-                    <a href="/tools.html" class="nav-item active">
+                </a>
+                <a class="nav-item active" href="/tools.html">
                         <span class="nav-item-content">
                             <i class="fa fa-tools icon"></i>
                             <span>工具</span>
                         </span>
-                    </a>
-                    <a href="/works.html" class="nav-item">
+                </a>
+                <a class="nav-item" href="/works.html">
                         <span class="nav-item-content">
                             <i class="fa-solid fa-image icon"></i>
                             <span>作品</span>
                         </span>
-                    </a>
-                </nav>
-                <div id="theme-toggle">
-                    <i class="fa fa-sun text-xl"></i>
-                </div>
-                <button id="mobile-menu-button" class="lg:hidden text-xl p-2 rounded-md mr-2">
-                    <i class="fa fa-bars"></i>
-                </button>
+                </a>
+            </nav>
+            <div id="theme-toggle">
+                <i class="fa fa-sun text-xl"></i>
             </div>
-        </header>
-
-        <div class="page-content">
-            <main class="right-content-area flex flex-col items-center w-full">
-                <section id="tools-section" class="py-16 text-center w-full anim-fade-in-up">
-                    <h2 class="text-5xl font-extrabold mb-8">我的工具箱</h2>
-                    <p class="text-xl leading-relaxed mb-12">这里收集了我开发或日常使用的工具和资源</p>
-
-                    <div id="tools-grid-container" class="tools-grid">
-                    </div>
-                </section>
-            </main>
+            <button class="lg:hidden text-xl p-2 rounded-md mr-2" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
         </div>
+    </header>
 
-        <footer class="w-full text-center py-6 mt-10">
-            <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
-        </footer>
+    <div class="page-content">
+        <main class="right-content-area flex flex-col items-center w-full">
+            <section class="py-16 text-center w-full anim-fade-in-up" id="tools-section">
+                <h2 class="text-5xl font-extrabold mb-8">我的工具箱</h2>
+                <p class="text-xl leading-relaxed mb-12">这里收集了我开发或日常使用的工具和资源</p>
+
+                <div class="tools-grid" id="tools-grid-container">
+                </div>
+            </section>
+        </main>
     </div>
 
-    <div id="custom-menu">
-        <div class="menu-header">常规操作</div>
-        <div class="menu-item" id="back-item" onclick="backAction()">
-            <i class="fa fa-arrow-left"></i>
-            <span>返回</span>
-        </div>
-        <div class="menu-item" id="refresh-item" onclick="refreshAction()">
-            <i class="fa fa-refresh"></i>
-            <span>刷新</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">编辑操作</div>
-        <div class="menu-item" id="copy-item" onclick="copyAction()">
-            <i class="fa fa-copy"></i>
-            <span>复制</span>
-        </div>
-        <div class="menu-item" id="paste-item" onclick="pasteAction()">
-            <i class="fa fa-paste"></i>
-            <span>粘贴</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">链接操作</div>
-        <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
-            <i class="fa fa-external-link"></i>
-            <span>在新标签页打开</span>
-        </div>
-        <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
-            <i class="fa fa-link"></i>
-            <span>复制链接地址</span>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-header">其他操作</div>
-        <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
-            <i class="fa fa-home"></i>
-            <span>返回主页</span>
-        </div>
+    <footer class="w-full text-center py-6 mt-10">
+        <p class="text-sm">© 2025 LanRhyme. All rights reserved. | Built with ❤️ and Code.</p>
+    </footer>
+</div>
+
+<div id="custom-menu">
+    <div class="menu-header">常规操作</div>
+    <div class="menu-item" id="back-item" onclick="backAction()">
+        <i class="fa fa-arrow-left"></i>
+        <span>返回</span>
     </div>
+    <div class="menu-item" id="refresh-item" onclick="refreshAction()">
+        <i class="fa fa-refresh"></i>
+        <span>刷新</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">编辑操作</div>
+    <div class="menu-item" id="copy-item" onclick="copyAction()">
+        <i class="fa fa-copy"></i>
+        <span>复制</span>
+    </div>
+    <div class="menu-item" id="paste-item" onclick="pasteAction()">
+        <i class="fa fa-paste"></i>
+        <span>粘贴</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">链接操作</div>
+    <div class="menu-item" id="open-in-new-tab-item" onclick="openInNewTabAction()">
+        <i class="fa fa-external-link"></i>
+        <span>在新标签页打开</span>
+    </div>
+    <div class="menu-item" id="copy-link-item" onclick="copyLinkAction()">
+        <i class="fa fa-link"></i>
+        <span>复制链接地址</span>
+    </div>
+    <div class="menu-divider"></div>
+    <div class="menu-header">其他操作</div>
+    <div class="menu-item" id="back-to-home-item" onclick="backToHomeAction()">
+        <i class="fa fa-home"></i>
+        <span>返回主页</span>
+    </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Theme Toggle ---
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
-            const savedTheme = localStorage.getItem('theme') || 'light';
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Theme Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('theme') || 'light';
 
-            const applyTheme = (theme) => {
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('dark-mode');
-                    themeIcon.classList.remove('fa-sun');
-                    themeIcon.classList.add('fa-moon');
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        };
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- Navigation Tracker ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const tracker = document.getElementById('tracker');
+
+        let currentActiveNavItem = document.querySelector('.nav-item.active');
+
+        function moveTracker(element) {
+            if (element && tracker) {
+                const isMobile = window.innerWidth <= 992;
+
+                if (isMobile) {
+                    tracker.style.top = `${element.offsetTop}px`;
+                    tracker.style.height = `${element.offsetHeight}px`;
+                    tracker.style.left = `0`;
+                    tracker.style.width = `100%`;
+                    tracker.style.transform = `translateY(0)`;
                 } else {
-                    document.documentElement.classList.remove('dark-mode');
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                }
-            };
-            applyTheme(savedTheme);
-
-            themeToggle.addEventListener('click', () => {
-                const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
-
-            // --- Navigation Tracker ---
-            const navItems = document.querySelectorAll('.nav-item');
-            const tracker = document.getElementById('tracker');
-
-            let currentActiveNavItem = document.querySelector('.nav-item.active');
-
-            function moveTracker(element) {
-                if (element && tracker) {
-                    const isMobile = window.innerWidth <= 992;
-
-                    if (isMobile) {
-                        tracker.style.top = `${element.offsetTop}px`;
-                        tracker.style.height = `${element.offsetHeight}px`;
-                        tracker.style.left = `0`;
-                        tracker.style.width = `100%`;
-                        tracker.style.transform = `translateY(0)`;
-                    } else {
-                        tracker.style.width = `${element.offsetWidth}px`;
-                        tracker.style.transform = `translateX(${element.offsetLeft}px)`;
-                        tracker.style.top = `5px`;
-                        tracker.style.height = `40px`;
-                    }
+                    tracker.style.width = `${element.offsetWidth}px`;
+                    tracker.style.transform = `translateX(${element.offsetLeft}px)`;
+                    tracker.style.top = `5px`;
+                    tracker.style.height = `40px`;
                 }
             }
+        }
 
-            // Initial position of the tracker
-            setTimeout(() => moveTracker(currentActiveNavItem), 50);
-            window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
-
-
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    if (currentActiveNavItem) {
-                        currentActiveNavItem.classList.remove('active');
-                    }
-                    item.classList.add('active');
-                    currentActiveNavItem = item;
-
-                    moveTracker(item);
-
-                    setTimeout(() => {
-                        window.location.href = item.href;
-                    }, 150);
-                });
-            });
+        // Initial position of the tracker
+        setTimeout(() => moveTracker(currentActiveNavItem), 50);
+        window.addEventListener('resize', () => moveTracker(currentActiveNavItem));
 
 
-            // --- Animation on Load ---
-            const animatedElements = document.querySelectorAll('.anim-fade-in-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            animatedElements.forEach(el => observer.observe(el));
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
 
-
-            // --- Entrance Animation Logic ---
-            const pageLoader = document.getElementById('page-loader');
-            const bodyElement = document.querySelector('body');
-
-            window.addEventListener('load', () => {
-                if (pageLoader) {
-                    pageLoader.classList.add('hidden');
-                    setTimeout(() => {
-                        pageLoader.style.display = 'none';
-                    }, 300);
+                if (currentActiveNavItem) {
+                    currentActiveNavItem.classList.remove('active');
                 }
-                if (bodyElement) {
-                    bodyElement.classList.add('content-loaded');
+                item.classList.add('active');
+                currentActiveNavItem = item;
+
+                moveTracker(item);
+
+                setTimeout(() => {
+                    window.location.href = item.href;
+                }, 150);
+            });
+        });
+
+
+        // --- Animation on Load ---
+        const animatedElements = document.querySelectorAll('.anim-fade-in-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
                 }
             });
+        }, {threshold: 0.1});
+        animatedElements.forEach(el => observer.observe(el));
 
-            // --- Tool Cards Rendering ---
-            const toolsGridContainer = document.getElementById('tools-grid-container');
-            if (toolsGridContainer) {
-                fetch('tools.json')
-                    .then(response => response.json())
-                    .then(tools => {
-                        tools.forEach(tool => {
-                            const toolCardAnchor = document.createElement('a');
-                            let finalLink = tool.link;
-                            if (finalLink && !finalLink.startsWith('http://') && !finalLink.startsWith('https://') && !finalLink.startsWith('//')) {
-                                finalLink = `https://${finalLink}`;
-                            }
 
-                            if (finalLink) {
-                                toolCardAnchor.href = finalLink;
-                                toolCardAnchor.target = "_blank";
-                            } else {
-                                toolCardAnchor.href = "javascript:void(0);";
-                            }
+        // --- Entrance Animation Logic ---
+        const pageLoader = document.getElementById('page-loader');
+        const bodyElement = document.querySelector('body');
 
-                            toolCardAnchor.className = "solid-card tool-card hover:scale-105 transition duration-300 anim-fade-in-up";
-                            toolCardAnchor.style.animationDelay = `${0.1 + tools.indexOf(tool) * 0.05}s`; // Stagger animation
+        window.addEventListener('load', () => {
+            if (pageLoader) {
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+            }
+            if (bodyElement) {
+                bodyElement.classList.add('content-loaded');
+            }
+        });
 
-                            toolCardAnchor.innerHTML = `
+        // --- Tool Cards Rendering ---
+        const toolsGridContainer = document.getElementById('tools-grid-container');
+        if (toolsGridContainer) {
+            fetch('tools.json')
+                .then(response => response.json())
+                .then(tools => {
+                    tools.forEach(tool => {
+                        const toolCardAnchor = document.createElement('a');
+                        let finalLink = tool.link;
+                        if (finalLink && !finalLink.startsWith('http://') && !finalLink.startsWith('https://') && !finalLink.startsWith('//')) {
+                            finalLink = `https://${finalLink}`;
+                        }
+
+                        if (finalLink) {
+                            toolCardAnchor.href = finalLink;
+                            toolCardAnchor.target = "_blank";
+                        } else {
+                            toolCardAnchor.href = "javascript:void(0);";
+                        }
+
+                        toolCardAnchor.className = "solid-card tool-card hover:scale-105 transition duration-300 anim-fade-in-up";
+                        toolCardAnchor.style.animationDelay = `${0.1 + tools.indexOf(tool) * 0.05}s`; // Stagger animation
+
+                        toolCardAnchor.innerHTML = `
                                 <i class="${tool.icon} tool-icon"></i>
                                 <h4>${tool.title}</h4>
                                 <p>${tool.description}</p>
@@ -881,170 +880,198 @@
                                 </div>
                             `;
 
-                            toolCardAnchor.addEventListener('click', (e) => {
-                                if (!tool.link || toolCardAnchor.href.includes("javascript:void(0)")) {
-                                    e.preventDefault();
-                                }
-                                toolCardAnchor.classList.add('card-bounce');
-                                setTimeout(() => {
-                                    toolCardAnchor.classList.remove('card-bounce');
-                                }, 300);
-                            });
-                            toolsGridContainer.appendChild(toolCardAnchor);
-                            observer.observe(toolCardAnchor); // Observe new elements
+                        toolCardAnchor.addEventListener('click', (e) => {
+                            if (!tool.link || toolCardAnchor.href.includes("javascript:void(0)")) {
+                                e.preventDefault();
+                            }
+                            toolCardAnchor.classList.add('card-bounce');
+                            setTimeout(() => {
+                                toolCardAnchor.classList.remove('card-bounce');
+                            }, 300);
                         });
-                    })
-                    .catch(error => console.error('Error fetching tools:', error));
-            }
+                        toolsGridContainer.appendChild(toolCardAnchor);
+                        observer.observe(toolCardAnchor); // Observe new elements
+                    });
+                })
+                .catch(error => console.error('Error fetching tools:', error));
+        }
 
 
-            // --- Mobile Menu Toggle ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const headerCard = document.querySelector('.header-card');
-            const nav = document.querySelector('.nav');
-            const menuIcon = mobileMenuButton.querySelector('i');
+        // --- Mobile Menu Toggle ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const headerCard = document.querySelector('.header-card');
+        const nav = document.querySelector('.nav');
+        const menuIcon = mobileMenuButton.querySelector('i');
 
-            mobileMenuButton.addEventListener('click', () => {
-                headerCard.classList.toggle('is-open');
-                const isOpen = headerCard.classList.contains('is-open');
-                menuIcon.classList.toggle('fa-bars', !isOpen);
-                menuIcon.classList.toggle('fa-times', isOpen);
+        mobileMenuButton.addEventListener('click', () => {
+            headerCard.classList.toggle('is-open');
+            const isOpen = headerCard.classList.contains('is-open');
+            menuIcon.classList.toggle('fa-bars', !isOpen);
+            menuIcon.classList.toggle('fa-times', isOpen);
 
-                if (isOpen) {
-                    const activeNavItem = nav.querySelector('.nav-item.active');
-                    if (activeNavItem) {
-                        setTimeout(() => moveTracker(activeNavItem), 300);
-                    }
-                } else {
-                    tracker.style.display = 'none';
+            if (isOpen) {
+                const activeNavItem = nav.querySelector('.nav-item.active');
+                if (activeNavItem) {
+                    setTimeout(() => moveTracker(activeNavItem), 300);
                 }
-            });
-        });
-
-        /* --- Right-Click Menu Script (from CRCMenu.js) --- */
-        const customMenu = document.getElementById('custom-menu');
-        const backItem = document.getElementById('back-item');
-        const refreshItem = document.getElementById('refresh-item');
-        const copyItem = document.getElementById('copy-item');
-        const pasteItem = document.getElementById('paste-item');
-        const openInNewTabItem = document.getElementById('open-in-new-tab-item');
-        const copyLinkItem = document.getElementById('copy-link-item');
-        const backToHomeItem = document.getElementById('back-to-home-item');
-
-        let isMenuVisible = false;
-        let currentTarget = null;
-        let selectedText = '';
-        let isAnimating = false;
-        let menuOpenTime = 0;
-        let focusedElementBeforeMenu = null;
-
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-            focusedElementBeforeMenu = document.activeElement;
-            const now = Date.now();
-            const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
-
-            selectedText = window.getSelection().toString().trim();
-            currentTarget = e.target.closest('a');
-
-            updateMenuItemsVisibility();
-
-            const menuWidth = customMenu.offsetWidth;
-            const menuHeight = customMenu.offsetHeight;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-
-            let left = e.clientX;
-            if (e.clientX + menuWidth > viewportWidth) {
-                left = viewportWidth - menuWidth - 5;
-            }
-
-            let top = e.clientY;
-            if (e.clientY + menuHeight > viewportHeight) {
-                top = e.clientY - menuHeight;
-            }
-
-            if (isNewOpen) {
-                showMenu(left, top);
             } else {
-                moveMenu(left, top);
+                tracker.style.display = 'none';
             }
-            menuOpenTime = now;
         });
+    });
 
-        function showMenu(left, top) {
-            if (isAnimating) return;
-            isAnimating = true;
-            customMenu.style.left = `${left}px`;
-            customMenu.style.top = `${top}px`;
-            customMenu.style.display = 'block';
-            customMenu.classList.remove('hiding');
-            requestAnimationFrame(() => {
-                customMenu.classList.add('visible');
-                setTimeout(() => {
-                    isAnimating = false;
-                    isMenuVisible = true;
-                }, 150);
-            });
+    /* --- Right-Click Menu Script (from CRCMenu.js) --- */
+    const customMenu = document.getElementById('custom-menu');
+    const backItem = document.getElementById('back-item');
+    const refreshItem = document.getElementById('refresh-item');
+    const copyItem = document.getElementById('copy-item');
+    const pasteItem = document.getElementById('paste-item');
+    const openInNewTabItem = document.getElementById('open-in-new-tab-item');
+    const copyLinkItem = document.getElementById('copy-link-item');
+    const backToHomeItem = document.getElementById('back-to-home-item');
+
+    let isMenuVisible = false;
+    let currentTarget = null;
+    let selectedText = '';
+    let isAnimating = false;
+    let menuOpenTime = 0;
+    let focusedElementBeforeMenu = null;
+
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        focusedElementBeforeMenu = document.activeElement;
+        const now = Date.now();
+        const isNewOpen = !isMenuVisible || (now - menuOpenTime > 300);
+
+        selectedText = window.getSelection().toString().trim();
+        currentTarget = e.target.closest('a');
+
+        updateMenuItemsVisibility();
+
+        const menuWidth = customMenu.offsetWidth;
+        const menuHeight = customMenu.offsetHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let left = e.clientX;
+        if (e.clientX + menuWidth > viewportWidth) {
+            left = viewportWidth - menuWidth - 5;
         }
 
-        function moveMenu(left, top) {
-            customMenu.style.left = `${left}px`;
-            customMenu.style.top = `${top}px`;
+        let top = e.clientY;
+        if (e.clientY + menuHeight > viewportHeight) {
+            top = e.clientY - menuHeight;
         }
 
-        function hideMenu() {
-            if (!isMenuVisible || isAnimating) return;
-            isAnimating = true;
-            customMenu.classList.remove('visible');
-            customMenu.classList.add('hiding');
+        if (isNewOpen) {
+            showMenu(left, top);
+        } else {
+            moveMenu(left, top);
+        }
+        menuOpenTime = now;
+    });
+
+    function showMenu(left, top) {
+        if (isAnimating) return;
+        isAnimating = true;
+        customMenu.style.left = `${left}px`;
+        customMenu.style.top = `${top}px`;
+        customMenu.style.display = 'block';
+        customMenu.classList.remove('hiding');
+        requestAnimationFrame(() => {
+            customMenu.classList.add('visible');
             setTimeout(() => {
-                customMenu.style.display = 'none';
                 isAnimating = false;
-                isMenuVisible = false;
+                isMenuVisible = true;
             }, 150);
-        }
-
-        document.addEventListener('click', (e) => {
-            if (isMenuVisible && !customMenu.contains(e.target)) hideMenu();
         });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isMenuVisible) hideMenu();
-        });
-        window.addEventListener('scroll', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
-        window.addEventListener('resize', () => { if (isMenuVisible) hideMenu(); }, { passive: true });
+    }
 
-        function updateMenuItemsVisibility() {
-            const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
-            const hasSelectedText = selectedText.length > 0;
-            const isLink = !!currentTarget;
+    function moveMenu(left, top) {
+        customMenu.style.left = `${left}px`;
+        customMenu.style.top = `${top}px`;
+    }
 
-            copyItem.style.display = hasSelectedText ? 'flex' : 'none';
-            pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
-            openInNewTabItem.style.display = isLink ? 'flex' : 'none';
-            copyLinkItem.style.display = isLink ? 'flex' : 'none';
-        }
+    function hideMenu() {
+        if (!isMenuVisible || isAnimating) return;
+        isAnimating = true;
+        customMenu.classList.remove('visible');
+        customMenu.classList.add('hiding');
+        setTimeout(() => {
+            customMenu.style.display = 'none';
+            isAnimating = false;
+            isMenuVisible = false;
+        }, 150);
+    }
 
-        function backAction() { window.history.back(); hideMenu(); }
-        function refreshAction() { window.location.reload(); hideMenu(); }
-        function copyAction() { if (selectedText) navigator.clipboard.writeText(selectedText); hideMenu(); }
-        function openInNewTabAction() { if (currentTarget) window.open(currentTarget.href, '_blank'); hideMenu(); }
-        function copyLinkAction() { if (currentTarget) navigator.clipboard.writeText(currentTarget.href); hideMenu(); }
-        function backToHomeAction() { window.location.href = '/'; hideMenu(); }
-        async function pasteAction() {
-            const targetElement = focusedElementBeforeMenu;
-            if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
-                try {
-                    const text = await navigator.clipboard.readText();
-                    targetElement.focus();
-                    document.execCommand('insertText', false, text);
-                } catch (err) {
-                    console.error('Failed to read clipboard contents: ', err);
-                }
+    document.addEventListener('click', (e) => {
+        if (isMenuVisible && !customMenu.contains(e.target)) hideMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isMenuVisible) hideMenu();
+    });
+    window.addEventListener('scroll', () => {
+        if (isMenuVisible) hideMenu();
+    }, {passive: true});
+    window.addEventListener('resize', () => {
+        if (isMenuVisible) hideMenu();
+    }, {passive: true});
+
+    function updateMenuItemsVisibility() {
+        const isInputOrTextarea = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+        const hasSelectedText = selectedText.length > 0;
+        const isLink = !!currentTarget;
+
+        copyItem.style.display = hasSelectedText ? 'flex' : 'none';
+        pasteItem.style.display = isInputOrTextarea ? 'flex' : 'none';
+        openInNewTabItem.style.display = isLink ? 'flex' : 'none';
+        copyLinkItem.style.display = isLink ? 'flex' : 'none';
+    }
+
+    function backAction() {
+        window.history.back();
+        hideMenu();
+    }
+
+    function refreshAction() {
+        window.location.reload();
+        hideMenu();
+    }
+
+    function copyAction() {
+        if (selectedText) navigator.clipboard.writeText(selectedText);
+        hideMenu();
+    }
+
+    function openInNewTabAction() {
+        if (currentTarget) window.open(currentTarget.href, '_blank');
+        hideMenu();
+    }
+
+    function copyLinkAction() {
+        if (currentTarget) navigator.clipboard.writeText(currentTarget.href);
+        hideMenu();
+    }
+
+    function backToHomeAction() {
+        window.location.href = '/';
+        hideMenu();
+    }
+
+    async function pasteAction() {
+        const targetElement = focusedElementBeforeMenu;
+        if (targetElement && (targetElement.tagName === 'INPUT' || targetElement.tagName === 'TEXTAREA' || targetElement.isContentEditable)) {
+            try {
+                const text = await navigator.clipboard.readText();
+                targetElement.focus();
+                document.execCommand('insertText', false, text);
+            } catch (err) {
+                console.error('Failed to read clipboard contents: ', err);
             }
-            hideMenu();
         }
-    </script>
+        hideMenu();
+    }
+</script>
 </body>
 
 </html>
