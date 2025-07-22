@@ -40,6 +40,7 @@
             --menu-item-hover-bg: #f3f4f6;
             --menu-divider: #e5e7eb;
             --menu-header-text: #9ca3af;
+            --cursor-glow-color: rgba(40, 167, 69, 0.3); /* Light theme glow color */
         }
 
         .dark-mode {
@@ -69,6 +70,7 @@
             --menu-item-hover-bg: #4a5568;
             --menu-divider: #4a5568;
             --menu-header-text: #a0aec0;
+            --cursor-glow-color: rgba(61, 220, 132, 0.2); /* Dark theme glow color */
         }
 
         html,
@@ -84,6 +86,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            cursor: none; /* 确保全局隐藏默认鼠标指针 */
         }
 
         .solid-card {
@@ -260,6 +263,41 @@
         #page-loader.hidden {
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* --- Custom Cursor --- */
+        #custom-cursor {
+            position: fixed;
+            width: 12px;
+            /* Initial size of the dot */
+            height: 12px;
+            background-color: var(--amethyst-color);
+            /* Use your theme color */
+            border-radius: 50%;
+            pointer-events: none;
+            /* Allows clicks to pass through */
+            transform: translate(-50%, -50%);
+            /* Center the cursor */
+            /* Adjust transition for glow effect */
+            transition: width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+            z-index: 99999;
+            /* Ensure it's on top */
+            box-shadow: 0 0 5px var(--cursor-glow-color), 0 0 10px var(--cursor-glow-color), 0 0 15px var(--cursor-glow-color); /* Initial glow */
+        }
+
+        #custom-cursor.grow {
+            width: 16px;
+            /* Slightly smaller desired size when active */
+            height: 16px;
+            background-color: var(--amethyst-color-hover);
+            /* Optional: change color on hover */
+            /* Enhanced glow when active */
+            box-shadow: 0 0 8px var(--cursor-glow-color), 0 0 16px var(--cursor-glow-color), 0 0 24px var(--cursor-glow-color), 0 0 32px var(--cursor-glow-color);
+        }
+
+        /* Ensure native cursor is hidden over interactable elements */
+        a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"] {
+            cursor: none !important;
         }
 
         .content-container {
@@ -681,6 +719,8 @@
 <div id="page-loader">
 </div>
 
+<div id="custom-cursor"></div>
+
 <div class="mc-bg-container"></div>
 <div class="blob" style="top: 10%; left: 5%;"></div>
 <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
@@ -1081,6 +1121,48 @@
             }
         });
 
+        // --- Custom Cursor ---
+        const customCursor = document.getElementById('custom-cursor');
+
+        // Function to move the custom cursor
+        document.addEventListener('mousemove', (e) => {
+            if (customCursor) {
+                customCursor.style.left = `${e.clientX}px`;
+                customCursor.style.top = `${e.clientY}px`;
+            }
+        });
+
+        // Function to handle cursor growth on interactable elements
+        // 您可以根据需要调整或添加更多选择器，以包含所有希望光标放大的可交互元素
+        const interactableElements = 'a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"]';
+
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest(interactableElements)) {
+                customCursor?.classList.add('grow');
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            // 确保我们只在真正离开可交互元素时移除 'grow' 类
+            if (e.target.closest(interactableElements)) {
+                if (!e.relatedTarget || !e.relatedTarget.closest(interactableElements)) {
+                    customCursor?.classList.remove('grow');
+                }
+            }
+        });
+
+        // Ensure cursor is hidden if it leaves the window
+        document.addEventListener('mouseleave', () => {
+            if (customCursor) {
+                customCursor.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('mouseenter', () => {
+            if (customCursor) {
+                customCursor.style.display = 'block';
+            }
+        });
     });
 
     /* --- Right-Click Menu Script (from CRCMenu.js) --- */
