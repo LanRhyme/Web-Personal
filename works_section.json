@@ -1,0 +1,23 @@
+[
+  {
+    "id": "practice",
+    "title": "一些练习/无偿",
+    "description": "提升",
+    "thumbnail": "works/插画15.png",
+    "work_ids": [
+      "work-3",
+      "work-4",
+      "work-2",
+      "work-5"
+    ]
+  },
+  {
+    "id": "111",
+    "title": "稿件",
+    "description": "稿件都放这里",
+    "thumbnail": "works/work-1.png",
+    "work_ids": [
+      "work-1"
+    ]
+  }
+]
