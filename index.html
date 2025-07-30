@@ -99,7 +99,7 @@
             /* Stack children vertically */
             min-height: 100vh;
             /* Ensure body takes at least full viewport height */
-            cursor: none; /* 确保全局隐藏默认鼠标指针 */
+            /* cursor: none;  移除自定义鼠标指针隐藏 */
         }
 
         .solid-card {
@@ -482,39 +482,29 @@
         }
 
         /* --- Custom Cursor --- */
-        #custom-cursor {
+        /* #custom-cursor {
             position: fixed;
             width: 12px;
-            /* Initial size of the dot */
             height: 12px;
             background-color: var(--amethyst-color);
-            /* Use your theme color */
             border-radius: 50%;
             pointer-events: none;
-            /* Allows clicks to pass through */
             transform: translate(-50%, -50%);
-            /* Center the cursor */
-            /* Adjust transition for glow effect */
             transition: width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
             z-index: 99999;
-            /* Ensure it's on top */
-            box-shadow: 0 0 5px var(--cursor-glow-color), 0 0 10px var(--cursor-glow-color), 0 0 15px var(--cursor-glow-color); /* Initial glow */
+            box-shadow: 0 0 5px var(--cursor-glow-color), 0 0 10px var(--cursor-glow-color), 0 0 15px var(--cursor-glow-color);
         }
-
         #custom-cursor.grow {
             width: 16px;
-            /* Slightly smaller desired size when active */
             height: 16px;
             background-color: var(--amethyst-color-hover);
-            /* Optional: change color on hover */
-            /* Enhanced glow when active */
             box-shadow: 0 0 8px var(--cursor-glow-color), 0 0 16px var(--cursor-glow-color), 0 0 24px var(--cursor-glow-color), 0 0 32px var(--cursor-glow-color);
-        }
+        } */
 
         /* Ensure native cursor is hidden over interactable elements */
-        a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"] {
+        /* a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"] {
             cursor: none !important;
-        }
+        } */
 
 
         /* --- Mobile Navigation Styles --- */
@@ -1226,3 +1216,4 @@
 </body>
 
 </html>
+

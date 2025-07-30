@@ -86,7 +86,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            cursor: none; /* 确保全局隐藏默认鼠标指针 */
+            /* cursor: none; 移除自定义鼠标指针隐藏 */
         }
 
         .solid-card {
@@ -266,39 +266,29 @@
         }
 
         /* --- Custom Cursor --- */
-        #custom-cursor {
+        /* #custom-cursor {
             position: fixed;
             width: 12px;
-            /* Initial size of the dot */
             height: 12px;
             background-color: var(--amethyst-color);
-            /* Use your theme color */
             border-radius: 50%;
             pointer-events: none;
-            /* Allows clicks to pass through */
             transform: translate(-50%, -50%);
-            /* Center the cursor */
-            /* Adjust transition for glow effect */
             transition: width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
             z-index: 99999;
-            /* Ensure it's on top */
-            box-shadow: 0 0 5px var(--cursor-glow-color), 0 0 10px var(--cursor-glow-color), 0 0 15px var(--cursor-glow-color); /* Initial glow */
+            box-shadow: 0 0 5px var(--cursor-glow-color), 0 0 10px var(--cursor-glow-color), 0 0 15px var(--cursor-glow-color);
         }
-
         #custom-cursor.grow {
             width: 16px;
-            /* Slightly smaller desired size when active */
             height: 16px;
             background-color: var(--amethyst-color-hover);
-            /* Optional: change color on hover */
-            /* Enhanced glow when active */
             box-shadow: 0 0 8px var(--cursor-glow-color), 0 0 16px var(--cursor-glow-color), 0 0 24px var(--cursor-glow-color), 0 0 32px var(--cursor-glow-color);
-        }
+        } */
 
         /* Ensure native cursor is hidden over interactable elements */
-        a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"] {
+        /* a, button, .nav-item, #theme-toggle, .menu-item, .amethyst-dark-button, .solid-card, [onclick], [role="button"], input[type="button"], input[type="submit"] {
             cursor: none !important;
-        }
+        } */
 
         .content-container {
             opacity: 0;
@@ -716,6 +706,38 @@
 </head>
 
 <body class="content-container">
+<script>
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        // 创建或获取警告弹窗
+        let warn = document.getElementById('right-click-warn');
+        if (!warn) {
+            warn = document.createElement('div');
+            warn.id = 'right-click-warn';
+            warn.style.position = 'fixed';
+            warn.style.top = '-60px';
+            warn.style.left = '50%';
+            warn.style.transform = 'translateX(-50%)';
+            warn.style.background = 'rgba(255,0,0,0.2)';
+            warn.style.color = '#fff';
+            warn.style.fontSize = '1.1rem';
+            warn.style.fontWeight = 'bold';
+            warn.style.padding = '5px 32px';
+            warn.style.borderRadius = '9999px';
+            warn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+            warn.style.zIndex = '99999';
+            warn.style.transition = 'top 0.4s cubic-bezier(0.65,0,0.35,0.1)';
+            warn.style.backdropFilter = 'blur(8px)';
+            warn.style.webkitBackdropFilter = 'blur(8px)';
+            warn.innerHTML = '<i class="fa fa-exclamation-triangle" style="margin-right:10px;font-size:1.3em;"></i>此页面不允许右键行为';
+            document.body.appendChild(warn);
+        }
+        warn.style.top = '110px';
+        setTimeout(() => {
+            warn.style.top = '-60px';
+        }, 1800);
+    });
+</script>
 <div id="page-loader">
 </div>
 
@@ -763,7 +785,7 @@
         <section class="text-center mb-12 anim-fade-in-up" id="works-intro">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4">我的作品</h2>
             <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                光与影的交织，色彩与情感的碰撞，这里是我想象力的乐园
+                光与影的交织��色彩与情感的碰撞，这里是我想象力的乐园
             </p>
         </section>
 
@@ -1173,3 +1195,4 @@
 </body>
 
 </html>
+
