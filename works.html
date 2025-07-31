@@ -411,11 +411,19 @@
             }
         }
 
+        @media (max-width: 640px) {
+            /* 手机端瀑布流两列，不均匀分布 */
+            .gallery-grid {
+                column-count: 2;
+                /* 不要 display: block;，保持 column-count 生效 */
+            }
+        }
+
         @media (max-width: 500px) {
 
-            /* Keep 1 column for very small screens */
+            /* Keep 2 columns for very small screens */
             .gallery-grid {
-                column-count: 1;
+                column-count: 2;
             }
         }
 
@@ -715,14 +723,14 @@
             warn = document.createElement('div');
             warn.id = 'right-click-warn';
             warn.style.position = 'fixed';
-            warn.style.top = '-60px';
+            warn.style.top = '-65px';
             warn.style.left = '50%';
             warn.style.transform = 'translateX(-50%)';
-            warn.style.background = 'rgba(255,0,0,0.2)';
+            warn.style.background = 'rgba(255,0,0,0.25)';
             warn.style.color = '#fff';
             warn.style.fontSize = '1.1rem';
             warn.style.fontWeight = 'bold';
-            warn.style.padding = '5px 32px';
+            warn.style.padding = '5px 50px';
             warn.style.borderRadius = '9999px';
             warn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
             warn.style.zIndex = '99999';
@@ -734,7 +742,7 @@
         }
         warn.style.top = '110px';
         setTimeout(() => {
-            warn.style.top = '-60px';
+            warn.style.top = '-65px';
         }, 1800);
     });
 </script>
@@ -944,7 +952,7 @@
             }
         });
 
-        // --- 画廊和灯箱脚本 ---
+        // --- 画廊和灯箱脚��� ---
         const portfoliosGallery = document.getElementById('portfolios-gallery');
         const individualWorksGallery = document.getElementById('individual-works-gallery');
         const lightbox = document.getElementById('lightbox');
