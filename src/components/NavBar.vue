@@ -107,16 +107,16 @@ watch(
             <span>约稿</span>
           </span>
         </router-link>
-        <router-link to="/tools" class="nav-item" active-class="active">
-          <span class="nav-item-content">
-            <i class="fa fa-tools icon"></i>
-            <span>工具</span>
-          </span>
-        </router-link>
         <router-link to="/works" class="nav-item" active-class="active">
           <span class="nav-item-content">
             <i class="fa-solid fa-image icon"></i>
             <span>作品</span>
+          </span>
+        </router-link>
+        <router-link to="/github" class="nav-item" active-class="active">
+          <span class="nav-item-content">
+            <i class="fab fa-github icon"></i>
+            <span>GitHub</span>
           </span>
         </router-link>
       </nav>

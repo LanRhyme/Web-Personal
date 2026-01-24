@@ -1,57 +1,68 @@
 <template>
-  <div class="page-content flex flex-col lg:flex-row items-center lg:items-start justify-center flex-wrap lg:flex-nowrap gap-8">
-    <!-- Left Sidebar -->
-    <div class="left-sidebar w-full lg:w-[350px] flex-shrink-0 flex flex-col gap-8">
+  <div class="page-content flex flex-col items-center w-full max-w-[1200px] mx-auto gap-8">
+    
+    <!-- Top Platforms & Invitations (Merged Row) -->
+    <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Commission Platforms -->
-      <section class="commission-section anim-fade-in-up" style="animation-delay: 0.1s;">
-        <h2 class="text-3xl font-bold mb-4 text-center">约稿平台</h2>
-        <div class="platform-grid grid grid-cols-2 gap-4">
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform" href="https://b23.tv/YLg5WYo" target="_blank">
-            <i class="fab fa-bilibili text-4xl mb-1 text-amethyst"></i>
-            <h4 class="text-lg font-semibold">Bilibili 工坊</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
+      <section class="commission-section anim-fade-in-up flex-1" style="animation-delay: 0.1s;">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-store text-amethyst"></i> 约稿平台
+        </h2>
+        <div class="platform-grid grid grid-cols-2 gap-4 h-full">
+          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://b23.tv/YLg5WYo" target="_blank">
+            <i class="fab fa-bilibili text-3xl mb-1 text-amethyst"></i>
+            <h4 class="text-base font-semibold">Bilibili 工坊</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400">点击跳转</p>
           </a>
-          <div class="platform-card solid-card disabled p-4 flex flex-col items-center justify-center gap-2 text-center opacity-60 cursor-not-allowed">
-            <i class="fa-solid fa-palette text-4xl mb-1 text-amethyst"></i>
-            <h4 class="text-lg font-semibold">画加</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">暂未入驻</p>
+          <div class="platform-card solid-card disabled p-4 flex flex-col items-center justify-center gap-2 text-center opacity-60 cursor-not-allowed h-32">
+            <i class="fa-solid fa-palette text-3xl mb-1 text-amethyst"></i>
+            <h4 class="text-base font-semibold">画加</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400">暂未入驻</p>
           </div>
         </div>
       </section>
 
       <!-- Invitations -->
-      <section class="commission-section anim-fade-in-up" style="animation-delay: 0.2s;">
-        <h2 class="text-3xl font-bold mb-4 text-center">向我发起邀请</h2>
-        <div class="platform-grid grid grid-cols-2 gap-4">
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform" href="https://b23.tv/YLg5WYo" target="_blank">
-            <i class="fab fa-bilibili text-4xl mb-1 text-amethyst"></i>
-            <h4 class="text-lg font-semibold">B站私信</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">点击跳转</p>
+      <section class="commission-section anim-fade-in-up flex-1" style="animation-delay: 0.2s;">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-envelope-open-text text-amethyst"></i> 向我发起邀请
+        </h2>
+        <div class="platform-grid grid grid-cols-2 gap-4 h-full">
+          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://b23.tv/YLg5WYo" target="_blank">
+            <i class="fab fa-bilibili text-3xl mb-1 text-amethyst"></i>
+            <h4 class="text-base font-semibold">B站私信</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400">点击跳转</p>
           </a>
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform" href="https://qm.qq.com/q/5jATjlQd4A" target="_blank">
-            <i class="fab fa-qq text-4xl mb-1 text-amethyst"></i>
-            <h4 class="text-lg font-semibold">QQ群</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">687671385</p>
+          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://qm.qq.com/q/5jATjlQd4A" target="_blank">
+            <i class="fab fa-qq text-3xl mb-1 text-amethyst"></i>
+            <h4 class="text-base font-semibold">QQ群</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400">687671385</p>
           </a>
         </div>
       </section>
 
       <!-- Payment -->
-      <section class="commission-section anim-fade-in-up" style="animation-delay: 0.3s;">
-        <h2 class="text-3xl font-bold mb-4 text-center">支付</h2>
-        <div class="flex justify-center">
-          <button @click="showPaymentModal = true" class="amethyst-dark-button py-3 px-8 rounded-full text-lg transition-transform hover:scale-105">
-            点击显示收款码
+      <section class="commission-section anim-fade-in-up flex-1 flex flex-col" style="animation-delay: 0.3s;">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-wallet text-amethyst"></i> 支付
+        </h2>
+        <div class="flex-grow flex items-center justify-center solid-card rounded-2xl p-6 border border-card-border h-32">
+          <button @click="showPaymentModal = true" class="amethyst-dark-button py-2 px-6 rounded-full text-base transition-transform hover:scale-105 flex items-center gap-2">
+            <i class="fas fa-qrcode"></i> 点击显示收款码
           </button>
         </div>
       </section>
     </div>
 
-    <!-- Main Content -->
-    <main class="right-content-area flex-grow min-w-0 flex flex-col items-center w-full">
+    <!-- Main Content: Pricing List -->
+    <main class="right-content-area w-full flex flex-col items-center">
       <section class="commission-section w-full anim-fade-in-up" style="animation-delay: 0.4s;">
-        <h2 class="text-4xl font-bold mb-6 text-center">报价单</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <h2 class="text-4xl font-bold mb-8 text-center flex items-center justify-center gap-3">
+          <span class="w-12 h-1 bg-amethyst rounded-full"></span>
+          报价单
+          <span class="w-12 h-1 bg-amethyst rounded-full"></span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 max-w-5xl mx-auto">
           <div v-for="(item, index) in priceList" :key="index" class="solid-card price-list-item flex flex-col items-center text-center p-6 rounded-2xl border border-card-border shadow-card hover:shadow-lg transition-shadow">
             
             <!-- Image Gallery -->

@@ -3,11 +3,14 @@ import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import MeCard from './components/MeCard.vue';
 import ParticlesBackground from './components/ParticlesBackground.vue';
-import { onMounted, onUnmounted, ref, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, onUnmounted, ref, nextTick, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const isLoaded = ref(false);
 const router = useRouter();
+const route = useRoute();
+
+const isHome = computed(() => route.path === '/');
 
 let observer: IntersectionObserver;
 let mutationObserver: MutationObserver;
@@ -89,7 +92,7 @@ onUnmounted(() => {
       <NavBar />
 
       <div class="page-content w-full flex justify-center items-start p-8 box-border max-w-[1200px] mx-auto flex-wrap gap-8">
-        <MeCard />
+        <MeCard v-if="isHome" />
         <main class="right-content-area flex-grow max-w-[700px]">
           <router-view v-slot="{ Component }">
             <transition name="fade" mode="out-in">
