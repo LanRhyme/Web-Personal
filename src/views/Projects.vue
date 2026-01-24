@@ -25,7 +25,7 @@ const getImageUrl = (path: string) => {
       <div 
         v-for="(project, index) in projects" 
         :key="index"
-        class="solid-card overflow-hidden hover:scale-[1.02] transform transition-all duration-300 flex flex-col h-full"
+        class="solid-card group overflow-hidden hover:scale-[1.02] transform transition-all duration-300 flex flex-col h-full"
       >
         <div class="h-48 overflow-hidden relative group">
           <img 
@@ -58,14 +58,17 @@ const getImageUrl = (path: string) => {
         </div>
         
         <div class="p-5 flex flex-col flex-grow">
-          <h3 class="text-xl font-bold mb-2">{{ project.title }}</h3>
+          <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+            {{ project.title }}
+            <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-amethyst"></i>
+          </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">{{ project.description }}</p>
           
           <div class="flex flex-wrap gap-2 mt-auto">
             <span 
               v-for="(tag, tIndex) in project.tags" 
               :key="tIndex"
-              class="px-2 py-1 text-xs rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+              class="px-2 py-1 text-xs rounded-md bg-[var(--highlight-bg)] text-amethyst"
             >
               {{ tag }}
             </span>

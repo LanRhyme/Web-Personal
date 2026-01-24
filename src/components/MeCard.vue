@@ -77,7 +77,7 @@ onUnmounted(() => {
       <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth</p>
       <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span>{{ githubInfo }}</span></p>
       <p 
-        class="font-bold mt-4 cursor-pointer p-2 rounded-md transition text-center hover:bg-gray-100 dark:hover:bg-gray-700" 
+        class="font-bold mt-4 cursor-pointer p-2 transition text-center" 
         @click="fetchHitokoto"
       >
         {{ yiyan }}

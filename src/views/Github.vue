@@ -231,7 +231,7 @@ onMounted(() => {
                   <svg class="w-4 h-4 mr-2 text-[#2d4a2b] dark:text-[#a4ac86]" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/></svg>
                   {{ repo.name }}
                 </h4>
-                <span class="text-xs bg-gray-100/80 dark:bg-white/5 px-2 py-1 rounded text-[#2d4a2b] dark:text-[#a4ac86] font-medium whitespace-nowrap border border-gray-200/50 dark:border-white/5">
+                <span class="text-xs bg-highlight-bg px-2 py-1 rounded text-amethyst font-medium whitespace-nowrap">
                   {{ repo.language || 'Code' }}
                 </span>
               </div>
@@ -272,7 +272,7 @@ onMounted(() => {
                class="block p-5 rounded-xl bg-white/70 dark:bg-[#1a1a1a]/80 backdrop-blur-md border border-gray-200/60 dark:border-gray-800/60 hover:bg-white/90 dark:hover:bg-[#252525]/90 hover:shadow-lg hover:border-[#2d4a2b]/30 dark:hover:border-[#a4ac86]/30 transition-all duration-300 transform hover:-translate-y-1 group">
               <div class="flex justify-between items-start mb-3">
                 <h4 class="font-bold text-lg break-words pr-2 text-gray-900 dark:text-gray-100 group-hover:text-[#2d4a2b] dark:group-hover:text-[#a4ac86] transition-colors">{{ repo.name }}</h4>
-                <span class="text-xs bg-gray-100/80 dark:bg-white/5 px-2 py-1 rounded text-[#2d4a2b] dark:text-[#a4ac86] font-medium whitespace-nowrap border border-gray-200/50 dark:border-white/5">
+                <span class="text-xs bg-[var(--highlight-bg)] px-2 py-1 rounded text-amethyst font-medium whitespace-nowrap">
                   {{ repo.language || 'Code' }}
                 </span>
               </div>

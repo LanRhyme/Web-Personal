@@ -10,6 +10,7 @@ export default {
       colors: {
         'amethyst': 'var(--amethyst-color)',
         'amethyst-hover': 'var(--amethyst-color-hover)',
+        'highlight-bg': 'var(--highlight-bg)',
         'bg-primary': 'var(--bg-primary)',
         'text-primary': 'var(--text-primary)',
         'card-bg': 'var(--card-bg)',
