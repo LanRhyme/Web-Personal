@@ -11,6 +11,7 @@ const router = useRouter();
 const route = useRoute();
 
 const isHome = computed(() => route.path === '/');
+const isAdmin = computed(() => route.path === '/admin');
 
 let observer: IntersectionObserver;
 let mutationObserver: MutationObserver;
@@ -89,9 +90,17 @@ onUnmounted(() => {
 
     <!-- Main Content -->
     <div class="min-h-screen flex flex-col items-center relative z-10 w-full">
-      <NavBar />
+      <NavBar v-if="!isAdmin" />
 
-      <div class="page-content w-full flex justify-center items-start p-8 box-border max-w-[1200px] mx-auto flex-wrap gap-8">
+      <template v-if="isAdmin">
+         <router-view v-slot="{ Component }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
+      </template>
+
+      <div v-else class="page-content w-full flex justify-center items-start p-8 box-border max-w-[1200px] mx-auto flex-wrap gap-8">
         <MeCard v-if="isHome" />
         <main class="right-content-area flex-grow max-w-[700px]">
           <router-view v-slot="{ Component }">
@@ -102,7 +111,7 @@ onUnmounted(() => {
         </main>
       </div>
 
-      <Footer />
+      <Footer v-if="!isAdmin" />
     </div>
   </div>
 </template>

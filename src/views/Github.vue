@@ -123,6 +123,9 @@ const fetchPinnedRepos = async () => {
     const combinedRepos = [...validManualRepos, ...orgResults];
     const uniqueRepos = Array.from(new Map(combinedRepos.map(repo => [repo.id, repo])).values());
     
+    // Sort by stars descending
+    uniqueRepos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+
     pinnedRepos.value = uniqueRepos;
     setCachedData(cacheKey, uniqueRepos);
   } catch (e) {

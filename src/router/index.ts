@@ -4,6 +4,7 @@ import Projects from '../views/Projects.vue';
 import Works from '../views/Works.vue';
 import Commissions from '../views/Commissions.vue';
 import Github from '../views/Github.vue';
+import Admin from '../views/Admin.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -11,6 +12,7 @@ const routes = [
   { path: '/works', component: Works },
   { path: '/commissions', component: Commissions },
   { path: '/github', component: Github },
+  { path: '/admin', component: Admin },
 ];
 
 const router = createRouter({

@@ -73,7 +73,7 @@ onUnmounted(() => {
     </div>
     <div class="me-info text-left text-sm space-y-2">
       <p><strong><i class="fa fa-clock fa-fw mr-2"></i>时间:</strong> <span>{{ currentTime }}</span></p>
-      <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a href="mailto:i@lanrhyme.com">lanrhyme@outlook.com</a></p>
+      <p><strong><i class="fa fa-envelope fa-fw mr-2"></i>邮箱:</strong> <a href="mailto:i@lanrhyme.com">xiao_ren233@foxmail.com</a></p>
       <p><strong><i class="fa fa-map-marker-alt fa-fw mr-2"></i>坐标:</strong> Earth</p>
       <p><strong><i class="fab fa-github fa-fw mr-2"></i>GitHub:</strong> <span>{{ githubInfo }}</span></p>
       <p 
@@ -86,7 +86,6 @@ onUnmounted(() => {
     <div class="me-social-links mt-4 text-center">
       <a aria-label="GitHub" href="https://github.com/LanRhyme" target="_blank"><i class="fab fa-github"></i></a>
       <a aria-label="Bilibili" href="https://space.bilibili.com/496901387" target="_blank"><i class="fab fa-bilibili"></i></a>
-      <a aria-label="LinkedIn" href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
     </div>
   </aside>
 </template>
