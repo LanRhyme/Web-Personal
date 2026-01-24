@@ -1,0 +1,27 @@
+{
+  "priceList": [
+    {
+      "title": "半身",
+      "images": [
+        "works/插画19.png",
+        "works/插画15.png",
+        "works/插画16.png",
+        "works/插画12-1.png",
+        "works/work-1.png"
+      ],
+      "price": "¥ 28 +- 10",
+      "description": "根据设定复杂程度浮动",
+      "requirements": "头发设不大画得好，例图配色得舒服一点"
+    },
+    {
+      "title": "盲盒",
+      "images": [
+        "works/插画21.png",
+        "works/插画20.png"
+      ],
+      "price": "¥ 5,15,25,35,50,75",
+      "description": "有可能会是任何类型",
+      "requirements": "价位决定质量，可能会有惊喜，看我手感吧"
+    }
+  ]
+}

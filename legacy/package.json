@@ -1,0 +1,21 @@
+{
+  "name": "web-personal",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "live-server --port=6060 --open=index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LanRhyme/Web-Personal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LanRhyme/Web-Personal/issues"
+  },
+  "homepage": "https://github.com/LanRhyme/Web-Personal#readme",
+  "description": ""
+}

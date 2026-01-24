@@ -1,21 +1,27 @@
 {
-  "name": "web-personal",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "temp-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "live-server --port=6060 --open=index.html"
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LanRhyme/Web-Personal.git"
+  "dependencies": {
+    "vue": "^3.5.24",
+    "vue-router": "^4.6.4"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/LanRhyme/Web-Personal/issues"
-  },
-  "homepage": "https://github.com/LanRhyme/Web-Personal#readme",
-  "description": ""
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vue-tsc": "^3.1.4"
+  }
 }
