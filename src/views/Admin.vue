@@ -16,9 +16,9 @@ const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin888';
 // GitHub Config
 const showSettings = ref(false);
 const githubConfig = ref({
-  token: '',
-  owner: '',
-  repo: '',
+  token: import.meta.env.VITE_GITHUB_TOKEN || '',
+  owner: import.meta.env.VITE_GITHUB_OWNER || '',
+  repo: import.meta.env.VITE_GITHUB_REPO || '',
   branch: 'main'
 });
 const isGithubConfigured = computed(() => !!githubConfig.value.token && !!githubConfig.value.owner && !!githubConfig.value.repo);
@@ -286,6 +286,10 @@ const resolveImg = (path: string) => {
                 <button @click="showSettings = false" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa fa-times"></i></button>
                 <h3 class="text-xl font-bold mb-6">Cloud Configuration</h3>
                 <div class="space-y-4">
+                    <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-200 mb-4">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        For live websites (Netlify), use this GitHub configuration to manage content. The local upload server is disabled in production.
+                    </div>
                     <div class="input-group">
                         <label>GitHub Personal Access Token</label>
                         <input v-model="githubConfig.token" type="password" class="modern-input" placeholder="ghp_..." />
