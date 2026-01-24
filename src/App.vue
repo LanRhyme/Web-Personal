@@ -2,6 +2,7 @@
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import MeCard from './components/MeCard.vue';
+import ParticlesBackground from './components/ParticlesBackground.vue';
 import { onMounted, onUnmounted, ref, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -81,6 +82,7 @@ onUnmounted(() => {
     <div class="mc-bg-container"></div>
     <div class="blob" style="top: 10%; left: 5%;"></div>
     <div class="blob" style="top: 70%; right: 10%; transform: scale(0.8);"></div>
+    <ParticlesBackground />
 
     <!-- Main Content -->
     <div class="min-h-screen flex flex-col items-center relative z-10 w-full">

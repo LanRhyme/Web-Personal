@@ -57,8 +57,8 @@
             <!-- Image Gallery -->
             <div class="commission-image-gallery w-full max-w-[300px] mb-4">
               <img 
-                :src="getImageUrl(item.currentImage || item.images[0])" 
-                @click="openImageModal(getImageUrl(item.currentImage || item.images[0]))"
+                :src="getImageUrl(item.currentImage || item.images[0] || '')" 
+                @click="openImageModal(getImageUrl(item.currentImage || item.images[0] || ''))"
                 class="commission-main-image w-full h-[250px] object-cover rounded-lg border border-card-border mb-3 cursor-pointer transition-opacity duration-300"
                 alt="Commission Example"
               >

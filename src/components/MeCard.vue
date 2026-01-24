@@ -61,7 +61,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <aside class="me-card solid-card anim-fade-in-up">
+  <aside class="me-card solid-card anim-fade-in-up w-full lg:w-[320px] flex-shrink-0">
     <div class="me-image">
       <img alt="LanRhyme Avatar" src="/img/avatar.jpg">
     </div>
@@ -91,5 +91,60 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Inherits global styles from style.css, specific tweaks here */
+.me-card {
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.me-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 4px;
+  background-color: var(--amethyst-color);
+  border-radius: 2px;
+}
+
+.me-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  border: 3px solid var(--amethyst-color);
+  overflow: hidden;
+}
+
+.me-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.me-info a {
+  color: var(--footer-link);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.me-info a:hover {
+  text-decoration: underline;
+}
+
+.me-social-links a {
+  display: inline-block;
+  margin: 0 10px;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.me-social-links a:hover {
+  color: var(--amethyst-color);
+  transform: scale(1.2);
+}
 </style>

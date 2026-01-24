@@ -171,7 +171,8 @@ const lightbox = reactive({
 
 const openLightbox = (index: number) => {
   lightbox.index = index;
-  lightbox.image = getImageUrl(displayedWorks.value[index].image);
+  const work = displayedWorks.value[index];
+  lightbox.image = work ? getImageUrl(work.image) : '';
   lightbox.visible = true;
   document.body.style.overflow = 'hidden';
 };
@@ -184,13 +185,15 @@ const closeLightbox = () => {
 const prevImage = () => {
   const works = displayedWorks.value;
   lightbox.index = (lightbox.index > 0) ? lightbox.index - 1 : works.length - 1;
-  lightbox.image = getImageUrl(works[lightbox.index].image);
+  const work = works[lightbox.index];
+  lightbox.image = work ? getImageUrl(work.image) : '';
 };
 
 const nextImage = () => {
   const works = displayedWorks.value;
   lightbox.index = (lightbox.index < works.length - 1) ? lightbox.index + 1 : 0;
-  lightbox.image = getImageUrl(works[lightbox.index].image);
+  const work = works[lightbox.index];
+  lightbox.image = work ? getImageUrl(work.image) : '';
 };
 
 // Keyboard navigation for lightbox
