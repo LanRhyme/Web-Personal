@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 const currentTime = ref('加载中...');
 const githubInfo = ref('加载中...');
-const yiyan = ref('“点击获取每日一言”');
+const yiyan = ref('正在获取每日一言...');
 
 let timer: number;
 
@@ -53,6 +53,7 @@ onMounted(() => {
   updateTime();
   timer = setInterval(updateTime, 1000);
   fetchGithubInfo();
+  fetchHitokoto();
 });
 
 onUnmounted(() => {
@@ -146,5 +147,14 @@ onUnmounted(() => {
 .me-social-links a:hover {
   color: var(--amethyst-color);
   transform: scale(1.2);
+}
+
+@media (max-width: 992px) {
+  .me-card {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 0 20px 0;
+    display: block !important;
+  }
 }
 </style>

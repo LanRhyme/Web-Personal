@@ -71,10 +71,10 @@ const particlesOptions = computed(() => ({
   },
   particles: {
     color: {
-      value: isDark.value ? "#ffffff" : "#28a745",
+      value: isDark.value ? "#a4ac86" : "#2d4a2b",
     },
     links: {
-      color: isDark.value ? "#ffffff" : "#28a745",
+      color: isDark.value ? "#a4ac86" : "#2d4a2b",
       distance: 150,
       enable: false,
       opacity: 0.4,

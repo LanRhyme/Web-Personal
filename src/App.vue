@@ -140,10 +140,13 @@ onUnmounted(() => {
   .page-content {
     flex-direction: column;
     align-items: center;
+    padding: 1rem;
+    gap: 1.5rem;
   }
   .right-content-area {
     width: 100%;
-    padding: 1rem;
+    max-width: 100%;
+    padding: 0;
   }
 }
 </style>

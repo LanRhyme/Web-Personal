@@ -1,69 +1,69 @@
 @import "tailwindcss";
 
-/* --- Light Theme Variables (Green Palette) --- */
+/* --- Light Theme Variables (Forest Canopy Palette) --- */
 :root {
-  --bg-primary: #ffffff;
-  --text-primary: #212529;
+  --bg-primary: #faf9f6;
+  --text-primary: #2d4a2b;
   --card-bg: #ffffff;
   --card-border: #e9ecef;
   --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   /* Navigation Bar Specific */
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(0, 0, 0, 0.05);
-  --nav-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --nav-item-text: #495057;
+  --nav-bg: rgba(250, 249, 246, 0.85);
+  --nav-border: rgba(45, 74, 43, 0.05);
+  --nav-shadow: 0 8px 32px 0 rgba(45, 74, 43, 0.1);
+  --nav-item-text: #7d8471;
   --nav-item-active-text: #ffffff;
   /* --- */
-  --amethyst-color: #28a745;
-  --amethyst-color-hover: #218838;
-  --highlight-bg: rgba(40, 167, 69, 0.15);
-  --blob-gradient-start: rgba(40, 167, 69, 0.2);
-  --blob-gradient-end: rgba(33, 136, 56, 0.2);
-  --footer-bg: #ffffff;
-  --footer-text: #6c757d;
+  --amethyst-color: #2d4a2b;
+  --amethyst-color-hover: #1e331d;
+  --highlight-bg: rgba(45, 74, 43, 0.15);
+  --blob-gradient-start: rgba(45, 74, 43, 0.2);
+  --blob-gradient-end: rgba(125, 132, 113, 0.2);
+  --footer-bg: #faf9f6;
+  --footer-text: #7d8471;
   --footer-link: var(--amethyst-color);
-  --theme-toggle-icon-color: #495057;
-  --menu-bg: rgba(255, 255, 255, 0.85);
-  --menu-border: rgba(0, 0, 0, 0.1);
-  --menu-item-text: #374151;
-  --menu-item-icon: #6b7280;
+  --theme-toggle-icon-color: #2d4a2b;
+  --menu-bg: rgba(250, 249, 246, 0.85);
+  --menu-border: rgba(45, 74, 43, 0.1);
+  --menu-item-text: #2d4a2b;
+  --menu-item-icon: #7d8471;
   --menu-item-hover-bg: #f3f4f6;
   --menu-divider: #e5e7eb;
-  --menu-header-text: #9ca3af;
-  --cursor-glow-color: rgba(40, 167, 69, 0.3);
+  --menu-header-text: #7d8471;
+  --cursor-glow-color: rgba(45, 74, 43, 0.3);
 }
 
-/* --- Dark Theme Variables (Green Palette) --- */
+/* --- Dark Theme Variables (Forest Canopy Palette) --- */
 .dark, .dark-mode {
   --bg-primary: #121212;
-  --text-primary: #e9ecef;
+  --text-primary: #faf9f6;
   --card-bg: #1e1e1e;
   --card-border: #343a40;
   --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   /* Navigation Bar Specific */
   --nav-bg: rgba(20, 20, 20, 0.7);
-  --nav-border: rgba(255, 255, 255, 0.1);
+  --nav-border: rgba(164, 172, 134, 0.1);
   --nav-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  --nav-item-text: #adb5bd;
+  --nav-item-text: #a4ac86;
   --nav-item-active-text: #121212;
   /* --- */
-  --amethyst-color: #3ddc84;
-  --amethyst-color-hover: #35c474;
-  --highlight-bg: rgba(61, 220, 132, 0.15);
-  --blob-gradient-start: rgba(61, 220, 132, 0.1);
-  --blob-gradient-end: rgba(53, 196, 116, 0.1);
+  --amethyst-color: #a4ac86;
+  --amethyst-color-hover: #7d8471;
+  --highlight-bg: rgba(164, 172, 134, 0.15);
+  --blob-gradient-start: rgba(45, 74, 43, 0.1);
+  --blob-gradient-end: rgba(164, 172, 134, 0.1);
   --footer-bg: #1e1e1e;
-  --footer-text: #adb5bd;
+  --footer-text: #a4ac86;
   --footer-link: var(--amethyst-color);
-  --theme-toggle-icon-color: #adb5bd;
+  --theme-toggle-icon-color: #a4ac86;
   --menu-bg: rgba(25, 26, 25, 0.85);
-  --menu-border: rgba(255, 255, 255, 0.15);
-  --menu-item-text: #e2e8f0;
-  --menu-item-icon: #a0aec0;
+  --menu-border: rgba(164, 172, 134, 0.15);
+  --menu-item-text: #faf9f6;
+  --menu-item-icon: #a4ac86;
   --menu-item-hover-bg: #4a5568;
   --menu-divider: #4a5568;
-  --menu-header-text: #a0aec0;
-  --cursor-glow-color: rgba(61, 220, 132, 0.2);
+  --menu-header-text: #7d8471;
+  --cursor-glow-color: rgba(164, 172, 134, 0.2);
 }
 
 html, body {
