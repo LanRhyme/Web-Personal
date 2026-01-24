@@ -1,4 +1,5 @@
 [
+<<<<<<< HEAD
     {
         "title": "长期接稿",
         "description": "欢迎来主动邀请",
@@ -9,4 +10,16 @@
         "description": "最近开发的项目(点击进入)",
         "link": "mclog.xiaohe520.top"
     }
+=======
+  {
+    "title": "ShardLauncher",
+    "description": "一款安卓Minecraft Java版启动器",
+    "link": "shardlauncher.cn"
+  },
+  {
+    "title": "Minecraft日志分析器",
+    "description": "最近开发的项目(点击进入)",
+    "link": "mclog.xiaohe520.top"
+  }
+>>>>>>> c2eb2e8c48d6ffe228f240827d1b8850f79461f6
 ]
