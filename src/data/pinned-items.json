@@ -1,17 +1,12 @@
 [
-    {
-        "title": "长期接稿",
-        "description": "欢迎来主动邀请",
-        "link": ""
-    },
-    {
-        "title": "ShardLauncher",
-        "description": "一款安卓Minecraft Java版启动器",
-        "link": "shardlauncher.cn"
-    },
-    {
-        "title": "Minecraft日志分析器",
-        "description": "最近开发的项目(点击进入)",
-        "link": "mclog.xiaohe520.top"
-    }
+  {
+    "title": "ShardLauncher",
+    "description": "一款安卓Minecraft Java版启动器",
+    "link": "shardlauncher.cn"
+  },
+  {
+    "title": "Minecraft日志分析器",
+    "description": "支持多款启动器日志分析",
+    "link": "lanrhymelog.netlify.app"
+  }
 ]
