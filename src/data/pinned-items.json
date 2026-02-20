@@ -8,5 +8,15 @@
     "title": "Minecraft日志分析器",
     "description": "支持多款启动器日志分析",
     "link": "lanrhymelog.netlify.app"
+  },
+  {
+    "title": "MicYou",
+    "description": "多平台麦克风串流工具",
+    "link": "micyou.netlify.app"
+  },
+  {
+    "title": "裂月编年：破碎之光",
+    "description": "我的oc世界观",
+    "link": "age-of-shattered-light.netlify.app"
   }
 ]
