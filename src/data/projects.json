@@ -1,41 +1,51 @@
 [
-    {
-        "image": "img-projects/minecraftlog.png",
-        "title": "Minecraft-iOS日志分析器",
-        "description": "基于Web的Minecraft日志分析工具，提供日志上传、基础信息提取、错误统计和AI智能分析功能",
-        "tags": [
-            "HTML5/CSS3",
-            "Tailwind CSS",
-            "JavaScript",
-            "Node.js"
-        ],
-        "live_url": "https://mclog.xiaohe520.top/",
-        "source_url": "https://github.com/LanRhyme/Web-MinecraftLogAnalyzer"
-    },
-    {
-        "image": "img-projects/geminichat.png",
-        "title": "GeminiChatPlugin",
-        "description": "GeminiChatPlugin 是一个基于 Paper 1.21 的 Minecraft 服务器插件，允许玩家通过聊天与 Gemini AI 进行交互。插件支持预设配置，玩家可以切换不同的预设以改变 AI 的行为",
-        "tags": [
-            "Minecraft",
-            "服务器",
-            "插件",
-            "paper"
-        ],
-        "live_url": "",
-        "source_url": "https://github.com/LanRhyme/GeminiChatPlugin"
-    },
-    {
-        "image": "img-projects/viod.png",
-        "title": "VoidFallProtectionPlugin",
-        "description": "VoidFallProtection 是一个用于 Minecraft 服务器的插件，旨在保护玩家免受虚空掉落造成的伤害",
-        "tags": [
-            "Minecraft",
-            "服务器",
-            "插件",
-            "paper"
-        ],
-        "live_url": "",
-        "source_url": "https://github.com/LanRhyme/VoidFallProtectionPlugin"
-    }
+  {
+    "image": "img-projects/minecraftlog.png",
+    "title": "Minecraft-iOS日志分析器",
+    "description": "基于Web的Minecraft日志分析工具，提供日志上传、基础信息提取、错误统计和AI智能分析功能",
+    "tags": [
+      "HTML5/CSS3",
+      "Tailwind CSS",
+      "JavaScript",
+      "Node.js"
+    ],
+    "live_url": "https://mclog.xiaohe520.top/",
+    "source_url": "https://github.com/LanRhyme/Web-MinecraftLogAnalyzer"
+  },
+  {
+    "image": "img-projects/geminichat.png",
+    "title": "GeminiChatPlugin",
+    "description": "GeminiChatPlugin 是一个基于 Paper 1.21 的 Minecraft 服务器插件，允许玩家通过聊天与 Gemini AI 进行交互。插件支持预设配置，玩家可以切换不同的预设以改变 AI 的行为",
+    "tags": [
+      "Minecraft",
+      "服务器",
+      "插件",
+      "paper"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/GeminiChatPlugin"
+  },
+  {
+    "image": "img-projects/viod.png",
+    "title": "VoidFallProtectionPlugin",
+    "description": "VoidFallProtection 是一个用于 Minecraft 服务器的插件，旨在保护玩家免受虚空掉落造成的伤害",
+    "tags": [
+      "Minecraft",
+      "服务器",
+      "插件",
+      "paper"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/VoidFallProtectionPlugin"
+  },
+  {
+    "image": "/img-projects/1771607060528-PixPin_2026-02-21_01-04-00.png",
+    "title": "MicYou",
+    "description": "一款多平台的麦克风串流软件",
+    "tags": [
+      "KMP，Kotlin，Compose，工具"
+    ],
+    "live_url": "",
+    "source_url": "https://micyou.netlify.app/"
+  }
 ]
