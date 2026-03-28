@@ -11,7 +11,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
  */
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-let animRef = 0;
+let animRef: number | null = null;
 const isVisible = ref(false);
 
 // Simple pseudo-noise generator
@@ -24,7 +24,7 @@ function makeNoise2D() {
   }
   for (let i = 0; i < 256; i++) perm[i + 256] = perm[i];
 
-  const grad = [
+  const grad: number[][] = [
     [1, 1], [-1, 1], [1, -1], [-1, -1],
     [1, 0], [-1, 0], [0, 1], [0, -1],
   ];
@@ -54,7 +54,7 @@ function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
 
-const colors = [
+const colors: string[] = [
   '#35bfa0', '#1fc9a8', '#a8e6cf',
   '#88d8b0', '#6bc5a0', '#c8f0e0'
 ];
@@ -64,7 +64,9 @@ onMounted(() => {
 
   const canvas = canvasRef.value;
   if (!canvas) return;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  
   let width = canvas.clientWidth;
   let height = canvas.clientHeight;
 
@@ -87,7 +89,7 @@ onMounted(() => {
   // Occupancy grid
   const gridCell = 80;
   let gridCols = 0, gridRows = 0;
-  let grid: Float32Array;
+  let grid: Float32Array = new Float32Array(0);
 
   function allocateGrid() {
     gridCols = Math.max(1, Math.ceil(width / gridCell));
@@ -239,11 +241,20 @@ onMounted(() => {
     }
   }
 
+  // Check if dark mode is active
+  function isDarkMode() {
+    return document.documentElement.classList.contains('dark');
+  }
+
   function draw() {
+    const darkMode = isDarkMode();
+    // Reduce opacity in dark mode for subtler effect
+    const baseAlpha = darkMode ? 0.35 : 0.7;
+
     for (const b of bubbles) {
       ctx.save();
       ctx.filter = `blur(${b.blur}px)`;
-      ctx.globalAlpha = 0.7;
+      ctx.globalAlpha = baseAlpha;
       ctx.beginPath();
       ctx.fillStyle = b.color;
       ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
@@ -307,7 +318,7 @@ onMounted(() => {
   }
 
   onUnmounted(() => {
-    cancelAnimationFrame(animRef);
+    if (animRef) cancelAnimationFrame(animRef);
     ro.disconnect();
     if (resizeTimer !== null) window.clearTimeout(resizeTimer);
   });

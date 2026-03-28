@@ -67,6 +67,20 @@ const getImageUrl = (path: string) => {
         </div>
 
         <QuoteCard class="order-5 lg:order-none" />
+
+        <!-- Game Card -->
+        <router-link to="/games" class="card !p-3 md:!p-4 group cursor-pointer block order-6 lg:order-none hover:border-[#35bfa0]/30 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#35bfa0]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-gamepad text-[#35bfa0] text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-xs font-bold text-[var(--color-primary)] truncate">小游戏</h3>
+                    <p class="text-[10px] text-[var(--color-secondary)] opacity-70 truncate">放松一下</p>
+                </div>
+                <i class="fa fa-chevron-right text-[10px] text-[#35bfa0] opacity-0 group-hover:opacity-100 transition-all"></i>
+            </div>
+        </router-link>
       </div>
 
       <!-- Center Column (Identity & Main Focus) (6/12) -->

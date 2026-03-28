@@ -40,13 +40,13 @@ html.dark {
   --color-card-solid: #0b0f0e;
   --color-text-dim: #7da592;
 
-  /* Premium Dark Bubbles — deep teals and muted indigos */
-  --bubble-color-1: #0a1f1a;
-  --bubble-color-2: #050b10;
-  --bubble-color-3: #122b26;
-  --bubble-color-4: #03080c;
-  --bubble-color-5: #0e1a18;
-  --bubble-color-6: #06100d;
+  /* Premium Dark Bubbles — softer muted teals with lower opacity feel */
+  --bubble-color-1: #0d2a22;
+  --bubble-color-2: #081a15;
+  --bubble-color-3: #0f2f28;
+  --bubble-color-4: #051210;
+  --bubble-color-5: #0a1f1a;
+  --bubble-color-6: #071814;
 }
 
 /* --- Base Resets --- */
