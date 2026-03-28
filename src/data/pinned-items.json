@@ -1,5 +1,10 @@
 [
   {
+    "title": "MicYou",
+    "description": "多平台麦克风串流工具",
+    "link": "micyou.netlify.app"
+  },
+  {
     "title": "ShardLauncher",
     "description": "一款安卓Minecraft Java版启动器",
     "link": "shardlauncher.cn"
@@ -8,11 +13,6 @@
     "title": "Minecraft日志分析器",
     "description": "支持多款启动器日志分析",
     "link": "lanrhymelog.netlify.app"
-  },
-  {
-    "title": "MicYou",
-    "description": "多平台麦克风串流工具",
-    "link": "micyou.netlify.app"
   },
   {
     "title": "裂月编年：破碎之光",
