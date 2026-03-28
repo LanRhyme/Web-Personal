@@ -75,7 +75,7 @@
 
     <!-- Pricing List -->
     <section class="w-full anim-fade-in-up" style="animation-delay: 0.2s;">
-      <h3 class="section-heading justify-center mb-8 text-2xl">报价单</h3>
+      <h3 class="section-heading justify-center mb-8 text-2xl">橱窗</h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto stagger-children">
         <div

@@ -76,25 +76,28 @@ onUnmounted(() => {
     <div class="relative z-10 min-h-screen flex flex-col w-full">
       <NavBar v-if="!isAdmin" />
 
-      <template v-if="isAdmin">
+      <!-- Admin View (Standalone) -->
+      <div v-if="isAdmin" class="flex-grow flex flex-col w-full h-full">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
-      </template>
+      </div>
 
+      <!-- Main Site View -->
       <div 
+        v-else
         class="flex-grow w-full max-w-[1400px] mx-auto px-4 md:px-8 pb-12"
         :class="isHome ? 'pt-30' : 'pt-36'"
       >
         <div class="flex flex-col lg:flex-row items-start gap-8 lg:gap-10 relative">
-          <MeCard v-if="!isHome && !isAdmin" class="w-full lg:w-[320px] lg:sticky lg:top-28 shrink-0 z-20" />
+          <MeCard v-if="!isHome" class="w-full lg:w-[320px] lg:sticky lg:top-28 shrink-0 z-20" />
           <main class="flex-grow w-full z-10" :class="{ 'w-full': isHome, 'max-w-4xl': !isHome }">
-            <router-view v-slot="{ Component }">
-              <transition name="page-slide" mode="out-in">
-                <keep-alive>
-                    <component :is="Component" />
+            <router-view v-slot="{ Component, route }">
+              <transition name="page-slide" mode="out-in" appear>
+                <keep-alive :max="10">
+                    <component :is="Component" :key="route.name || route.path" />
                 </keep-alive>
               </transition>
             </router-view>
@@ -108,20 +111,27 @@ onUnmounted(() => {
 </template>
 
 <style>
+/* --- Layout Transitions --- */
+.layout-transition {
+  transition: padding 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+}
+
 /* --- Premium Page Transitions --- */
 .page-slide-enter-active,
 .page-slide-leave-active {
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.7s cubic-bezier(0.2, 1, 0.2, 1);
 }
 
 .page-slide-enter-from {
   opacity: 0;
-  transform: translateY(20px) scale(0.98);
+  transform: translateY(30px) scale(0.96);
+  filter: blur(8px);
 }
 
 .page-slide-leave-to {
   opacity: 0;
-  transform: translateY(-20px) scale(1.02);
+  transform: translateY(-30px) scale(1.04);
+  filter: blur(8px);
 }
 
 .fade-enter-active, .fade-leave-active {

@@ -52,7 +52,7 @@ const getImageUrl = (path: string) => {
                 Explore<br><span class="text-brand-gradient">With Me</span>
             </h2>
             <p class="text-[11px] text-[var(--color-secondary)] leading-relaxed mb-6 opacity-80">
-                在这里发现我的代码工程与绘画艺术的交汇点。
+                在这里发现我的绘画创意
             </p>
             <div class="flex flex-col gap-3">
                 <router-link to="/works" class="btn-brand justify-center py-3 text-xs">全部作品</router-link>
