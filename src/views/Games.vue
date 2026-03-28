@@ -51,7 +51,7 @@ const POINTS_PER_MODE: Record<Mode, number> = { simple: 10, challenge: 20, hell:
 
 const MODE_LABELS: Record<Mode, string> = { simple: '简单', challenge: '挑战', hell: '地狱', final: '终极挑战' };
 
-const MODE_COLORS: Record<Mode, string> = { simple: '#35bfa0', challenge: '#f59e0b', hell: '#ef4444', final: '#8b5cf6' };
+const MODE_COLORS: Record<Mode, string> = { simple: '#84C93C', challenge: '#f59e0b', hell: '#ef4444', final: '#8b5cf6' };
 
 const TRANSITION_MSG: Record<string, { title: string; sub: string }> = {
   challenge: { title: '升级！', sub: '进入挑战模式 — 网格线已移除！' },
@@ -207,8 +207,8 @@ const getGrade = computed(() => {
   const acc = accuracy.value;
   if (acc >= 100) return { grade: 'S+', color: '#FFD700', message: '完美！全部正确！' };
   if (acc >= 90) return { grade: 'S', color: '#FFD700', message: '太棒了！你的表现非常出色！' };
-  if (acc >= 80) return { grade: 'A', color: '#35bfa0', message: '很好！继续保持这个水平！' };
-  if (acc >= 60) return { grade: 'B', color: '#35bfa0', message: '不错的表现，还有提升空间！' };
+  if (acc >= 80) return { grade: 'A', color: '#84C93C', message: '很好！继续保持这个水平！' };
+  if (acc >= 60) return { grade: 'B', color: '#84C93C', message: '不错的表现，还有提升空间！' };
   if (acc >= 40) return { grade: 'C', color: '#f59e0b', message: '继续加油，多练习会更好！' };
   return { grade: 'D', color: '#ef4444', message: '别灰心，再试一次吧！' };
 });
@@ -916,9 +916,9 @@ onUnmounted(() => {
           <div class="card p-6">
             <h4 class="font-bold text-[var(--color-primary)] mb-4">题型说明</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[var(--color-secondary)]">
-              <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#35bfa0]/10 flex items-center justify-center shrink-0">
-                  <i class="fa fa-crosshairs text-[#35bfa0]"></i>
+              <div class="flex items-start gap-3'>
+                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                  <i class="fa fa-crosshairs text-[#84C93C]"></i>
                 </div>
                 <div>
                   <p class="font-semibold text-[var(--color-primary)]">坐标识别</p>
@@ -926,8 +926,8 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#35bfa0]/10 flex items-center justify-center shrink-0">
-                  <i class="fa fa-sync text-[#35bfa0]"></i>
+                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                  <i class="fa fa-crosshairs text-[#84C93C]"></i>
                 </div>
                 <div>
                   <p class="font-semibold text-[var(--color-primary)]">对称变换</p>
@@ -935,8 +935,8 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#35bfa0]/10 flex items-center justify-center shrink-0">
-                  <i class="fa fa-arrows-alt text-[#35bfa0]"></i>
+                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                  <i class="fa fa-arrows-alt text-[#84C93C]"></i>
                 </div>
                 <div>
                   <p class="font-semibold text-[var(--color-primary)]">平移变换</p>
@@ -944,8 +944,8 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#35bfa0]/10 flex items-center justify-center shrink-0">
-                  <i class="fa fa-shapes text-[#35bfa0]"></i>
+                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                  <i class="fa fa-shapes text-[#84C93C]"></i>
                 </div>
                 <div>
                   <p class="font-semibold text-[var(--color-primary)]">面积计算</p>

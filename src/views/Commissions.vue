@@ -6,7 +6,7 @@
       <!-- Commission Platforms -->
       <section class="anim-fade-in-up" style="animation-delay: 0.05s;">
         <h2 class="section-heading mb-4 text-lg">
-          <i class="fas fa-store text-[#35bfa0]"></i>
+          <i class="fas fa-store text-[#84C93C]"></i>
           约稿平台
         </h2>
         <div class="grid grid-cols-2 gap-3">
@@ -15,12 +15,12 @@
             href="https://b23.tv/YLg5WYo"
             target="_blank"
           >
-            <i class="fab fa-bilibili text-2xl text-[#35bfa0]"></i>
+            <i class="fab fa-bilibili text-2xl text-[#84C93C]"></i>
             <h4 class="text-sm font-semibold text-[var(--color-primary)]">Bilibili 工坊</h4>
             <p class="text-xs text-[var(--color-secondary)]">点击跳转</p>
           </a>
           <div class="card-flat !p-4 flex flex-col items-center justify-center gap-2 text-center opacity-50 cursor-not-allowed h-28">
-            <i class="fa-solid fa-palette text-2xl text-[#35bfa0]"></i>
+            <i class="fa-solid fa-palette text-2xl text-[#84C93C]"></i>
             <h4 class="text-sm font-semibold text-[var(--color-primary)]">画加</h4>
             <p class="text-xs text-[var(--color-secondary)]">暂未入驻</p>
           </div>
@@ -30,7 +30,7 @@
       <!-- Invitations -->
       <section class="anim-fade-in-up" style="animation-delay: 0.1s;">
         <h2 class="section-heading mb-4 text-lg">
-          <i class="fas fa-envelope-open-text text-[#35bfa0]"></i>
+          <i class="fas fa-envelope-open-text text-[#84C93C]"></i>
           向我发起邀请
         </h2>
         <div class="grid grid-cols-2 gap-3">
@@ -39,7 +39,7 @@
             href="https://b23.tv/YLg5WYo"
             target="_blank"
           >
-            <i class="fab fa-bilibili text-2xl text-[#35bfa0]"></i>
+            <i class="fab fa-bilibili text-2xl text-[#84C93C]"></i>
             <h4 class="text-sm font-semibold text-[var(--color-primary)]">B站私信</h4>
             <p class="text-xs text-[var(--color-secondary)]">点击跳转</p>
           </a>
@@ -48,7 +48,7 @@
             href="https://qm.qq.com/q/5jATjlQd4A"
             target="_blank"
           >
-            <i class="fab fa-qq text-2xl text-[#35bfa0]"></i>
+            <i class="fab fa-qq text-2xl text-[#84C93C]"></i>
             <h4 class="text-sm font-semibold text-[var(--color-primary)]">QQ群</h4>
             <p class="text-xs text-[var(--color-secondary)]">687671385</p>
           </a>
@@ -58,7 +58,7 @@
       <!-- Payment -->
       <section class="anim-fade-in-up flex flex-col" style="animation-delay: 0.15s;">
         <h2 class="section-heading mb-4 text-lg">
-          <i class="fas fa-wallet text-[#35bfa0]"></i>
+          <i class="fas fa-wallet text-[#84C93C]"></i>
           支付
         </h2>
         <div class="card-flat flex-grow flex items-center justify-center">
@@ -111,7 +111,7 @@
                 class="w-11 h-11 object-cover rounded-lg cursor-pointer transition-all duration-200 border-2"
                 :class="[
                   (item.currentImage === img || (!item.currentImage && imgIndex === 0))
-                    ? 'border-[#35bfa0] opacity-100 scale-105'
+                    ? 'border-[#84C93C] opacity-100 scale-105'
                     : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'
                 ]"
                 alt="Thumbnail"
@@ -161,7 +161,7 @@
         @click.self="closeImageModal"
       >
         <div class="relative max-w-[90%] max-h-[90%]">
-          <button @click="closeImageModal" class="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-lg text-[#2d4a3e] hover:bg-[#35bfa0] hover:text-white transition-colors z-10">
+          <button @click="closeImageModal" class="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-lg text-[#2d4a3e] hover:bg-[#84C93C] hover:text-white transition-colors z-10">
             <i class="fas fa-times text-sm"></i>
           </button>
           <img :src="modalImageUrl" class="block max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl" alt="Enlarged">

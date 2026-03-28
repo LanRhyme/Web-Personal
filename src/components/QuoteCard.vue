@@ -43,17 +43,17 @@ onMounted(() => {
   >
     <!-- Refresh indicator -->
     <div 
-      class="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#35bfa0]/10 flex items-center justify-center transition-all duration-300"
+      class="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#84C93C]/10 flex items-center justify-center transition-all duration-300"
       :class="isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100'"
     >
       <i 
-        class="fa fa-refresh text-[#35bfa0] text-[10px] transition-transform duration-500"
+        class="fa fa-refresh text-[#84C93C] text-[10px] transition-transform duration-500"
         :class="isAnimating ? 'animate-spin' : ''"
       ></i>
     </div>
 
     <div class="flex items-center gap-2 mb-1">
-        <i class="fa fa-quote-left text-[#35bfa0] text-xs opacity-50 group-hover:opacity-100 transition-opacity"></i>
+        <i class="fa fa-quote-left text-[#84C93C] text-xs opacity-50 group-hover:opacity-100 transition-opacity"></i>
         <span class="text-[10px] font-bold text-[#6b8a7a] uppercase tracking-wider">Hitokoto</span>
     </div>
     
@@ -76,7 +76,7 @@ onMounted(() => {
 
     <!-- Click hint -->
     <div 
-      class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] text-[#35bfa0]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] text-[#84C93C]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
       点击切换
     </div>

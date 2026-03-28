@@ -9,8 +9,8 @@
 :root {
   --color-primary: #2d4a3e;
   --color-secondary: #6b8a7a;
-  --color-brand: #35bfa0;
-  --color-brand-secondary: #1fc9a8;
+  --color-brand: #84C93C;
+  --color-brand-secondary: #6BA32A;
   --color-bg: #eeeeee;
   --color-border: #fff;
   --color-card: rgba(255, 255, 255, 0.4);
@@ -23,8 +23,8 @@
     'Helvetica Neue', 'Hiragino Sans GB', 'Microsoft YaHei', Arial;
 
   /* Bubble background colors — greens & teals */
-  --bubble-color-1: #35bfa0;
-  --bubble-color-2: #1fc9a8;
+  --bubble-color-1: #84C93C;
+  --bubble-color-2: #6BA32A;
   --bubble-color-3: #a8e6cf;
   --bubble-color-4: #88d8b0;
   --bubble-color-5: #6bc5a0;
@@ -35,7 +35,7 @@ html.dark {
   --color-primary: #e6f0ee;
   --color-secondary: #94a39e;
   --color-bg: #050608;
-  --color-border: rgba(53, 191, 160, 0.12);
+  --color-border: rgba(132, 201, 60, 0.12);
   --color-card: rgba(13, 18, 17, 0.75);
   --color-card-solid: #0b0f0e;
   --color-text-dim: #7da592;

@@ -275,7 +275,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
     <transition name="fade">
       <div v-if="!isAuthenticated" class="fixed inset-0 z-[200] flex items-center justify-center bg-[var(--color-bg)]">
         <div class="card max-w-md w-full mx-4 p-8 md:p-12 text-center animate-fade-in">
-          <div class="w-16 h-16 rounded-2xl bg-[#35bfa0] text-white flex items-center justify-center text-2xl shadow-lg mx-auto mb-8">
+          <div class="w-16 h-16 rounded-2xl bg-[#84C93C] text-white flex items-center justify-center text-2xl shadow-lg mx-auto mb-8">
               <i class="fas fa-fingerprint"></i>
           </div>
           <h2 class="text-3xl font-black text-[var(--color-primary)] mb-8 tracking-tight">管理后台登入</h2>
@@ -296,7 +296,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
       
       <!-- Mobile Navbar Toggle -->
       <div class="lg:hidden fixed top-6 right-6 z-[60]">
-        <button @click="toggleSidebar" class="w-12 h-12 rounded-full bg-[#35bfa0] text-white shadow-xl flex items-center justify-center text-xl transition-transform active:scale-95">
+        <button @click="toggleSidebar" class="w-12 h-12 rounded-full bg-[#84C93C] text-white shadow-xl flex items-center justify-center text-xl transition-transform active:scale-95">
           <i class="fas" :class="isSidebarOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>
       </div>
@@ -307,12 +307,12 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
         :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
       >
         <div class="flex items-center gap-4 mb-10 px-2 mt-4 lg:mt-0">
-            <div class="w-10 h-10 rounded-xl bg-[#35bfa0] text-white flex items-center justify-center shadow-lg"><i class="fas fa-terminal"></i></div>
+            <div class="w-10 h-10 rounded-xl bg-[#84C93C] text-white flex items-center justify-center shadow-lg"><i class="fas fa-terminal"></i></div>
             <h1 class="text-xl font-black text-[var(--color-primary)] tracking-tight">Console<span class="font-light opacity-50">.hub</span></h1>
         </div>
 
         <div class="mb-8 space-y-3 px-2">
-            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="w-full flex items-center justify-center gap-3 bg-[#35bfa0] hover:bg-[#1fc9a8] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#35bfa0]/20 transition-all disabled:opacity-50">
+            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="w-full flex items-center justify-center gap-3 bg-[#84C93C] hover:bg-[#6BA32A] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#84C93C]/20 transition-all disabled:opacity-50">
                 <i v-if="isPublishing" class="fas fa-sync fa-spin"></i>
                 <i v-else class="fas fa-cloud-upload-alt"></i>
                 {{ isPublishing ? '同步中...' : '发布到生产环境' }}
@@ -320,7 +320,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
             <button @click="() => {
                     activeTab === 'pinned' ? addPinnedItem() : activeTab === 'projects' ? addProject() : activeTab === 'commissions' ? addCommission() : activeTab === 'works' ? addWork() : addWorksSection();
                     isSidebarOpen = false;
-                }" class="w-full flex items-center justify-center gap-3 bg-[var(--color-card-solid)] border border-[var(--color-border)] text-[#35bfa0] py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#35bfa0]/5 transition-all">
+                }" class="w-full flex items-center justify-center gap-3 bg-[var(--color-card-solid)] border border-[var(--color-border)] text-[#84C93C] py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#84C93C]/5 transition-all">
                 <i class="fas fa-plus-circle"></i> 新增记录
             </button>
         </div>
@@ -333,7 +333,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                 :key="tab.id"
                 @click="() => { activeTab = tab.id; isSidebarOpen = false; }"
                 class="w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 group"
-                :class="activeTab === tab.id ? 'bg-[#35bfa0]/10 text-[#35bfa0]' : 'text-[var(--color-secondary)] hover:bg-[#35bfa0]/5 hover:text-[var(--color-primary)]'"
+                :class="activeTab === tab.id ? 'bg-[#84C93C]/10 text-[#84C93C]' : 'text-[var(--color-secondary)] hover:bg-[#84C93C]/5 hover:text-[var(--color-primary)]'"
             >
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-card-solid)] shadow-sm group-hover:scale-110">
                     <i class="fas" :class="tab.icon"></i>
@@ -346,7 +346,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
         </nav>
 
         <div class="mt-auto space-y-3 px-2 border-t border-[var(--color-border)] pt-8">
-            <button @click="showSettings = true" class="w-full flex items-center gap-3 text-xs font-bold text-[var(--color-secondary)] hover:text-[#35bfa0] transition-colors">
+            <button @click="showSettings = true" class="w-full flex items-center gap-3 text-xs font-bold text-[var(--color-secondary)] hover:text-[#84C93C] transition-colors">
                 <i class="fas fa-sliders-h"></i> 存储配置
             </button>
             <button @click="logout" class="w-full flex items-center gap-3 text-xs font-bold text-red-400 hover:text-red-500 transition-colors">
@@ -363,13 +363,13 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
         <div class="flex-grow overflow-y-auto px-6 md:px-12 pt-16 lg:pt-12 pb-32">
             <div class="mb-12">
                 <div class="flex items-center gap-3 mb-2">
-                    <i class="fas" :class="currentTabInfo?.icon + ' text-[#35bfa0] text-xl'"></i>
+                    <i class="fas" :class="currentTabInfo?.icon + ' text-[#84C93C] text-xl'"></i>
                     <h2 class="text-4xl font-black text-[var(--color-primary)] tracking-tight">{{ currentTabInfo?.name }}</h2>
                 </div>
                 <p class="text-[var(--color-secondary)] font-medium max-w-2xl text-sm md:text-base">{{ currentTabInfo?.desc }} — 管理并排序您的资产。</p>
             </div>
 
-            <div v-if="isUploading" class="fixed bottom-12 right-12 z-50 bg-[#35bfa0] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 animate-bounce">
+            <div v-if="isUploading" class="fixed bottom-12 right-12 z-50 bg-[#84C93C] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 animate-bounce">
                 <i class="fas fa-shield-virus fa-spin"></i>
                 <span class="text-xs font-bold uppercase tracking-widest">正在上传资产...</span>
             </div>
@@ -380,8 +380,8 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                 <template v-if="activeTab === 'pinned'">
                     <div v-for="(item, index) in pinnedItems" :key="index" class="card-flat group relative animate-fade-in-up">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-down"></i></button>
+                            <button @click="moveUp(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#84C93C] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-up"></i></button>
+                            <button @click="moveDown(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#6BA32A] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-down"></i></button>
                             <button @click="removePinnedItem(index)" class="w-8 h-8 rounded-full bg-red-400/10 text-red-500 transition-all hover:bg-red-400 hover:text-white text-xs shadow-sm"><i class="fas fa-trash"></i></button>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 md:pt-0">
@@ -396,8 +396,8 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                 <template v-if="activeTab === 'projects'">
                     <div v-for="(project, index) in projects" :key="index" class="card-flat group animate-fade-in-up relative flex flex-col md:flex-row gap-8">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
+                            <button @click="moveUp(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#84C93C] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
+                            <button @click="moveDown(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#84C93C] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
                             <button @click="removeProject(index)" class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white shadow-lg"><i class="fas fa-trash"></i></button>
                         </div>
                         <div class="w-full md:w-64 flex-shrink-0 pt-10 md:pt-0">
@@ -427,7 +427,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                     <div class="card-flat group animate-fade-in-up p-6 mb-6">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all" :class="isBusinessOpen ? 'bg-[#35bfa0]/20 text-[#35bfa0]' : 'bg-red-500/20 text-red-500'">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all" :class="isBusinessOpen ? 'bg-[#84C93C]/20 text-[#84C93C]' : 'bg-red-500/20 text-red-500'">
                                     <i class="fas" :class="isBusinessOpen ? 'fa-store' : 'fa-store-slash'"></i>
                                 </div>
                                 <div>
@@ -438,7 +438,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                             <button 
                                 @click="isBusinessOpen = !isBusinessOpen" 
                                 class="relative w-16 h-8 rounded-full transition-all duration-300 shadow-inner"
-                                :class="isBusinessOpen ? 'bg-[#35bfa0]' : 'bg-gray-400'"
+                                :class="isBusinessOpen ? 'bg-[#84C93C]' : 'bg-gray-400'"
                             >
                                 <span 
                                     class="absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300"
@@ -449,27 +449,27 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                     </div>
                     <div v-for="(comm, index) in commissions" :key="index" class="card-flat group animate-fade-in-up p-8 relative">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
+                            <button @click="moveUp(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#84C93C] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
+                            <button @click="moveDown(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#84C93C] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
                             <button @click="removeCommission(index)" class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white shadow-lg"><i class="fas fa-trash"></i></button>
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 md:pt-0">
                             <div class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="input-group"><label>服务名称</label><input v-model="comm.title" class="input-modern" /></div>
-                                    <div class="input-group"><label>定价说明</label><input v-model="comm.price" class="input-modern font-bold text-[#35bfa0]" /></div>
+                                    <div class="input-group"><label>定价说明</label><input v-model="comm.price" class="input-modern font-bold text-[#84C93C]" /></div>
                                 </div>
                                 <div class="input-group"><label>需求概括</label><input v-model="comm.requirements" class="input-modern" /></div>
                                 <div class="input-group"><label>服务详情</label><textarea v-model="comm.description" class="input-modern h-32 pt-4"></textarea></div>
                             </div>
                             <div class="space-y-4">
-                                <label class="text-[10px] font-black uppercase tracking-widest text-[#35bfa0]">预览图示</label>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-[#84C93C]">预览图示</label>
                                 <div class="grid grid-cols-3 gap-3">
                                     <div v-for="(img, i) in comm.images" :key="i" class="aspect-square rounded-2xl overflow-hidden bg-[var(--color-bg)] group/img relative shadow-sm">
                                         <img :src="resolveImg(img)" class="w-full h-full object-cover" />
                                         <button @click="comm.images.splice(i, 1)" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 text-white text-[8px]"><i class="fas fa-times"></i></button>
                                     </div>
-                                    <label class="aspect-square rounded-2xl border-2 border-dashed border-[var(--color-border)] flex flex-col items-center justify-center text-[var(--color-secondary)] hover:border-[#35bfa0] hover:text-[#35bfa0] cursor-pointer transition-all">
+                                    <label class="aspect-square rounded-2xl border-2 border-dashed border-[var(--color-border)] flex flex-col items-center justify-center text-[var(--color-secondary)] hover:border-[#84C93C] hover:text-[#84C93C] cursor-pointer transition-all">
                                         <i class="fas fa-plus-circle text-xl"></i>
                                         <input type="file" class="hidden" accept="image/*" @change="(e) => {
                                             const file = (e.target as HTMLInputElement).files?.[0];
@@ -487,8 +487,8 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                         <div v-for="(work, index) in works" :key="work.id" class="card-flat group relative animate-fade-in-up !p-4">
                             <div class="absolute top-3 right-3 flex flex-col gap-1 z-20">
-                                <button @click="moveUp(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[#35bfa0] shadow-md"><i class="fas fa-chevron-up"></i></button>
-                                <button @click="moveDown(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[#35bfa0] shadow-md"><i class="fas fa-chevron-down"></i></button>
+                                <button @click="moveUp(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[#84C93C] shadow-md"><i class="fas fa-chevron-up"></i></button>
+                                <button @click="moveDown(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[#84C93C] shadow-md"><i class="fas fa-chevron-down"></i></button>
                                 <button @click="removeWork(index)" class="w-7 h-7 rounded-sm bg-red-500 text-white shadow-md"><i class="fas fa-times"></i></button>
                             </div>
                             <div class="aspect-square rounded-2xl overflow-hidden bg-[var(--color-bg)] relative mb-4">
@@ -542,10 +542,10 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                                  <div v-for="work in works" :key="work.id" 
                                       @click="toggleWorkInSection(index, work.id)"
                                       class="aspect-square rounded-xl overflow-hidden cursor-pointer relative transition-all"
-                                      :class="section.work_ids.includes(work.id) ? 'ring-4 ring-[#35bfa0] scale-95 opacity-100' : 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0'"
+                                      :class="section.work_ids.includes(work.id) ? 'ring-4 ring-[#84C93C] scale-95 opacity-100' : 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0'"
                                  >
                                       <img :src="resolveImg(work.image)" class="w-full h-full object-cover" />
-                                      <div v-if="section.work_ids.includes(work.id)" class="absolute inset-0 flex items-center justify-center bg-[#35bfa0]/20">
+                                      <div v-if="section.work_ids.includes(work.id)" class="absolute inset-0 flex items-center justify-center bg-[#84C93C]/20">
                                           <i class="fas fa-check-circle text-white text-2xl shadow-lg"></i>
                                       </div>
                                  </div>
@@ -597,7 +597,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
 
 .input-modern:focus {
     outline: none;
-    border-color: #35bfa0;
+    border-color: #84C93C;
     background: var(--color-card-solid);
 }
 
@@ -619,7 +619,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(53, 191, 160, 0.2);
+  background: rgba(132, 201, 60, 0.2);
   border-radius: 10px;
 }
 </style>

@@ -33,13 +33,13 @@ const segmentMap: Record<number, boolean[]> = {
     9: [true, true, true, true, false, true, true]
 };
 
-const activeColor = '#35bfa0';
-const inactiveColor = 'rgba(53, 191, 160, 0.05)';
+const activeColor = '#84C93C';
+const inactiveColor = 'rgba(132, 201, 60, 0.05)';
 </script>
 
 <template>
   <div class="card !p-2 flex items-center justify-center overflow-hidden w-full">
-    <div class="w-full bg-[rgba(53,191,160,0.06)] rounded-[20px] md:rounded-[24px] flex items-center justify-center gap-0.5 sm:gap-1 md:gap-1.5 py-3 md:py-4 px-2 sm:px-3 md:px-4">
+    <div class="w-full bg-[rgba(132,201,60,0.06)] rounded-[20px] md:rounded-[24px] flex items-center justify-center gap-0.5 sm:gap-1 md:gap-1.5 py-3 md:py-4 px-2 sm:px-3 md:px-4">
       <!-- Hours -->
       <div class="digit-box flex gap-0.5 sm:gap-1">
         <svg v-for="(v, i) in hours.split('')" :key="'h'+i" viewBox="0 0 29 52" fill="none" class="digit-svg digit-hours">
@@ -52,8 +52,8 @@ const inactiveColor = 'rgba(53, 191, 160, 0.05)';
 
       <!-- Colon -->
       <div class="flex flex-col gap-1 sm:gap-1.5 opacity-60 px-0.5">
-        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#35bfa0] rounded-full"></div>
-        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#35bfa0] rounded-full"></div>
+        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#84C93C] rounded-full"></div>
+        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#84C93C] rounded-full"></div>
       </div>
 
       <!-- Minutes -->
@@ -69,8 +69,8 @@ const inactiveColor = 'rgba(53, 191, 160, 0.05)';
       <!-- Optional Seconds for larger screens -->
       <template v-if="true">
         <div class="flex flex-col gap-1 opacity-30 hidden sm:flex px-0.5">
-          <div class="w-0.5 h-0.5 bg-[#35bfa0] rounded-full"></div>
-          <div class="w-0.5 h-0.5 bg-[#35bfa0] rounded-full"></div>
+          <div class="w-0.5 h-0.5 bg-[#84C93C] rounded-full"></div>
+          <div class="w-0.5 h-0.5 bg-[#84C93C] rounded-full"></div>
         </div>
         <div class="digit-box hidden sm:flex gap-0.5 transform scale-75 origin-left">
           <svg v-for="(v, i) in seconds.split('')" :key="'s'+i" width="18" height="32" viewBox="0 0 29 52" fill="none" class="digit-svg digit-seconds">
@@ -99,7 +99,7 @@ const paths = [
 
 <style scoped>
 .digit-svg {
-  filter: drop-shadow(0 0 1px rgba(53, 191, 160, 0.2));
+  filter: drop-shadow(0 0 1px rgba(132, 201, 60, 0.2));
   transition: all 0.3s ease;
 }
 

@@ -42,7 +42,7 @@ const getImageUrl = (path: string) => {
                 v-if="project.live_url"
                 :href="project.live_url"
                 target="_blank"
-                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#35bfa0] hover:text-white transition-colors shadow-md"
+                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#84C93C] hover:text-white transition-colors shadow-md"
                 title="预览"
               >
                 <i class="fa fa-external-link-alt text-sm"></i>
@@ -51,7 +51,7 @@ const getImageUrl = (path: string) => {
                 v-if="project.source_url"
                 :href="project.source_url"
                 target="_blank"
-                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#35bfa0] hover:text-white transition-colors shadow-md"
+                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#84C93C] hover:text-white transition-colors shadow-md"
                 title="源码"
               >
                 <i class="fab fa-github text-sm"></i>
@@ -64,7 +64,7 @@ const getImageUrl = (path: string) => {
         <div class="p-6 flex flex-col flex-grow">
           <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2 flex items-center gap-2">
             {{ project.title }}
-            <i class="fa fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-[#35bfa0]"></i>
+            <i class="fa fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-[#84C93C]"></i>
           </h3>
           <p class="text-sm text-[var(--color-secondary)] mb-4 flex-grow leading-relaxed">{{ project.description }}</p>
 

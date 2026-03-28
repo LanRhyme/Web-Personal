@@ -59,7 +59,7 @@ function rand(min: number, max: number) {
 }
 
 const colors: string[] = [
-  '#35bfa0', '#1fc9a8', '#a8e6cf',
+  '#84C93C', '#6BA32A', '#a8e6cf',
   '#88d8b0', '#6bc5a0', '#c8f0e0'
 ];
 

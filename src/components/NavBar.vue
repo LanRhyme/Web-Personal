@@ -113,7 +113,7 @@ watch(() => route.path, () => {
           :key="item.path"
           :to="item.path"
           class="card-flat flex items-center gap-3 px-5 py-3.5 text-base font-semibold transition-all duration-300"
-          :class="route.path === item.path ? 'text-[#35bfa0] border-[rgba(53,191,160,0.3)] bg-[rgba(53,191,160,0.05)]' : 'text-[#2d4a3e]'"
+          :class="route.path === item.path ? 'text-[#84C93C] border-[rgba(132,201,60,0.3)] bg-[rgba(132,201,60,0.05)]' : 'text-[#2d4a3e]'"
           active-class=""
           @click="closeMobileMenu"
         >
@@ -162,7 +162,7 @@ watch(() => route.path, () => {
         <!-- Dark Mode Toggle -->
         <button
           @click="toggleDarkMode"
-          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(53,191,160,0.1)] text-[#6b8a7a] hover:text-[#35bfa0]"
+          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(132,201,60,0.1)] text-[#6b8a7a] hover:text-[#84C93C]"
           :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
         >
           <transition name="fade" mode="out-in">

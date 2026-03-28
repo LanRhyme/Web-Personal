@@ -253,7 +253,7 @@ onMounted(() => {
             <a v-for="repo in repos" :key="repo.id" :href="repo.html_url" target="_blank" 
                class="card group relative overflow-hidden transition-all duration-500 anim-fade-in-up">
               <div class="flex justify-between items-start mb-4">
-                <h4 class="font-bold text-lg text-[#2d4a3e] group-hover:text-[#35bfa0] transition-colors">{{ repo.name }}</h4>
+                <h4 class="font-bold text-lg text-[#2d4a3e] group-hover:text-[#84C93C] transition-colors">{{ repo.name }}</h4>
                 <span class="tag">
                   {{ repo.language || 'Code' }}
                 </span>
@@ -288,20 +288,20 @@ onMounted(() => {
               
               <div class="card !p-5 group">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="font-bold text-sm text-[#35bfa0] flex items-center gap-2">
+                  <span class="font-bold text-sm text-[#84C93C] flex items-center gap-2">
                     <i class="fa-solid fa-bolt text-xs"></i>
                     {{ formatEventType(event.type) }}
                   </span>
                   <span class="text-xs text-[#a4c9b3]">{{ formatDate(event.created_at) }}</span>
                 </div>
                 <div class="text-sm mb-3">
-                  <a :href="`https://github.com/${event.repo.name}`" target="_blank" class="font-bold text-[#2d4a3e] hover:text-[#35bfa0] transition-colors break-all">
+                  <a :href="`https://github.com/${event.repo.name}`" target="_blank" class="font-bold text-[#2d4a3e] hover:text-[#84C93C] transition-colors break-all">
                     {{ event.repo.name }}
                   </a>
                 </div>
                 <div v-if="event.payload.commits" class="text-xs text-[#6b8a7a] bg-white/30 p-3 rounded-xl border border-white/30">
                   <div v-for="commit in event.payload.commits.slice(0, 2)" :key="commit.sha" class="truncate flex items-start gap-2">
-                    <span class="text-[#35bfa0] shrink-0">-</span>
+                    <span class="text-[#84C93C] shrink-0">-</span>
                     <span>{{ commit.message }}</span>
                   </div>
                 </div>
