@@ -122,17 +122,6 @@ watch(() => route.path, () => {
       :class="{ 'shadow-lg': isScrolled }"
       style="width: auto; min-width: min-content;"
     >
-      <!-- Logo -->
-      <router-link to="/" class="flex items-center gap-3 shrink-0 text-decoration-none">
-        <img
-          alt="LanRhyme"
-          src="/img/avatar.jpg"
-          class="h-9 w-9 rounded-full object-cover"
-          style="box-shadow: 0 8px 16px -4px rgba(139, 118, 106, 0.25)"
-        >
-        <span class="text-lg font-bold text-[#2d4a3e] hidden sm:inline">LanRhyme</span>
-      </router-link>
-
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center relative py-1" ref="navRef">
         <div class="nav-tracker" ref="trackerRef" style="opacity: 0"></div>
