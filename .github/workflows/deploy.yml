@@ -25,19 +25,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Clean install dependencies
         run: |
           rm -rf node_modules
           rm -rf dist
-          npm ci
+          npm install
 
       - name: Build
         run: npm run build
 
+      - name: Check dist/index.html
+        run: cat dist/index.html
+
       - name: List dist contents
-        run: ls -la dist/
+        run: ls -la dist/assets/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
