@@ -98,15 +98,17 @@ onUnmounted(() => {
           </router-view>
       </template>
 
-      <div v-else class="page-content w-full flex justify-center items-start p-8 box-border max-w-[1200px] mx-auto flex-wrap gap-8">
-        <MeCard v-if="isHome" />
-        <main class="right-content-area flex-grow max-w-[700px]">
-          <router-view v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
-        </main>
+      <div v-else class="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 lg:py-16">
+        <div class="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-16 relative">
+          <MeCard v-if="isHome" class="w-full lg:w-[380px] lg:sticky lg:top-32 shrink-0 z-20" />
+          <main class="flex-grow w-full z-10" :class="{ 'max-w-4xl': isHome, 'max-w-6xl': !isHome }">
+            <router-view v-slot="{ Component }">
+              <transition name="fade" mode="out-in">
+                <component :is="Component" />
+              </transition>
+            </router-view>
+          </main>
+        </div>
       </div>
 
       <Footer v-if="!isAdmin" />
@@ -145,18 +147,5 @@ onUnmounted(() => {
   100% { transform: scale(0.8); opacity: 0.5; }
 }
 
-/* Ensure page-content layout matches legacy */
-@media (max-width: 992px) {
-  .page-content {
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    gap: 1.5rem;
-  }
-  .right-content-area {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-  }
-}
+/* Layout relies purely on flex utility classes instead of manual media query */
 </style>

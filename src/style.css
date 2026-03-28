@@ -2,7 +2,8 @@
 
 /* --- Jelly UI Variables --- */
 :root {
-  --bg-primary: #f8fafc;
+  --bg-primary: #f0f4f8; /* slightly cooler light bg to contrast glow */
+  --bg-rgb: 240, 244, 248;
   --text-primary: #0f172a;
   
   /* Jelly Green Palette */
@@ -11,11 +12,15 @@
   --jelly-green-border: rgba(16, 185, 129, 0.3);
 
   /* Glassmorphism / Jelly variables */
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(16, 185, 129, 0.05),
+    inset 0 0 20px rgba(255, 255, 255, 0.5);
 
-  --nav-bg: rgba(255, 255, 255, 0.6);
+  --nav-bg: rgba(255, 255, 255, 0.4);
   --nav-item-text: #64748b;
   --nav-item-active-text: #0f172a;
 
@@ -24,18 +29,23 @@
 }
 
 .dark, .dark-mode {
-  --bg-primary: #0a0a0a;
+  --bg-primary: #050505; /* completely deep dark for ultra contrast */
+  --bg-rgb: 5, 5, 5;
   --text-primary: #f8fafc;
 
   --jelly-green-rgb: 52, 211, 153; /* Emerald 400 */
   --jelly-green-glow: rgba(52, 211, 153, 0.5);
   --jelly-green-border: rgba(52, 211, 153, 0.3);
 
-  --glass-bg: rgba(30, 30, 30, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(20, 20, 20, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+    inset 0 -1px 2px rgba(52, 211, 153, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
 
-  --nav-bg: rgba(20, 20, 20, 0.6);
+  --nav-bg: rgba(20, 20, 20, 0.4);
   --nav-item-text: #94a3b8;
   --nav-item-active-text: #f8fafc;
 
@@ -106,46 +116,50 @@ body {
 /* --- Jelly Glass Component --- */
 .jelly-glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid var(--glass-border);
-  border-radius: 24px;
+  border-radius: 32px;
   box-shadow: var(--glass-shadow);
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Elastic spring */
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Elastic spring */
 }
 
 .jelly-glass:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: var(--jelly-green-border);
-  box-shadow: 0 12px 40px rgba(var(--jelly-green-rgb), 0.15), 
-              0 0 20px rgba(var(--jelly-green-rgb), 0.1), 
-              inset 0 0 0 1px var(--jelly-green-border);
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(var(--jelly-green-rgb), 0.5);
+  box-shadow: 
+    0 20px 50px rgba(var(--jelly-green-rgb), 0.15), 
+    0 0 20px rgba(var(--jelly-green-rgb), 0.1), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 0 20px rgba(var(--jelly-green-rgb), 0.1);
 }
 
 /* For simple solid card backwards compatibility, map it to jelly-glass */
 .solid-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid var(--glass-border);
-  border-radius: 24px;
+  border-radius: 32px;
   box-shadow: var(--glass-shadow);
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .solid-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: var(--jelly-green-border);
-  box-shadow: 0 12px 40px rgba(var(--jelly-green-rgb), 0.15), 
-              0 0 20px rgba(var(--jelly-green-rgb), 0.1), 
-              inset 0 0 0 1px var(--jelly-green-border);
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(var(--jelly-green-rgb), 0.5);
+  box-shadow: 
+    0 20px 50px rgba(var(--jelly-green-rgb), 0.15), 
+    0 0 20px rgba(var(--jelly-green-rgb), 0.1), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 0 20px rgba(var(--jelly-green-rgb), 0.1);
 }
 
 /* --- Navigation Bar --- */
 .header-card {
   background: var(--nav-bg);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
   border-radius: 9999px;
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
@@ -153,12 +167,16 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .header-card:hover {
-  border-color: var(--jelly-green-border);
-  box-shadow: 0 8px 32px rgba(var(--jelly-green-rgb), 0.1), inset 0 0 0 1px var(--jelly-green-border);
+  border-color: rgba(var(--jelly-green-rgb), 0.5);
+  box-shadow: 
+    0 15px 40px rgba(var(--jelly-green-rgb), 0.15), 
+    0 0 15px rgba(var(--jelly-green-rgb), 0.1), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 0 20px rgba(var(--jelly-green-rgb), 0.1);
 }
 
 .nav {
@@ -240,11 +258,11 @@ body {
   color: var(--text-primary);
   border: 1px solid var(--glass-border);
   border-radius: 9999px;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: var(--glass-shadow);
 }
 
 .btn-glow-primary::before, .btn-glass::before {
@@ -263,9 +281,13 @@ body {
 }
 
 .btn-glow-primary:hover, .btn-glass:hover {
-  border-color: var(--jelly-green-border);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(var(--jelly-green-rgb), 0.2), inset 0 0 0 1px var(--jelly-green-border);
+  border-color: rgba(var(--jelly-green-rgb), 0.6);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 15px 30px rgba(var(--jelly-green-rgb), 0.2), 
+    0 0 15px rgba(var(--jelly-green-rgb), 0.15), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 0 15px rgba(var(--jelly-green-rgb), 0.2);
   color: rgb(var(--jelly-green-rgb));
 }
 

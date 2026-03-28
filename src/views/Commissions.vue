@@ -5,17 +5,17 @@
     <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Commission Platforms -->
       <section class="commission-section anim-fade-in-up flex-1" style="animation-delay: 0.1s;">
-        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <i class="fas fa-store text-amethyst"></i> 约稿平台
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 drop-shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.3)]">
+          <i class="fas fa-store text-[rgb(var(--jelly-green-rgb))]"></i> 约稿平台
         </h2>
         <div class="platform-grid grid grid-cols-2 gap-4 h-full">
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://b23.tv/YLg5WYo" target="_blank">
-            <i class="fab fa-bilibili text-3xl mb-1 text-amethyst"></i>
+          <a class="platform-card jelly-glass p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-all h-32 shadow-[0_5px_15px_rgba(var(--jelly-green-rgb),0.05)] hover:shadow-[0_10px_25px_rgba(var(--jelly-green-rgb),0.15)]" href="https://b23.tv/YLg5WYo" target="_blank">
+            <i class="fab fa-bilibili text-3xl mb-1 text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"></i>
             <h4 class="text-base font-semibold">Bilibili 工坊</h4>
             <p class="text-xs text-gray-500 dark:text-gray-400">点击跳转</p>
           </a>
-          <div class="platform-card solid-card disabled p-4 flex flex-col items-center justify-center gap-2 text-center opacity-60 cursor-not-allowed h-32">
-            <i class="fa-solid fa-palette text-3xl mb-1 text-amethyst"></i>
+          <div class="platform-card jelly-glass disabled p-4 flex flex-col items-center justify-center gap-2 text-center opacity-60 cursor-not-allowed h-32">
+            <i class="fa-solid fa-palette text-3xl mb-1 text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"></i>
             <h4 class="text-base font-semibold">画加</h4>
             <p class="text-xs text-gray-500 dark:text-gray-400">暂未入驻</p>
           </div>
@@ -24,17 +24,17 @@
 
       <!-- Invitations -->
       <section class="commission-section anim-fade-in-up flex-1" style="animation-delay: 0.2s;">
-        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <i class="fas fa-envelope-open-text text-amethyst"></i> 向我发起邀请
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 drop-shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.3)]">
+          <i class="fas fa-envelope-open-text text-[rgb(var(--jelly-green-rgb))]"></i> 向我发起邀请
         </h2>
         <div class="platform-grid grid grid-cols-2 gap-4 h-full">
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://b23.tv/YLg5WYo" target="_blank">
-            <i class="fab fa-bilibili text-3xl mb-1 text-amethyst"></i>
+          <a class="platform-card jelly-glass p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-all h-32 shadow-[0_5px_15px_rgba(var(--jelly-green-rgb),0.05)] hover:shadow-[0_10px_25px_rgba(var(--jelly-green-rgb),0.15)]" href="https://b23.tv/YLg5WYo" target="_blank">
+            <i class="fab fa-bilibili text-3xl mb-1 text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"></i>
             <h4 class="text-base font-semibold">B站私信</h4>
             <p class="text-xs text-gray-500 dark:text-gray-400">点击跳转</p>
           </a>
-          <a class="platform-card solid-card p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-transform h-32" href="https://qm.qq.com/q/5jATjlQd4A" target="_blank">
-            <i class="fab fa-qq text-3xl mb-1 text-amethyst"></i>
+          <a class="platform-card jelly-glass p-4 flex flex-col items-center justify-center gap-2 text-center decoration-none hover:scale-105 transition-all h-32 shadow-[0_5px_15px_rgba(var(--jelly-green-rgb),0.05)] hover:shadow-[0_10px_25px_rgba(var(--jelly-green-rgb),0.15)]" href="https://qm.qq.com/q/5jATjlQd4A" target="_blank">
+            <i class="fab fa-qq text-3xl mb-1 text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"></i>
             <h4 class="text-base font-semibold">QQ群</h4>
             <p class="text-xs text-gray-500 dark:text-gray-400">687671385</p>
           </a>
@@ -43,12 +43,14 @@
 
       <!-- Payment -->
       <section class="commission-section anim-fade-in-up flex-1 flex flex-col" style="animation-delay: 0.3s;">
-        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <i class="fas fa-wallet text-amethyst"></i> 支付
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 drop-shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.3)]">
+          <i class="fas fa-wallet text-[rgb(var(--jelly-green-rgb))]"></i> 支付
         </h2>
-        <div class="flex-grow flex items-center justify-center solid-card rounded-2xl p-6 border border-card-border h-32">
-          <button @click="showPaymentModal = true" class="amethyst-dark-button py-2 px-6 rounded-full text-base transition-transform hover:scale-105 flex items-center gap-2">
-            <i class="fas fa-qrcode"></i> 点击显示收款码
+        <div class="flex-grow flex items-center justify-center jelly-glass rounded-2xl p-6 h-32">
+          <button @click="showPaymentModal = true" class="bg-[rgb(var(--jelly-green-rgb))] text-black shadow-[0_0_20px_rgba(var(--jelly-green-rgb),0.5)] hover:shadow-[0_0_40px_rgba(var(--jelly-green-rgb),0.8)] py-3 px-8 rounded-full text-base flex items-center gap-2 font-bold group transition-all duration-300 hover:-translate-y-1">
+            <span class="relative z-10 flex items-center gap-2">
+              <i class="fas fa-qrcode group-hover:scale-110 transition-transform"></i> 点击显示收款码
+            </span>
           </button>
         </div>
       </section>
@@ -58,12 +60,13 @@
     <main class="right-content-area w-full flex flex-col items-center">
       <section class="commission-section w-full anim-fade-in-up" style="animation-delay: 0.4s;">
         <h2 class="text-4xl font-bold mb-8 text-center flex items-center justify-center gap-3">
-          <span class="w-12 h-1 bg-amethyst rounded-full"></span>
+          <span class="w-12 h-1 bg-[rgb(var(--jelly-green-rgb))] rounded-full shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)]"></span>
           报价单
-          <span class="w-12 h-1 bg-amethyst rounded-full"></span>
+          <span class="w-12 h-1 bg-[rgb(var(--jelly-green-rgb))] rounded-full shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)]"></span>
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <div v-for="(item, index) in priceList" :key="index" class="solid-card price-list-item flex flex-col items-center text-center p-6 rounded-2xl border border-card-border shadow-card hover:shadow-lg transition-shadow">
+          <div v-for="(item, index) in priceList" :key="index" class="jelly-glass price-list-item flex flex-col items-center text-center p-8 transition-all relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.05)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             
             <!-- Image Gallery -->
             <div class="commission-image-gallery w-full max-w-[300px] mb-4">
@@ -95,8 +98,8 @@
     </main>
 
     <!-- Payment Modal -->
-    <div v-if="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]" @click.self="showPaymentModal = false">
-      <div class="solid-card p-8 relative max-w-sm w-full mx-4 rounded-2xl bg-card-bg shadow-2xl anim-fade-in-up active">
+    <div v-if="showPaymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[1000] transition-opacity" @click.self="showPaymentModal = false">
+      <div class="jelly-glass p-8 relative max-w-sm w-full mx-4 rounded-3xl shadow-[0_0_50px_rgba(var(--jelly-green-rgb),0.15)] anim-fade-in-up active">
         <button @click="showPaymentModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl">
           <i class="fas fa-times"></i>
         </button>
@@ -180,12 +183,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.text-amethyst {
-  color: var(--amethyst-color);
-}
-.border-amethyst {
-  border-color: var(--amethyst-color);
-}
 
 /* Reusing global styles, but ensuring scoped styles don't conflict */
 .solid-card {

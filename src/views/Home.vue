@@ -58,7 +58,7 @@ const openLink = (link: string) => {
 
 <template>
   <div class="right-content-area flex flex-col items-center w-full">
-    <section class="py-20 text-center w-full anim-fade-in-up relative overflow-hidden" id="home" style="animation-delay: 0.1s;">
+    <section class="py-12 lg:py-24 text-center w-full anim-fade-in-up relative overflow-visible" id="home" style="animation-delay: 0.1s;">
       <!-- Hero Content -->
       <div class="relative z-10">
         <h2 class="text-6xl font-black mb-6 tracking-tight">
@@ -103,7 +103,7 @@ const openLink = (link: string) => {
         <div 
           v-for="(item, index) in items" 
           :key="index"
-          class="jelly-glass group p-6 cursor-pointer relative overflow-hidden"
+          class="jelly-glass group p-8 cursor-pointer relative overflow-hidden"
           @click="openLink(item.link)"
         >
           <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

@@ -17,10 +17,10 @@
     </section>
 
     <div class="text-center mb-6" v-show="currentView === 'portfolio'">
-      <button @click="switchToAllWorks" class="back-button inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-amethyst text-white font-semibold transition-all hover:bg-amethyst-hover hover:-translate-y-0.5 shadow-md">
+      <button @click="switchToAllWorks" class="back-button bg-[rgb(var(--jelly-green-rgb))] text-black shadow-[0_0_15px_rgba(var(--jelly-green-rgb),0.4)] hover:shadow-[0_0_25px_rgba(var(--jelly-green-rgb),0.8)] inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all hover:-translate-y-1">
         <i class="fas fa-arrow-left"></i> 返回所有作品
       </button>
-      <h3 class="section-title text-3xl font-bold mt-4 mb-8">{{ currentPortfolioTitle }}</h3>
+      <h3 class="section-title text-3xl font-bold mt-6 mb-8 drop-shadow-[0_0_15px_rgba(var(--jelly-green-rgb),0.3)]">{{ currentPortfolioTitle }}</h3>
     </div>
 
     <div class="gallery-transition-container w-full max-w-[1400px]" :class="{ 'fade-out-content': isTransitioning }">
@@ -32,12 +32,13 @@
           <div 
             v-for="portfolio in allPortfolios" 
             :key="portfolio.id" 
-            class="work-item portfolio-item mb-6 break-inside-avoid relative overflow-hidden rounded-2xl bg-card-border cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+            class="jelly-glass work-item portfolio-item mb-6 break-inside-avoid relative overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 drop-shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_20px_40px_rgba(var(--jelly-green-rgb),0.15)] group"
             @click="switchToPortfolio(portfolio)"
           >
-            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block rounded-t-2xl">
-            <div class="portfolio-info bg-card-bg p-4 border-t border-card-border rounded-b-2xl">
-              <div class="title font-bold text-lg mb-1">{{ portfolio.title }}</div>
+            <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.05)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"></div>
+            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105">
+            <div class="portfolio-info p-5 border-t border-white/5 bg-black/10 backdrop-blur-md relative z-10">
+              <div class="title font-bold text-lg mb-1 group-hover:text-[rgb(var(--jelly-green-rgb))] transition-colors">{{ portfolio.title }}</div>
               <div class="description text-sm text-gray-600 dark:text-gray-400">{{ portfolio.description }}</div>
             </div>
           </div>
@@ -51,13 +52,14 @@
           <div 
             v-for="(work, index) in displayedWorks" 
             :key="work.id" 
-            class="work-item individual-work-item mb-6 break-inside-avoid relative overflow-hidden rounded-2xl bg-card-border cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-xl group"
+            class="work-item individual-work-item mb-6 break-inside-avoid relative overflow-hidden jelly-glass cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:drop-shadow-[0_20px_40px_rgba(var(--jelly-green-rgb),0.2)] group"
             @click="openLightbox(index)"
           >
-            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block rounded-2xl">
-            <div class="overlay absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-10 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 rounded-b-2xl">
-              <div class="title font-bold text-lg mb-1">{{ work.title }}</div>
-              <div class="description text-sm opacity-90">{{ work.description }}</div>
+            <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"></div>
+            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105">
+            <div class="overlay absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-5 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 relative z-10">
+              <div class="title font-bold text-lg mb-1 text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.8)]">{{ work.title }}</div>
+              <div class="description text-sm opacity-90 font-medium">{{ work.description }}</div>
             </div>
           </div>
         </div>

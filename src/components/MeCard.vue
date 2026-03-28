@@ -94,7 +94,7 @@ onUnmounted(() => {
 
 <style scoped>
 .me-card {
-  padding: 20px;
+  padding: 32px 24px;
   text-align: center;
   position: relative;
   z-index: 10;
@@ -169,12 +169,9 @@ onUnmounted(() => {
   transform: scale(1.2) translateY(-2px);
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .me-card {
-    width: 100% !important;
-    max-width: 100%;
     margin: 0 0 20px 0;
-    display: block !important;
   }
 }
 </style>

@@ -25,7 +25,7 @@ const getImageUrl = (path: string) => {
       <div 
         v-for="(project, index) in projects" 
         :key="index"
-        class="solid-card group overflow-hidden hover:scale-[1.02] transform transition-all duration-300 flex flex-col h-full"
+        class="jelly-glass group hover:scale-[1.02] transform transition-all duration-300 flex flex-col h-full overflow-hidden"
       >
         <div class="h-48 overflow-hidden relative group">
           <img 
@@ -39,7 +39,7 @@ const getImageUrl = (path: string) => {
                   v-if="project.live_url" 
                   :href="project.live_url" 
                   target="_blank"
-                  class="bg-white text-gray-900 p-2 rounded-full hover:bg-amethyst hover:text-white transition-colors"
+                  class="bg-white/80 backdrop-blur-sm text-gray-900 p-2 rounded-full hover:bg-[rgb(var(--jelly-green-rgb))] hover:text-white transition-colors"
                   title="View Live"
                 >
                   <i class="fa fa-external-link-alt"></i>
@@ -48,7 +48,7 @@ const getImageUrl = (path: string) => {
                   v-if="project.source_url" 
                   :href="project.source_url" 
                   target="_blank"
-                  class="bg-white text-gray-900 p-2 rounded-full hover:bg-amethyst hover:text-white transition-colors"
+                  class="bg-white/80 backdrop-blur-sm text-gray-900 p-2 rounded-full hover:bg-[rgb(var(--jelly-green-rgb))] hover:text-white transition-colors"
                   title="View Source"
                 >
                   <i class="fab fa-github"></i>
@@ -60,15 +60,15 @@ const getImageUrl = (path: string) => {
         <div class="p-5 flex flex-col flex-grow">
           <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
             {{ project.title }}
-            <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-amethyst"></i>
+            <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-[rgb(var(--jelly-green-rgb))]"></i>
           </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">{{ project.description }}</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow relative z-10">{{ project.description }}</p>
           
-          <div class="flex flex-wrap gap-2 mt-auto">
+          <div class="flex flex-wrap gap-2 mt-auto relative z-10">
             <span 
               v-for="(tag, tIndex) in project.tags" 
               :key="tIndex"
-              class="px-2 py-1 text-xs rounded-md bg-[var(--highlight-bg)] text-amethyst"
+              class="px-2 py-1 text-xs rounded-md bg-[rgba(var(--jelly-green-rgb),0.1)] text-[rgb(var(--jelly-green-rgb))] font-bold"
             >
               {{ tag }}
             </span>
