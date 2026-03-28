@@ -110,8 +110,8 @@ watch(
           v-for="item in navItems" 
           :key="item.path"
           :to="item.path" 
-          class="text-2xl font-bold text-gray-800 dark:text-gray-200 hover:text-[#2d4a2b] dark:hover:text-[#a4ac86] transition-colors py-2"
-          active-class="text-[#2d4a2b] dark:text-[#a4ac86]"
+          class="text-2xl font-bold text-gray-800 dark:text-gray-200 hover:text-[rgb(var(--jelly-green-rgb))] transition-colors py-2 hover:drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"
+          active-class="text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_8px_rgba(var(--jelly-green-rgb),0.5)]"
           @click="closeMobileMenu"
         >
           <i :class="`${item.icon} mr-3`"></i>

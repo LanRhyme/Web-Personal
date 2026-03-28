@@ -62,7 +62,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <aside class="me-card solid-card anim-fade-in-up w-full lg:w-[320px] flex-shrink-0">
+  <aside class="me-card jelly-glass anim-fade-in-up w-full lg:w-[320px] flex-shrink-0 relative overflow-hidden group">
+    <!-- Inner subtle glow -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[rgba(var(--jelly-green-rgb),0.05)] to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
     <div class="me-image">
       <img alt="LanRhyme Avatar" src="/img/avatar.jpg">
     </div>
@@ -106,8 +108,16 @@ onUnmounted(() => {
   transform: translateX(-50%);
   width: 50px;
   height: 4px;
-  background-color: var(--amethyst-color);
+  background-color: rgba(var(--jelly-green-rgb), 0.6);
+  box-shadow: 0 2px 10px rgba(var(--jelly-green-rgb), 0.4);
   border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.me-card:hover::before {
+  width: 80px;
+  background-color: rgb(var(--jelly-green-rgb));
+  box-shadow: 0 2px 15px rgba(var(--jelly-green-rgb), 0.6);
 }
 
 .me-image {
@@ -115,8 +125,18 @@ onUnmounted(() => {
   height: 100px;
   border-radius: 50%;
   margin: 0 auto 15px;
-  border: 3px solid var(--amethyst-color);
+  border: 3px solid rgba(var(--jelly-green-rgb), 0.4);
+  box-shadow: 0 0 20px rgba(var(--jelly-green-rgb), 0.15);
   overflow: hidden;
+  position: relative;
+  z-index: 10;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.me-card:hover .me-image {
+  transform: scale(1.05);
+  border-color: rgba(var(--jelly-green-rgb), 0.8);
+  box-shadow: 0 0 30px rgba(var(--jelly-green-rgb), 0.3);
 }
 
 .me-image img {
@@ -144,8 +164,9 @@ onUnmounted(() => {
 }
 
 .me-social-links a:hover {
-  color: var(--amethyst-color);
-  transform: scale(1.2);
+  color: rgb(var(--jelly-green-rgb));
+  text-shadow: 0 0 10px rgba(var(--jelly-green-rgb), 0.4);
+  transform: scale(1.2) translateY(-2px);
 }
 
 @media (max-width: 992px) {

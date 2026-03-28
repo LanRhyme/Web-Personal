@@ -62,31 +62,31 @@ const openLink = (link: string) => {
       <!-- Hero Content -->
       <div class="relative z-10">
         <h2 class="text-6xl font-black mb-6 tracking-tight">
-            <span class="text-text-primary">Hello, I'm</span> <span class="relative inline-block bg-clip-text text-transparent bg-gradient-to-r from-[#2d4a2b] to-[#7d8471] dark:from-[#a4ac86] dark:to-[#7d8471]">LanRhyme</span>
+            <span class="text-text-primary">Hello, I'm</span> 
+            <span class="relative inline-block text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_15px_rgba(var(--jelly-green-rgb),0.5)]">LanRhyme</span>
         </h2>
         <div class="h-12 flex justify-center items-center">
              <p class="text-2xl text-gray-700 dark:text-gray-300 font-light">
-                我是 <span class="font-bold text-[#2d4a2b] dark:text-[#a4ac86]">{{ currentRole }}</span><span class="cursor-blink">|</span>
+                我是 <span class="font-bold text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.3)]">{{ currentRole }}</span><span class="cursor-blink">|</span>
              </p>
         </div>
         
         <div class="mt-12 flex justify-center gap-6 flex-wrap">
-          <router-link to="/commissions" class="btn-glow-primary group relative px-8 py-3 rounded-full bg-[#2d4a2b] text-white font-bold overflow-hidden transition-all hover:scale-105 hover:shadow-lg">
+          <router-link to="/commissions" class="btn-glow-primary group px-8 py-3 font-bold">
             <span class="relative z-10 flex items-center">
-                 <i class="fa-solid fa-pencil mr-2"></i> 约稿
+                 <i class="fa-solid fa-pencil mr-2 group-hover:animate-bounce"></i> 约稿
             </span>
-            <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -ml-4"></div>
           </router-link>
           
-          <router-link to="/works" class="btn-glass group relative px-8 py-3 rounded-full border border-[#2d4a2b]/30 text-[#2d4a2b] dark:text-[#a4ac86] font-bold overflow-hidden transition-all hover:scale-105 hover:bg-[#2d4a2b]/10">
+          <router-link to="/works" class="btn-glass group px-8 py-3 font-bold">
              <span class="relative z-10 flex items-center">
-                <i class="fa-solid fa-image mr-2"></i> 作品
+                <i class="fa-solid fa-image mr-2 group-hover:rotate-12 transition-transform"></i> 作品
              </span>
           </router-link>
 
-          <router-link to="/projects" class="btn-glass group relative px-8 py-3 rounded-full border border-[#2d4a2b]/30 text-[#2d4a2b] dark:text-[#a4ac86] font-bold overflow-hidden transition-all hover:scale-105 hover:bg-[#2d4a2b]/10">
+          <router-link to="/projects" class="btn-glass group px-8 py-3 font-bold">
              <span class="relative z-10 flex items-center">
-                <i class="fa fa-user mr-2"></i> 项目
+                <i class="fa fa-user mr-2 group-hover:scale-110 transition-transform"></i> 项目
              </span>
           </router-link>
         </div>
@@ -95,22 +95,22 @@ const openLink = (link: string) => {
 
     <section class="w-full mt-10 anim-fade-in-up" id="pinned-content" style="animation-delay: 0.2s;">
       <h3 class="text-3xl font-bold mb-8 text-center flex items-center justify-center">
-        <span class="w-8 h-1 bg-[#2d4a2b] dark:bg-[#a4ac86] rounded-full mr-4"></span>
+        <span class="w-8 h-1 bg-[rgb(var(--jelly-green-rgb))] shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)] rounded-full mr-4"></span>
         精选置顶
-        <span class="w-8 h-1 bg-[#2d4a2b] dark:bg-[#a4ac86] rounded-full ml-4"></span>
+        <span class="w-8 h-1 bg-[rgb(var(--jelly-green-rgb))] shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)] rounded-full ml-4"></span>
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
         <div 
           v-for="(item, index) in items" 
           :key="index"
-          class="glass-card group p-6 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border border-gray-100 dark:border-gray-700/50 relative overflow-hidden"
+          class="jelly-glass group p-6 cursor-pointer relative overflow-hidden"
           @click="openLink(item.link)"
         >
-          <div class="absolute inset-0 bg-gradient-to-br from-[#2d4a2b]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <h4 class="text-xl font-bold mb-3 group-hover:text-[#2d4a2b] dark:group-hover:text-[#a4ac86] transition-colors">{{ item.title }}</h4>
-          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ item.description }}</p>
-          <div class="mt-4 flex justify-end">
-             <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-[#2d4a2b] dark:group-hover:text-[#a4ac86] transform group-hover:translate-x-2 transition-all"></i>
+          <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <h4 class="text-xl font-bold mb-3 text-text-primary group-hover:text-[rgb(var(--jelly-green-rgb))] transition-colors relative z-10">{{ item.title }}</h4>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed relative z-10">{{ item.description }}</p>
+          <div class="mt-4 flex justify-end relative z-10">
+             <i class="fa-solid fa-arrow-right text-gray-300 dark:text-gray-600 group-hover:text-[rgb(var(--jelly-green-rgb))] transform group-hover:translate-x-2 transition-all"></i>
           </div>
         </div>
       </div>
@@ -126,17 +126,6 @@ const openLink = (link: string) => {
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.dark .glass-card {
-  background: rgba(30, 30, 30, 0.6);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
