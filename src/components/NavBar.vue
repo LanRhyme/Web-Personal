@@ -118,8 +118,9 @@ watch(() => route.path, () => {
 
   <header class="w-full py-4 px-4 md:px-6 flex justify-center sticky top-0 z-50">
     <div
-      class="nav-card w-full max-w-[720px] px-3 py-2 flex items-center justify-between transition-all duration-500"
+      class="nav-card px-3 py-2 flex items-center justify-between transition-all duration-500"
       :class="{ 'shadow-lg': isScrolled }"
+      style="width: auto; min-width: min-content;"
     >
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-3 shrink-0 text-decoration-none">

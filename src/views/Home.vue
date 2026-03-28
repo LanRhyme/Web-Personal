@@ -59,6 +59,18 @@ const getImageUrl = (path: string) => {
             </div>
         </div>
 
+        <!-- Game Card -->
+        <router-link to="/games" class="card p-4 group cursor-pointer flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#35bfa0] to-[#1fc9a8] flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-gamepad text-white text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-bold text-[var(--color-primary)]">坐标挑战</h3>
+                <p class="text-[10px] text-[var(--color-secondary)] truncate">测试你的坐标几何技能</p>
+            </div>
+            <i class="fa fa-chevron-right text-[10px] text-[#35bfa0] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </router-link>
+
         <QuoteCard />
       </div>
 
