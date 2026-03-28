@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import pinnedItems from '../data/pinned-items.json';
-import { ref, onMounted } from 'vue';
+import projectsData from '../data/projects.json';
+import ClockCard from '../components/ClockCard.vue';
+import CalendarCard from '../components/CalendarCard.vue';
+import MeCard from '../components/MeCard.vue';
+import QuoteCard from '../components/QuoteCard.vue';
+import { ref, onMounted, computed } from 'vue';
 
 interface PinnedItem {
   title: string;
@@ -9,146 +14,108 @@ interface PinnedItem {
 }
 
 const items: PinnedItem[] = pinnedItems;
-
-const roles = ["全栈开发者", "数字艺术家", "创意探索者"];
-const currentRole = ref("");
-const roleIndex = ref(0);
-const charIndex = ref(0);
-const isDeleting = ref(false);
-const typingSpeed = ref(100);
-
-const typeRole = () => {
-  const current = roles[roleIndex.value] || "";
-  
-  if (isDeleting.value) {
-    currentRole.value = current.substring(0, charIndex.value - 1);
-    charIndex.value--;
-    typingSpeed.value = 50;
-  } else {
-    currentRole.value = current.substring(0, charIndex.value + 1);
-    charIndex.value++;
-    typingSpeed.value = 150;
-  }
-
-  if (!isDeleting.value && charIndex.value === current.length) {
-    isDeleting.value = true;
-    typingSpeed.value = 2000; // Pause at end
-  } else if (isDeleting.value && charIndex.value === 0) {
-    isDeleting.value = false;
-    roleIndex.value = (roleIndex.value + 1) % roles.length;
-    typingSpeed.value = 500;
-  }
-
-  setTimeout(typeRole, typingSpeed.value);
-};
-
-onMounted(() => {
-  setTimeout(typeRole, 1000);
-});
+const latestProject = computed(() => projectsData[0] || null);
 
 const openLink = (link: string) => {
-  if (link) {
-    if (!link.startsWith('http')) {
-        link = 'https://' + link;
+    if (link) {
+        if (!link.startsWith('http')) link = 'https://' + link;
+        window.open(link, '_blank');
     }
-    window.open(link, '_blank');
-  }
+};
+
+const getImageUrl = (path: string) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return path.startsWith('/') ? path : '/' + path;
 };
 </script>
 
 <template>
-  <div class="right-content-area flex flex-col items-center w-full">
-    <section class="py-12 lg:py-24 text-center w-full anim-fade-in-up relative overflow-visible" id="home" style="animation-delay: 0.1s;">
-      <!-- Hero Content -->
-      <div class="relative z-10">
-        <h2 class="text-6xl font-black mb-6 tracking-tight">
-            <span class="text-text-primary">Hello, I'm</span> 
-            <span class="relative inline-block text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_15px_rgba(var(--jelly-green-rgb),0.5)]">LanRhyme</span>
-        </h2>
-        <div class="h-12 flex justify-center items-center">
-             <p class="text-2xl text-gray-700 dark:text-gray-300 font-light">
-                我是 <span class="font-bold text-[rgb(var(--jelly-green-rgb))] drop-shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.3)]">{{ currentRole }}</span><span class="cursor-blink">|</span>
-             </p>
+  <div class="page-container py-12">
+    <!-- Main Content Grid: This replaces the absolute positioning to prevent overlapping -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      
+      <!-- Left Column (3/12) -->
+      <div class="lg:col-span-3 flex flex-col gap-6 anim-fade-in-up" style="animation-delay: 0.1s">
+        <div class="card p-6 flex flex-col group cursor-pointer" @click="$router.push('/projects')">
+           <img v-if="latestProject" :src="getImageUrl(latestProject.image)" class="absolute inset-0 w-full h-full object-cover opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none" />
+           <p class="text-[10px] font-bold text-[#35bfa0] uppercase tracking-widest mb-3">Latest</p>
+           <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2 leading-tight">{{ latestProject?.title }}</h3>
+           <p class="text-xs text-[var(--color-secondary)] line-clamp-2">{{ latestProject?.description }}</p>
+           <div class="mt-6 flex justify-between items-center">
+              <span class="text-[10px] text-[#35bfa0] font-bold">查看详情 →</span>
+           </div>
         </div>
         
-        <div class="mt-12 flex justify-center gap-6 flex-wrap">
-          <router-link to="/commissions" class="btn-glow-primary group px-8 py-3 font-bold">
-            <span class="relative z-10 flex items-center">
-                 <i class="fa-solid fa-pencil mr-2 group-hover:animate-bounce"></i> 约稿
-            </span>
-          </router-link>
-          
-          <router-link to="/works" class="btn-glass group px-8 py-3 font-bold">
-             <span class="relative z-10 flex items-center">
-                <i class="fa-solid fa-image mr-2 group-hover:rotate-12 transition-transform"></i> 作品
-             </span>
-          </router-link>
+        <div class="card p-8 group">
+            <h2 class="text-3xl font-black text-[var(--color-primary)] leading-tight mb-4">
+                Explore<br><span class="text-brand-gradient">With Me</span>
+            </h2>
+            <p class="text-[11px] text-[var(--color-secondary)] leading-relaxed mb-6 opacity-80">
+                在这里发现我的代码工程与绘画艺术的交汇点。
+            </p>
+            <div class="flex flex-col gap-3">
+                <router-link to="/works" class="btn-brand justify-center py-3 text-xs">全部作品</router-link>
+            </div>
+        </div>
 
-          <router-link to="/projects" class="btn-glass group px-8 py-3 font-bold">
-             <span class="relative z-10 flex items-center">
-                <i class="fa fa-user mr-2 group-hover:scale-110 transition-transform"></i> 项目
-             </span>
-          </router-link>
+        <QuoteCard />
+      </div>
+
+      <!-- Center Column (Identity & Main Focus) (6/12) -->
+      <div class="lg:col-span-6 flex flex-col gap-6 lg:gap-8 anim-fade-in-up" style="animation-delay: 0.05s">
+        <MeCard />
+        
+        <div class="card p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="section-heading">作品集精选</h3>
+                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[#35bfa0] uppercase tracking-widest">Index →</router-link>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                  v-for="(item, index) in items" 
+                  :key="index" 
+                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[#35bfa0]/5 hover:border-[#35bfa0]/30 cursor-pointer !px-6 !py-5 group transition-all duration-300"
+                  @click="openLink(item.link)"
+                >
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-[var(--color-primary)] group-hover:text-[#35bfa0] transition-colors line-clamp-1">{{ item.title }}</h4>
+                        <i class="fa fa-arrow-right text-[10px] text-[#35bfa0] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
+                    </div>
+                    <p class="text-[10px] text-[var(--color-secondary)] mt-2 leading-relaxed line-clamp-2">{{ item.description }}</p>
+                </div>
+            </div>
         </div>
       </div>
-    </section>
 
-    <section class="w-full mt-10 anim-fade-in-up" id="pinned-content" style="animation-delay: 0.2s;">
-      <h3 class="text-3xl font-bold mb-8 text-center flex items-center justify-center">
-        <span class="w-8 h-1 bg-[rgb(var(--jelly-green-rgb))] shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)] rounded-full mr-4"></span>
-        精选置顶
-        <span class="w-8 h-1 bg-[rgb(var(--jelly-green-rgb))] shadow-[0_0_10px_rgba(var(--jelly-green-rgb),0.5)] rounded-full ml-4"></span>
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
-        <div 
-          v-for="(item, index) in items" 
-          :key="index"
-          class="jelly-glass group p-8 cursor-pointer relative overflow-hidden"
-          @click="openLink(item.link)"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-[rgba(var(--jelly-green-rgb),0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <h4 class="text-xl font-bold mb-3 text-text-primary group-hover:text-[rgb(var(--jelly-green-rgb))] transition-colors relative z-10">{{ item.title }}</h4>
-          <p class="text-gray-600 dark:text-gray-400 leading-relaxed relative z-10">{{ item.description }}</p>
-          <div class="mt-4 flex justify-end relative z-10">
-             <i class="fa-solid fa-arrow-right text-gray-300 dark:text-gray-600 group-hover:text-[rgb(var(--jelly-green-rgb))] transform group-hover:translate-x-2 transition-all"></i>
-          </div>
+      <!-- Right Column (Widgets) (3/12) -->
+      <div class="lg:col-span-3 flex flex-col gap-6 anim-fade-in-up" style="animation-delay: 0.15s">
+        <ClockCard />
+        <CalendarCard />
+        
+        <!-- Quick Status/Social -->
+        <div class="card p-6 flex flex-col items-center gap-4">
+             <div class="flex flex-col items-center text-center">
+                <p class="text-[10px] font-bold text-[#35bfa0] uppercase tracking-widest mb-1">Status</p>
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#35bfa0] opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-[#35bfa0]"></span>
+                    </span>
+                    <span class="text-xs font-bold text-[var(--color-primary)]">Available for Hire</span>
+                </div>
+             </div>
         </div>
       </div>
-    </section>
+
+    </div>
   </div>
 </template>
 
 <style scoped>
-.cursor-blink {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@media (max-width: 768px) {
-  .text-6xl {
-    font-size: 2.5rem;
-    line-height: 1.2;
-  }
-  .text-3xl {
-    font-size: 1.5rem;
-  }
-  .py-20 {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-  .mt-12 {
-    margin-top: 2rem;
-  }
-  .gap-6 {
-    gap: 1rem;
-  }
-  .btn-glow-primary, .btn-glass {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.9rem;
-  }
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 </style>

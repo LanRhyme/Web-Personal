@@ -2,6 +2,7 @@
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import MeCard from './components/MeCard.vue';
+import BlurredBubbles from './components/BlurredBubbles.vue';
 import { onMounted, onUnmounted, ref, nextTick, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -25,27 +26,24 @@ const initObserver = () => {
     });
   }, { threshold: 0.1 });
 
-  // Initial check
-  document.querySelectorAll('.anim-fade-in-up, .anim-fade-in-down').forEach(el => observer.observe(el));
+  document.querySelectorAll('.anim-fade-in-up').forEach(el => observer.observe(el));
 };
 
 onMounted(() => {
   setTimeout(() => {
     isLoaded.value = true;
-  }, 500);
+  }, 300);
 
   initObserver();
 
-  // Watch for DOM changes to handle dynamic content (routing)
   mutationObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node instanceof HTMLElement) {
-          if (node.classList.contains('anim-fade-in-up') || node.classList.contains('anim-fade-in-down')) {
+          if (node.classList.contains('anim-fade-in-up')) {
             observer.observe(node);
           }
-          // Check children
-          node.querySelectorAll('.anim-fade-in-up, .anim-fade-in-down').forEach(el => observer.observe(el));
+          node.querySelectorAll('.anim-fade-in-up').forEach(el => observer.observe(el));
         }
       });
     });
@@ -55,11 +53,10 @@ onMounted(() => {
     childList: true,
     subtree: true
   });
-  
-  // Also hook into router changes as a backup
+
   router.afterEach(() => {
     nextTick(() => {
-      document.querySelectorAll('.anim-fade-in-up:not(.active), .anim-fade-in-down:not(.active)').forEach(el => observer.observe(el));
+      document.querySelectorAll('.anim-fade-in-up:not(.active)').forEach(el => observer.observe(el));
     });
   });
 });
@@ -71,40 +68,34 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app-container" :class="{ 'content-loaded': isLoaded }">
-    <!-- Loader -->
-    <div id="page-loader" :class="{ 'hidden': isLoaded }">
-      <div class="butterfly-loader">
-        <div class="butterfly" style="top: 20%; left: 10%;"></div>
-        <div class="butterfly" style="top: 60%; left: 70%;"></div>
-        <div class="butterfly" style="top: 40%; left: 40%;"></div>
-      </div>
-    </div>
-
-    <!-- Ambient Jelly Lighting -->
-    <div class="ambient-light light-1"></div>
-    <div class="ambient-light light-2"></div>
-    <div class="ambient-light light-3"></div>
+  <div class="app-root" :class="{ 'is-loaded': isLoaded }">
+    <!-- Blurred Bubbles Background -->
+    <BlurredBubbles />
 
     <!-- Main Content -->
-    <div class="min-h-screen flex flex-col items-center relative z-10 w-full">
+    <div class="relative z-10 min-h-screen flex flex-col w-full">
       <NavBar v-if="!isAdmin" />
 
       <template v-if="isAdmin">
-         <router-view v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </template>
 
-      <div v-else class="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 lg:py-16">
-        <div class="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-16 relative">
-          <MeCard v-if="isHome" class="w-full lg:w-[380px] lg:sticky lg:top-32 shrink-0 z-20" />
-          <main class="flex-grow w-full z-10" :class="{ 'max-w-4xl': isHome, 'max-w-6xl': !isHome }">
+      <div 
+        class="flex-grow w-full max-w-[1400px] mx-auto px-4 md:px-8 pb-12"
+        :class="isHome ? 'pt-30' : 'pt-36'"
+      >
+        <div class="flex flex-col lg:flex-row items-start gap-8 lg:gap-10 relative">
+          <MeCard v-if="!isHome && !isAdmin" class="w-full lg:w-[320px] lg:sticky lg:top-28 shrink-0 z-20" />
+          <main class="flex-grow w-full z-10" :class="{ 'w-full': isHome, 'max-w-4xl': !isHome }">
             <router-view v-slot="{ Component }">
-              <transition name="fade" mode="out-in">
-                <component :is="Component" />
+              <transition name="page-slide" mode="out-in">
+                <keep-alive>
+                    <component :is="Component" />
+                </keep-alive>
               </transition>
             </router-view>
           </main>
@@ -116,36 +107,36 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+<style>
+/* --- Premium Page Transitions --- */
+.page-slide-enter-active,
+.page-slide-leave-active {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.page-slide-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+}
+
+.page-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px) scale(1.02);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
 
-/* Butterfly Loader Styles (Copied from legacy if needed, or simple placeholder) */
-.butterfly-loader {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.butterfly {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: var(--amethyst-color);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.8); opacity: 0.5; }
+.app-root {
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
-/* Layout relies purely on flex utility classes instead of manual media query */
+.app-root.is-loaded {
+  opacity: 1;
+}
 </style>

@@ -19,56 +19,60 @@ const getImageUrl = (path: string) => {
 </script>
 
 <template>
-  <div class="right-content-area w-full anim-fade-in-up">
-    <h2 class="text-3xl font-bold mb-6 text-center lg:text-left">项目展示</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div 
-        v-for="(project, index) in projects" 
+  <div class="w-full anim-fade-in-up">
+    <h2 class="section-heading mb-8">项目展示</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
+      <div
+        v-for="(project, index) in projects"
         :key="index"
-        class="jelly-glass group hover:scale-[1.02] transform transition-all duration-300 flex flex-col h-full overflow-hidden"
+        class="card group overflow-hidden flex flex-col h-full !p-0 anim-fade-in-up"
       >
-        <div class="h-48 overflow-hidden relative group">
-          <img 
-            :src="getImageUrl(project.image)" 
+        <!-- Image -->
+        <div class="h-48 overflow-hidden relative">
+          <img
+            :src="getImageUrl(project.image)"
             :alt="project.title"
-            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           >
-          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-             <div class="flex gap-4">
-                <a 
-                  v-if="project.live_url" 
-                  :href="project.live_url" 
-                  target="_blank"
-                  class="bg-white/80 backdrop-blur-sm text-gray-900 p-2 rounded-full hover:bg-[rgb(var(--jelly-green-rgb))] hover:text-white transition-colors"
-                  title="View Live"
-                >
-                  <i class="fa fa-external-link-alt"></i>
-                </a>
-                <a 
-                  v-if="project.source_url" 
-                  :href="project.source_url" 
-                  target="_blank"
-                  class="bg-white/80 backdrop-blur-sm text-gray-900 p-2 rounded-full hover:bg-[rgb(var(--jelly-green-rgb))] hover:text-white transition-colors"
-                  title="View Source"
-                >
-                  <i class="fab fa-github"></i>
-                </a>
-             </div>
+          <!-- Overlay Actions -->
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div class="flex gap-3">
+              <a
+                v-if="project.live_url"
+                :href="project.live_url"
+                target="_blank"
+                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#35bfa0] hover:text-white transition-colors shadow-md"
+                title="预览"
+              >
+                <i class="fa fa-external-link-alt text-sm"></i>
+              </a>
+              <a
+                v-if="project.source_url"
+                :href="project.source_url"
+                target="_blank"
+                class="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#2d4a3e] hover:bg-[#35bfa0] hover:text-white transition-colors shadow-md"
+                title="源码"
+              >
+                <i class="fab fa-github text-sm"></i>
+              </a>
+            </div>
           </div>
         </div>
-        
-        <div class="p-5 flex flex-col flex-grow">
-          <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+
+        <!-- Content -->
+        <div class="p-6 flex flex-col flex-grow">
+          <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2 flex items-center gap-2">
             {{ project.title }}
-            <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-[rgb(var(--jelly-green-rgb))]"></i>
+            <i class="fa fa-arrow-right text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 text-[#35bfa0]"></i>
           </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow relative z-10">{{ project.description }}</p>
-          
-          <div class="flex flex-wrap gap-2 mt-auto relative z-10">
-            <span 
-              v-for="(tag, tIndex) in project.tags" 
+          <p class="text-sm text-[var(--color-secondary)] mb-4 flex-grow leading-relaxed">{{ project.description }}</p>
+
+          <div class="flex flex-wrap gap-2 mt-auto">
+            <span
+              v-for="(tag, tIndex) in project.tags"
               :key="tIndex"
-              class="px-2 py-1 text-xs rounded-md bg-[rgba(var(--jelly-green-rgb),0.1)] text-[rgb(var(--jelly-green-rgb))] font-bold"
+              class="tag"
             >
               {{ tag }}
             </span>

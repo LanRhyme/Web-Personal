@@ -755,6 +755,16 @@ const resolveImg = (path: string) => {
 </template>
 
 <style scoped>
+:root, .page-container {
+  --amethyst-color: #35bfa0;
+  --amethyst-color-hover: #1fc9a8;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(255, 255, 255, 0.5);
+  --bg-primary: #f5f7f6;
+  --text-primary: #2d4a3e;
+  --highlight-bg: rgba(53, 191, 160, 0.05);
+}
+
 /* --- Glass Panel & Layout --- */
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
