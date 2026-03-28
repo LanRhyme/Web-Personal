@@ -5,6 +5,7 @@ import Works from '../views/Works.vue';
 import Commissions from '../views/Commissions.vue';
 import Github from '../views/Github.vue';
 import Admin from '../views/Admin.vue';
+import Games from '../views/Games.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -12,6 +13,7 @@ const routes = [
   { path: '/works', component: Works },
   { path: '/commissions', component: Commissions },
   { path: '/github', component: Github },
+  { path: '/games', component: Games },
   { path: '/admin', component: Admin },
 ];
 

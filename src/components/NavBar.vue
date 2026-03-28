@@ -25,6 +25,7 @@ const navItems = [
   { path: '/projects', name: '项目', icon: 'fa fa-cube' },
   { path: '/commissions', name: '约稿', icon: 'fa-solid fa-pencil' },
   { path: '/works', name: '作品', icon: 'fa-solid fa-image' },
+  { path: '/games', name: '游戏', icon: 'fa-solid fa-gamepad' },
   { path: '/github', name: 'GitHub', icon: 'fab fa-github' }
 ];
 
