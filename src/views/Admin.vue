@@ -148,6 +148,7 @@ const projects = ref([...projectsData]);
 const commissions = ref([...commissionsData.priceList]);
 const works = ref([...worksData]);
 const worksSections = ref([...worksSectionData]);
+const isBusinessOpen = ref(commissionsData.isBusinessOpen !== undefined ? commissionsData.isBusinessOpen : true);
 
 const isGithubConfigured = computed(() => !!githubConfig.value.token && !!githubConfig.value.owner && !!githubConfig.value.repo);
 
@@ -155,7 +156,7 @@ const getCurrentData = () => {
     switch (activeTab.value) {
         case 'pinned': return pinnedItems.value;
         case 'projects': return projects.value;
-        case 'commissions': return { priceList: commissions.value };
+        case 'commissions': return { isBusinessOpen: isBusinessOpen.value, priceList: commissions.value };
         case 'works': return works.value;
         case 'works_section': return worksSections.value;
         default: return [];
@@ -391,6 +392,29 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
 
                 <!-- Commissions -->
                 <template v-if="activeTab === 'commissions'">
+                    <div class="card-flat group animate-fade-in-up p-6 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all" :class="isBusinessOpen ? 'bg-[#35bfa0]/20 text-[#35bfa0]' : 'bg-red-500/20 text-red-500'">
+                                    <i class="fas" :class="isBusinessOpen ? 'fa-store' : 'fa-store-slash'"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-[var(--color-primary)]">营业状态</h4>
+                                    <p class="text-xs text-[var(--color-secondary)]">{{ isBusinessOpen ? '当前营业中，橱窗正常展示' : '当前暂停营业，橱窗将隐藏' }}</p>
+                                </div>
+                            </div>
+                            <button 
+                                @click="isBusinessOpen = !isBusinessOpen" 
+                                class="relative w-16 h-8 rounded-full transition-all duration-300 shadow-inner"
+                                :class="isBusinessOpen ? 'bg-[#35bfa0]' : 'bg-gray-400'"
+                            >
+                                <span 
+                                    class="absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all duration-300"
+                                    :class="isBusinessOpen ? 'left-9' : 'left-1'"
+                                ></span>
+                            </button>
+                        </div>
+                    </div>
                     <div v-for="(comm, index) in commissions" :key="index" class="card-flat group animate-fade-in-up p-8 relative">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
                             <button @click="moveUp(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[#35bfa0] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>

@@ -77,7 +77,18 @@
     <section class="w-full anim-fade-in-up" style="animation-delay: 0.2s;">
       <h3 class="section-heading justify-center mb-8 text-2xl">橱窗</h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto stagger-children">
+      <div v-if="!isBusinessOpen" class="card-flat p-12 text-center max-w-2xl mx-auto">
+        <div class="w-20 h-20 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center text-3xl mx-auto mb-6">
+          <i class="fas fa-store-slash"></i>
+        </div>
+        <h4 class="text-xl font-bold text-[var(--color-primary)] mb-3">当前暂停营业</h4>
+        <p class="text-[var(--color-secondary)] text-sm leading-relaxed">
+          抱歉，目前暂时没有开启任何橱窗<br>
+          请稍后再来查看，或通过上方联系方式了解最新动态
+        </p>
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto stagger-children">
         <div
           v-for="(item, index) in priceList"
           :key="index"
@@ -173,6 +184,7 @@ interface CommissionItem {
   currentImage?: string;
 }
 
+const isBusinessOpen = ref(commissionsData.isBusinessOpen !== undefined ? commissionsData.isBusinessOpen : true);
 const priceList = reactive<CommissionItem[]>(commissionsData.priceList.map(item => ({
   ...item,
   currentImage: item.images[0]
