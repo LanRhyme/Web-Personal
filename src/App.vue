@@ -15,6 +15,7 @@ const isAdmin = computed(() => route.path === '/admin');
 
 let observer: IntersectionObserver;
 let mutationObserver: MutationObserver;
+let disableContextMenu: ((e: MouseEvent) => void) | null = null;
 
 const initObserver = () => {
   observer = new IntersectionObserver((entries) => {
@@ -33,6 +34,12 @@ onMounted(() => {
   setTimeout(() => {
     isLoaded.value = true;
   }, 300);
+
+  // Disable right-click context menu
+  disableContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+  };
+  document.addEventListener('contextmenu', disableContextMenu);
 
   initObserver();
 
@@ -64,6 +71,7 @@ onMounted(() => {
 onUnmounted(() => {
   if (observer) observer.disconnect();
   if (mutationObserver) mutationObserver.disconnect();
+  if (disableContextMenu) document.removeEventListener('contextmenu', disableContextMenu);
 });
 </script>
 
