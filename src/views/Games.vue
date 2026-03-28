@@ -917,7 +917,7 @@ onUnmounted(() => {
             <h4 class="font-bold text-[var(--color-primary)] mb-4">题型说明</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[var(--color-secondary)]">
               <div class="flex items-start gap-3'>
-                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0">
                   <i class="fa fa-crosshairs text-[#84C93C]"></i>
                 </div>
                 <div>
