@@ -42,9 +42,13 @@ function makeNoise2D() {
     const v = fade(y);
     const a = perm[X] + Y;
     const b = perm[X + 1] + Y;
+    const g00 = grad[perm[a]! & 7]!;
+    const g10 = grad[perm[b]! & 7]!;
+    const g01 = grad[perm[a + 1]! & 7]!;
+    const g11 = grad[perm[b + 1]! & 7]!;
     return lerp(
-      lerp(dot(grad[perm[a] & 7], x, y), dot(grad[perm[b] & 7], x - 1, y), u),
-      lerp(dot(grad[perm[a + 1] & 7], x, y - 1), dot(grad[perm[b + 1] & 7], x - 1, y - 1), u),
+      lerp(dot(g00, x, y), dot(g10, x - 1, y), u),
+      lerp(dot(g01, x, y - 1), dot(g11, x - 1, y - 1), u),
       v
     );
   };
@@ -176,19 +180,19 @@ onMounted(() => {
     const { tx, ty } = lowestOccupancyTarget();
 
     for (let i = 0; i < bubbles.length; i++) {
-      const b = bubbles[i];
+      const b = bubbles[i]!;
+      if (!b) continue;
 
-      // Flow field
       const n = noise(b.x * noiseScale, b.y * noiseScale + t * noiseTimeScale);
       const angle = n * Math.PI * 2;
       const fx = Math.cos(angle) * speed * b.jitter;
       const fy = Math.sin(angle) * speed * b.jitter;
 
-      // Separation
       let sx = 0, sy = 0;
       for (let j = 0; j < bubbles.length; j++) {
         if (j !== i) {
-          const o = bubbles[j];
+          const o = bubbles[j]!;
+          if (!o) continue;
           const dx = b.x - o.x;
           const dy = b.y - o.y;
           const d2 = dx * dx + dy * dy;
@@ -202,14 +206,12 @@ onMounted(() => {
         }
       }
 
-      // Coverage bias
       const dxT = tx - b.x;
       const dyT = ty - b.y;
       const dT = Math.hypot(dxT, dyT) + 1e-3;
       const cx = (dxT / dT) * 0.05;
       const cy = (dyT / dT) * 0.05;
 
-      // Band constraint
       const bandMin = height * bottomBandStart;
       const bandMax = height * 1.5;
       let bx = 0, by = 0;
@@ -248,10 +250,10 @@ onMounted(() => {
 
   function draw() {
     const darkMode = isDarkMode();
-    // Reduce opacity in dark mode for subtler effect
     const baseAlpha = darkMode ? 0.35 : 0.7;
 
     for (const b of bubbles) {
+      if (!b) continue;
       ctx.save();
       ctx.filter = `blur(${b.blur}px)`;
       ctx.globalAlpha = baseAlpha;

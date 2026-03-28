@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import pinnedItemsData from '../data/pinned-items.json';
 import projectsData from '../data/projects.json';
@@ -7,6 +7,8 @@ import commissionsData from '../data/commissions.json';
 import worksData from '../data/works.json';
 import worksSectionData from '../data/works_section.json';
 import { getGitHubConfig, saveGitHubConfig, updateFile } from '../services/github';
+
+const DRAFT_KEY = 'admin_draft_data';
 
 const route = useRoute();
 
@@ -142,31 +144,50 @@ const tabs = [
 
 const currentTabInfo = computed(() => tabs.find(t => t.id === activeTab.value));
 
-// Data State
-const pinnedItems = ref([...pinnedItemsData]);
-const projects = ref([...projectsData]);
-const commissions = ref([...commissionsData.priceList]);
-const works = ref([...worksData]);
-const worksSections = ref([...worksSectionData]);
-const isBusinessOpen = ref(commissionsData.isBusinessOpen !== undefined ? commissionsData.isBusinessOpen : true);
+const loadDraftData = () => {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch {
+            return null;
+        }
+    }
+    return null;
+};
+
+const saveDraftData = () => {
+    const draft = {
+        pinnedItems: pinnedItems.value,
+        projects: projects.value,
+        commissions: commissions.value,
+        works: works.value,
+        worksSections: worksSections.value,
+        isBusinessOpen: isBusinessOpen.value
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+};
+
+const clearDraftData = () => {
+    localStorage.removeItem(DRAFT_KEY);
+};
+
+const draftData = loadDraftData();
+
+const pinnedItems = ref(draftData?.pinnedItems || [...pinnedItemsData]);
+const projects = ref(draftData?.projects || [...projectsData]);
+const commissions = ref(draftData?.commissions || [...commissionsData.priceList]);
+const works = ref(draftData?.works || [...worksData]);
+const worksSections = ref(draftData?.worksSections || [...worksSectionData]);
+const isBusinessOpen = ref(draftData?.isBusinessOpen ?? (commissionsData.isBusinessOpen !== undefined ? commissionsData.isBusinessOpen : true));
+
+watch([pinnedItems, projects, commissions, works, worksSections, isBusinessOpen], saveDraftData, { deep: true });
 
 const isGithubConfigured = computed(() => !!githubConfig.value.token && !!githubConfig.value.owner && !!githubConfig.value.repo);
 
-const getCurrentData = () => {
-    switch (activeTab.value) {
-        case 'pinned': return pinnedItems.value;
-        case 'projects': return projects.value;
-        case 'commissions': return { isBusinessOpen: isBusinessOpen.value, priceList: commissions.value };
-        case 'works': return works.value;
-        case 'works_section': return worksSections.value;
-        default: return [];
-    }
-};
-
-// Actions
 const isPublishing = ref(false);
 
-const publishChanges = async () => {
+const publishAllChanges = async () => {
     if (!isGithubConfigured.value) {
         alert('请先配置 GitHub 设置！');
         showSettings.value = true;
@@ -177,14 +198,23 @@ const publishChanges = async () => {
 
     try {
         isPublishing.value = true;
-        const filename = currentTabInfo.value?.file;
-        if (!filename) throw new Error('未指定文件');
         
-        const content = JSON.stringify(getCurrentData(), null, 2);
-        const path = `src/data/${filename}`;
+        const filesToPublish = [
+            { filename: 'pinned-items.json', data: pinnedItems.value },
+            { filename: 'projects.json', data: projects.value },
+            { filename: 'commissions.json', data: { isBusinessOpen: isBusinessOpen.value, priceList: commissions.value } },
+            { filename: 'works.json', data: works.value },
+            { filename: 'works_section.json', data: worksSections.value }
+        ];
         
-        await updateFile(path, content, `Admin: 更新 ${filename}`, githubConfig.value);
-        alert('发布成功！');
+        for (const file of filesToPublish) {
+            const content = JSON.stringify(file.data, null, 2);
+            const path = `src/data/${file.filename}`;
+            await updateFile(path, content, `Admin: 更新 ${file.filename}`, githubConfig.value);
+        }
+        
+        clearDraftData();
+        alert('所有修改已成功发布！');
     } catch (e) {
         console.error(e);
         alert('发布失败: ' + e);
@@ -212,17 +242,19 @@ const addWorksSection = () => worksSections.value.push({ id: `section-${Date.now
 const removeWorksSection = (index: number) => worksSections.value.splice(index, 1);
 
 // Reordering Logic
-const moveUp = (list: any[], index: number) => {
-    if (index > 0) {
-        const item = list.splice(index, 1)[0];
-        list.splice(index - 1, 0, item);
+const moveUp = (list: any[], index: number | string) => {
+    const idx = Number(index);
+    if (idx > 0) {
+        const item = list.splice(idx, 1)[0];
+        list.splice(idx - 1, 0, item);
     }
 };
 
-const moveDown = (list: any[], index: number) => {
-    if (index < list.length - 1) {
-        const item = list.splice(index, 1)[0];
-        list.splice(index + 1, 0, item);
+const moveDown = (list: any[], index: number | string) => {
+    const idx = Number(index);
+    if (idx < list.length - 1) {
+        const item = list.splice(idx, 1)[0];
+        list.splice(idx + 1, 0, item);
     }
 };
 
@@ -280,7 +312,7 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
         </div>
 
         <div class="mb-8 space-y-3 px-2">
-            <button @click="() => { publishChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="w-full flex items-center justify-center gap-3 bg-[#35bfa0] hover:bg-[#1fc9a8] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#35bfa0]/20 transition-all disabled:opacity-50">
+            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="w-full flex items-center justify-center gap-3 bg-[#35bfa0] hover:bg-[#1fc9a8] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#35bfa0]/20 transition-all disabled:opacity-50">
                 <i v-if="isPublishing" class="fas fa-sync fa-spin"></i>
                 <i v-else class="fas fa-cloud-upload-alt"></i>
                 {{ isPublishing ? '同步中...' : '发布到生产环境' }}
