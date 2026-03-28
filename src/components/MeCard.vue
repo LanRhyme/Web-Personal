@@ -33,32 +33,37 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside class="card anim-fade-in-up overflow-hidden group flex flex-col items-center text-center p-8" style="animation-delay: 0.05s">
-    <!-- Avatar -->
-    <div class="avatar-ring overflow-hidden">
-      <img alt="LanRhyme Avatar" src="/img/avatar.jpg" class="avatar-img">
+  <aside class="card anim-fade-in-up overflow-hidden group flex flex-col items-center text-left md:text-center p-5 md:p-8" style="animation-delay: 0.05s">
+    <!-- Mobile: Horizontal Layout, Desktop: Vertical Centered -->
+    <div class="flex items-center gap-4 md:flex-col md:items-center w-full">
+      <!-- Avatar -->
+      <div class="avatar-ring overflow-hidden flex-shrink-0 w-16 h-16 md:w-[100px] md:h-[100px]">
+        <img alt="LanRhyme Avatar" src="/img/avatar.jpg" class="avatar-img">
+      </div>
+
+      <!-- Greeting & Identity -->
+      <div class="flex-1 min-w-0 md:w-full md:text-center">
+        <p class="text-[10px] font-bold text-[var(--color-secondary)] uppercase tracking-[0.2em] md:mt-6">{{ greeting }}</p>
+        <h3 class="text-lg md:text-2xl font-black mt-0.5 md:mt-2 text-[var(--color-primary)]">
+          I'm <span class="text-brand-gradient">LanRhyme</span>
+        </h3>
+        <p class="text-[10px] md:text-xs text-[var(--color-secondary)] mt-0.5 md:mt-1 font-medium opacity-80">Full-Stack Developer & Artist</p>
+      </div>
     </div>
 
-    <!-- Greeting & Identity -->
-    <p class="text-[10px] font-bold text-[var(--color-secondary)] uppercase tracking-[0.2em] mt-6">{{ greeting }}</p>
-    <h3 class="text-2xl font-black mt-2 text-[var(--color-primary)]">
-      I'm <span class="text-brand-gradient">LanRhyme</span>
-    </h3>
-    <p class="text-xs text-[var(--color-secondary)] mt-1 font-medium opacity-80">Full-Stack Developer & Artist</p>
-
-    <div class="w-10 h-[2.5px] bg-[#35bfa0] rounded-full mx-auto my-6 opacity-40 group-hover:w-16 group-hover:opacity-80 transition-all duration-500"></div>
+    <div class="hidden md:block w-10 h-[2.5px] bg-[#35bfa0] rounded-full mx-auto my-6 opacity-40 group-hover:w-16 group-hover:opacity-80 transition-all duration-500"></div>
 
     <!-- Stats & Contact Hub -->
-    <div class="flex flex-col gap-4 w-full">
-        <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[rgba(53,191,160,0.06)] border border-[rgba(53,191,160,0.1)] transition-all group-hover:bg-[rgba(53,191,160,0.1)]">
-            <i class="fab fa-github text-[#35bfa0] text-sm"></i>
-            <span class="text-[11px] font-bold text-[var(--color-secondary)]">{{ githubInfo }}</span>
+    <div class="flex flex-col gap-3 md:gap-4 w-full mt-4 md:mt-0">
+        <div class="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl bg-[rgba(53,191,160,0.06)] border border-[rgba(53,191,160,0.1)] transition-all group-hover:bg-[rgba(53,191,160,0.1)]">
+            <i class="fab fa-github text-[#35bfa0] text-xs md:text-sm"></i>
+            <span class="text-[10px] md:text-[11px] font-bold text-[var(--color-secondary)] truncate">{{ githubInfo }}</span>
         </div>
-        
-        <div class="flex justify-center gap-4 mt-2">
-            <a href="https://github.com/LanRhyme" target="_blank" class="social-icon !w-12 !h-12 border-none shadow-sm"><i class="fab fa-github"></i></a>
-            <a href="https://space.bilibili.com/496901387" target="_blank" class="social-icon !w-12 !h-12 border-none shadow-sm"><i class="fab fa-bilibili"></i></a>
-            <a href="mailto:i@lanrhyme.com" class="social-icon !w-12 !h-12 border-none shadow-sm"><i class="fa fa-envelope"></i></a>
+
+        <div class="flex justify-start md:justify-center gap-3 md:gap-4 mt-1 md:mt-2">
+            <a href="https://github.com/LanRhyme" target="_blank" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fab fa-github"></i></a>
+            <a href="https://space.bilibili.com/496901387" target="_blank" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fab fa-bilibili"></i></a>
+            <a href="mailto:i@lanrhyme.com" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fa fa-envelope"></i></a>
         </div>
     </div>
   </aside>

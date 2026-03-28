@@ -38,45 +38,45 @@ const inactiveColor = 'rgba(53, 191, 160, 0.05)';
 </script>
 
 <template>
-  <div class="card !p-2 flex items-center justify-center overflow-hidden w-full h-full">
-    <div class="w-full h-full bg-[rgba(53,191,160,0.06)] rounded-[24px] flex items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-4">
+  <div class="card !p-2 flex items-center justify-center overflow-hidden w-full">
+    <div class="w-full bg-[rgba(53,191,160,0.06)] rounded-[20px] md:rounded-[24px] flex items-center justify-center gap-0.5 sm:gap-1 md:gap-1.5 py-3 md:py-4 px-2 sm:px-3 md:px-4">
       <!-- Hours -->
-      <div class="digit-box flex gap-1">
-        <svg v-for="(v, i) in hours.split('')" :key="'h'+i" width="24" height="44" viewBox="0 0 29 52" fill="none" class="digit-svg">
-          <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx" 
-                :d="paths[idx]" 
-                :fill="active ? activeColor : inactiveColor" 
+      <div class="digit-box flex gap-0.5 sm:gap-1">
+        <svg v-for="(v, i) in hours.split('')" :key="'h'+i" viewBox="0 0 29 52" fill="none" class="digit-svg digit-hours">
+          <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx"
+                :d="paths[idx]"
+                :fill="active ? activeColor : inactiveColor"
           />
         </svg>
       </div>
 
       <!-- Colon -->
-      <div class="flex flex-col gap-1.5 opacity-60">
-        <div class="w-1 h-1 bg-[#35bfa0] rounded-full"></div>
-        <div class="w-1 h-1 bg-[#35bfa0] rounded-full"></div>
+      <div class="flex flex-col gap-1 sm:gap-1.5 opacity-60 px-0.5">
+        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#35bfa0] rounded-full"></div>
+        <div class="w-0.5 sm:w-1 h-0.5 sm:h-1 bg-[#35bfa0] rounded-full"></div>
       </div>
 
       <!-- Minutes -->
-      <div class="digit-box flex gap-1">
-        <svg v-for="(v, i) in minutes.split('')" :key="'m'+i" width="24" height="44" viewBox="0 0 29 52" fill="none" class="digit-svg">
-          <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx" 
-                :d="paths[idx]" 
-                :fill="active ? activeColor : inactiveColor" 
+      <div class="digit-box flex gap-0.5 sm:gap-1">
+        <svg v-for="(v, i) in minutes.split('')" :key="'m'+i" viewBox="0 0 29 52" fill="none" class="digit-svg digit-minutes">
+          <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx"
+                :d="paths[idx]"
+                :fill="active ? activeColor : inactiveColor"
           />
         </svg>
       </div>
 
       <!-- Optional Seconds for larger screens -->
       <template v-if="true">
-        <div class="flex flex-col gap-1.5 opacity-30 hidden sm:flex px-0.5">
+        <div class="flex flex-col gap-1 opacity-30 hidden sm:flex px-0.5">
           <div class="w-0.5 h-0.5 bg-[#35bfa0] rounded-full"></div>
           <div class="w-0.5 h-0.5 bg-[#35bfa0] rounded-full"></div>
         </div>
         <div class="digit-box hidden sm:flex gap-0.5 transform scale-75 origin-left">
-          <svg v-for="(v, i) in seconds.split('')" :key="'s'+i" width="20" height="36" viewBox="0 0 29 52" fill="none" class="digit-svg">
-            <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx" 
-                  :d="paths[idx]" 
-                  :fill="active ? activeColor : inactiveColor" 
+          <svg v-for="(v, i) in seconds.split('')" :key="'s'+i" width="18" height="32" viewBox="0 0 29 52" fill="none" class="digit-svg digit-seconds">
+            <path v-for="(active, idx) in segmentMap[parseInt(v)]" :key="idx"
+                  :d="paths[idx]"
+                  :fill="active ? activeColor : inactiveColor"
             />
           </svg>
         </div>
@@ -103,10 +103,46 @@ const paths = [
   transition: all 0.3s ease;
 }
 
-@media (max-width: 640px) {
-  .digit-svg {
+/* Default sizes for larger screens */
+.digit-hours {
+  width: 22px;
+  height: 40px;
+}
+
+.digit-minutes {
+  width: 22px;
+  height: 40px;
+}
+
+.digit-seconds {
+  width: 18px;
+  height: 32px;
+}
+
+/* Tablet sizes */
+@media (max-width: 1024px) {
+  .digit-hours,
+  .digit-minutes {
     width: 20px;
     height: 36px;
+  }
+}
+
+/* Mobile sizes */
+@media (max-width: 640px) {
+  .digit-hours,
+  .digit-minutes {
+    width: 16px;
+    height: 28px;
+  }
+}
+
+/* Small mobile sizes */
+@media (max-width: 380px) {
+  .digit-hours,
+  .digit-minutes {
+    width: 14px;
+    height: 24px;
   }
 }
 </style>

@@ -96,32 +96,52 @@ watch(() => route.path, () => {
     <div
       v-if="isMobileMenuOpen"
       class="fixed inset-0 z-40 backdrop-blur-2xl flex flex-col justify-center items-center lg:hidden"
-      style="background: rgba(238, 238, 238, 0.92)"
+      style="background: rgba(238, 238, 238, 0.95)"
       @click.self="closeMobileMenu"
     >
-      <div class="flex flex-col space-y-3 text-center w-full px-8 max-w-xs mx-auto">
+      <!-- Close button at top right -->
+      <button
+        class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(53,191,160,0.1)] text-[#2d4a3e]"
+        @click="closeMobileMenu"
+      >
+        <i class="fa fa-times text-lg"></i>
+      </button>
+
+      <div class="flex flex-col space-y-2.5 text-center w-full px-6 max-w-sm mx-auto">
         <router-link
           v-for="item in navItems"
           :key="item.path"
           :to="item.path"
-          class="card-flat flex items-center gap-4 px-6 py-4 text-lg font-semibold transition-all duration-300"
-          :class="route.path === item.path ? 'text-[#35bfa0] border-[rgba(53,191,160,0.3)]' : 'text-[#2d4a3e]'"
+          class="card-flat flex items-center gap-3 px-5 py-3.5 text-base font-semibold transition-all duration-300"
+          :class="route.path === item.path ? 'text-[#35bfa0] border-[rgba(53,191,160,0.3)] bg-[rgba(53,191,160,0.05)]' : 'text-[#2d4a3e]'"
           active-class=""
           @click="closeMobileMenu"
         >
-          <i :class="item.icon" class="w-6 text-center"></i>
+          <i :class="item.icon" class="w-5 text-center"></i>
           {{ item.name }}
         </router-link>
+      </div>
+
+      <!-- Footer info in mobile menu -->
+      <div class="absolute bottom-8 text-center">
+        <p class="text-[10px] text-[var(--color-secondary)] opacity-60">LanRhyme Portfolio</p>
       </div>
     </div>
   </transition>
 
-  <header class="w-full py-4 px-4 md:px-6 flex justify-center sticky top-0 z-50">
+  <header class="w-full py-3 md:py-4 px-3 md:px-6 flex justify-center sticky top-0 z-50">
     <div
-      class="nav-card px-3 py-2 flex items-center justify-between transition-all duration-500"
+      class="nav-card px-2 md:px-3 py-2 flex items-center justify-between transition-all duration-500"
       :class="{ 'shadow-lg': isScrolled }"
       style="width: auto; min-width: min-content;"
     >
+      <!-- Mobile: Logo/Brand -->
+      <div class="lg:hidden flex items-center">
+        <router-link to="/" class="flex items-center gap-2 px-2">
+          <span class="text-sm font-bold text-[var(--color-primary)]">LanRhyme</span>
+        </router-link>
+      </div>
+
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center relative py-1" ref="navRef">
         <div class="nav-tracker" ref="trackerRef" style="opacity: 0"></div>
@@ -138,26 +158,26 @@ watch(() => route.path, () => {
       </nav>
 
       <!-- Right Actions -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 md:gap-2">
         <!-- Dark Mode Toggle -->
         <button
           @click="toggleDarkMode"
-          class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(53,191,160,0.1)] text-[#6b8a7a] hover:text-[#35bfa0]"
+          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(53,191,160,0.1)] text-[#6b8a7a] hover:text-[#35bfa0]"
           :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
         >
           <transition name="fade" mode="out-in">
-            <i v-if="isDark" class="fas fa-moon"></i>
-            <i v-else class="fas fa-sun"></i>
+            <i v-if="isDark" class="fas fa-moon text-sm md:text-base"></i>
+            <i v-else class="fas fa-sun text-sm md:text-base"></i>
           </transition>
         </button>
 
         <!-- Mobile Menu Toggle -->
         <button
-          class="lg:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 text-[#2d4a3e]"
+          class="lg:hidden flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full transition-all duration-300 text-[#2d4a3e]"
           :class="isMobileMenuOpen ? 'bg-[rgba(53,191,160,0.1)]' : ''"
           @click="toggleMobileMenu"
         >
-          <i class="fa text-base" :class="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+          <i class="fa text-sm md:text-base" :class="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>
       </div>
     </div>
