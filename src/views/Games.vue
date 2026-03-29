@@ -867,6 +867,15 @@ onUnmounted(() => {
         <p class="text-sm text-[var(--color-secondary)]">
           测试你的坐标几何技能，通过4个递进难度等级
         </p>
+        <a
+          href="https://github.com/WingChunWong"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 mt-3 text-xs text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors"
+        >
+          <i class="fab fa-github"></i>
+          WingChunWong
+        </a>
       </div>
 
       <transition name="fade" mode="out-in" @after-enter="onTransitionComplete">
@@ -1144,6 +1153,16 @@ onUnmounted(() => {
               <button class="btn-brand px-6 py-3" @click="startGame">再玩一次</button>
               <button class="btn-secondary px-6 py-3" @click="restartGame">返回首页</button>
             </div>
+
+            <a
+              href="https://github.com/WingChunWong"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 mt-6 text-xs text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors"
+            >
+              <i class="fab fa-github"></i>
+              WingChunWong
+            </a>
           </div>
 
           <div class="card p-6">
