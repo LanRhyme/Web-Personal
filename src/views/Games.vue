@@ -916,8 +916,8 @@ onUnmounted(() => {
           <div class="card p-6">
             <h4 class="font-bold text-[var(--color-primary)] mb-4">题型说明</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[var(--color-secondary)]">
-              <div class="flex items-start gap-3'>
-                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background-color: rgba(132,201,60,0.1)">
                   <i class="fa fa-crosshairs text-[#84C93C]"></i>
                 </div>
                 <div>
@@ -926,8 +926,8 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
-                  <i class="fa fa-crosshairs text-[#84C93C]"></i>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background-color: rgba(132,201,60,0.1)">
+                  <i class="fa fa-sync text-[#84C93C]"></i>
                 </div>
                 <div>
                   <p class="font-semibold text-[var(--color-primary)]">对称变换</p>
@@ -935,7 +935,7 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background-color: rgba(132,201,60,0.1)">
                   <i class="fa fa-arrows-alt text-[#84C93C]"></i>
                 </div>
                 <div>
@@ -944,7 +944,7 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#84C93C]/10 flex items-center justify-center shrink-0'>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background-color: rgba(132,201,60,0.1)">
                   <i class="fa fa-shapes text-[#84C93C]"></i>
                 </div>
                 <div>
