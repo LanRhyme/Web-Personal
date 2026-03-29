@@ -250,7 +250,7 @@ onMounted(() => {
 
   function draw() {
     const darkMode = isDarkMode();
-    const baseAlpha = darkMode ? 0.35 : 0.7;
+    const baseAlpha = darkMode ? 0.2 : 0.4;
 
     for (const b of bubbles) {
       if (!b) continue;
