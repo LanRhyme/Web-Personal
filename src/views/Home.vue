@@ -13,8 +13,23 @@ interface PinnedItem {
   link: string;
 }
 
+interface Article {
+  slug: string;
+  title: string;
+  date: string;
+  summary?: string;
+  tags: string[];
+  cover?: string;
+  hidden?: boolean;
+}
+
 const items: PinnedItem[] = pinnedItems;
 const latestProject = computed(() => projectsData[0] || null);
+const articles = ref<Article[]>([]);
+const latestArticle = computed(() => {
+  if (articles.value.length === 0) return null;
+  return [...articles.value].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+});
 
 const openLink = (link: string) => {
     if (link) {
@@ -28,6 +43,22 @@ const getImageUrl = (path: string) => {
   if (path.startsWith('http')) return path;
   return path.startsWith('/') ? path : '/' + path;
 };
+
+const loadArticles = async () => {
+  try {
+    const res = await fetch('/blogs/index.json', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      articles.value = Array.isArray(data) ? data : [];
+    }
+  } catch (e) {
+    console.error('Failed to load articles:', e);
+  }
+};
+
+onMounted(() => {
+  loadArticles();
+});
 </script>
 
 <template>
@@ -153,6 +184,30 @@ const getImageUrl = (path: string) => {
                 </div>
              </div>
         </div>
+
+        <!-- Latest Article Card -->
+        <router-link v-if="latestArticle" :to="'/article/' + latestArticle.slug" class="card p-4 md:p-6 group cursor-pointer block hover:border-[var(--color-brand)]/30 transition-all duration-300">
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-feather-alt text-[var(--color-brand)] text-sm"></i>
+                </div>
+                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest">最新文章</p>
+            </div>
+            <h4 class="text-sm font-bold text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-2 mb-2">{{ latestArticle.title }}</h4>
+            <p v-if="latestArticle.summary" class="text-[10px] text-[var(--color-secondary)] line-clamp-2 mb-2">{{ latestArticle.summary }}</p>
+            <div class="flex items-center gap-2 flex-wrap">
+                <span v-for="tag in latestArticle.tags.slice(0, 3)" :key="tag" class="text-[9px] font-bold text-[var(--color-brand)] bg-[var(--color-brand)]/10 px-2 py-0.5 rounded-full uppercase">#{{ tag }}</span>
+            </div>
+        </router-link>
+        <router-link v-else to="/articles" class="card p-4 md:p-6 group cursor-pointer block hover:border-[var(--color-brand)]/30 transition-all duration-300">
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-feather-alt text-[var(--color-brand)] text-sm"></i>
+                </div>
+                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest">文章</p>
+            </div>
+            <h4 class="text-sm font-bold text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors">暂无文章</h4>
+        </router-link>
       </div>
 
     </div>

@@ -139,7 +139,8 @@ const tabs = [
   { id: 'projects', name: '项目案例', icon: 'fa-code', desc: '主要代码工程展示', file: 'projects.json' },
   { id: 'commissions', name: '约稿信息', icon: 'fa-pencil-alt', desc: '定价与服务说明', file: 'commissions.json' },
   { id: 'works', name: '个人图库', icon: 'fa-image', desc: '单次上传的作品', file: 'works.json' },
-  { id: 'works_section', name: '作品合集', icon: 'fa-folder-open', desc: '对作品进行分类归纳', file: 'works_section.json' }
+  { id: 'works_section', name: '作品合集', icon: 'fa-folder-open', desc: '对作品进行分类归纳', file: 'works_section.json' },
+  { id: 'articles', name: '文章管理', icon: 'fa-feather-alt', desc: '博客文章发布与管理', file: 'articles' }
 ];
 
 const currentTabInfo = computed(() => tabs.find(t => t.id === activeTab.value));
@@ -266,6 +267,202 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
   if (idx === -1) section.work_ids.push(workId);
   else section.work_ids.splice(idx, 1);
 };
+
+// Article Editor State
+const articleForm = ref({
+  title: '',
+  slug: '',
+  summary: '',
+  content: '',
+  tags: '',
+  category: '',
+  cover: '',
+  hidden: false
+});
+
+const articleImages = ref<{ id: string; previewUrl: string; file?: File }[]>([]);
+const articleCoverPreview = ref<string | null>(null);
+const isArticlePublishing = ref(false);
+const existingArticles = ref<{ slug: string; title: string; date: string }[]>([]);
+const isLoadingArticles = ref(false);
+
+const generateSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+const handleArticleTitleChange = () => {
+  if (!articleForm.value.slug) {
+    articleForm.value.slug = generateSlug(articleForm.value.title);
+  }
+};
+
+const handleArticleCoverUpload = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    articleCoverPreview.value = e.target?.result as string;
+    articleForm.value.cover = file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+const getArticleCoverUrl = (path: string) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return path.startsWith('/') ? path : '/' + path;
+};
+
+const loadArticlesList = async () => {
+  if (!isGithubConfigured.value) return;
+  isLoadingArticles.value = true;
+  try {
+    const res = await fetch('/blogs/index.json', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      existingArticles.value = Array.isArray(data) ? data : [];
+    }
+  } catch (e) {
+    console.error('Failed to load articles:', e);
+  } finally {
+    isLoadingArticles.value = false;
+  }
+};
+
+const publishArticle = async () => {
+  if (!isGithubConfigured.value) {
+    alert('请先配置 GitHub 设置！');
+    showSettings.value = true;
+    return;
+  }
+
+  if (!articleForm.value.title || !articleForm.value.slug) {
+    alert('请填写标题和slug！');
+    return;
+  }
+
+  if (!confirm('确认发布文章吗？')) return;
+
+  isArticlePublishing.value = true;
+
+  try {
+    const slug = articleForm.value.slug;
+    const basePath = `public/blogs/${slug}`;
+    const treeItems: any[] = [];
+
+    const dateStr = new Date().toISOString().split('T')[0];
+
+    const config = {
+      title: articleForm.value.title,
+      summary: articleForm.value.summary,
+      date: dateStr,
+      tags: articleForm.value.tags.split(',').map(t => t.trim()).filter(Boolean),
+      category: articleForm.value.category,
+      cover: articleForm.value.cover,
+      hidden: articleForm.value.hidden
+    };
+
+    const configBlob = await createBlob(githubConfig.value.token, githubConfig.value.owner, githubConfig.value.repo, btoa(unescape(encodeURIComponent(JSON.stringify(config, null, 2)))), 'base64');
+    treeItems.push({
+      path: `${basePath}/config.json`,
+      mode: '100644',
+      type: 'blob',
+      sha: configBlob.sha
+    });
+
+    const mdBlob = await createBlob(githubConfig.value.token, githubConfig.value.owner, githubConfig.value.repo, btoa(unescape(encodeURIComponent(articleForm.value.content))), 'base64');
+    treeItems.push({
+      path: `${basePath}/index.md`,
+      mode: '100644',
+      type: 'blob',
+      sha: mdBlob.sha
+    });
+
+    const refRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/refs/heads/${githubConfig.value.branch}`, {
+      headers: { Authorization: `token ${githubConfig.value.token}` }
+    });
+    const refData = await refRes.json();
+    const latestCommitSha = refData.object.sha;
+
+    const treeRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/trees`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        base_tree: latestCommitSha,
+        tree: treeItems
+      })
+    });
+    const treeData = await treeRes.json();
+
+    const commitRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/commits`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Admin: 发布文章 ${slug}`,
+        tree: treeData.sha,
+        parents: [latestCommitSha]
+      })
+    });
+    const commitData = await commitRes.json();
+
+    await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/refs/heads/${githubConfig.value.branch}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sha: commitData.sha
+      })
+    });
+
+    articleForm.value = { title: '', slug: '', summary: '', content: '', tags: '', category: '', cover: '', hidden: false };
+    articleCoverPreview.value = null;
+    await loadArticlesList();
+
+    alert('文章发布成功！');
+  } catch (e: any) {
+    console.error('Failed to publish article:', e);
+    alert('发布失败: ' + (e?.message || e));
+  } finally {
+    isArticlePublishing.value = false;
+  }
+};
+
+const createBlob = async (token: string, owner: string, repo: string, content: string, encoding: string) => {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+    method: 'POST',
+    headers: {
+      Authorization: `token ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ content, encoding })
+  });
+  return await res.json();
+};
+
+onMounted(() => {
+  if (isAuthenticated.value) {
+    loadArticlesList();
+  }
+});
+
+watch(isAuthenticated, (newVal) => {
+  if (newVal) {
+    loadArticlesList();
+  }
+});
 </script>
 
 <template>
@@ -552,6 +749,98 @@ const toggleWorkInSection = (sectionIndex: number, workId: string) => {
                              </div>
                         </div>
                      </div>
+                </template>
+
+                <!-- Articles -->
+                <template v-if="activeTab === 'articles'">
+                    <div class="card-flat p-6 mb-6">
+                        <h4 class="font-bold text-[var(--color-primary)] mb-4">撰写新文章</h4>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label>标题</label>
+                                    <input v-model="articleForm.title" @input="handleArticleTitleChange" class="input-modern" placeholder="文章标题" />
+                                </div>
+                                <div class="input-group">
+                                    <label>Slug (URL标识)</label>
+                                    <input v-model="articleForm.slug" class="input-modern font-mono text-xs" placeholder="my-article-slug" />
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>摘要</label>
+                                <input v-model="articleForm.summary" class="input-modern" placeholder="文章简要描述" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label>标签 (逗号分隔)</label>
+                                    <input v-model="articleForm.tags" class="input-modern" placeholder="vue, react, typescript" />
+                                </div>
+                                <div class="input-group">
+                                    <label>分类</label>
+                                    <input v-model="articleForm.category" class="input-modern" placeholder="技术/生活/其他" />
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>封面图片 URL</label>
+                                <div class="flex gap-4 items-start">
+                                    <input v-model="articleForm.cover" class="input-modern flex-grow" placeholder="/blogs/my-article/cover.png" />
+                                    <label class="btn-ghost cursor-pointer">
+                                        <i class="fas fa-upload mr-2"></i>上传
+                                        <input type="file" class="hidden" accept="image/*" @change="handleArticleCoverUpload" />
+                                    </label>
+                                </div>
+                                <div v-if="articleCoverPreview" class="mt-3 w-32 h-32 rounded-xl overflow-hidden bg-[var(--color-bg)]">
+                                    <img :src="articleCoverPreview" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Markdown 内容</label>
+                                <textarea v-model="articleForm.content" class="input-modern h-64 font-mono text-xs" placeholder="# 标题&#10;&#10;这里是文章内容，支持 Markdown 语法..."></textarea>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" v-model="articleForm.hidden" class="w-4 h-4 rounded accent-[var(--color-brand)]" />
+                                    <span class="text-xs text-[var(--color-secondary)]">隐藏文章 (不显示在列表)</span>
+                                </label>
+                            </div>
+                            <div class="flex justify-end gap-4 pt-4 border-t border-[var(--color-border)]">
+                                <button @click="articleForm = { title: '', slug: '', summary: '', content: '', tags: '', category: '', cover: '', hidden: false }; articleCoverPreview = null;" class="btn-ghost">
+                                    <i class="fas fa-times mr-2"></i>清空
+                                </button>
+                                <button @click="publishArticle" :disabled="isArticlePublishing" class="btn-brand">
+                                    <i v-if="isArticlePublishing" class="fas fa-sync fa-spin mr-2"></i>
+                                    <i v-else class="fas fa-cloud-upload-alt mr-2"></i>
+                                    {{ isArticlePublishing ? '发布中...' : '发布文章' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="isLoadingArticles" class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin text-[var(--color-brand)] text-xl"></i>
+                    </div>
+
+                    <div v-else-if="existingArticles.length > 0">
+                        <h4 class="font-bold text-[var(--color-primary)] mb-4">已发布的文章</h4>
+                        <div class="space-y-3">
+                            <div v-for="article in existingArticles" :key="article.slug" class="card-flat bg-white/40 hover:bg-[var(--color-brand)]/5 transition-colors p-4 flex items-center justify-between">
+                                <div>
+                                    <h5 class="font-bold text-[var(--color-primary)]">{{ article.title }}</h5>
+                                    <p class="text-xs text-[var(--color-secondary)] font-mono">{{ article.slug }}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-[var(--color-secondary)]">{{ article.date }}</span>
+                                    <button @click="$router.push('/article/' + article.slug)" class="btn-ghost !py-2 !px-3 text-xs">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="text-center py-12 text-[var(--color-secondary)]">
+                        <i class="fas fa-feather-alt text-4xl opacity-20 mb-4"></i>
+                        <p>暂无已发布的文章</p>
+                    </div>
                 </template>
 
             </div>
