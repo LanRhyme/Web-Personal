@@ -15,13 +15,20 @@ const greeting = ref(getGreeting());
 
 const fetchGithubInfo = async () => {
   try {
-    const response = await fetch('https://api.github.com/users/LanRhyme');
-    if (response.ok) {
-      const data = await response.json();
-      githubInfo.value = `${data.public_repos} Repos · ${data.followers} Followers`;
-    } else {
+    const userRes = await fetch('https://api.github.com/users/LanRhyme');
+    if (!userRes.ok) {
       githubInfo.value = 'GitHub Error';
+      return;
     }
+    const userData = await userRes.json();
+    const reposRes = await fetch(`https://api.github.com/users/LanRhyme/repos?per_page=100&sort=updated`);
+    if (!reposRes.ok) {
+      githubInfo.value = `${userData.public_repos} Repos · ${userData.followers} Followers`;
+      return;
+    }
+    const repos = await reposRes.json();
+    const totalStars = repos.reduce((sum: number, repo: { stargazers_count: number }) => sum + repo.stargazers_count, 0);
+    githubInfo.value = `${totalStars} Stars · ${userData.followers} Followers`;
   } catch (e) {
     githubInfo.value = '网络错误';
   }
