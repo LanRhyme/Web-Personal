@@ -285,6 +285,7 @@ const articleCoverPreview = ref<string | null>(null);
 const isArticlePublishing = ref(false);
 const existingArticles = ref<{ slug: string; title: string; date: string }[]>([]);
 const isLoadingArticles = ref(false);
+const isDeletingArticle = ref(false);
 
 const generateSlug = (title: string) => {
   return title
@@ -515,6 +516,88 @@ const createBlob = async (token: string, owner: string, repo: string, content: s
     body: JSON.stringify({ content, encoding })
   });
   return await res.json();
+};
+
+const deleteArticle = async (slug: string) => {
+  if (!isGithubConfigured.value) {
+    alert('请先配置 GitHub 设置！');
+    showSettings.value = true;
+    return;
+  }
+
+  if (!confirm(`确认删除文章 "${slug}" 吗？此操作不可恢复。`)) return;
+
+  isDeletingArticle.value = true;
+
+  try {
+    const refRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/refs/heads/${githubConfig.value.branch}`, {
+      headers: { Authorization: `token ${githubConfig.value.token}` }
+    });
+    const refData = await refRes.json();
+    const latestCommitSha = refData.object.sha;
+
+    const indexRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/contents/public/blogs/index.json?ref=${githubConfig.value.branch}`, {
+      headers: { Authorization: `token ${githubConfig.value.token}` }
+    });
+    const indexData = await indexRes.json();
+    const existingIndex = indexData.content ? JSON.parse(atob(indexData.content)) : [];
+
+    const updatedIndex = existingIndex.filter((a: any) => a.slug !== slug);
+    const updatedIndexContent = JSON.stringify(updatedIndex, null, 2);
+
+    const indexBlob = await createBlob(githubConfig.value.token, githubConfig.value.owner, githubConfig.value.repo, btoa(unescape(encodeURIComponent(updatedIndexContent))), 'base64');
+
+    const indexTreeRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/trees`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        base_tree: latestCommitSha,
+        tree: [{
+          path: 'public/blogs/index.json',
+          mode: '100644',
+          type: 'blob',
+          sha: indexBlob.sha
+        }]
+      })
+    });
+    const indexTreeData = await indexTreeRes.json();
+
+    const indexCommitRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/commits`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Admin: 删除文章 ${slug}`,
+        tree: indexTreeData.sha,
+        parents: [latestCommitSha]
+      })
+    });
+    const indexCommitData = await indexCommitRes.json();
+
+    await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/refs/heads/${githubConfig.value.branch}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sha: indexCommitData.sha
+      })
+    });
+
+    await loadArticlesList();
+    alert('文章删除成功！');
+  } catch (e: any) {
+    console.error('Failed to delete article:', e);
+    alert('删除失败: ' + (e?.message || e));
+  } finally {
+    isDeletingArticle.value = false;
+  }
 };
 
 onMounted(() => {
@@ -897,6 +980,9 @@ watch(isAuthenticated, (newVal) => {
                                     <span class="text-xs text-[var(--color-secondary)]">{{ article.date }}</span>
                                     <button @click="$router.push('/article/' + article.slug)" class="btn-ghost !py-2 !px-3 text-xs">
                                         <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button @click="deleteArticle(article.slug)" :disabled="isDeletingArticle" class="btn-ghost !py-2 !px-3 text-xs text-red-400 hover:!bg-red-400 hover:!text-white">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>

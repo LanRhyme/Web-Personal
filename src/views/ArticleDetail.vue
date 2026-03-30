@@ -31,30 +31,104 @@ const date = computed(() => {
 });
 const tags = computed(() => article.value?.config.tags || []);
 
-const getImageUrl = (path: string) => {
+const getImageUrl = (path: string | undefined) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-  return path.startsWith('/') ? path : '/' + path;
+  if (path.startsWith('/blogs/')) return path;
+  return `/blogs/${path}`;
 };
 
 const goBack = () => {
   router.back();
 };
 
-const marked = (text: string): string => {
-  let html = text
-    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" class="blog-img" />')
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br />');
+const escapeHtml = (str: string): string => {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
 
-  return `<p>${html}</p>`;
+const marked = (text: string): string => {
+  let html = text;
+
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    const language = lang || 'plaintext';
+    const escapedCode = escapeHtml(code.trimEnd());
+    return `<pre class="language-${language}"><button class="copy-btn" data-code="${escapedCode}"><i class="fas fa-copy"></i></button><code class="language-${language}">${escapedCode}</code></pre>`;
+  });
+
+  html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    const fullUrl = src.startsWith('http') ? src : `/blogs/${slug.value}/${src}`;
+    return `<img alt="${alt}" src="${fullUrl}" class="blog-img" />`;
+  });
+
+  html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+  const lines = html.split('\n');
+  const paragraphs: string[] = [];
+  let inCodeBlock = false;
+  let currentParagraph = '';
+
+  for (const line of lines) {
+    if (line.startsWith('<pre') || line.startsWith('<h') || line.startsWith('<img') || inCodeBlock) {
+      if (currentParagraph.trim()) {
+        paragraphs.push(`<p>${currentParagraph}</p>`);
+        currentParagraph = '';
+      }
+      if (line.startsWith('<pre')) inCodeBlock = true;
+      if (line.includes('</pre>')) inCodeBlock = false;
+      paragraphs.push(line);
+    } else if (line.trim() === '') {
+      if (currentParagraph.trim()) {
+        paragraphs.push(`<p>${currentParagraph}</p>`);
+        currentParagraph = '';
+      }
+    } else {
+      currentParagraph += line;
+    }
+  }
+
+  if (currentParagraph.trim()) {
+    paragraphs.push(`<p>${currentParagraph}</p>`);
+  }
+
+  return paragraphs.join('\n');
+};
+
+const renderMarkdown = () => {
+  if (!article.value) return '';
+  return marked(article.value.markdown);
+};
+
+const handleCopyCode = async (event: Event) => {
+  const btn = (event.target as HTMLElement).closest('.copy-btn') as HTMLButtonElement;
+  if (!btn) return;
+
+  const code = btn.getAttribute('data-code');
+  if (!code) return;
+
+  try {
+    const decoded = code.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    await navigator.clipboard.writeText(decoded);
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-copy"></i>';
+    }, 2000);
+  } catch (e) {
+    console.error('Failed to copy:', e);
+  }
 };
 
 onMounted(async () => {
@@ -71,6 +145,15 @@ onMounted(async () => {
     const markdown = await mdRes.text();
 
     article.value = { config, markdown };
+
+    setTimeout(() => {
+      if (typeof (window as any).Prism !== 'undefined') {
+        (window as any).Prism.highlightAll();
+      }
+      document.querySelectorAll('.blog-content').forEach(el => {
+        el.addEventListener('click', handleCopyCode);
+      });
+    }, 100);
   } catch (e) {
     error.value = '加载失败';
     console.error(e);
@@ -117,49 +200,49 @@ onMounted(async () => {
         "{{ article.config.summary }}"
       </div>
 
-      <div class="article-content" v-html="marked(article.markdown)"></div>
+      <div class="blog-content" v-html="marked(article.markdown)"></div>
     </article>
   </div>
 </template>
 
 <style>
-.article-content h1 {
+.blog-content h1 {
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--color-primary);
   margin: 2rem 0 1rem;
 }
 
-.article-content h2 {
+.blog-content h2 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-primary);
   margin: 1.75rem 0 0.875rem;
 }
 
-.article-content h3 {
+.blog-content h3 {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-primary);
   margin: 1.5rem 0 0.75rem;
 }
 
-.article-content p {
+.blog-content p {
   color: var(--color-secondary);
   line-height: 1.8;
   margin-bottom: 1rem;
 }
 
-.article-content strong {
+.blog-content strong {
   color: var(--color-primary);
   font-weight: 700;
 }
 
-.article-content em {
+.blog-content em {
   font-style: italic;
 }
 
-.article-content code {
+.blog-content code:not([class*="language-"]) {
   background: var(--color-card);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
@@ -167,18 +250,56 @@ onMounted(async () => {
   font-size: 0.875em;
 }
 
-.article-content img {
+.blog-content pre[class*="language-"] {
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.blog-content pre[class*="language-"] code {
+  background: transparent;
+  padding: 1rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.blog-content img {
   max-width: 100%;
   border-radius: 0.75rem;
   margin: 1.5rem 0;
 }
 
-.article-content a {
+.blog-content a {
   color: var(--color-brand);
   text-decoration: underline;
 }
 
-.article-content a:hover {
+.blog-content a:hover {
   opacity: 0.8;
+}
+
+.blog-content pre {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.blog-content pre .copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 0.375rem;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.blog-content pre .copy-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>
