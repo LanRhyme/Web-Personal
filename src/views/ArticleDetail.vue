@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 interface ArticleConfig {
@@ -146,14 +146,29 @@ onMounted(async () => {
 
     article.value = { config, markdown };
 
-    setTimeout(() => {
-      if (typeof (window as any).Prism !== 'undefined') {
-        (window as any).Prism.highlightAll();
-      }
-      document.querySelectorAll('.blog-content').forEach(el => {
-        el.addEventListener('click', handleCopyCode);
+    await nextTick();
+
+    const waitForPrism = () => {
+      return new Promise<void>((resolve) => {
+        const check = () => {
+          if (typeof (window as any).Prism !== 'undefined' && (window as any).Prism.highlightElement) {
+            resolve();
+          } else {
+            setTimeout(check, 50);
+          }
+        };
+        check();
       });
-    }, 100);
+    };
+
+    await waitForPrism();
+
+    document.querySelectorAll('.blog-content pre code[class*="language-"]').forEach((block) => {
+      (window as any).Prism.highlightElement(block as HTMLElement);
+    });
+    document.querySelectorAll('.blog-content').forEach(el => {
+      el.addEventListener('click', handleCopyCode);
+    });
   } catch (e) {
     error.value = '加载失败';
     console.error(e);
@@ -254,11 +269,10 @@ onMounted(async () => {
   margin: 1.5rem 0;
   border-radius: 0.75rem;
   overflow: hidden;
+  position: relative;
 }
 
 .blog-content pre[class*="language-"] code {
-  background: transparent;
-  padding: 1rem;
   display: block;
   overflow-x: auto;
 }

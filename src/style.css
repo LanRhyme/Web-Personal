@@ -29,6 +29,18 @@
   --bubble-color-4: #88d8b0;
   --bubble-color-5: #6bc5a0;
   --bubble-color-6: #c8f0e0;
+
+  /* Code Block Colors — Light Theme */
+  --color-code-bg: #2d2d2d;
+  --color-code-text: #e6e6e6;
+  --color-code-comment: #6a9955;
+  --color-code-punctuation: #d4d4d4;
+  --color-code-number: #b5cea8;
+  --color-code-string: #ce9178;
+  --color-code-operator: #d4d4d4;
+  --color-code-keyword: #569cd6;
+  --color-code-function: #dcdcaa;
+  --color-code-variable: #9cdcfe;
 }
 
 html.dark {
@@ -49,6 +61,18 @@ html.dark {
   --bubble-color-4: #051210;
   --bubble-color-5: #0a1f1a;
   --bubble-color-6: #071814;
+
+  /* Code Block Colors — Dark Theme */
+  --color-code-bg: #1a1a2e;
+  --color-code-text: #e6e6e6;
+  --color-code-comment: #6a9955;
+  --color-code-punctuation: #d4d4d4;
+  --color-code-number: #b5cea8;
+  --color-code-string: #ce9178;
+  --color-code-operator: #d4d4d4;
+  --color-code-keyword: #569cd6;
+  --color-code-function: #dcdcaa;
+  --color-code-variable: #9cdcfe;
 }
 
 /* --- Base Resets --- */
