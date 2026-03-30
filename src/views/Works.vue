@@ -5,13 +5,13 @@
         我的作品
         <button
           @click="open3DView"
-          class="absolute -right-16 top-1 text-[10px] font-bold tracking-wider bg-[#84C93C]/10 border border-[#84C93C]/30 text-[#84C93C] hover:bg-[#84C93C] hover:text-white px-3 py-1 rounded-full transform rotate-12 hover:rotate-0 hover:scale-110 transition-all shadow-sm hover:shadow-[0_0_15px_rgba(132,201,60,0.5)] cursor-pointer backdrop-blur-sm"
+          class="absolute -right-16 top-1 text-[10px] font-bold tracking-wider bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-white px-3 py-1 rounded-full transform rotate-12 hover:rotate-0 hover:scale-110 transition-all shadow-sm hover:shadow-[0_0_15px_rgba(var(--brand-rgb),0.5)] cursor-pointer backdrop-blur-sm"
           title="Enter 3D Gallery"
         >
           3D VIEW
         </button>
       </h2>
-      <p class="text-lg md:text-xl text-[#6b8a7a] max-w-3xl mx-auto font-medium">
+      <p class="text-lg md:text-xl text-[var(--color-secondary)] max-w-3xl mx-auto font-medium">
         光与影的交织，色彩与情感的碰撞，这里是我想象力的乐园
       </p>
     </section>
@@ -20,7 +20,7 @@
       <button @click="switchToAllWorks" class="btn-brand">
         <i class="fas fa-arrow-left"></i> 返回所有作品
       </button>
-      <h3 class="text-3xl font-bold mt-8 mb-8 text-[#2d4a3e] drop-shadow-sm">{{ currentPortfolioTitle }}</h3>
+      <h3 class="text-3xl font-bold mt-8 mb-8 text-[var(--color-primary)] drop-shadow-sm">{{ currentPortfolioTitle }}</h3>
     </div>
 
     <div class="gallery-transition-container w-full max-w-[1400px]" :class="{ 'fade-out-content': isTransitioning }">
@@ -37,8 +37,8 @@
           >
             <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105">
             <div class="p-5 border-t border-white/50 bg-white/20 backdrop-blur-md relative z-10">
-              <div class="font-bold text-lg mb-1 group-hover:text-[#84C93C] transition-colors text-[#2d4a3e]">{{ portfolio.title }}</div>
-              <div class="text-sm text-[#6b8a7a]">{{ portfolio.description }}</div>
+              <div class="font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-primary)]">{{ portfolio.title }}</div>
+              <div class="text-sm text-[var(--color-secondary)]">{{ portfolio.description }}</div>
             </div>
           </div>
         </div>
@@ -56,14 +56,14 @@
           >
             <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105">
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10">
-              <div class="font-bold text-lg mb-1 text-[#84C93C] drop-shadow-[0_0_8px_rgba(132,201,60,0.8)]">{{ work.title }}</div>
+              <div class="font-bold text-lg mb-1 text-[var(--color-brand)] drop-shadow-[0_0_8px_rgba(var(--brand-rgb),0.8)]">{{ work.title }}</div>
               <div class="text-sm opacity-90 font-medium">{{ work.description }}</div>
             </div>
           </div>
         </div>
       </div>
       <div v-else-if="currentView === 'portfolio'" class="text-center py-12">
-        <p class="text-lg text-[#6b8a7a]">此作品集暂无作品。</p>
+        <p class="text-lg text-[var(--color-secondary)]">此作品集暂无作品。</p>
       </div>
 
     </div>
@@ -88,13 +88,13 @@
         <!-- Controls -->
         <button
           @click="close3DView"
-          class="absolute top-6 right-8 z-50 text-white/50 hover:text-[#84C93C] hover:scale-110 text-5xl transition-all cursor-pointer"
+          class="absolute top-6 right-8 z-50 text-white/50 hover:text-[var(--color-brand)] hover:scale-110 text-5xl transition-all cursor-pointer"
         >
           &times;
         </button>
         
         <div class="absolute top-8 left-8 z-50 pointer-events-none">
-          <p class="text-sm uppercase tracking-[0.2em] font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#84C93C] to-[#6BA32A]">3D 作品展示</p>
+          <p class="text-sm uppercase tracking-[0.2em] font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-brand-secondary)]">3D 作品展示</p>
           <p class="text-[10px] mt-1 opacity-70 text-white">拖动旋转 • 点击查看详情</p>
         </div>
 
@@ -105,7 +105,7 @@
              :key="layout"
              @click.stop="set3DLayout(layout as LayoutType)"
              class="px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap"
-             :class="currentLayout === layout ? 'bg-[#84C93C] text-white shadow-[0_0_15px_rgba(132,201,60,0.5)]' : 'text-white/60 hover:text-white hover:bg-white/10'"
+             :class="currentLayout === layout ? 'bg-[var(--color-brand)] text-white shadow-[0_0_15px_rgba(var(--brand-rgb),0.5)]' : 'text-white/60 hover:text-white hover:bg-white/10'"
             >
               {{ layout }}
             </button>
@@ -128,7 +128,7 @@
               }"
               @click.stop="focusItem(index)"
              >
-                <div class="relative h-[250px] md:h-[350px] w-auto rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:border-[#84C93C]/50 group-hover:shadow-[0_0_30px_rgba(132,201,60,0.3)] bg-gray-900/40 backface-hidden flex justify-center items-center backdrop-blur-sm">
+                <div class="relative h-[250px] md:h-[350px] w-auto rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--color-brand)]/50 group-hover:shadow-[0_0_30px_rgba(var(--brand-rgb),0.3)] bg-gray-900/40 backface-hidden flex justify-center items-center backdrop-blur-sm">
                   <img :src="getImageUrl(work.image)" class="h-full w-auto max-w-[500px] object-contain" />
                   <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 pointer-events-none"></div>
                   <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none">
@@ -172,8 +172,8 @@
             @click.stop
           >
           <div class="mt-6 text-center text-white anim-fade-in-up active">
-             <h3 class="text-2xl font-bold text-[#84C93C]">{{ lightbox.works[lightbox.index]?.title }}</h3>
-             <p class="text-[#6b8a7a] mt-2">{{ lightbox.works[lightbox.index]?.description }}</p>
+             <h3 class="text-2xl font-bold text-[var(--color-brand)]">{{ lightbox.works[lightbox.index]?.title }}</h3>
+             <p class="text-[var(--color-secondary)] mt-2">{{ lightbox.works[lightbox.index]?.description }}</p>
           </div>
         </div>
       </div>

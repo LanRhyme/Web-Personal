@@ -4,7 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // Enable class-based dark mode
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -14,6 +14,9 @@ export default {
         'bg-primary': 'var(--bg-primary)',
         'text-primary': 'var(--text-primary)',
         'card-bg': 'var(--card-bg)',
+        'brand': 'var(--color-brand)',
+        'brand-secondary': 'var(--color-brand-secondary)',
+        'brand-rgb': '132, 201, 60',
       }
     },
   },

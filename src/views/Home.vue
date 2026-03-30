@@ -58,27 +58,27 @@ const getImageUrl = (path: string) => {
         <!-- Latest Project Card -->
         <div class="card p-4 md:p-6 flex flex-col group cursor-pointer order-2 lg:order-none" @click="$router.push('/projects')">
            <img v-if="latestProject" :src="getImageUrl(latestProject.image)" class="absolute inset-0 w-full h-full object-cover opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none" />
-           <p class="text-[10px] font-bold text-[#84C93C] uppercase tracking-widest mb-2 md:mb-3">Latest</p>
+           <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest mb-2 md:mb-3">Latest</p>
            <h3 class="text-base md:text-lg font-bold text-[var(--color-primary)] mb-1.5 md:mb-2 leading-tight">{{ latestProject?.title }}</h3>
            <p class="text-[10px] md:text-xs text-[var(--color-secondary)] line-clamp-2">{{ latestProject?.description }}</p>
            <div class="mt-4 md:mt-6 flex justify-between items-center">
-              <span class="text-[10px] text-[#84C93C] font-bold">查看详情 →</span>
+              <span class="text-[10px] text-[var(--color-brand)] font-bold">查看详情 →</span>
            </div>
         </div>
 
         <QuoteCard class="order-5 lg:order-none" />
 
         <!-- Game Card -->
-        <router-link to="/games" class="card !p-3 md:!p-4 group cursor-pointer block order-6 lg:order-none hover:border-[#84C93C]/30 transition-all duration-300">
+        <router-link to="/games" class="card !p-3 md:!p-4 group cursor-pointer block order-6 lg:order-none hover:border-[var(--color-brand)]/30 transition-all duration-300">
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-[#84C93C]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <i class="fa-solid fa-gamepad text-[#84C93C] text-sm"></i>
+                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-gamepad text-[var(--color-brand)] text-sm"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-xs font-bold text-[var(--color-primary)] truncate">小游戏</h3>
                     <p class="text-[10px] text-[var(--color-secondary)] opacity-70 truncate">放松一下</p>
                 </div>
-                <i class="fa fa-chevron-right text-[10px] text-[#84C93C] opacity-0 group-hover:opacity-100 transition-all"></i>
+                <i class="fa fa-chevron-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all"></i>
             </div>
         </router-link>
       </div>
@@ -90,19 +90,19 @@ const getImageUrl = (path: string) => {
         <div class="card p-6 md:p-8">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h3 class="section-heading text-base md:text-lg">推荐内容</h3>
-                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[#84C93C] uppercase tracking-widest">Index →</router-link>
+                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[var(--color-brand)] uppercase tracking-widest">Index →</router-link>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <div
                   v-for="(item, index) in items"
                   :key="index"
-                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[#84C93C]/5 hover:border-[#84C93C]/30 cursor-pointer !px-4 md:!px-6 !py-4 md:!py-5 group transition-all duration-300"
+                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[var(--color-brand)]/5 hover:border-[var(--color-brand)]/30 cursor-pointer !px-4 md:!px-6 !py-4 md:!py-5 group transition-all duration-300"
                   @click="openLink(item.link)"
                 >
                     <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-xs md:text-sm text-[var(--color-primary)] group-hover:text-[#84C93C] transition-colors line-clamp-1">{{ item.title }}</h4>
-                        <i class="fa fa-arrow-right text-[10px] text-[#84C93C] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
+                        <h4 class="font-bold text-xs md:text-sm text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-1">{{ item.title }}</h4>
+                        <i class="fa fa-arrow-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
                     </div>
                     <p class="text-[10px] text-[var(--color-secondary)] mt-2 leading-relaxed line-clamp-2">{{ item.description }}</p>
                 </div>
@@ -115,19 +115,19 @@ const getImageUrl = (path: string) => {
         <div class="card p-4 md:p-6">
             <div class="flex items-center justify-between mb-4 md:mb-6">
                 <h3 class="section-heading text-sm md:text-base">推荐内容</h3>
-                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[#84C93C] uppercase tracking-widest">Index →</router-link>
+                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[var(--color-brand)] uppercase tracking-widest">Index →</router-link>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div
                   v-for="(item, index) in items"
                   :key="index"
-                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[#84C93C]/5 hover:border-[#84C93C]/30 cursor-pointer !p-4 group transition-all duration-300"
+                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[var(--color-brand)]/5 hover:border-[var(--color-brand)]/30 cursor-pointer !p-4 group transition-all duration-300"
                   @click="openLink(item.link)"
                 >
                     <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-xs text-[var(--color-primary)] group-hover:text-[#84C93C] transition-colors line-clamp-1">{{ item.title }}</h4>
-                        <i class="fa fa-arrow-right text-[10px] text-[#84C93C] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
+                        <h4 class="font-bold text-xs text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-1">{{ item.title }}</h4>
+                        <i class="fa fa-arrow-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
                     </div>
                     <p class="text-[10px] text-[var(--color-secondary)] mt-1.5 leading-relaxed line-clamp-2">{{ item.description }}</p>
                 </div>
@@ -143,11 +143,11 @@ const getImageUrl = (path: string) => {
         <!-- Quick Status/Social -->
         <div class="card p-4 md:p-6 flex flex-col items-center gap-3 md:gap-4">
              <div class="flex flex-col items-center text-center">
-                <p class="text-[10px] font-bold text-[#84C93C] uppercase tracking-widest mb-1">Status</p>
+                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest mb-1">Status</p>
                 <div class="flex items-center gap-2">
                     <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#84C93C] opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-[#84C93C]"></span>
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-brand)] opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-brand)]"></span>
                     </span>
                     <span class="text-xs font-bold text-[var(--color-primary)]">Available for Hire</span>
                 </div>

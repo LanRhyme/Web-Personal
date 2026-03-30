@@ -34,6 +34,8 @@
 html.dark {
   --color-primary: #e6f0ee;
   --color-secondary: #94a39e;
+  --color-brand: #84C93C;
+  --color-brand-secondary: #6BA32A;
   --color-bg: #050608;
   --color-border: rgba(132, 201, 60, 0.12);
   --color-card: rgba(13, 18, 17, 0.75);

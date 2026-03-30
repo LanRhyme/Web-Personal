@@ -28,17 +28,17 @@ const currentWeekdayIndex = computed(() => (now.value.getDay() + 6) % 7);
 <template>
   <div class="card flex flex-col w-full">
     <div class="flex justify-between items-center mb-2 md:mb-3">
-        <h3 class="text-[10px] md:text-xs font-bold text-[#6b8a7a] tracking-wider uppercase">
+        <h3 class="text-[10px] md:text-xs font-bold text-[var(--color-secondary)] tracking-wider uppercase">
             {{ year }}/{{ month }}/{{ currentDate }} 周{{ dayName }}
         </h3>
-        <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#84C93C] animate-pulse"></div>
+        <div class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[var(--color-brand)] animate-pulse"></div>
     </div>
 
     <div class="grid grid-cols-7 gap-0.5 md:gap-1">
       <!-- Weekday Headers -->
       <div v-for="(name, index) in weekDates" :key="index"
            class="flex items-center justify-center text-[9px] md:text-[10px] font-bold py-1"
-           :class="index === currentWeekdayIndex ? 'text-[#84C93C]' : 'text-[#6b8a7a]/50'">
+           :class="index === currentWeekdayIndex ? 'text-[var(--color-brand)]' : 'text-[var(--color-secondary)]/50'">
         {{ name }}
       </div>
 
@@ -49,8 +49,8 @@ const currentWeekdayIndex = computed(() => (now.value.getDay() + 6) % 7);
       <div v-for="day in daysInMonth" :key="day"
            class="flex items-center justify-center text-[10px] md:text-[11px] rounded-md md:rounded-lg transition-all duration-300 aspect-square min-h-[24px] md:min-h-[28px]"
            :class="day === currentDate
-             ? 'bg-brand-gradient text-white font-bold shadow-md shadow-[#84C93C]/20 scale-105 z-10'
-             : 'text-[#2d4a3e] hover:bg-[rgba(132,201,60,0.1)] hover:text-[#84C93C]'">
+             ? 'bg-brand-gradient text-white font-bold shadow-md shadow-[var(--color-brand)]/20 scale-105 z-10'
+             : 'text-[var(--color-primary)] hover:bg-[var(--color-brand)]/10 hover:text-[var(--color-brand)]'">
         {{ day }}
       </div>
     </div>

@@ -58,12 +58,12 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="hidden md:block w-10 h-[2.5px] bg-[#84C93C] rounded-full mx-auto my-6 opacity-40 group-hover:w-16 group-hover:opacity-80 transition-all duration-500"></div>
+    <div class="hidden md:block w-10 h-[2.5px] bg-[var(--color-brand)] rounded-full mx-auto my-6 opacity-40 group-hover:w-16 group-hover:opacity-80 transition-all duration-500"></div>
 
     <!-- Stats & Contact Hub -->
     <div class="flex flex-col gap-3 md:gap-4 w-full mt-4 md:mt-0">
-        <div class="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl bg-[rgba(132,201,60,0.06)] border border-[rgba(132,201,60,0.1)] transition-all group-hover:bg-[rgba(132,201,60,0.1)]">
-            <i class="fab fa-github text-[#84C93C] text-xs md:text-sm"></i>
+        <div class="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/20 transition-all group-hover:bg-[var(--color-brand)]/10">
+            <i class="fab fa-github text-[var(--color-brand)] text-xs md:text-sm"></i>
             <span class="text-[10px] md:text-[11px] font-bold text-[var(--color-secondary)] truncate">{{ githubInfo }}</span>
         </div>
 
@@ -82,14 +82,14 @@ onMounted(() => {
   height: 100px;
   border-radius: 50%;
   padding: 4px;
-  background: linear-gradient(135deg, #84C93C, #6BA32A, #a8e6cf);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-secondary), var(--bubble-color-3));
   box-shadow: 0 16px 32px -8px rgba(132, 201, 60, 0.2);
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.6s ease;
 }
 
 .card:hover .avatar-ring {
   transform: scale(1.08) rotate(3deg);
-  box-shadow: 0 20px 40px -8px rgba(132, 201, 60, 0.35);
+  box-shadow: 0 20px 40px -8px rgba(var(--brand-rgb), 0.35);
 }
 
 .avatar-img {

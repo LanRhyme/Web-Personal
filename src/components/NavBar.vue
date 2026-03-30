@@ -101,7 +101,7 @@ watch(() => route.path, () => {
     >
       <!-- Close button at top right -->
       <button
-        class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(53,191,160,0.1)] text-[#2d4a3e]"
+        class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--color-brand)]/10 text-[var(--color-primary)]"
         @click="closeMobileMenu"
       >
         <i class="fa fa-times text-lg"></i>
@@ -113,7 +113,7 @@ watch(() => route.path, () => {
           :key="item.path"
           :to="item.path"
           class="card-flat flex items-center gap-3 px-5 py-3.5 text-base font-semibold transition-all duration-300"
-          :class="route.path === item.path ? 'text-[#84C93C] border-[rgba(132,201,60,0.3)] bg-[rgba(132,201,60,0.05)]' : 'text-[#2d4a3e]'"
+          :class="route.path === item.path ? 'text-[var(--color-brand)] border-[var(--color-brand)]/30 bg-[var(--color-brand)]/5' : 'text-[var(--color-primary)]'"
           active-class=""
           @click="closeMobileMenu"
         >
@@ -162,7 +162,7 @@ watch(() => route.path, () => {
         <!-- Dark Mode Toggle -->
         <button
           @click="toggleDarkMode"
-          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[rgba(132,201,60,0.1)] text-[#6b8a7a] hover:text-[#84C93C]"
+          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--color-brand)]/10 text-[var(--color-secondary)] hover:text-[var(--color-brand)]"
           :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
         >
           <transition name="fade" mode="out-in">
@@ -173,7 +173,7 @@ watch(() => route.path, () => {
 
         <!-- Mobile Menu Toggle -->
         <button
-          class="lg:hidden flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full transition-all duration-300 text-[#2d4a3e]"
+          class="lg:hidden flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full transition-all duration-300 text-[var(--color-primary)]"
           :class="isMobileMenuOpen ? 'bg-[rgba(53,191,160,0.1)]' : ''"
           @click="toggleMobileMenu"
         >
