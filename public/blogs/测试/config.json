@@ -1,11 +1,11 @@
 {
   "title": "测试",
-  "summary": "一个测试文章",
+  "summary": "aaa",
   "date": "2026-03-30",
   "tags": [
-    "compose"
+    "kotlin"
   ],
-  "category": "技术",
-  "cover": "1759577316606.jpeg",
+  "category": "",
+  "cover": "1759577316606.png",
   "hidden": false
 }
