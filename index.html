@@ -28,8 +28,27 @@
   
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <!-- Prism Themes: Light and Dark -->
+  <link id="prism-light-theme" href="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <link id="prism-dark-theme" href="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" disabled>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Theme Sync Script -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const lightTheme = document.getElementById('prism-light-theme');
+      const darkTheme = document.getElementById('prism-dark-theme');
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        lightTheme.disabled = true;
+        darkTheme.disabled = false;
+      } else {
+        lightTheme.disabled = false;
+        darkTheme.disabled = true;
+      }
+    })();
+  </script>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>

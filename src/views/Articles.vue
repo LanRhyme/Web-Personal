@@ -41,9 +41,11 @@ const formatDate = (dateStr: string) => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 };
 
-const getImageUrl = (path: string) => {
+const getImageUrl = (path: string, slug?: string) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
+  if (path.startsWith('/blogs/')) return path;
+  if (slug) return `/blogs/${slug}/${path}`;
   return path.startsWith('/') ? path : '/' + path;
 };
 
@@ -115,7 +117,7 @@ onMounted(async () => {
             >
               <div class="flex flex-col md:flex-row gap-4 md:gap-6">
                 <div v-if="article.cover" class="w-full md:w-32 h-32 flex-shrink-0 rounded-xl overflow-hidden bg-[var(--color-bg)]">
-                  <img :src="getImageUrl(article.cover)" class="w-full h-full object-cover" />
+                  <img :src="getImageUrl(article.cover, article.slug)" class="w-full h-full object-cover" @error="($event.target as HTMLImageElement).style.display='none'" />
                 </div>
                 <div class="flex-grow min-w-0">
                   <div class="flex items-start justify-between gap-4 mb-2">

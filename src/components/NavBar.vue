@@ -18,6 +18,19 @@ const toggleDarkMode = () => {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
     }
+    // Sync Prism theme
+    const lightTheme = document.getElementById('prism-light-theme') as HTMLLinkElement;
+    const darkTheme = document.getElementById('prism-dark-theme') as HTMLLinkElement;
+    if (lightTheme && darkTheme) {
+        lightTheme.disabled = isDark.value;
+        darkTheme.disabled = !isDark.value;
+    }
+    // Re-highlight code blocks after theme switch
+    setTimeout(() => {
+        if (typeof (window as any).Prism !== 'undefined') {
+            (window as any).Prism.highlightAll();
+        }
+    }, 50);
 };
 
 const navItems = [

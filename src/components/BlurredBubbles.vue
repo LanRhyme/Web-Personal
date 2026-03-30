@@ -40,12 +40,12 @@ function makeNoise2D() {
     y -= Math.floor(y);
     const u = fade(x);
     const v = fade(y);
-    const a = perm[X] + Y;
-    const b = perm[X + 1] + Y;
-    const g00 = grad[perm[a]! & 7]!;
-    const g10 = grad[perm[b]! & 7]!;
-    const g01 = grad[perm[a + 1]! & 7]!;
-    const g11 = grad[perm[b + 1]! & 7]!;
+    const a = perm[X]! + Y;
+    const b = perm[X + 1]! + Y;
+    const g00 = grad[perm[a]! & 7] ?? [0, 0];
+    const g10 = grad[perm[b]! & 7] ?? [0, 0];
+    const g01 = grad[perm[a + 1]! & 7] ?? [0, 0];
+    const g11 = grad[perm[b + 1]! & 7] ?? [0, 0];
     return lerp(
       lerp(dot(g00, x, y), dot(g10, x - 1, y), u),
       lerp(dot(g01, x, y - 1), dot(g11, x - 1, y - 1), u),
@@ -180,7 +180,7 @@ onMounted(() => {
     const { tx, ty } = lowestOccupancyTarget();
 
     for (let i = 0; i < bubbles.length; i++) {
-      const b = bubbles[i]!;
+      const b = bubbles[i];
       if (!b) continue;
 
       const n = noise(b.x * noiseScale, b.y * noiseScale + t * noiseTimeScale);
@@ -191,7 +191,7 @@ onMounted(() => {
       let sx = 0, sy = 0;
       for (let j = 0; j < bubbles.length; j++) {
         if (j !== i) {
-          const o = bubbles[j]!;
+          const o = bubbles[j];
           if (!o) continue;
           const dx = b.x - o.x;
           const dy = b.y - o.y;
@@ -249,6 +249,7 @@ onMounted(() => {
   }
 
   function draw() {
+    if (!ctx) return;
     const darkMode = isDarkMode();
     const baseAlpha = darkMode ? 0.2 : 0.4;
 
@@ -302,6 +303,7 @@ onMounted(() => {
       height = nextH;
       canvas.width = Math.floor(width * DPR);
       canvas.height = Math.floor(height * DPR);
+      if (!ctx) return;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(DPR, DPR);
       allocateGrid();

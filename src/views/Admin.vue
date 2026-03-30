@@ -243,19 +243,17 @@ const addWorksSection = () => worksSections.value.push({ id: `section-${Date.now
 const removeWorksSection = (index: number) => worksSections.value.splice(index, 1);
 
 // Reordering Logic
-const moveUp = (list: any[], index: number | string) => {
-    const idx = Number(index);
-    if (idx > 0) {
-        const item = list.splice(idx, 1)[0];
-        list.splice(idx - 1, 0, item);
+const moveUp = (list: any[], index: number) => {
+    if (index > 0) {
+        const item = list.splice(index, 1)[0];
+        list.splice(index - 1, 0, item);
     }
 };
 
-const moveDown = (list: any[], index: number | string) => {
-    const idx = Number(index);
-    if (idx < list.length - 1) {
-        const item = list.splice(idx, 1)[0];
-        list.splice(idx + 1, 0, item);
+const moveDown = (list: any[], index: number) => {
+    if (index < list.length - 1) {
+        const item = list.splice(index, 1)[0];
+        list.splice(index + 1, 0, item);
     }
 };
 

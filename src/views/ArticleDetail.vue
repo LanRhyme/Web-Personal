@@ -35,7 +35,7 @@ const getImageUrl = (path: string | undefined) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
   if (path.startsWith('/blogs/')) return path;
-  return `/blogs/${path}`;
+  return `/blogs/${slug.value}/${path}`;
 };
 
 const goBack = () => {
@@ -208,7 +208,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="article.config.cover" class="mb-8 rounded-2xl overflow-hidden">
-        <img :src="getImageUrl(article.config.cover)" class="w-full" />
+        <img :src="getImageUrl(article.config.cover)" class="w-full" @error="($event.target as HTMLImageElement).style.display='none'" />
       </div>
 
       <div v-if="article.config.summary" class="text-center text-sm text-[var(--color-secondary)] italic mb-8 px-4">
@@ -270,11 +270,127 @@ onMounted(async () => {
   border-radius: 0.75rem;
   overflow: hidden;
   position: relative;
+  background: var(--color-code-bg) !important;
 }
 
 .blog-content pre[class*="language-"] code {
   display: block;
   overflow-x: auto;
+  background: transparent !important;
+  color: var(--color-code-text) !important;
+  text-shadow: none !important;
+}
+
+/* Prism Token Colors - Light Theme */
+html:not(.dark) .blog-content pre[class*="language-"] .token.comment,
+html:not(.dark) .blog-content pre[class*="language-"] .token.prolog,
+html:not(.dark) .blog-content pre[class*="language-"] .token.doctype,
+html:not(.dark) .blog-content pre[class*="language-"] .token.cdata {
+  color: #708090;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.punctuation {
+  color: #999;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.property,
+html:not(.dark) .blog-content pre[class*="language-"] .token.tag,
+html:not(.dark) .blog-content pre[class*="language-"] .token.boolean,
+html:not(.dark) .blog-content pre[class*="language-"] .token.number,
+html:not(.dark) .blog-content pre[class*="language-"] .token.constant,
+html:not(.dark) .blog-content pre[class*="language-"] .token.symbol,
+html:not(.dark) .blog-content pre[class*="language-"] .token.deleted {
+  color: #905;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.selector,
+html:not(.dark) .blog-content pre[class*="language-"] .token.attr-name,
+html:not(.dark) .blog-content pre[class*="language-"] .token.string,
+html:not(.dark) .blog-content pre[class*="language-"] .token.char,
+html:not(.dark) .blog-content pre[class*="language-"] .token.builtin,
+html:not(.dark) .blog-content pre[class*="language-"] .token.inserted {
+  color: #690;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.operator,
+html:not(.dark) .blog-content pre[class*="language-"] .token.entity,
+html:not(.dark) .blog-content pre[class*="language-"] .token.url,
+html:not(.dark) .blog-content pre[class*="language-"] .token.language-css .token.string,
+html:not(.dark) .blog-content pre[class*="language-"] .token.style .token.string {
+  color: #9a6e3a;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.atrule,
+html:not(.dark) .blog-content pre[class*="language-"] .token.attr-value,
+html:not(.dark) .blog-content pre[class*="language-"] .token.keyword {
+  color: #07a;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.function,
+html:not(.dark) .blog-content pre[class*="language-"] .token.class-name {
+  color: #DD4A68;
+}
+
+html:not(.dark) .blog-content pre[class*="language-"] .token.regex,
+html:not(.dark) .blog-content pre[class*="language-"] .token.important,
+html:not(.dark) .blog-content pre[class*="language-"] .token.variable {
+  color: #e90;
+}
+
+/* Prism Token Colors - Dark Theme (Tomorrow) */
+html.dark .blog-content pre[class*="language-"] .token.comment,
+html.dark .blog-content pre[class*="language-"] .token.prolog,
+html.dark .blog-content pre[class*="language-"] .token.doctype,
+html.dark .blog-content pre[class*="language-"] .token.cdata {
+  color: #999;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.punctuation {
+  color: #ccc;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.property,
+html.dark .blog-content pre[class*="language-"] .token.tag,
+html.dark .blog-content pre[class*="language-"] .token.boolean,
+html.dark .blog-content pre[class*="language-"] .token.number,
+html.dark .blog-content pre[class*="language-"] .token.constant,
+html.dark .blog-content pre[class*="language-"] .token.symbol,
+html.dark .blog-content pre[class*="language-"] .token.deleted {
+  color: #f2777a;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.selector,
+html.dark .blog-content pre[class*="language-"] .token.attr-name,
+html.dark .blog-content pre[class*="language-"] .token.string,
+html.dark .blog-content pre[class*="language-"] .token.char,
+html.dark .blog-content pre[class*="language-"] .token.builtin,
+html.dark .blog-content pre[class*="language-"] .token.inserted {
+  color: #9c9;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.operator,
+html.dark .blog-content pre[class*="language-"] .token.entity,
+html.dark .blog-content pre[class*="language-"] .token.url,
+html.dark .blog-content pre[class*="language-"] .token.language-css .token.string,
+html.dark .blog-content pre[class*="language-"] .token.style .token.string {
+  color: #9a6e3a;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.atrule,
+html.dark .blog-content pre[class*="language-"] .token.attr-value,
+html.dark .blog-content pre[class*="language-"] .token.keyword {
+  color: #cc99cd;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.function,
+html.dark .blog-content pre[class*="language-"] .token.class-name {
+  color: #f8c555;
+}
+
+html.dark .blog-content pre[class*="language-"] .token.regex,
+html.dark .blog-content pre[class*="language-"] .token.important,
+html.dark .blog-content pre[class*="language-"] .token.variable {
+  color: #e90;
 }
 
 .blog-content img {
@@ -304,16 +420,16 @@ onMounted(async () => {
   top: 0.5rem;
   right: 0.5rem;
   padding: 0.375rem 0.625rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(128, 128, 128, 0.2);
   border: none;
   border-radius: 0.375rem;
-  color: #fff;
+  color: var(--color-code-text);
   cursor: pointer;
   font-size: 0.75rem;
   transition: all 0.2s;
 }
 
 .blog-content pre .copy-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(128, 128, 128, 0.4);
 }
 </style>
