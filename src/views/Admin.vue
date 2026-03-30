@@ -427,6 +427,71 @@ const publishArticle = async () => {
       })
     });
 
+    const indexRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/contents/public/blogs/index.json?ref=${githubConfig.value.branch}`, {
+      headers: { Authorization: `token ${githubConfig.value.token}` }
+    });
+    const indexData = await indexRes.json();
+    const existingIndex = indexData.content ? JSON.parse(atob(indexData.content)) : [];
+
+    const newArticleEntry = {
+      slug: slug,
+      title: articleForm.value.title,
+      date: dateStr,
+      summary: articleForm.value.summary,
+      tags: articleForm.value.tags.split(',').map(t => t.trim()).filter(Boolean),
+      category: articleForm.value.category,
+      cover: articleForm.value.cover,
+      hidden: articleForm.value.hidden
+    };
+
+    const updatedIndex = [...existingIndex.filter((a: any) => a.slug !== slug), newArticleEntry];
+    const updatedIndexContent = JSON.stringify(updatedIndex, null, 2);
+
+    const indexBlob = await createBlob(githubConfig.value.token, githubConfig.value.owner, githubConfig.value.repo, btoa(unescape(encodeURIComponent(updatedIndexContent))), 'base64');
+
+    const indexTreeRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/trees`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        base_tree: commitData.sha,
+        tree: [{
+          path: 'public/blogs/index.json',
+          mode: '100644',
+          type: 'blob',
+          sha: indexBlob.sha
+        }]
+      })
+    });
+    const indexTreeData = await indexTreeRes.json();
+
+    const indexCommitRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/commits`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Admin: 更新文章索引`,
+        tree: indexTreeData.sha,
+        parents: [commitData.sha]
+      })
+    });
+    const indexCommitData = await indexCommitRes.json();
+
+    await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/git/refs/heads/${githubConfig.value.branch}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${githubConfig.value.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sha: indexCommitData.sha
+      })
+    });
+
     articleForm.value = { title: '', slug: '', summary: '', content: '', tags: '', category: '', cover: '', hidden: false };
     articleCoverPreview.value = null;
     await loadArticlesList();
