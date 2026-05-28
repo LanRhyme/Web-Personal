@@ -41,28 +41,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- System Stats -->
-      <div class="flex flex-col gap-4 text-[10px] tracking-widest opacity-80">
-        <div>
-          <div class="flex justify-between mb-1">
-            <span>SYS_INTEGRITY</span>
-            <span class="text-[var(--color-brand)]">100%</span>
-          </div>
-          <div class="w-full h-[2px] bg-[var(--color-border)]">
-            <div class="bg-[var(--color-brand)] h-full w-full"></div>
-          </div>
-        </div>
 
-        <div>
-          <div class="flex justify-between mb-1">
-            <span>CREATIVE_DRIVE</span>
-            <span class="text-[var(--color-brand)]">MAX</span>
-          </div>
-          <div class="w-full h-[2px] bg-[var(--color-border)]">
-            <div class="bg-[var(--color-brand)] h-full w-full animate-pulse"></div>
-          </div>
-        </div>
-      </div>
 
       <!-- Detailed Attributes -->
       <div class="flex flex-col gap-3 text-[10px] border-t border-[var(--color-border)] pt-6 tracking-widest leading-relaxed">
@@ -87,14 +66,14 @@ onMounted(() => {
 
     <!-- Action Links as Terminal Commands -->
     <div class="mt-8 border-t border-[var(--color-border)] pt-6 flex flex-col gap-3">
-      <a href="https://github.com/LanRhyme" target="_blank" class="btn-terminal block text-center w-full !text-[10px]">
-        > EXEC_GITHUB
+      <a href="https://github.com/LanRhyme" target="_blank" class="btn-terminal flex justify-center items-center gap-2 w-full !text-[10px]">
+        <i class="fa-brands fa-github text-[12px]"></i> EXEC_GITHUB
       </a>
-      <a href="https://space.bilibili.com/496901387" target="_blank" class="btn-terminal block text-center w-full !text-[10px]">
-        > EXEC_BILIBILI
+      <a href="https://space.bilibili.com/496901387" target="_blank" class="btn-terminal flex justify-center items-center gap-2 w-full !text-[10px]">
+        <i class="fa-brands fa-bilibili text-[12px]"></i> EXEC_BILIBILI
       </a>
-      <a href="mailto:i@lanrhyme.com" class="btn-terminal block text-center w-full !text-[10px]">
-        > INIT_CONTACT
+      <a href="mailto:i@lanrhyme.com" class="btn-terminal flex justify-center items-center gap-2 w-full !text-[10px]">
+        <i class="fa-solid fa-envelope text-[12px]"></i> INIT_CONTACT
       </a>
     </div>
   </aside>

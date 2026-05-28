@@ -179,8 +179,8 @@ a {
 
 .reveal {
   opacity: 0;
-  transform: translateY(50px);
-  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(60px);
+  transition: all 2.4s cubic-bezier(0.25, 1, 0.3, 1);
 }
 .reveal.is-visible {
   opacity: 1;
@@ -189,8 +189,8 @@ a {
 
 .reveal-left {
   opacity: 0;
-  transform: translateX(-50px);
-  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-60px);
+  transition: all 2.4s cubic-bezier(0.25, 1, 0.3, 1);
 }
 .reveal-left.is-visible {
   opacity: 1;
@@ -299,6 +299,33 @@ a {
 
 .animate-scan {
   animation: scan 3s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.animate-float-slow {
+  animation: float 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes float-rotate {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+.animate-float-rotate {
+  animation: float-rotate 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* Custom Fluid Cursor (Square Framing style) */

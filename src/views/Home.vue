@@ -4,6 +4,7 @@ import projectsData from '../data/projects.json';
 import ClockCard from '../components/ClockCard.vue';
 import CalendarCard from '../components/CalendarCard.vue';
 import MeCard from '../components/MeCard.vue';
+import HitokotoCard from '../components/HitokotoCard.vue';
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -75,39 +76,11 @@ onMounted(async () => {
   nextTick(() => {
     setupScrollReveal();
   });
-  
-  // Real-time animated console logger
-  runConsoleLogger();
 });
-
-// Console Logger implementation
-const consoleLogs = ref<string[]>([]);
-const logQueue = [
-  'INITIALIZING LANRHYME CORE SYSTEM...',
-  'ESTABLISHING SECURE CONNECTION [PORT 443]... DONE',
-  'SYNCING GITHUB PROFILE DATA... SUCCESS',
-  'LOADED ARTICLES: ' + (articles.value.length || 0) + ' NODES MOUNTED',
-  'LOADED PROJECT DATABASE... VALID',
-  'RENDER ENGINE: PARTICLES & GLOWS RUNNING',
-  'SYSTEM V2.0.26 STATUS: ONLINE',
-  'USER CONNECTION: ESTABLISHED'
-];
-
-const runConsoleLogger = () => {
-  let idx = 0;
-  const interval = setInterval(() => {
-    if (idx < logQueue.length) {
-      consoleLogs.value.push(logQueue[idx]);
-      idx++;
-    } else {
-      clearInterval(interval);
-    }
-  }, 900);
-};
 </script>
 
 <template>
-  <div class="w-full font-sans text-[var(--color-text)] flex flex-col gap-16 sm:gap-24 pb-24 pt-[70px] sm:pt-[86px] md:pt-[102px]">
+  <div class="w-full font-sans text-[var(--color-text)] flex flex-col gap-16 sm:gap-24 pb-24 pt-[40px] sm:pt-[56px] md:pt-[72px]">
     
     <!-- Hero Section (Parallax & Typographic) -->
     <section class="min-h-[80vh] flex flex-col justify-center px-4 md:px-12 relative overflow-hidden">
@@ -115,7 +88,7 @@ const runConsoleLogger = () => {
         
         <!-- Huge Glitched Typography & Artistic Mixed Headline -->
         <div class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8">
-          <div>
+          <div class="animate-float-slow">
             <h1 
               class="text-[14vw] xl:text-[9vw] leading-[0.9] font-art italic glitch-hover" 
               data-text="LanRhyme."
@@ -151,29 +124,9 @@ const runConsoleLogger = () => {
             <pre class="m-0 text-[var(--color-brand)]">{{ asciiAvatar }}</pre>
           </div>
 
-          <!-- Live Interactive Console Log Box (Premium HUD) -->
-          <div class="cyber-glass p-8 font-mono text-sm leading-relaxed text-[var(--color-text-dim)] w-full h-[320px] relative overflow-hidden select-none reveal z-10 shadow-2xl group">
-            <!-- Scanning Laser -->
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-[var(--color-brand)] shadow-[0_0_15px_rgba(107,143,114,0.8)] opacity-50 animate-scan pointer-events-none"></div>
-            
-            <!-- HUD Brackets -->
-            <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--color-brand)] opacity-40"></div>
-            <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--color-brand)] opacity-40"></div>
-            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--color-brand)] opacity-40"></div>
-            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[var(--color-brand)] opacity-40"></div>
-
-            <div class="border-b border-[var(--color-border)] pb-4 mb-6 text-[var(--color-text)] font-bold flex justify-between items-center tracking-widest text-sm">
-              <span class="flex items-center gap-3">
-                <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse"></span>
-                > SYS.MONITOR
-              </span>
-              <span class="text-[var(--color-brand)] text-[10px] border border-[var(--color-brand)] px-2 py-0.5">LIVE</span>
-            </div>
-            
-            <div class="h-[200px] overflow-y-auto flex flex-col gap-4 pr-4">
-              <div v-for="(log, i) in consoleLogs" :key="i" class="text-[var(--color-text)] opacity-80 group-hover:opacity-100 transition-opacity duration-300">> {{ log }}</div>
-              <div v-if="consoleLogs.length < logQueue.length" class="text-[var(--color-brand)] animate-pulse">> SYS.STREAMING_DATA...</div>
-            </div>
+          <!-- Interactive Hitokoto Card -->
+          <div class="w-full relative z-10 reveal animate-float-rotate">
+            <HitokotoCard />
           </div>
         </div>
       </div>
@@ -208,7 +161,7 @@ const runConsoleLogger = () => {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <!-- Route Buttons as Cyber Blocks -->
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px]" 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
                 @click="$router.push('/works')"
               >
                 <div>
@@ -217,13 +170,13 @@ const runConsoleLogger = () => {
                   <div class="text-base opacity-80 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
                 </div>
                 <!-- Deco Barcode -->
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity">
-                  <div class="w-[2px] h-4 bg-[var(--color-text)]"></div><div class="w-[4px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div><div class="w-[3px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div>
+                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                  <div class="w-[2px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px]" 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
                 @click="$router.push('/projects')"
               >
                 <div>
@@ -231,13 +184,13 @@ const runConsoleLogger = () => {
                   <div class="font-art text-3xl mb-3">> Projects.</div>
                   <div class="text-base opacity-80 line-clamp-1 font-sans tracking-wide">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity">
-                  <div class="w-[1px] h-4 bg-[var(--color-text)]"></div><div class="w-[3px] h-4 bg-[var(--color-text)]"></div><div class="w-[2px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div><div class="w-[4px] h-4 bg-[var(--color-text)]"></div>
+                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                  <div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px]" 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
                 @click="$router.push('/articles')"
               >
                 <div>
@@ -245,13 +198,13 @@ const runConsoleLogger = () => {
                   <div class="font-art text-3xl mb-3">> Articles.</div>
                   <div class="text-base opacity-80 font-sans tracking-wide">TECHNICAL & THOUGHTS</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity">
-                  <div class="w-[4px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div><div class="w-[2px] h-4 bg-[var(--color-text)]"></div><div class="w-[3px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div>
+                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                  <div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px]" 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
                 @click="$router.push('/games')"
               >
                 <div>
@@ -259,8 +212,8 @@ const runConsoleLogger = () => {
                   <div class="font-art text-3xl mb-3">> Games.</div>
                   <div class="text-base opacity-80 font-sans tracking-wide">SIMULATIONS</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity">
-                  <div class="w-[3px] h-4 bg-[var(--color-text)]"></div><div class="w-[2px] h-4 bg-[var(--color-text)]"></div><div class="w-[4px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div><div class="w-[1px] h-4 bg-[var(--color-text)]"></div>
+                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                  <div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
             </div>
@@ -272,18 +225,26 @@ const runConsoleLogger = () => {
               <span class="text-[var(--color-text)]">> RECOMMENDED_NODES</span>
             </div>
             
-            <div class="flex flex-col gap-0 cyber-glass">
+            <div class="flex flex-col gap-0 cyber-glass overflow-hidden">
               <div 
                 v-for="(item, index) in items" 
                 :key="index" 
-                class="p-6 sm:p-8 cursor-pointer hover:bg-[var(--color-text)] hover:text-black group border-b border-[var(--color-border)] last:border-b-0 transition-colors" 
+                class="p-6 sm:p-8 cursor-pointer relative group border-b border-[var(--color-border)] last:border-b-0 transition-all duration-500 hover:pl-10 sm:hover:pl-12 hover:bg-[rgba(107,143,114,0.05)]" 
                 @click="openLink(item.link)"
               >
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                  <span class="font-art font-bold text-2xl">{{ item.title }}</span>
-                  <span class="opacity-0 group-hover:opacity-100 text-sm tracking-widest hidden sm:block font-mono">[CONNECT]</span>
+                <!-- Hover Side Indicator -->
+                <div class="absolute left-0 top-0 w-1 h-full bg-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 relative z-10">
+                  <span class="font-art font-bold text-2xl group-hover:text-[var(--color-brand)] transition-colors duration-300 flex items-center relative">
+                    <i class="fa-solid fa-link text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 absolute -left-6"></i>
+                    <span class="transition-all duration-300 group-hover:translate-x-1">{{ item.title }}</span>
+                  </span>
+                  <span class="opacity-0 group-hover:opacity-100 text-sm tracking-widest hidden sm:flex items-center gap-2 font-mono text-[var(--color-brand)] transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                    [CONNECT] <i class="fa-solid fa-arrow-right"></i>
+                  </span>
                 </div>
-                <div class="text-base opacity-70 group-hover:opacity-90 mt-3 font-sans tracking-wide">{{ item.description }}</div>
+                <div class="text-base opacity-70 group-hover:opacity-100 mt-3 font-sans tracking-wide relative z-10 transition-opacity duration-300">{{ item.description }}</div>
               </div>
             </div>
           </div>

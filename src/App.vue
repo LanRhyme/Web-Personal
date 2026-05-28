@@ -195,9 +195,42 @@ const eyeRotation = computed(() => {
   return angle;
 });
 
+const idleDialogues = [
+  '好无聊呀...( ´ ▽ ` )',
+  '今天天气真不错～(o^▽^o)',
+  '要不要点点我？(✧ω✧)',
+  '随时待命！(๑>ᴗ<๑)',
+  '发现了一名可爱的访客！(≧◡≦)',
+  '发呆中... (￣▽￣*)'
+];
+
+const hoverDialogues = [
+  '哇，你发现我啦！(*^ω^*)',
+  '有什么吩咐吗主人？(☆▽☆)',
+  '贴贴！(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)',
+  '好痒，不要碰我啦...(*/_＼)'
+];
+
+const happyDialogues = [
+  '开心开心！o(≧▽≦)o',
+  '谢谢你的摸摸！(๑˃ᴗ˂)ﻭ',
+  '能量充满啦！(★ω★)',
+  '最喜欢你啦！♡( ◡‿◡ )'
+];
+
+const routeDialogues = [
+  '准备出发啦！(￣^￣)ゞ',
+  '正在进入新区域...(⌐■_■)',
+  '努力加载中...！(⊃｡•́‿•̀｡)⊃'
+];
+
+const getRandomText = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+
+let petTalkTimer: number | null = null;
 const petTalking = (text: string) => {
   bubbleText.value = text;
-  setTimeout(() => {
+  if (petTalkTimer) clearTimeout(petTalkTimer);
+  petTalkTimer = window.setTimeout(() => {
     if (bubbleText.value === text) {
       bubbleText.value = '';
     }
@@ -207,7 +240,7 @@ const petTalking = (text: string) => {
 const triggerHappyPet = () => {
   petState.value = 'happy';
   petHappiness.value = Math.min(100, petHappiness.value + 12);
-  petTalking('SYSTEM OPTIMIZED [OK]');
+  petTalking(getRandomText(happyDialogues));
   
   setTimeout(() => {
     if (route.path === '/projects' || route.path === '/games' || route.path === '/github') {
@@ -221,15 +254,17 @@ const triggerHappyPet = () => {
 watch(() => route.path, (newPath) => {
   if (newPath === '/projects' || newPath === '/games' || newPath === '/github') {
     petState.value = 'working';
-    petTalking('INIT. SEQUENCE [DEV_MODE]');
+    petTalking(getRandomText(routeDialogues));
   } else if (newPath === '/works' || newPath === '/commissions') {
     petState.value = 'active';
-    petTalking('LOADING ASSETS...');
+    petTalking(getRandomText(routeDialogues));
   } else {
     petState.value = 'idle';
-    petTalking('TERMINAL READY.');
+    petTalking('我回来啦！(＾▽＾)');
   }
 });
+
+let idleTimer: number | null = null;
 
 onMounted(() => {
   setTimeout(() => {
@@ -269,13 +304,21 @@ onMounted(() => {
   initCanvas();
   
   setTimeout(() => {
-    petTalking('SYS.AI INITIALIZED.');
+    petTalking('你好呀主人！ヾ(•ω•`)o');
   }, 1500);
+
+  idleTimer = window.setInterval(() => {
+    if (petState.value === 'idle' && !bubbleText.value && Math.random() > 0.4) {
+      petTalking(getRandomText(idleDialogues));
+    }
+  }, 8000);
 });
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', updateMouse);
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  if (idleTimer) clearInterval(idleTimer);
+  if (petTalkTimer) clearTimeout(petTalkTimer);
 });
 </script>
 
@@ -303,18 +346,24 @@ onUnmounted(() => {
 
       <!-- AI Core Widget -->
       <div 
-        class="cyber-glass p-2 flex flex-col items-center justify-center bg-black/60 border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all cursor-pointer group w-14 h-14"
+        class="cyber-glass p-2 flex flex-col items-center justify-center bg-black/60 border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-16 h-16 rounded-full animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)]"
+        :class="{ 'scale-90': petState === 'happy' }"
         @click="triggerHappyPet"
-        @mouseenter="petTalking('AWAITING COMMAND')"
+        @mouseenter="petTalking(getRandomText(hoverDialogues))"
       >
-        <div class="relative w-8 h-8 rounded-full border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300">
+        <!-- Rotating Outer Ring -->
+        <div class="absolute inset-0 border border-dashed border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] rounded-full animate-spin-slow opacity-20 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        
+        <div class="relative w-10 h-10 rounded-full border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black/40">
           <!-- The Eye -->
           <div 
-            class="w-3 h-3 bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)] transition-colors duration-300"
-            :style="{ transform: `rotate(${eyeRotation}deg) translateX(4px)` }"
-            style="clip-path: polygon(0 50%, 50% 0, 100% 50%, 50% 100%);"
+            class="w-4 h-4 bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)] transition-all duration-300 shadow-[0_0_10px_currentColor]"
+            :style="{ 
+              transform: `rotate(${eyeRotation}deg) translateX(4px)`,
+              clipPath: petState === 'happy' ? 'polygon(0 40%, 100% 40%, 100% 60%, 0 60%)' : 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)'
+            }"
           ></div>
-          <div class="absolute inset-0 rounded-full shadow-[0_0_10px_rgba(91,122,97,0)] group-hover:shadow-[0_0_15px_rgba(91,122,97,0.5)] transition-all duration-500"></div>
+          <div class="absolute inset-0 rounded-full shadow-[inset_0_0_15px_rgba(91,122,97,0)] group-hover:shadow-[inset_0_0_20px_rgba(91,122,97,0.4)] transition-all duration-500"></div>
         </div>
       </div>
     </div>
@@ -357,12 +406,6 @@ onUnmounted(() => {
       
       <div class="absolute top-1/4 right-[2%] hud-text-vertical hidden lg:block text-xs">
         <span class="opacity-50 tracking-[0.5em]">SYSTEM.UI</span> // <span class="text-brand">ONLINE</span>
-      </div>
-      
-      <div class="absolute bottom-12 left-12 font-mono text-[10px] text-[var(--color-text-dim)] hidden md:block uppercase tracking-widest leading-relaxed">
-        <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block"></span> ROOT ACCESS: OK</div>
-        <div>SECURE PROTOCOL / 0x8F8A2</div>
-        <div>MEM: 4096MB <span class="text-[var(--color-brand)]">ALLOCATED</span></div>
       </div>
     </div>
 
