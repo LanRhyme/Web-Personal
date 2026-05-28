@@ -319,7 +319,6 @@ const getArticleCoverUrl = (path: string) => {
 };
 
 const loadArticlesList = async () => {
-  if (!isGithubConfigured.value) return;
   isLoadingArticles.value = true;
   try {
     const res = await fetch('/blogs/index.json', { cache: 'no-store' });
@@ -329,6 +328,7 @@ const loadArticlesList = async () => {
     }
   } catch (e) {
     console.error('Failed to load articles:', e);
+    existingArticles.value = [];
   } finally {
     isLoadingArticles.value = false;
   }
@@ -776,6 +776,10 @@ watch(isAuthenticated, (newVal) => {
                                 <div class="input-terminal-group"><label>技术栈 (逗号分隔)</label><input :value="project.tags.join(', ')" @input="(e) => project.tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim())" class="input-terminal" /></div>
                             </div>
                             <div class="input-terminal-group"><label>详情描述</label><textarea v-model="project.description" class="input-terminal h-24 pt-4"></textarea></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-terminal-group"><label>预览链接 (live_url)</label><input v-model="project.live_url" class="input-terminal font-mono text-xs" placeholder="https://example.com" /></div>
+                                <div class="input-terminal-group"><label>源码链接 (source_url)</label><input v-model="project.source_url" class="input-terminal font-mono text-xs" placeholder="https://github.com/..." /></div>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -983,14 +987,16 @@ watch(isAuthenticated, (newVal) => {
 
                     <div v-else-if="existingArticles.length > 0">
                         <h4 class="font-bold text-[var(--color-primary)] mb-4">已发布的文章</h4>
-                        <div class="space-y-3">
-                            <div v-for="article in existingArticles" :key="article.slug" class="admin-card bg-white/40 hover:bg-[var(--color-brand)]/5 transition-colors p-4 flex items-center justify-between">
-                                <div>
-                                    <h5 class="font-bold text-[var(--color-primary)]">{{ article.title }}</h5>
-                                    <p class="text-xs text-[var(--color-secondary)] font-mono">{{ article.slug }}</p>
+                        <div class="space-y-2">
+                            <div v-for="article in existingArticles" :key="article.slug" class="admin-card !p-0 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
+                                <div class="flex-grow p-3 md:p-4">
+                                    <h5 class="font-bold text-[var(--color-primary)] text-sm md:text-base">{{ article.title }}</h5>
+                                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                                        <p class="text-[10px] text-[var(--color-secondary)] font-mono">{{ article.slug }}</p>
+                                        <span class="text-[10px] text-[var(--color-secondary)]">{{ article.date }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs text-[var(--color-secondary)]">{{ article.date }}</span>
+                                <div class="flex items-center gap-2 px-3 pb-3 md:px-4 md:py-0 md:pr-4">
                                     <button @click="$router.push('/article/' + article.slug)" class="btn-terminal !py-2 !px-3 text-xs">
                                         <i class="fas fa-eye"></i>
                                     </button>
