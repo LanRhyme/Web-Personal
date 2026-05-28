@@ -1,12 +1,8 @@
 <template>
-  <footer class="w-full text-center py-8 mt-auto">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <div class="w-16 h-[2px] bg-[rgba(53,191,160,0.2)] rounded-full mx-auto mb-4"></div>
-      <p class="text-sm text-[var(--color-secondary)] font-medium">
-        © 2026 LanRhyme · Built with
-        <i class="fa fa-heart text-[var(--color-brand)] mx-1" style="font-size: 11px"></i>
-        and Code
-      </p>
+  <footer class="w-full text-center py-4 mt-auto border-t-4 border-[var(--color-text)] bg-[var(--color-bg)] font-sans text-[10px] uppercase opacity-70">
+    <div class="max-w-[1400px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <span>(C) 2026 LANRHYME // ALL RIGHTS RESERVED</span>
+      <span>SYS.STATUS: RUNNING // EOF_REACHED</span>
     </div>
   </footer>
 </template>

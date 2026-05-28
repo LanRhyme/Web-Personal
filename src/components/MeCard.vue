@@ -1,36 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
-const githubInfo = ref('加载中...');
-
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour >= 6 && hour < 12) return 'Good Morning ☀️';
-  if (hour >= 12 && hour < 18) return 'Good Afternoon 🌤';
-  if (hour >= 18 && hour < 22) return 'Good Evening 🌙';
-  return 'Good Night ✨';
-}
-
-const greeting = ref(getGreeting());
+const githubInfo = ref('WAITING...');
 
 const fetchGithubInfo = async () => {
   try {
     const userRes = await fetch('https://api.github.com/users/LanRhyme');
-    if (!userRes.ok) {
-      githubInfo.value = 'GitHub Error';
-      return;
-    }
+    if (!userRes.ok) throw new Error('API Error');
     const userData = await userRes.json();
-    const reposRes = await fetch(`https://api.github.com/users/LanRhyme/repos?per_page=100&sort=updated`);
-    if (!reposRes.ok) {
-      githubInfo.value = `${userData.public_repos} Repos · ${userData.followers} Followers`;
-      return;
-    }
-    const repos = await reposRes.json();
-    const totalStars = repos.reduce((sum: number, repo: { stargazers_count: number }) => sum + repo.stargazers_count, 0);
-    githubInfo.value = `${totalStars} Stars · ${userData.followers} Followers`;
+    githubInfo.value = `FLWRS:${userData.followers} / REPOS:${userData.public_repos}`;
   } catch (e) {
-    githubInfo.value = '网络错误';
+    githubInfo.value = 'OFFLINE';
   }
 };
 
@@ -40,63 +20,82 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside class="card anim-fade-in-up overflow-hidden group flex flex-col items-center text-left md:text-center p-5 md:p-8" style="animation-delay: 0.05s">
-    <!-- Mobile: Horizontal Layout, Desktop: Vertical Centered -->
-    <div class="flex items-center gap-4 md:flex-col md:items-center w-full">
-      <!-- Avatar -->
-      <div class="avatar-ring overflow-hidden flex-shrink-0 w-16 h-16 md:w-[100px] md:h-[100px]">
-        <img alt="LanRhyme Avatar" src="/img/avatar.jpg" class="avatar-img">
+  <aside class="cyber-glass p-6 sm:p-8 flex flex-col font-mono uppercase text-[var(--color-text)] transition-all">
+    <!-- Header -->
+    <div class="border-b border-[var(--color-border)] pb-4 mb-6 flex justify-between items-center text-[10px] tracking-widest">
+      <span class="font-bold opacity-60">STATUS: LANRHYME.OS</span>
+      <span class="animate-pulse text-[var(--color-brand)] font-bold">● ACTIVE</span>
+    </div>
+
+    <!-- Avatar Placeholder & Core Stats -->
+    <div class="flex flex-col gap-8">
+      <div class="flex items-center gap-4">
+        <!-- Minimalist Avatar Frame -->
+        <div class="w-14 h-14 bg-transparent flex items-center justify-center border border-[var(--color-brand)] overflow-hidden relative">
+          <img src="/img/avatar.png" alt="Avatar" class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale hover:grayscale-0 transition-all duration-500" />
+          <div class="absolute inset-0 border border-[var(--color-brand)] mix-blend-overlay"></div>
+        </div>
+        <div class="flex flex-col gap-1 tracking-widest">
+          <span class="font-art font-bold text-xl leading-none">LanRhyme</span>
+          <span class="text-[9px] opacity-40">LV.26 FULL-STACK / ARTIST</span>
+        </div>
       </div>
 
-      <!-- Greeting & Identity -->
-      <div class="flex-1 min-w-0 md:w-full md:text-center">
-        <p class="text-[10px] font-bold text-[var(--color-secondary)] uppercase tracking-[0.2em] md:mt-6">{{ greeting }}</p>
-        <h3 class="text-lg md:text-2xl font-black mt-0.5 md:mt-2 text-[var(--color-primary)]">
-          I'm <span class="text-brand-gradient">LanRhyme</span>
-        </h3>
-        <p class="text-[10px] md:text-xs text-[var(--color-secondary)] mt-0.5 md:mt-1 font-medium opacity-80">Full-Stack Developer & Artist</p>
+      <!-- System Stats -->
+      <div class="flex flex-col gap-4 text-[10px] tracking-widest opacity-80">
+        <div>
+          <div class="flex justify-between mb-1">
+            <span>SYS_INTEGRITY</span>
+            <span class="text-[var(--color-brand)]">100%</span>
+          </div>
+          <div class="w-full h-[2px] bg-[var(--color-border)]">
+            <div class="bg-[var(--color-brand)] h-full w-full"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-1">
+            <span>CREATIVE_DRIVE</span>
+            <span class="text-[var(--color-brand)]">MAX</span>
+          </div>
+          <div class="w-full h-[2px] bg-[var(--color-border)]">
+            <div class="bg-[var(--color-brand)] h-full w-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Attributes -->
+      <div class="flex flex-col gap-3 text-[10px] border-t border-[var(--color-border)] pt-6 tracking-widest leading-relaxed">
+        <div class="flex justify-between">
+          <span class="opacity-40">DESIGNATION</span>
+          <span class="font-bold">CREATOR</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="opacity-40">ATTACK_PWR</span>
+          <span class="text-[var(--color-text)]">VUE / KOTLIN</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="opacity-40">DEFENSE_PWR</span>
+          <span class="text-[var(--color-text)]">ILLUSTRATION</span>
+        </div>
+        <div class="flex justify-between mt-2 pt-2 border-t border-[var(--color-border)] border-dashed">
+          <span class="opacity-40">GITHUB_NET</span>
+          <span class="text-[var(--color-brand)]">{{ githubInfo }}</span>
+        </div>
       </div>
     </div>
 
-    <div class="hidden md:block w-10 h-[2.5px] bg-[var(--color-brand)] rounded-full mx-auto my-6 opacity-40 group-hover:w-16 group-hover:opacity-80 transition-all duration-500"></div>
-
-    <!-- Stats & Contact Hub -->
-    <div class="flex flex-col gap-3 md:gap-4 w-full mt-4 md:mt-0">
-        <div class="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/20 transition-all group-hover:bg-[var(--color-brand)]/10">
-            <i class="fab fa-github text-[var(--color-brand)] text-xs md:text-sm"></i>
-            <span class="text-[10px] md:text-[11px] font-bold text-[var(--color-secondary)] truncate">{{ githubInfo }}</span>
-        </div>
-
-        <div class="flex justify-start md:justify-center gap-3 md:gap-4 mt-1 md:mt-2">
-            <a href="https://github.com/LanRhyme" target="_blank" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fab fa-github"></i></a>
-            <a href="https://space.bilibili.com/496901387" target="_blank" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fab fa-bilibili"></i></a>
-            <a href="mailto:i@lanrhyme.com" class="social-icon !w-10 !h-10 md:!w-12 md:!h-12 border-none shadow-sm text-sm md:text-base"><i class="fa fa-envelope"></i></a>
-        </div>
+    <!-- Action Links as Terminal Commands -->
+    <div class="mt-8 border-t border-[var(--color-border)] pt-6 flex flex-col gap-3">
+      <a href="https://github.com/LanRhyme" target="_blank" class="btn-terminal block text-center w-full !text-[10px]">
+        > EXEC_GITHUB
+      </a>
+      <a href="https://space.bilibili.com/496901387" target="_blank" class="btn-terminal block text-center w-full !text-[10px]">
+        > EXEC_BILIBILI
+      </a>
+      <a href="mailto:i@lanrhyme.com" class="btn-terminal block text-center w-full !text-[10px]">
+        > INIT_CONTACT
+      </a>
     </div>
   </aside>
 </template>
-
-<style scoped>
-.avatar-ring {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  padding: 4px;
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-secondary), var(--bubble-color-3));
-  box-shadow: 0 16px 32px -8px rgba(132, 201, 60, 0.2);
-  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.6s ease;
-}
-
-.card:hover .avatar-ring {
-  transform: scale(1.08) rotate(3deg);
-  box-shadow: 0 20px 40px -8px rgba(var(--brand-rgb), 0.35);
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--color-card-solid);
-}
-</style>

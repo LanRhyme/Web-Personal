@@ -1,199 +1,73 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const navRef = ref<HTMLElement | null>(null);
-const trackerRef = ref<HTMLElement | null>(null);
-const isMobileMenuOpen = ref(false);
-const isScrolled = ref(false);
-const isDark = ref(localStorage.getItem('theme') === 'dark');
+const currentTime = ref('');
+const mouseCoords = ref({ x: 0, y: 0 });
 
-const toggleDarkMode = () => {
-    isDark.value = !isDark.value;
-    if (isDark.value) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-    }
-    // Sync Prism theme
-    const lightTheme = document.getElementById('prism-light-theme') as HTMLLinkElement;
-    const darkTheme = document.getElementById('prism-dark-theme') as HTMLLinkElement;
-    if (lightTheme && darkTheme) {
-        lightTheme.disabled = isDark.value;
-        darkTheme.disabled = !isDark.value;
-    }
-    // Re-highlight code blocks after theme switch
-    setTimeout(() => {
-        if (typeof (window as any).Prism !== 'undefined') {
-            (window as any).Prism.highlightAll();
-        }
-    }, 50);
+let timeInterval: number;
+
+const updateTime = () => {
+  const now = new Date();
+  currentTime.value = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + Math.floor(now.getMilliseconds() / 100).toString();
+};
+
+const handleMouseMove = (e: MouseEvent) => {
+  mouseCoords.value = { x: e.clientX, y: e.clientY };
 };
 
 const navItems = [
-  { path: '/', name: '主页', icon: 'fa fa-home' },
-  { path: '/projects', name: '项目', icon: 'fa fa-cube' },
-  { path: '/commissions', name: '约稿', icon: 'fa-solid fa-pencil' },
-  { path: '/works', name: '作品', icon: 'fa-solid fa-image' },
-  { path: '/articles', name: '文章', icon: 'fa-solid fa-feather-alt' },
-  { path: '/games', name: '游戏', icon: 'fa-solid fa-gamepad' },
-  { path: '/github', name: 'GitHub', icon: 'fab fa-github' }
+  { path: '/', name: 'SYS.HOME' },
+  { path: '/projects', name: 'DIR.PROJECTS' },
+  { path: '/works', name: 'DIR.WORKS' },
+  { path: '/commissions', name: 'DIR.QUESTS' },
+  { path: '/articles', name: 'DIR.LOGS' },
+  { path: '/games', name: 'EXE.GAMES' },
+  { path: '/github', name: 'NET.GITHUB' }
 ];
 
-const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value;
-  document.body.style.overflow = isMobileMenuOpen.value ? 'hidden' : '';
-};
-
-const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false;
-  document.body.style.overflow = '';
-};
-
-const updateTracker = () => {
-  if (!navRef.value || !trackerRef.value) return;
-  if (window.innerWidth < 1024) return;
-
-  const activeItem = navRef.value.querySelector('.nav-link.active') as HTMLElement;
-  if (activeItem) {
-    trackerRef.value.style.width = `${activeItem.offsetWidth}px`;
-    trackerRef.value.style.height = `${activeItem.offsetHeight}px`;
-    trackerRef.value.style.transform = `translate(${activeItem.offsetLeft}px, ${activeItem.offsetTop}px)`;
-    trackerRef.value.style.opacity = '1';
-  } else {
-    trackerRef.value.style.opacity = '0';
-  }
-};
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20;
-};
-
 onMounted(() => {
-  if (isDark.value) {
-    document.documentElement.classList.add('dark');
-  }
-
-  nextTick(() => {
-    updateTracker();
-    setTimeout(updateTracker, 150);
-  });
-
-  window.addEventListener('resize', updateTracker);
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  updateTime();
+  timeInterval = setInterval(updateTime, 100);
+  window.addEventListener('mousemove', handleMouseMove);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateTracker);
-  window.removeEventListener('scroll', handleScroll);
-  document.body.style.overflow = '';
-});
-
-watch(() => route.path, () => {
-  nextTick(updateTracker);
+  clearInterval(timeInterval);
+  window.removeEventListener('mousemove', handleMouseMove);
 });
 </script>
 
 <template>
-  <!-- Mobile Menu Overlay -->
-  <transition
-    enter-active-class="transition duration-300 ease-out"
-    enter-from-class="opacity-0"
-    enter-to-class="opacity-100"
-    leave-active-class="transition duration-200 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="opacity-0"
-  >
-    <div
-      v-if="isMobileMenuOpen"
-      class="fixed inset-0 z-40 backdrop-blur-2xl flex flex-col justify-center items-center lg:hidden"
-      style="background: rgba(238, 238, 238, 0.95)"
-      @click.self="closeMobileMenu"
-    >
-      <!-- Close button at top right -->
-      <button
-        class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--color-brand)]/10 text-[var(--color-primary)]"
-        @click="closeMobileMenu"
+  <header class="w-full border-b border-[var(--color-border)] bg-[var(--color-bg)]/80 backdrop-blur-md sticky top-0 z-50 uppercase text-xs font-mono flex flex-col transition-all">
+    <!-- Top Status Line -->
+    <div class="flex justify-between items-center px-4 py-2 border-b border-[var(--color-border)] text-[0.65rem] sm:text-xs">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span class="flex items-center gap-2 font-bold tracking-widest text-[var(--color-text)]">
+          <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block"></span>
+          SYS.ONLINE
+        </span>
+        <span class="opacity-40 hidden md:inline tracking-widest">| USER: LANRHYME.DEV</span>
+        <span class="opacity-40 text-[var(--color-brand)] tracking-widest">| COORD: ({{ mouseCoords.x }}, {{ mouseCoords.y }})</span>
+      </div>
+      
+      <div class="flex items-center gap-6">
+        <span class="hidden sm:inline font-mono text-[var(--color-text-dim)] tracking-widest">T: {{ currentTime }}</span>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex flex-wrap items-center px-4 py-2 gap-4">
+      <router-link
+        v-for="item in navItems"
+        :key="item.path"
+        :to="item.path"
+        class="pb-1 border-b border-transparent hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all font-mono tracking-widest text-xs"
+        :class="route.path === item.path ? 'text-[var(--color-brand)] border-[var(--color-brand)] font-bold' : 'text-[var(--color-text-dim)]'"
       >
-        <i class="fa fa-times text-lg"></i>
-      </button>
-
-      <div class="flex flex-col space-y-2.5 text-center w-full px-6 max-w-sm mx-auto">
-        <router-link
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="card-flat flex items-center gap-3 px-5 py-3.5 text-base font-semibold transition-all duration-300"
-          :class="route.path === item.path ? 'text-[var(--color-brand)] border-[var(--color-brand)]/30 bg-[var(--color-brand)]/5' : 'text-[var(--color-primary)]'"
-          active-class=""
-          @click="closeMobileMenu"
-        >
-          <i :class="item.icon" class="w-5 text-center"></i>
-          {{ item.name }}
-        </router-link>
-      </div>
-
-      <!-- Footer info in mobile menu -->
-      <div class="absolute bottom-8 text-center">
-        <p class="text-[10px] text-[var(--color-secondary)] opacity-60">LanRhyme Portfolio</p>
-      </div>
-    </div>
-  </transition>
-
-  <header class="w-full py-3 md:py-4 px-3 md:px-6 flex justify-center sticky top-0 z-50">
-    <div
-      class="nav-card px-2 md:px-3 py-2 flex items-center justify-between transition-all duration-500"
-      :class="{ 'shadow-lg': isScrolled }"
-      style="width: auto; min-width: min-content;"
-    >
-      <!-- Mobile: Logo/Brand -->
-      <div class="lg:hidden flex items-center">
-        <router-link to="/" class="flex items-center gap-2 px-2">
-          <span class="text-sm font-bold text-[var(--color-primary)]">LanRhyme</span>
-        </router-link>
-      </div>
-
-      <!-- Desktop Nav -->
-      <nav class="hidden lg:flex items-center relative py-1" ref="navRef">
-        <div class="nav-tracker" ref="trackerRef" style="opacity: 0"></div>
-        <router-link
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="nav-link"
-          active-class="active"
-        >
-          <i :class="item.icon" class="text-sm"></i>
-          <span>{{ item.name }}</span>
-        </router-link>
-      </nav>
-
-      <!-- Right Actions -->
-      <div class="flex items-center gap-1 md:gap-2">
-        <!-- Dark Mode Toggle -->
-        <button
-          @click="toggleDarkMode"
-          class="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--color-brand)]/10 text-[var(--color-secondary)] hover:text-[var(--color-brand)]"
-          :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
-        >
-          <transition name="fade" mode="out-in">
-            <i v-if="isDark" class="fas fa-moon text-sm md:text-base"></i>
-            <i v-else class="fas fa-sun text-sm md:text-base"></i>
-          </transition>
-        </button>
-
-        <!-- Mobile Menu Toggle -->
-        <button
-          class="lg:hidden flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full transition-all duration-300 text-[var(--color-primary)]"
-          :class="isMobileMenuOpen ? 'bg-[rgba(53,191,160,0.1)]' : ''"
-          @click="toggleMobileMenu"
-        >
-          <i class="fa text-sm md:text-base" :class="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
-        </button>
-      </div>
-    </div>
+        <span class="opacity-50 mr-1">></span>{{ item.name }}
+      </router-link>
+    </nav>
   </header>
 </template>

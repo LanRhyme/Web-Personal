@@ -194,48 +194,47 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-full anim-fade-in-up">
+  <div class="flex flex-col items-center w-full reveal is-visible font-sans">
     <!-- Header -->
     <section class="w-full py-10">
       <div class="text-center mb-12">
-        <h2 class="text-5xl font-extrabold tracking-tight mb-4">
-          <span class="text-[var(--color-primary)]">GitHub</span> 
-          <span class="text-brand-gradient"> Activity</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 ">
+          <span>GITHUB // MAINFRAME_SYNC</span>
         </h2>
-        <p class="text-lg text-[var(--color-secondary)] font-medium">最近的代码动态与开源仓库</p>
+        <p class="text-xs text-[var(--color-secondary)] font-medium font-sans">最近的代码动态与开源仓库 // ACTIVE DATABASE STREAMS</p>
       </div>
 
       <div class="flex flex-col gap-10 px-4 max-w-5xl mx-auto">
         
         <!-- Pinned Repositories -->
         <div class="w-full">
-          <h3 class="section-heading mb-6">置顶仓库</h3>
+          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> PINNED_NODES</h3>
           
           <div v-if="loadingPinned" class="flex justify-center py-12">
-            <div class="spinner"></div>
+            <div class="cursor-blink"></div>
           </div>
           
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5 stagger-children">
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
             <a v-for="repo in pinnedRepos" :key="repo.id" :href="repo.html_url" target="_blank" 
-               class="card group relative overflow-hidden transition-all duration-500 anim-fade-in-up">
+               class="premium-card !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
               <div class="flex justify-between items-start mb-4">
-                <h4 class="font-bold text-lg text-[var(--color-primary)] group-hover:text-[var(--color-accent)] transition-colors flex items-center gap-2">
-                  <i class="fa-solid fa-bookmark text-sm"></i>
+                <h4 class="font-bold text-base text-[var(--color-brand)] group-hover:text-[var(--color-text)] transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-bookmark text-xs"></i>
                   {{ repo.name }}
                 </h4>
-                <span class="tag">
-                  {{ repo.language || 'Code' }}
+                <span class="text-[9px] border border-[var(--color-text)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] font-bold">
+                  {{ repo.language || 'CODE' }}
                 </span>
               </div>
-              <p class="text-sm text-[var(--color-secondary)] mb-4 h-11 overflow-hidden line-clamp-2 leading-relaxed">
+              <p class="text-[11px] text-[var(--color-text-dim)] mb-4 h-10 overflow-hidden line-clamp-2 leading-relaxed font-sans font-medium">
                 {{ repo.description || '暂无描述' }}
               </p>
-              <div class="flex justify-between items-center text-xs text-[var(--color-secondary)]/80 pt-4 border-t border-white/40">
-                <span class="flex items-center gap-1.5">
+              <div class="flex justify-between items-center text-[10px] text-[var(--color-text-dim)]/80 pt-3 border-t border-dashed border-[var(--color-text)]">
+                <span class="flex items-center gap-1">
                   <i class="fa-solid fa-star text-[var(--color-brand)]"></i>
-                  {{ repo.stargazers_count }}
+                  STARS: {{ repo.stargazers_count }}
                 </span>
-                <span>{{ formatDate(repo.updated_at) }}</span>
+                <span>SYNCED: {{ formatDate(repo.updated_at) }}</span>
               </div>
             </a>
           </div>
@@ -243,30 +242,30 @@ onMounted(() => {
 
         <!-- Recent Repositories -->
         <div class="w-full">
-          <h3 class="section-heading mb-6">最近更新</h3>
+          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> RECENT_NODES</h3>
           
           <div v-if="loadingRepos" class="flex justify-center py-12">
-            <div class="spinner"></div>
+            <div class="cursor-blink"></div>
           </div>
           
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5 stagger-children">
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
             <a v-for="repo in repos" :key="repo.id" :href="repo.html_url" target="_blank" 
-               class="card group relative overflow-hidden transition-all duration-500 anim-fade-in-up">
+               class="premium-card !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
               <div class="flex justify-between items-start mb-4">
-                <h4 class="font-bold text-lg text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors">{{ repo.name }}</h4>
-                <span class="tag">
-                  {{ repo.language || 'Code' }}
+                <h4 class="font-bold text-base text-[var(--color-brand)] group-hover:text-[var(--color-text)] transition-colors">{{ repo.name }}</h4>
+                <span class="text-[9px] border border-[var(--color-text)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] font-bold">
+                  {{ repo.language || 'CODE' }}
                 </span>
               </div>
-              <p class="text-sm text-[var(--color-secondary)] mb-4 h-11 overflow-hidden line-clamp-2 leading-relaxed">
+              <p class="text-[11px] text-[var(--color-text-dim)] mb-4 h-10 overflow-hidden line-clamp-2 leading-relaxed font-sans font-medium">
                 {{ repo.description || '暂无描述' }}
               </p>
-              <div class="flex justify-between items-center text-xs text-[var(--color-secondary)]/80 pt-4 border-t border-white/40">
-                <span class="flex items-center gap-1.5">
+              <div class="flex justify-between items-center text-[10px] text-[var(--color-text-dim)]/80 pt-3 border-t border-dashed border-[var(--color-text)]">
+                <span class="flex items-center gap-1">
                   <i class="fa-solid fa-star text-[var(--color-brand)]"></i>
-                  {{ repo.stargazers_count }}
+                  STARS: {{ repo.stargazers_count }}
                 </span>
-                <span>{{ formatDate(repo.updated_at) }}</span>
+                <span>SYNCED: {{ formatDate(repo.updated_at) }}</span>
               </div>
             </a>
           </div>
@@ -274,33 +273,33 @@ onMounted(() => {
 
         <!-- Recent Activity -->
         <div class="w-full">
-          <h3 class="section-heading mb-6">动态流</h3>
-
+          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> DATA_FLOWS</h3>
+          
           <div v-if="loadingEvents" class="flex justify-center py-12">
-            <div class="spinner"></div>
+            <div class="cursor-blink"></div>
           </div>
 
           <div v-else class="space-y-6 relative ml-2">
-            <div class="timeline-line"></div>
+            <div class="timeline-line border-l-2 border-[var(--color-text)] opacity-35 absolute left-1 h-full top-0"></div>
             
-            <div v-for="event in events" :key="event.id" class="relative pl-10 anim-fade-in-up">
-              <div class="timeline-dot"></div>
+            <div v-for="event in events" :key="event.id" class="relative pl-8 reveal is-visible">
+              <div class="timeline-dot w-2 h-2 bg-[var(--color-brand)] border-2 border-black absolute left-0 top-6 rotate-45"></div>
               
-              <div class="card !p-5 group">
+              <div class="premium-card !p-5 group">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="font-bold text-sm text-[var(--color-brand)] flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-xs"></i>
-                    {{ formatEventType(event.type) }}
+                  <span class="font-bold text-xs text-[var(--color-brand)] flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-[10px]"></i>
+                    {{ formatEventType(event.type).toUpperCase() }}
                   </span>
-                  <span class="text-xs text-[#a4c9b3]">{{ formatDate(event.created_at) }}</span>
+                  <span class="text-[10px] text-[var(--color-text-dim)] font-mono">{{ formatDate(event.created_at) }}</span>
                 </div>
-                <div class="text-sm mb-3">
+                <div class="text-xs mb-3 font-mono">
                   <a :href="`https://github.com/${event.repo.name}`" target="_blank" class="font-bold text-[var(--color-primary)] hover:text-[var(--color-brand)] transition-colors break-all">
-                    {{ event.repo.name }}
+                    > {{ event.repo.name }}
                   </a>
                 </div>
-                <div v-if="event.payload.commits" class="text-xs text-[var(--color-secondary)] bg-white/30 p-3 rounded-xl border border-white/30">
-                  <div v-for="commit in event.payload.commits.slice(0, 2)" :key="commit.sha" class="truncate flex items-start gap-2">
+                <div v-if="event.payload.commits" class="text-[10px] text-[var(--color-text-dim)] bg-[var(--color-text)]/5 p-3 rounded border border-dashed border-[var(--color-text)] font-mono">
+                  <div v-for="commit in event.payload.commits.slice(0, 2)" :key="commit.sha" class="truncate flex items-start gap-1">
                     <span class="text-[var(--color-brand)] shrink-0">-</span>
                     <span>{{ commit.message }}</span>
                   </div>

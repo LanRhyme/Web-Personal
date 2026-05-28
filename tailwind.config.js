@@ -7,16 +7,18 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        'mono': ['"JetBrains Mono"', '"Fira Code"', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        'sans': ['"Montserrat"', '"Space Grotesk"', '"Inter"', 'sans-serif'],
+        'art': ['"Playfair Display"', 'serif'],
+      },
       colors: {
-        'amethyst': 'var(--amethyst-color)',
-        'amethyst-hover': 'var(--amethyst-color-hover)',
-        'highlight-bg': 'var(--highlight-bg)',
-        'bg-primary': 'var(--bg-primary)',
-        'text-primary': 'var(--text-primary)',
-        'card-bg': 'var(--card-bg)',
+        'bg-primary': 'var(--color-bg)',
+        'text-primary': 'var(--color-text)',
+        'text-dim': 'var(--color-text-dim)',
         'brand': 'var(--color-brand)',
-        'brand-secondary': 'var(--color-brand-secondary)',
-        'brand-rgb': '132, 201, 60',
+        'border-color': 'var(--color-border)',
+        'card-bg': 'var(--color-card)',
       }
     },
   },

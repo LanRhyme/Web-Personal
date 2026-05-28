@@ -4,8 +4,13 @@ import projectsData from '../data/projects.json';
 import ClockCard from '../components/ClockCard.vue';
 import CalendarCard from '../components/CalendarCard.vue';
 import MeCard from '../components/MeCard.vue';
-import QuoteCard from '../components/QuoteCard.vue';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
+
+// Load generated ASCII avatar if available
+import asciiAvatarData from '../data/avatar-ascii.json';
+
+const router = useRouter();
 
 interface PinnedItem {
   title: string;
@@ -19,8 +24,6 @@ interface Article {
   date: string;
   summary?: string;
   tags: string[];
-  cover?: string;
-  hidden?: boolean;
 }
 
 const items: PinnedItem[] = pinnedItems;
@@ -31,17 +34,13 @@ const latestArticle = computed(() => {
   return [...articles.value].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 });
 
+const asciiAvatar = ref(asciiAvatarData?.ascii || '');
+
 const openLink = (link: string) => {
     if (link) {
         if (!link.startsWith('http')) link = 'https://' + link;
         window.open(link, '_blank');
     }
-};
-
-const getImageUrl = (path: string) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  return path.startsWith('/') ? path : '/' + path;
 };
 
 const loadArticles = async () => {
@@ -52,171 +51,227 @@ const loadArticles = async () => {
       articles.value = Array.isArray(data) ? data : [];
     }
   } catch (e) {
-    console.error('Failed to load articles:', e);
+    console.error('ERR_FETCH_ARTICLES');
   }
 };
 
-onMounted(() => {
-  loadArticles();
+// Scroll Reveal Logic
+const setupScrollReveal = () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left').forEach(el => observer.observe(el));
+};
+
+onMounted(async () => {
+  await loadArticles();
+  
+  nextTick(() => {
+    setupScrollReveal();
+  });
+  
+  // Real-time animated console logger
+  runConsoleLogger();
 });
+
+// Console Logger implementation
+const consoleLogs = ref<string[]>([]);
+const logQueue = [
+  'INITIALIZING LANRHYME CORE SYSTEM...',
+  'ESTABLISHING SECURE CONNECTION [PORT 443]... DONE',
+  'SYNCING GITHUB PROFILE DATA... SUCCESS',
+  'LOADED ARTICLES: ' + (articles.value.length || 0) + ' NODES MOUNTED',
+  'LOADED PROJECT DATABASE... VALID',
+  'RENDER ENGINE: PARTICLES & GLOWS RUNNING',
+  'SYSTEM V2.0.26 STATUS: ONLINE',
+  'USER CONNECTION: ESTABLISHED'
+];
+
+const runConsoleLogger = () => {
+  let idx = 0;
+  const interval = setInterval(() => {
+    if (idx < logQueue.length) {
+      consoleLogs.value.push(logQueue[idx]);
+      idx++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 900);
+};
 </script>
 
 <template>
-  <div class="page-container py-6 md:py-12">
-    <!-- Main Content Grid: This replaces the absolute positioning to prevent overlapping -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8 items-start">
-
-      <!-- Mobile: MeCard First (Full Width) -->
-      <div class="lg:hidden col-span-1 anim-fade-in-up" style="animation-delay: 0.05s">
-        <MeCard />
-      </div>
-
-      <!-- Left Column (3/12) -->
-      <div class="lg:col-span-3 flex flex-col gap-4 md:gap-6 anim-fade-in-up" style="animation-delay: 0.1s">
-        <!-- Mobile: Explore Card (Compact) -->
-        <div class="card p-4 md:p-6 lg:p-8 group order-1 lg:order-none">
-            <h2 class="text-xl md:text-2xl lg:text-3xl font-black text-[var(--color-primary)] leading-tight mb-2 md:mb-4">
-                Explore<span class="text-brand-gradient lg:hidden"> With Me</span><br class="hidden lg:block"><span class="hidden lg:inline text-brand-gradient">With Me</span>
-            </h2>
-            <p class="text-[10px] md:text-[11px] text-[var(--color-secondary)] leading-relaxed mb-4 md:mb-6 opacity-80">
-                在这里发现我的绘画创意
+  <div class="w-full font-sans text-[var(--color-text)] flex flex-col gap-16 sm:gap-24 pb-24">
+    
+    <!-- Hero Section (Parallax & Typographic) -->
+    <section class="min-h-[80vh] flex flex-col justify-center px-4 md:px-12 relative overflow-hidden">
+      <div class="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col xl:flex-row justify-between items-center gap-12">
+        
+        <!-- Huge Glitched Typography & Artistic Mixed Headline -->
+        <div class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8">
+          <div>
+            <h1 
+              class="text-[14vw] xl:text-[9vw] leading-[0.9] font-art italic glitch-hover" 
+              data-text="LanRhyme."
+            >
+              LanRhyme.
+            </h1>
+            <p class="font-mono text-lg md:text-xl mt-6 text-[var(--color-text-dim)] leading-relaxed tracking-wide">
+              Designing <span class="text-[var(--color-text)] border-b border-[var(--color-brand)]">digital interfaces</span> &amp;<br>
+              building <span class="text-[var(--color-text)] border-b border-[var(--color-brand)]">interactive systems</span>.
             </p>
-            <div class="flex flex-col gap-3">
-                <router-link to="/works" class="btn-brand justify-center py-2.5 md:py-3 text-xs">全部作品</router-link>
+          </div>
+          
+          <div class="flex flex-col md:flex-row md:items-end gap-6 md:gap-16 mt-8 opacity-90 reveal">
+            <div class="text-xs sm:text-xs tracking-[0.3em] uppercase max-w-sm font-mono text-[var(--color-text-dim)]">
+              <span class="text-[var(--color-brand)]">> STATUS: ONLINE</span><br><br>
+              FULL-STACK DEVELOPER<br>
+              DIGITAL ARTIST & CREATOR<br>
+              SYSTEM_VERSION: 2.0.26
             </div>
+            <div class="hidden md:block w-[1px] h-20 bg-[var(--color-border)]"></div>
+            <div class="text-[10px] sm:text-xs max-w-md opacity-40 font-mono tracking-widest leading-loose">
+              [SCROLL_DOWN TO INITIALIZE CONNECTION]<br>
+              [WARNING: HIGH_END_TERMINAL_ENABLED]
+            </div>
+          </div>
         </div>
-
-        <!-- Latest Project Card -->
-        <div class="card p-4 md:p-6 flex flex-col group cursor-pointer order-2 lg:order-none" @click="$router.push('/projects')">
-           <img v-if="latestProject" :src="getImageUrl(latestProject.image)" class="absolute inset-0 w-full h-full object-cover opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none" />
-           <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest mb-2 md:mb-3">Latest</p>
-           <h3 class="text-base md:text-lg font-bold text-[var(--color-primary)] mb-1.5 md:mb-2 leading-tight">{{ latestProject?.title }}</h3>
-           <p class="text-[10px] md:text-xs text-[var(--color-secondary)] line-clamp-2">{{ latestProject?.description }}</p>
-           <div class="mt-4 md:mt-6 flex justify-between items-center">
-              <span class="text-[10px] text-[var(--color-brand)] font-bold">查看详情 →</span>
-           </div>
-        </div>
-
-        <QuoteCard class="order-5 lg:order-none" />
-
-        <!-- Game Card -->
-        <router-link to="/games" class="card !p-3 md:!p-4 group cursor-pointer block order-6 lg:order-none hover:border-[var(--color-brand)]/30 transition-all duration-300">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <i class="fa-solid fa-gamepad text-[var(--color-brand)] text-sm"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-xs font-bold text-[var(--color-primary)] truncate">小游戏</h3>
-                    <p class="text-[10px] text-[var(--color-secondary)] opacity-70 truncate">放松一下</p>
-                </div>
-                <i class="fa fa-chevron-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all"></i>
+        
+        <!-- Dual Column Panel: ASCII + Live Console -->
+        <div class="flex flex-col md:flex-row xl:flex-col gap-8 items-center xl:items-end w-full xl:w-auto">
+          <!-- Live Interactive Console Log Box -->
+          <div class="cyber-glass p-6 font-mono text-xs leading-relaxed text-[var(--color-text-dim)] w-full md:w-[380px] h-[220px] relative overflow-hidden select-none reveal">
+            <div class="border-b border-[var(--color-border)] pb-2 mb-3 text-[var(--color-text)] font-bold flex justify-between tracking-widest">
+              <span>> SYSTEM_LOGS</span>
+              <span class="animate-pulse text-[var(--color-brand)]">LIVE</span>
             </div>
-        </router-link>
-      </div>
-
-      <!-- Center Column (Identity & Main Focus) (6/12) -->
-      <div class="hidden lg:flex lg:col-span-6 flex-col gap-6 lg:gap-8 anim-fade-in-up" style="animation-delay: 0.05s">
-        <MeCard />
-
-        <div class="card p-6 md:p-8">
-            <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h3 class="section-heading text-base md:text-lg">推荐内容</h3>
-                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[var(--color-brand)] uppercase tracking-widest">Index →</router-link>
+            <div class="h-[140px] overflow-y-auto flex flex-col gap-2 pr-2">
+              <div v-for="(log, i) in consoleLogs" :key="i" class="text-[var(--color-text)] opacity-80">> {{ log }}</div>
+              <div v-if="consoleLogs.length < logQueue.length" class="text-[var(--color-brand)] animate-pulse">> SYS.STREAMING_DATA...</div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <div
-                  v-for="(item, index) in items"
-                  :key="index"
-                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[var(--color-brand)]/5 hover:border-[var(--color-brand)]/30 cursor-pointer !px-4 md:!px-6 !py-4 md:!py-5 group transition-all duration-300"
-                  @click="openLink(item.link)"
-                >
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-xs md:text-sm text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-1">{{ item.title }}</h4>
-                        <i class="fa fa-arrow-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
-                    </div>
-                    <p class="text-[10px] text-[var(--color-secondary)] mt-2 leading-relaxed line-clamp-2">{{ item.description }}</p>
-                </div>
-            </div>
+          </div>
+          
+          <!-- Actual ASCII Art Avatar -->
+          <div class="hidden xl:block opacity-40 hover:opacity-100 transition-opacity duration-500 text-[6px] leading-[6px] tracking-tighter whitespace-pre font-mono pointer-events-none select-none reveal">
+            <pre class="m-0 text-[var(--color-text)]">{{ asciiAvatar }}</pre>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- Mobile: Projects Grid (Full Width) -->
-      <div class="lg:hidden col-span-1 anim-fade-in-up" style="animation-delay: 0.1s">
-        <div class="card p-4 md:p-6">
-            <div class="flex items-center justify-between mb-4 md:mb-6">
-                <h3 class="section-heading text-sm md:text-base">推荐内容</h3>
-                <router-link to="/projects" class="text-[10px] font-bold text-[var(--color-secondary)] hover:text-[var(--color-brand)] uppercase tracking-widest">Index →</router-link>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div
-                  v-for="(item, index) in items"
-                  :key="index"
-                  class="card-flat bg-white/40 dark:bg-white/5 hover:bg-[var(--color-brand)]/5 hover:border-[var(--color-brand)]/30 cursor-pointer !p-4 group transition-all duration-300"
-                  @click="openLink(item.link)"
-                >
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-xs text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-1">{{ item.title }}</h4>
-                        <i class="fa fa-arrow-right text-[10px] text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></i>
-                    </div>
-                    <p class="text-[10px] text-[var(--color-secondary)] mt-1.5 leading-relaxed line-clamp-2">{{ item.description }}</p>
-                </div>
-            </div>
-        </div>
-      </div>
-
-      <!-- Right Column (Widgets) (3/12) -->
-      <div class="lg:col-span-3 flex flex-col gap-4 md:gap-6 anim-fade-in-up" style="animation-delay: 0.15s">
-        <ClockCard />
-        <CalendarCard />
-
-        <!-- Quick Status/Social -->
-        <div class="card p-4 md:p-6 flex flex-col items-center gap-3 md:gap-4">
-             <div class="flex flex-col items-center text-center">
-                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest mb-1">Status</p>
-                <div class="flex items-center gap-2">
-                    <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-brand)] opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-brand)]"></span>
-                    </span>
-                    <span class="text-xs font-bold text-[var(--color-primary)]">Available for Hire</span>
-                </div>
-             </div>
+    <!-- Staggered Main Content (Offset Layout) -->
+    <section class="w-full max-w-[1400px] mx-auto px-4 md:px-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-20 items-start relative">
+        
+        <!-- Left Column: Identity & Modules (Sticky) -->
+        <div class="md:col-span-4 lg:col-span-3 flex flex-col gap-8 md:sticky md:top-32 z-20">
+          <div class="reveal-left" style="transition-delay: 0.1s;"><MeCard /></div>
+          <div class="reveal-left" style="transition-delay: 0.2s;"><ClockCard /></div>
+          <div class="reveal-left" style="transition-delay: 0.3s;"><CalendarCard /></div>
         </div>
 
-        <!-- Latest Article Card -->
-        <router-link v-if="latestArticle" :to="'/article/' + latestArticle.slug" class="card p-4 md:p-6 group cursor-pointer block hover:border-[var(--color-brand)]/30 transition-all duration-300">
-            <div class="flex items-center gap-2 mb-3">
-                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <i class="fa-solid fa-feather-alt text-[var(--color-brand)] text-sm"></i>
-                </div>
-                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest">最新文章</p>
+        <!-- Right Column: Navigation & Content (Flows down) -->
+        <div class="md:col-span-8 lg:col-span-9 flex flex-col gap-16 md:gap-24 pt-8">
+          
+          <!-- Modules -->
+          <div class="reveal flex flex-col gap-6 w-full lg:w-5/6 ml-auto">
+            <div class="border-b border-[var(--color-border)] pb-4 text-sm font-bold flex justify-between font-mono tracking-[0.3em]">
+              <span class="text-[var(--color-text)]">> SYS.EXPLORE</span>
+              <span class="opacity-30">DIR_LIST</span>
             </div>
-            <h4 class="text-sm font-bold text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors line-clamp-2 mb-2">{{ latestArticle.title }}</h4>
-            <p v-if="latestArticle.summary" class="text-[10px] text-[var(--color-secondary)] line-clamp-2 mb-2">{{ latestArticle.summary }}</p>
-            <div class="flex items-center gap-2 flex-wrap">
-                <span v-for="tag in latestArticle.tags.slice(0, 3)" :key="tag" class="text-[9px] font-bold text-[var(--color-brand)] bg-[var(--color-brand)]/10 px-2 py-0.5 rounded-full uppercase">#{{ tag }}</span>
-            </div>
-        </router-link>
-        <router-link v-else to="/articles" class="card p-4 md:p-6 group cursor-pointer block hover:border-[var(--color-brand)]/30 transition-all duration-300">
-            <div class="flex items-center gap-2 mb-3">
-                <div class="w-8 h-8 rounded-lg bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <i class="fa-solid fa-feather-alt text-[var(--color-brand)] text-sm"></i>
-                </div>
-                <p class="text-[10px] font-bold text-[var(--color-brand)] uppercase tracking-widest">文章</p>
-            </div>
-            <h4 class="text-sm font-bold text-[var(--color-primary)] group-hover:text-[var(--color-brand)] transition-colors">暂无文章</h4>
-        </router-link>
-      </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Route Buttons as Cyber Blocks -->
+              <div 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden" 
+                @click="$router.push('/works')"
+              >
+                <div class="text-xs opacity-40 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">01 / ARCHIVE</div>
+                <div class="font-art text-2xl mb-2">> Works.</div>
+                <div class="text-sm opacity-60 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
+              </div>
 
-    </div>
+              <div 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden" 
+                @click="$router.push('/projects')"
+              >
+                <div class="text-xs opacity-40 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">02 / DEPLOYMENTS</div>
+                <div class="font-art text-2xl mb-2">> Projects.</div>
+                <div class="text-sm opacity-60 line-clamp-1 font-sans tracking-wide">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
+              </div>
+
+              <div 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden" 
+                @click="$router.push('/articles')"
+              >
+                <div class="text-xs opacity-40 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">03 / LOGS</div>
+                <div class="font-art text-2xl mb-2">> Articles.</div>
+                <div class="text-sm opacity-60 font-sans tracking-wide">TECHNICAL & THOUGHTS</div>
+              </div>
+
+              <div 
+                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden" 
+                @click="$router.push('/games')"
+              >
+                <div class="text-xs opacity-40 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">04 / EXE</div>
+                <div class="font-art text-2xl mb-2">> Games.</div>
+                <div class="text-sm opacity-60 font-sans tracking-wide">SIMULATIONS</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pinned Nodes -->
+          <div class="reveal flex flex-col gap-6 w-full lg:w-5/6">
+            <div class="border-b border-[var(--color-border)] pb-4 text-sm font-bold font-mono tracking-[0.3em]">
+              <span class="text-[var(--color-text)]">> RECOMMENDED_NODES</span>
+            </div>
+            
+            <div class="flex flex-col gap-0 border border-[var(--color-border)] bg-black/20">
+              <div 
+                v-for="(item, index) in items" 
+                :key="index" 
+                class="p-6 cursor-pointer hover:bg-[var(--color-text)] hover:text-black group border-b border-[var(--color-border)] last:border-b-0 transition-colors" 
+                @click="openLink(item.link)"
+              >
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <span class="font-art font-bold text-xl">{{ item.title }}</span>
+                  <span class="opacity-0 group-hover:opacity-100 text-xs tracking-widest hidden sm:block font-mono">[CONNECT]</span>
+                </div>
+                <div class="text-sm opacity-50 group-hover:opacity-90 mt-2 font-sans tracking-wide">{{ item.description }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recent Log Highlight -->
+          <div class="reveal flex flex-col gap-6 w-full lg:w-3/4 ml-auto text-right">
+            <div class="border-b border-[var(--color-border)] pb-4 text-sm font-bold justify-end flex font-mono tracking-[0.3em]">
+              <span class="text-[var(--color-text)]">> RECENT_LOG</span>
+            </div>
+            
+            <div 
+              class="cyber-glass p-8 cursor-pointer hover:border-[var(--color-text)] group text-left transition-colors" 
+              @click="$router.push(latestArticle ? '/article/' + latestArticle.slug : '/articles')"
+            >
+              <div v-if="latestArticle">
+                <div class="text-xs opacity-40 mb-4 font-mono tracking-widest">> TIMESTAMP: {{ latestArticle.date }}</div>
+                <div class="font-art text-3xl mb-4 leading-snug group-hover:text-[var(--color-brand)] transition-colors">{{ latestArticle.title }}</div>
+                <div class="text-base opacity-60 line-clamp-3 font-sans tracking-wide leading-relaxed">{{ latestArticle.summary }}</div>
+                <div class="mt-6 flex flex-wrap gap-3">
+                  <span v-for="tag in latestArticle.tags" :key="tag" class="text-[10px] border border-[var(--color-border)] px-3 py-1 uppercase font-mono tracking-widest group-hover:border-[var(--color-text)] transition-colors">{{ tag }}</span>
+                </div>
+              </div>
+              <div v-else class="text-sm opacity-50 font-mono">NO_LOGS_FOUND_IN_DB</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
   </div>
 </template>
-
-<style scoped>
-.page-container {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-</style>

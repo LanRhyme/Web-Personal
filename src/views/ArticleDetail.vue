@@ -181,41 +181,43 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen w-full bg-[var(--color-bg)] transition-colors duration-500 font-sans">
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
-      <i class="fas fa-spinner fa-spin text-[var(--color-brand)] text-2xl"></i>
+      <div class="cursor-blink"></div>
     </div>
 
     <div v-else-if="error" class="flex flex-col items-center justify-center min-h-screen">
-      <div class="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-        <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+      <div class="w-16 h-16 border-4 border-red-500 text-red-500 flex items-center justify-center mb-4 rounded">
+        <i class="fas fa-exclamation-triangle text-xl"></i>
       </div>
-      <p class="text-[var(--color-secondary)] mb-6">{{ error }}</p>
-      <button @click="goBack" class="btn-brand">
-        <i class="fas fa-arrow-left mr-2"></i>返回
+      <p class="text-xs text-[var(--color-secondary)] mb-6">{{ error }}</p>
+      <button @click="goBack" class="premium-btn">
+        <i class="fas fa-arrow-left mr-2"></i>返回 // BACK
       </button>
     </div>
 
     <article v-else-if="article" class="max-w-3xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
-      <button @click="goBack" class="mb-8 text-sm text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i>返回
+      <button @click="goBack" class="premium-btn mb-8 !px-3 !py-1.5 !text-xs">
+        <i class="fas fa-arrow-left mr-2"></i>[ BACK.SYS ]
       </button>
 
-      <div class="text-center mb-8">
-        <h1 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] mb-4">{{ title }}</h1>
-        <div class="flex items-center justify-center gap-4 text-xs text-[var(--color-secondary)]">
-          <span v-if="date">{{ date }}</span>
-          <span v-for="tag in tags" :key="tag" class="text-[var(--color-brand)]">#{{ tag }}</span>
+      <div class="premium-card p-6 md:p-8 bg-[var(--color-card)] border-4 border-[var(--color-text)] mb-8">
+        <div class="text-center">
+          <h1 class="text-2xl md:text-3xl font-black text-[var(--color-brand)] mb-4 font-sans">> {{ title }}</h1>
+          <div class="flex items-center justify-center gap-4 text-[10px] text-[var(--color-text-dim)] font-mono">
+            <span v-if="date">[{{ date }}]</span>
+            <span v-for="tag in tags" :key="tag" class="border border-[var(--color-text-dim)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] font-bold">#{{ tag }}</span>
+          </div>
         </div>
       </div>
 
-      <div v-if="article.config.cover" class="mb-8 rounded-2xl overflow-hidden">
-        <img :src="getImageUrl(article.config.cover)" class="w-full" @error="($event.target as HTMLImageElement).style.display='none'" />
+      <div v-if="article.config.cover" class="mb-8 rounded border-4 border-[var(--color-text)] overflow-hidden">
+        <img :src="getImageUrl(article.config.cover)" class="w-full pixelated" @error="($event.target as HTMLImageElement).style.display='none'" />
       </div>
 
-      <div v-if="article.config.summary" class="text-center text-sm text-[var(--color-secondary)] italic mb-8 px-4">
-        "{{ article.config.summary }}"
+      <div v-if="article.config.summary" class="premium-card !p-4 text-center text-xs text-[var(--color-text-dim)] italic mb-8">
+        " {{ article.config.summary }} "
       </div>
 
-      <div class="blog-content" v-html="marked(article.markdown)"></div>
+      <div class="blog-content font-sans text-[var(--color-text)]" v-html="marked(article.markdown)"></div>
     </article>
   </div>
 </template>

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
-const quote = ref('加载中...');
+const quote = ref('WAITING FOR DATA...');
 const from = ref('');
 const isAnimating = ref(false);
 
 const fetchHitokoto = async () => {
-    // Prevent multiple clicks during animation
     if (isAnimating.value) return;
-    
     isAnimating.value = true;
+    quote.value = 'FETCHING...';
     
     try {
         const response = await fetch('https://v1.hitokoto.cn');
@@ -18,13 +17,12 @@ const fetchHitokoto = async () => {
             quote.value = data.hitokoto;
             from.value = data.from;
         } else {
-            quote.value = '愿你的代码永无 Bug。';
+            quote.value = 'SYS.ERR: NO DATA';
         }
     } catch (e) {
-        quote.value = '网络错误，请稍后再试。';
+        quote.value = 'SYS.ERR: NET_ERR';
     }
     
-    // Reset animation state after transition completes
     setTimeout(() => {
         isAnimating.value = false;
     }, 400);
@@ -37,73 +35,22 @@ onMounted(() => {
 
 <template>
   <div 
-    class="card !p-6 flex flex-col justify-center gap-3 group cursor-pointer relative overflow-hidden" 
+    class="terminal-border p-4 flex flex-col justify-center cursor-pointer hover:bg-[var(--color-text)] hover:text-[var(--color-bg)] transition-none font-mono text-sm" 
     @click="fetchHitokoto"
     :class="{ 'pointer-events-none': isAnimating }"
   >
-    <!-- Refresh indicator -->
-    <div 
-      class="absolute top-3 right-3 w-6 h-6 rounded-full bg-[var(--color-brand)]/10 flex items-center justify-center transition-all duration-300"
-      :class="isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100'"
-    >
-      <i 
-        class="fa fa-refresh text-[var(--color-brand)] text-[10px] transition-transform duration-500"
-        :class="isAnimating ? 'animate-spin' : ''"
-      ></i>
-    </div>
-
-    <div class="flex items-center gap-2 mb-1">
-        <i class="fa fa-quote-left text-[var(--color-brand)] text-xs opacity-50 group-hover:opacity-100 transition-opacity"></i>
-        <span class="text-[10px] font-bold text-[var(--color-secondary)] uppercase tracking-wider">Hitokoto</span>
+    <div class="border-b border-inherit pb-2 mb-2 text-xs font-bold uppercase flex justify-between">
+      <span>> SYS.QUOTE</span>
+      <span v-if="isAnimating" class="animate-spin">/</span>
+      <span v-else>[RELOAD]</span>
     </div>
     
-    <!-- Quote text with fade animation -->
-    <p 
-      class="text-sm leading-relaxed text-[var(--color-primary)] opacity-90 font-medium transition-all duration-300"
-      :class="isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'"
-    >
-        {{ quote }}
+    <p class="font-bold leading-relaxed mb-2">
+      "{{ quote }}"
     </p>
     
-    <!-- Source with fade animation -->
-    <div 
-      v-if="from" 
-      class="text-right transition-all duration-300 delay-75"
-      :class="isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'"
-    >
-        <span class="text-[11px] text-[var(--color-secondary)] opacity-60">— {{ from }}</span>
-    </div>
-
-    <!-- Click hint -->
-    <div 
-      class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] text-[var(--color-brand)]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    >
-      点击切换
+    <div v-if="from" class="text-right text-xs opacity-70">
+      -- {{ from }}
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Smooth transitions for content */
-.card {
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-.card:active {
-  transform: scale(0.98);
-}
-
-/* Animation keyframes for spin */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 0.5s linear infinite;
-}
-</style>
