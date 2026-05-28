@@ -1,0 +1,4 @@
+{"type":"click","text":"A\n      \n        完全统一风格\n        将admin页面完全改成ASCII Brutalism风格，包括Matrix背景、HUD元素、扫描线效果等","choice":"a","id":null,"timestamp":1779988427027}
+{"type":"click","text":"B\n      \n        部分统一风格\n        保留admin页面的功能布局，但更新颜色、字体、按钮样式等以匹配网站风格","choice":"b","id":null,"timestamp":1779988432689}
+{"type":"click","text":"C\n      \n        保持现有风格\n        只修复bug，不改变admin页面的整体风格设计","choice":"c","id":null,"timestamp":1779988433078}
+{"type":"click","text":"A\n      \n        完全统一风格\n        将admin页面完全改成ASCII Brutalism风格，包括Matrix背景、HUD元素、扫描线效果等","choice":"a","id":null,"timestamp":1779988433368}

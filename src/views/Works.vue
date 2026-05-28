@@ -630,4 +630,40 @@ onMounted(() => {
   background-size: 550px 550px;
   opacity: 0.15;
 }
+
+/* 3D Gallery Core */
+.perspective-container {
+  perspective: 2000px;
+  perspective-origin: 50% 50%;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.scene-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.05s linear;
+}
+
+.cylinder-container {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.cylinder-item {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.mask-gradient {
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 80%);
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(circle at 50% 50%, var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to));
+}
 </style>

@@ -281,6 +281,7 @@ onMounted(() => {
   document.addEventListener('mousemove', updateMouse);
   document.addEventListener('mousedown', () => isClicking.value = true);
   document.addEventListener('mouseup', () => isClicking.value = false);
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
 
   // --- Lenis Smooth Scrolling ---
   const lenis = new Lenis({

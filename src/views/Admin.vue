@@ -70,8 +70,9 @@ const saveSettings = () => {
 // Upload Logic
 const isUploading = ref(false);
 const uploadImage = async (file: File, folder: string): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    const reader = new FileReader();
+  const reader = new FileReader();
+  
+  return new Promise((resolve, reject) => {
     reader.onload = async () => {
       const base64 = reader.result as string;
       const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -79,36 +80,36 @@ const uploadImage = async (file: File, folder: string): Promise<string> => {
       
       if (isGithubConfigured.value) {
         try {
-            isUploading.value = true;
-            const content = base64.replace(/^data:image\/\w+;base64,/, "");
-            const path = `public/${filename}`;
-            await updateFile(path, content, `Upload ${filename}`, githubConfig.value, true);
-            resolve(`/${filename}`);
+          isUploading.value = true;
+          const content = base64.replace(/^data:image\/\w+;base64,/, "");
+          const path = `public/${filename}`;
+          await updateFile(path, content, `Upload ${filename}`, githubConfig.value, true);
+          resolve(`/${filename}`);
         } catch (e) {
-            console.error(e);
-            reject('GitHub 上传失败: ' + e);
+          console.error(e);
+          reject('GitHub 上传失败: ' + e);
         } finally {
-            isUploading.value = false;
+          isUploading.value = false;
         }
       } else {
         try {
-            isUploading.value = true;
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filepath: filename, content: base64 })
-            });
-            
-            if (res.ok) {
-                const json = await res.json();
-                resolve(json.path);
-            } else {
-                reject('上传失败');
-            }
+          isUploading.value = true;
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filepath: filename, content: base64 })
+          });
+          
+          if (res.ok) {
+            const json = await res.json();
+            resolve(json.path);
+          } else {
+            reject('上传失败');
+          }
         } catch (e) {
-            reject(e);
+          reject(e);
         } finally {
-            isUploading.value = false;
+          isUploading.value = false;
         }
       }
     };
@@ -429,8 +430,15 @@ const publishArticle = async () => {
     const indexRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/contents/public/blogs/index.json?ref=${githubConfig.value.branch}`, {
       headers: { Authorization: `token ${githubConfig.value.token}` }
     });
-    const indexData = await indexRes.json();
-    const existingIndex = indexData.content ? JSON.parse(atob(indexData.content)) : [];
+    let existingIndex: any[] = [];
+    try {
+      const indexData = await indexRes.json();
+      if (indexData.content) {
+        existingIndex = JSON.parse(atob(indexData.content));
+      }
+    } catch (e) {
+      console.error('Failed to parse index.json:', e);
+    }
 
     const newArticleEntry = {
       slug: slug,
@@ -537,8 +545,15 @@ const deleteArticle = async (slug: string) => {
     const indexRes = await fetch(`https://api.github.com/repos/${githubConfig.value.owner}/${githubConfig.value.repo}/contents/public/blogs/index.json?ref=${githubConfig.value.branch}`, {
       headers: { Authorization: `token ${githubConfig.value.token}` }
     });
-    const indexData = await indexRes.json();
-    const existingIndex = indexData.content ? JSON.parse(atob(indexData.content)) : [];
+    let existingIndex: any[] = [];
+    try {
+      const indexData = await indexRes.json();
+      if (indexData.content) {
+        existingIndex = JSON.parse(atob(indexData.content));
+      }
+    } catch (e) {
+      console.error('Failed to parse index.json:', e);
+    }
 
     const updatedIndex = existingIndex.filter((a: any) => a.slug !== slug);
     const updatedIndexContent = JSON.stringify(updatedIndex, null, 2);
@@ -617,7 +632,7 @@ watch(isAuthenticated, (newVal) => {
     <!-- Auth Screen -->
     <transition name="fade">
       <div v-if="!isAuthenticated" class="fixed inset-0 z-[200] flex items-center justify-center bg-[var(--color-bg)]">
-        <div class="card max-w-md w-full mx-4 p-8 md:p-12 text-center animate-fade-in">
+        <div class="cyber-glass max-w-md w-full mx-4 p-8 md:p-12 text-center">
           <div class="w-16 h-16 rounded-2xl bg-[var(--color-brand)] text-white flex items-center justify-center text-2xl shadow-lg mx-auto mb-8">
               <i class="fas fa-fingerprint"></i>
           </div>
@@ -627,9 +642,9 @@ watch(isAuthenticated, (newVal) => {
             v-model="password" 
             @keyup.enter="checkAuth"
             placeholder="请输入管理员密码"
-            class="input-modern mb-6"
+            class="input-terminal mb-6"
           />
-          <button @click="checkAuth" class="btn-brand w-full py-4 text-xs font-bold tracking-widest uppercase">解锁控制台</button>
+          <button @click="checkAuth" class="btn-terminal w-full py-4 text-xs font-bold tracking-widest uppercase">解锁控制台</button>
           <p v-if="loginError" class="text-red-500 text-xs font-bold mt-4 uppercase tracking-widest">身份验证失败</p>
         </div>
       </div>
@@ -646,7 +661,7 @@ watch(isAuthenticated, (newVal) => {
 
       <!-- Sidebar -->
       <aside 
-        class="fixed lg:sticky top-0 left-0 w-80 lg:w-85 h-screen bg-[var(--color-card)] backdrop-blur-3xl border-r border-[var(--color-border)] p-6 z-50 flex flex-col transition-all duration-500"
+        class="fixed lg:sticky top-0 left-0 w-80 lg:w-85 h-screen admin-sidebar p-6 z-50 flex flex-col transition-all duration-500"
         :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
       >
         <div class="flex items-center gap-4 mb-10 px-2 mt-4 lg:mt-0">
@@ -655,7 +670,7 @@ watch(isAuthenticated, (newVal) => {
         </div>
 
         <div class="mb-8 space-y-3 px-2">
-            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="w-full flex items-center justify-center gap-3 bg-[var(--color-brand)] hover:bg-[var(--color-brand-secondary)] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[var(--color-brand)]/20 transition-all disabled:opacity-50">
+            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="btn-terminal w-full flex items-center justify-center gap-3 py-4 font-black text-xs uppercase tracking-widest disabled:opacity-50">
                 <i v-if="isPublishing" class="fas fa-sync fa-spin"></i>
                 <i v-else class="fas fa-cloud-upload-alt"></i>
                 {{ isPublishing ? '同步中...' : '发布到生产环境' }}
@@ -663,20 +678,20 @@ watch(isAuthenticated, (newVal) => {
             <button @click="() => {
                     activeTab === 'pinned' ? addPinnedItem() : activeTab === 'projects' ? addProject() : activeTab === 'commissions' ? addCommission() : activeTab === 'works' ? addWork() : addWorksSection();
                     isSidebarOpen = false;
-                }" class="w-full flex items-center justify-center gap-3 bg-[var(--color-card-solid)] border border-[var(--color-border)] text-[var(--color-brand)] py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[var(--color-brand)]/5 transition-all">
+                }" class="btn-terminal w-full flex items-center justify-center gap-3 py-4 font-black text-xs uppercase tracking-widest">
                 <i class="fas fa-plus-circle"></i> 新增记录
             </button>
         </div>
 
         <div class="text-[10px] font-black text-[var(--color-secondary)] opacity-40 uppercase tracking-[0.2em] mb-4 px-4">Workspace</div>
         
-        <nav class="space-y-2 mb-10 overflow-y-auto custom-scrollbar pr-2">
+        <nav class="space-y-2 mb-10 overflow-y-auto admin-scrollbar pr-2">
             <button 
                 v-for="tab in tabs" 
                 :key="tab.id"
                 @click="() => { activeTab = tab.id; isSidebarOpen = false; }"
-                class="w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 group"
-                :class="activeTab === tab.id ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]' : 'text-[var(--color-secondary)] hover:bg-[var(--color-brand)]/5 hover:text-[var(--color-primary)]'"
+                class="w-full admin-nav-item"
+                :class="activeTab === tab.id ? 'active' : ''"
             >
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-card-solid)] shadow-sm group-hover:scale-110">
                     <i class="fas" :class="tab.icon"></i>
@@ -689,10 +704,10 @@ watch(isAuthenticated, (newVal) => {
         </nav>
 
         <div class="mt-auto space-y-3 px-2 border-t border-[var(--color-border)] pt-8">
-            <button @click="showSettings = true" class="w-full flex items-center gap-3 text-xs font-bold text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors">
+            <button @click="showSettings = true" class="btn-terminal w-full flex items-center gap-3 text-xs font-bold !border-0 !p-0 text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors">
                 <i class="fas fa-sliders-h"></i> 存储配置
             </button>
-            <button @click="logout" class="w-full flex items-center gap-3 text-xs font-bold text-red-400 hover:text-red-500 transition-colors">
+            <button @click="logout" class="btn-terminal w-full flex items-center gap-3 text-xs font-bold !border-0 !p-0 text-red-400 hover:text-red-500 transition-colors">
                 <i class="fas fa-sign-out-alt"></i> 退出登录
             </button>
         </div>
@@ -721,23 +736,23 @@ watch(isAuthenticated, (newVal) => {
                 
                 <!-- Pinned Items -->
                 <template v-if="activeTab === 'pinned'">
-                    <div v-for="(item, index) in pinnedItems" :key="index" class="card-flat group relative animate-fade-in-up">
+                    <div v-for="(item, index) in pinnedItems" :key="index" class="admin-card group relative animate-fade-in-up">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
                             <button @click="moveUp(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-up"></i></button>
                             <button @click="moveDown(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand-secondary)] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-down"></i></button>
                             <button @click="removePinnedItem(index)" class="w-8 h-8 rounded-full bg-red-400/10 text-red-500 transition-all hover:bg-red-400 hover:text-white text-xs shadow-sm"><i class="fas fa-trash"></i></button>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 md:pt-0">
-                            <div class="input-group"><label>标题</label><input v-model="item.title" class="input-modern" /></div>
-                            <div class="input-group"><label>描述</label><input v-model="item.description" class="input-modern" /></div>
-                            <div class="input-group"><label>跳转链接</label><input v-model="item.link" class="input-modern font-mono text-[10px]" /></div>
+                            <div class="input-terminal-group"><label>标题</label><input v-model="item.title" class="input-terminal" /></div>
+                            <div class="input-terminal-group"><label>描述</label><input v-model="item.description" class="input-terminal" /></div>
+                            <div class="input-terminal-group"><label>跳转链接</label><input v-model="item.link" class="input-terminal font-mono text-[10px]" /></div>
                         </div>
                     </div>
                 </template>
 
                 <!-- Projects -->
                 <template v-if="activeTab === 'projects'">
-                    <div v-for="(project, index) in projects" :key="index" class="card-flat group animate-fade-in-up relative flex flex-col md:flex-row gap-8">
+                    <div v-for="(project, index) in projects" :key="index" class="admin-card group animate-fade-in-up relative flex flex-col md:flex-row gap-8">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
                             <button @click="moveUp(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
                             <button @click="moveDown(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
@@ -748,7 +763,7 @@ watch(isAuthenticated, (newVal) => {
                                 <img v-if="project.image" :src="resolveImg(project.image)" class="w-full h-full object-cover" />
                                 <div v-else class="w-full h-full flex flex-col items-center justify-center text-[var(--color-secondary)] opacity-30"><i class="fas fa-image text-3xl mb-2"></i><span class="text-[10px] font-bold">PREVIEW</span></div>
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                                    <label class="btn-brand !py-2 !px-4 text-[10px] cursor-pointer">
+                                    <label class="btn-terminal !py-2 !px-4 text-[10px] cursor-pointer">
                                         更新图片
                                         <input type="file" class="hidden" accept="image/*" @change="(e) => handleFileUpload(e, project, 'image', 'img-projects')" />
                                     </label>
@@ -757,17 +772,17 @@ watch(isAuthenticated, (newVal) => {
                         </div>
                         <div class="flex-grow space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="input-group"><label>项目标题</label><input v-model="project.title" class="input-modern text-lg font-bold" /></div>
-                                <div class="input-group"><label>技术栈 (逗号分隔)</label><input :value="project.tags.join(', ')" @input="(e) => project.tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim())" class="input-modern" /></div>
+                                <div class="input-terminal-group"><label>项目标题</label><input v-model="project.title" class="input-terminal text-lg font-bold" /></div>
+                                <div class="input-terminal-group"><label>技术栈 (逗号分隔)</label><input :value="project.tags.join(', ')" @input="(e) => project.tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim())" class="input-terminal" /></div>
                             </div>
-                            <div class="input-group"><label>详情描述</label><textarea v-model="project.description" class="input-modern h-24 pt-4"></textarea></div>
+                            <div class="input-terminal-group"><label>详情描述</label><textarea v-model="project.description" class="input-terminal h-24 pt-4"></textarea></div>
                         </div>
                     </div>
                 </template>
 
                 <!-- Commissions -->
                 <template v-if="activeTab === 'commissions'">
-                    <div class="card-flat group animate-fade-in-up p-6 mb-6">
+                    <div class="admin-card group animate-fade-in-up p-6 mb-6">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all" :class="isBusinessOpen ? 'bg-[var(--color-brand)]/20 text-[var(--color-brand)]' : 'bg-red-500/20 text-red-500'">
@@ -790,7 +805,7 @@ watch(isAuthenticated, (newVal) => {
                             </button>
                         </div>
                     </div>
-                    <div v-for="(comm, index) in commissions" :key="index" class="card-flat group animate-fade-in-up p-8 relative">
+                    <div v-for="(comm, index) in commissions" :key="index" class="admin-card group animate-fade-in-up p-8 relative">
                         <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
                             <button @click="moveUp(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
                             <button @click="moveDown(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
@@ -799,11 +814,11 @@ watch(isAuthenticated, (newVal) => {
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 md:pt-0">
                             <div class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="input-group"><label>服务名称</label><input v-model="comm.title" class="input-modern" /></div>
-                                    <div class="input-group"><label>定价说明</label><input v-model="comm.price" class="input-modern font-bold text-[var(--color-brand)]" /></div>
+                                    <div class="input-terminal-group"><label>服务名称</label><input v-model="comm.title" class="input-terminal" /></div>
+                                    <div class="input-terminal-group"><label>定价说明</label><input v-model="comm.price" class="input-terminal font-bold text-[var(--color-brand)]" /></div>
                                 </div>
-                                <div class="input-group"><label>需求概括</label><input v-model="comm.requirements" class="input-modern" /></div>
-                                <div class="input-group"><label>服务详情</label><textarea v-model="comm.description" class="input-modern h-32 pt-4"></textarea></div>
+                                <div class="input-terminal-group"><label>需求概括</label><input v-model="comm.requirements" class="input-terminal" /></div>
+                                <div class="input-terminal-group"><label>服务详情</label><textarea v-model="comm.description" class="input-terminal h-32 pt-4"></textarea></div>
                             </div>
                             <div class="space-y-4">
                                 <label class="text-[10px] font-black uppercase tracking-widest text-[var(--color-brand)]">预览图示</label>
@@ -828,7 +843,7 @@ watch(isAuthenticated, (newVal) => {
                 <!-- Gallery -->
                 <template v-if="activeTab === 'works'">
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                        <div v-for="(work, index) in works" :key="work.id" class="card-flat group relative animate-fade-in-up !p-4">
+                        <div v-for="(work, index) in works" :key="work.id" class="admin-card group relative animate-fade-in-up !p-4">
                             <div class="absolute top-3 right-3 flex flex-col gap-1 z-20">
                                 <button @click="moveUp(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[var(--color-brand)] shadow-md"><i class="fas fa-chevron-up"></i></button>
                                 <button @click="moveDown(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[var(--color-brand)] shadow-md"><i class="fas fa-chevron-down"></i></button>
@@ -843,7 +858,7 @@ watch(isAuthenticated, (newVal) => {
                                     </label>
                                 </div>
                             </div>
-                            <input v-model="work.title" placeholder="标题" class="input-modern !text-xs font-bold mb-2" />
+                            <input v-model="work.title" placeholder="标题" class="input-terminal !text-xs font-bold mb-2" />
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-[9px] opacity-40 font-mono">{{ work.id }}</p>
                             </div>
@@ -853,7 +868,7 @@ watch(isAuthenticated, (newVal) => {
 
                 <!-- Collections -->
                 <template v-if="activeTab === 'works_section'">
-                     <div v-for="(section, index) in worksSections" :key="section.id" class="card-flat group animate-fade-in-up">
+                     <div v-for="(section, index) in worksSections" :key="section.id" class="admin-card group animate-fade-in-up">
                         <div class="flex flex-col md:flex-row gap-8">
                             <div class="w-32 flex-shrink-0">
                                 <div class="aspect-square rounded-3xl overflow-hidden bg-[var(--color-bg)] relative shadow-inner border border-[var(--color-border)]">
@@ -866,22 +881,22 @@ watch(isAuthenticated, (newVal) => {
                             </div>
                             <div class="flex-grow">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div class="input-group"><label>合集名称</label><input v-model="section.title" class="input-modern font-black text-xl" /></div>
-                                    <div class="input-group"><label>引用键名</label><input v-model="section.id" class="input-modern font-mono text-xs opacity-60" /></div>
+                                    <div class="input-terminal-group"><label>合集名称</label><input v-model="section.title" class="input-terminal font-black text-xl" /></div>
+                                    <div class="input-terminal-group"><label>引用键名</label><input v-model="section.id" class="input-terminal font-mono text-xs opacity-60" /></div>
                                 </div>
-                                <div class="input-group"><label>简介说明</label><textarea v-model="section.description" class="input-modern h-20 pt-4"></textarea></div>
+                                <div class="input-terminal-group"><label>简介说明</label><textarea v-model="section.description" class="input-terminal h-20 pt-4"></textarea></div>
                             </div>
                             <div class="flex flex-row md:flex-col gap-2">
-                                 <button @click="removeWorksSection(index)" class="btn-ghost !text-red-400 !border-red-400/20 hover:!bg-red-400 hover:!text-white py-2 shadow-sm"><i class="fas fa-trash"></i></button>
+                                 <button @click="removeWorksSection(index)" class="btn-terminal !text-red-400 !border-red-400/20 hover:!bg-red-400 hover:!text-white py-2 shadow-sm"><i class="fas fa-trash"></i></button>
                                  <button @click="editingSectionId = editingSectionId === section.id ? null : section.id" 
-                                         class="btn-ghost py-2" :class="editingSectionId === section.id ? 'btn-brand text-white' : ''">
+                                         class="btn-terminal py-2" :class="editingSectionId === section.id ? 'btn-terminal text-white' : ''">
                                      <i class="fas fa-layer-group"></i> 管理
                                  </button>
                             </div>
                         </div>
 
                         <div v-if="editingSectionId === section.id" class="mt-8 pt-8 border-t border-[var(--color-border)] animate-fade-in">
-                             <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 max-h-96 overflow-y-auto pr-4 custom-scrollbar">
+                             <div class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 max-h-96 overflow-y-auto pr-4 admin-scrollbar">
                                  <div v-for="work in works" :key="work.id" 
                                       @click="toggleWorkInSection(index, work.id)"
                                       class="aspect-square rounded-xl overflow-hidden cursor-pointer relative transition-all"
@@ -899,38 +914,38 @@ watch(isAuthenticated, (newVal) => {
 
                 <!-- Articles -->
                 <template v-if="activeTab === 'articles'">
-                    <div class="card-flat p-6 mb-6">
+                    <div class="admin-card p-6 mb-6">
                         <h4 class="font-bold text-[var(--color-primary)] mb-4">撰写新文章</h4>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="input-group">
+                                <div class="input-terminal-group">
                                     <label>标题</label>
-                                    <input v-model="articleForm.title" @input="handleArticleTitleChange" class="input-modern" placeholder="文章标题" />
+                                    <input v-model="articleForm.title" @input="handleArticleTitleChange" class="input-terminal" placeholder="文章标题" />
                                 </div>
-                                <div class="input-group">
+                                <div class="input-terminal-group">
                                     <label>Slug (URL标识)</label>
-                                    <input v-model="articleForm.slug" class="input-modern font-mono text-xs" placeholder="my-article-slug" />
+                                    <input v-model="articleForm.slug" class="input-terminal font-mono text-xs" placeholder="my-article-slug" />
                                 </div>
                             </div>
-                            <div class="input-group">
+                            <div class="input-terminal-group">
                                 <label>摘要</label>
-                                <input v-model="articleForm.summary" class="input-modern" placeholder="文章简要描述" />
+                                <input v-model="articleForm.summary" class="input-terminal" placeholder="文章简要描述" />
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="input-group">
+                                <div class="input-terminal-group">
                                     <label>标签 (逗号分隔)</label>
-                                    <input v-model="articleForm.tags" class="input-modern" placeholder="vue, react, typescript" />
+                                    <input v-model="articleForm.tags" class="input-terminal" placeholder="vue, react, typescript" />
                                 </div>
-                                <div class="input-group">
+                                <div class="input-terminal-group">
                                     <label>分类</label>
-                                    <input v-model="articleForm.category" class="input-modern" placeholder="技术/生活/其他" />
+                                    <input v-model="articleForm.category" class="input-terminal" placeholder="技术/生活/其他" />
                                 </div>
                             </div>
-                            <div class="input-group">
+                            <div class="input-terminal-group">
                                 <label>封面图片 URL</label>
                                 <div class="flex gap-4 items-start">
-                                    <input v-model="articleForm.cover" class="input-modern flex-grow" placeholder="/blogs/my-article/cover.png" />
-                                    <label class="btn-ghost cursor-pointer">
+                                    <input v-model="articleForm.cover" class="input-terminal flex-grow" placeholder="/blogs/my-article/cover.png" />
+                                    <label class="btn-terminal cursor-pointer">
                                         <i class="fas fa-upload mr-2"></i>上传
                                         <input type="file" class="hidden" accept="image/*" @change="handleArticleCoverUpload" />
                                     </label>
@@ -939,9 +954,9 @@ watch(isAuthenticated, (newVal) => {
                                     <img :src="articleCoverPreview" class="w-full h-full object-cover" />
                                 </div>
                             </div>
-                            <div class="input-group">
+                            <div class="input-terminal-group">
                                 <label>Markdown 内容</label>
-                                <textarea v-model="articleForm.content" class="input-modern h-64 font-mono text-xs" placeholder="# 标题&#10;&#10;这里是文章内容，支持 Markdown 语法..."></textarea>
+                                <textarea v-model="articleForm.content" class="input-terminal h-64 font-mono text-xs" placeholder="# 标题&#10;&#10;这里是文章内容，支持 Markdown 语法..."></textarea>
                             </div>
                             <div class="flex items-center gap-4">
                                 <label class="flex items-center gap-2 cursor-pointer">
@@ -950,10 +965,10 @@ watch(isAuthenticated, (newVal) => {
                                 </label>
                             </div>
                             <div class="flex justify-end gap-4 pt-4 border-t border-[var(--color-border)]">
-                                <button @click="articleForm = { title: '', slug: '', summary: '', content: '', tags: '', category: '', cover: '', hidden: false }; articleCoverPreview = null;" class="btn-ghost">
+                                <button @click="articleForm = { title: '', slug: '', summary: '', content: '', tags: '', category: '', cover: '', hidden: false }; articleCoverPreview = null;" class="btn-terminal">
                                     <i class="fas fa-times mr-2"></i>清空
                                 </button>
-                                <button @click="publishArticle" :disabled="isArticlePublishing" class="btn-brand">
+                                <button @click="publishArticle" :disabled="isArticlePublishing" class="btn-terminal">
                                     <i v-if="isArticlePublishing" class="fas fa-sync fa-spin mr-2"></i>
                                     <i v-else class="fas fa-cloud-upload-alt mr-2"></i>
                                     {{ isArticlePublishing ? '发布中...' : '发布文章' }}
@@ -969,17 +984,17 @@ watch(isAuthenticated, (newVal) => {
                     <div v-else-if="existingArticles.length > 0">
                         <h4 class="font-bold text-[var(--color-primary)] mb-4">已发布的文章</h4>
                         <div class="space-y-3">
-                            <div v-for="article in existingArticles" :key="article.slug" class="card-flat bg-white/40 hover:bg-[var(--color-brand)]/5 transition-colors p-4 flex items-center justify-between">
+                            <div v-for="article in existingArticles" :key="article.slug" class="admin-card bg-white/40 hover:bg-[var(--color-brand)]/5 transition-colors p-4 flex items-center justify-between">
                                 <div>
                                     <h5 class="font-bold text-[var(--color-primary)]">{{ article.title }}</h5>
                                     <p class="text-xs text-[var(--color-secondary)] font-mono">{{ article.slug }}</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs text-[var(--color-secondary)]">{{ article.date }}</span>
-                                    <button @click="$router.push('/article/' + article.slug)" class="btn-ghost !py-2 !px-3 text-xs">
+                                    <button @click="$router.push('/article/' + article.slug)" class="btn-terminal !py-2 !px-3 text-xs">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button @click="deleteArticle(article.slug)" :disabled="isDeletingArticle" class="btn-ghost !py-2 !px-3 text-xs text-red-400 hover:!bg-red-400 hover:!text-white">
+                                    <button @click="deleteArticle(article.slug)" :disabled="isDeletingArticle" class="btn-terminal !py-2 !px-3 text-xs text-red-400 hover:!bg-red-400 hover:!text-white">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -999,19 +1014,19 @@ watch(isAuthenticated, (newVal) => {
        <!-- Settings Modal -->
     <transition name="fade">
         <div v-if="showSettings" class="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 backdrop-blur-xl px-4">
-            <div class="card max-w-lg w-full p-10 relative">
+            <div class="cyber-glass max-w-lg w-full p-10 relative">
                 <button @click="showSettings = false" class="absolute top-6 right-6 text-[var(--color-secondary)] hover:text-red-500"><i class="fas fa-times"></i></button>
                 <h3 class="text-2xl font-black mb-8 text-[var(--color-primary)]">GitHub 存储配置</h3>
                 <div class="space-y-6">
-                    <div class="input-group">
+                    <div class="input-terminal-group">
                         <label>Token</label>
-                        <input v-model="githubConfig.token" type="password" class="input-modern" placeholder="ghp_xxxx" />
+                        <input v-model="githubConfig.token" type="password" class="input-terminal" placeholder="ghp_xxxx" />
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="input-group"><label>Owner</label><input v-model="githubConfig.owner" class="input-modern" /></div>
-                        <div class="input-group"><label>Repo</label><input v-model="githubConfig.repo" class="input-modern" /></div>
+                        <div class="input-terminal-group"><label>Owner</label><input v-model="githubConfig.owner" class="input-terminal" /></div>
+                        <div class="input-terminal-group"><label>Repo</label><input v-model="githubConfig.repo" class="input-terminal" /></div>
                     </div>
-                    <button @click="saveSettings" class="btn-brand w-full py-4 mt-4">确认保存</button>
+                    <button @click="saveSettings" class="btn-terminal w-full py-4 mt-4">确认保存</button>
                 </div>
             </div>
         </div>
@@ -1022,42 +1037,17 @@ watch(isAuthenticated, (newVal) => {
 </template>
 
 <style scoped>
-.input-modern {
-    width: 100%;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 1rem;
-    padding: 0.75rem 1.25rem;
-    color: var(--color-primary);
-    font-size: 0.875rem;
-    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+/* Admin页面显示鼠标指针 */
+:deep(*) {
+  cursor: auto !important;
 }
 
-.input-modern:focus {
-    outline: none;
-    border-color: var(--color-brand);
-    background: var(--color-card-solid);
-}
-
-.input-group label {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-secondary);
-    margin-bottom: 0.6rem;
-    padding-left: 0.5rem;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(132, 201, 60, 0.2);
-  border-radius: 10px;
+:deep(a),
+:deep(button),
+:deep(.cursor-pointer),
+:deep(input),
+:deep(textarea),
+:deep(select) {
+  cursor: pointer !important;
 }
 </style>

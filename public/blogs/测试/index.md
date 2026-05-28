@@ -1,9 +1,3 @@
-# 测试
+# 喵
 
-```kotlin
-
-fun main(){
-   plintln("Hello World")
-}
-
-```
+因为我是懒批，根本不写

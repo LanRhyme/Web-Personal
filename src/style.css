@@ -14,14 +14,22 @@
   /* Desaturated Green Accent (Matrix/Terminal Feel but high-end) */
   --color-brand: #6b8f72;
   --color-brand-rgb: 107, 143, 114;
+  --color-brand-secondary: #5a7a60;
   
   --color-border: #262626;
   --color-card: rgba(15, 15, 15, 0.98);
+  --color-card-solid: #0f0f0f;
   --color-hud: rgba(107, 143, 114, 0.3);
+  
+  /* Primary and Secondary colors */
+  --color-primary: #ffffff;
+  --color-secondary: #a0a0a0;
 }
 
 * {
   cursor: none !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 html {
@@ -34,6 +42,13 @@ html {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   scroll-behavior: smooth;
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
 }
 
 body {
@@ -330,7 +345,7 @@ a {
   width: 0;
   height: 0;
   pointer-events: none;
-  z-index: 10000;
+  z-index: 99999;
   mix-blend-mode: difference;
 }
 
@@ -367,4 +382,139 @@ a {
 /* Add a global scale trick so clicking works with the box */
 .cursor-frame.clicking {
   border-width: 2px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Admin专用样式 — ASCII Brutalism风格
+   ═══════════════════════════════════════════════════ */
+
+/* Admin专用输入框样式 */
+.input-terminal {
+  width: 100%;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  color: var(--color-text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.input-terminal:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 1px var(--color-brand);
+}
+
+/* Admin输入组标签 */
+.input-terminal-group label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim);
+  margin-bottom: 0.5rem;
+}
+
+/* Admin侧边栏样式 */
+.admin-sidebar {
+  background: var(--color-card);
+  border-right: 1px solid var(--color-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Admin侧边栏导航项 */
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  color: var(--color-text-dim);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  cursor: none !important;
+}
+
+.admin-nav-item:hover {
+  color: var(--color-text);
+  border-color: var(--color-border);
+  background: rgba(107, 143, 114, 0.05);
+}
+
+.admin-nav-item.active {
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+  background: rgba(107, 143, 114, 0.1);
+}
+
+/* Admin卡片样式 */
+.admin-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-card:hover {
+  border-color: rgba(107, 143, 114, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(107, 143, 114, 0.03);
+}
+
+/* Admin卡片角标装饰 */
+.admin-card::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid var(--color-brand);
+  border-left: 1px solid var(--color-brand);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.admin-card:hover::after {
+  opacity: 1;
+}
+
+/* Admin自定义滚动条 */
+.admin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(107, 143, 114, 0.2);
+  border-radius: 10px;
+}
+
+/* Admin动画 */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
