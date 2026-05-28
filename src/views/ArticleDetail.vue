@@ -54,10 +54,20 @@ const escapeHtml = (str: string): string => {
 const marked = (text: string): string => {
   let html = text;
 
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
-    const language = lang || 'plaintext';
+  const codeBlocks: string[] = [];
+  html = html.replace(/```(.*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
+    const language = lang ? lang.trim() : 'plaintext';
     const escapedCode = escapeHtml(code.trimEnd());
-    return `<pre class="language-${language}"><button class="copy-btn" data-code="${escapedCode}"><i class="fas fa-copy"></i></button><code class="language-${language}">${escapedCode}</code></pre>`;
+    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+    codeBlocks.push(`<pre class="language-${language}"><button class="copy-btn" data-code="${escapedCode}"><i class="fas fa-copy"></i></button><code class="language-${language}">${escapedCode}</code></pre>`);
+    return placeholder;
+  });
+
+  const inlineCodes: string[] = [];
+  html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+    const placeholder = `__INLINE_CODE_${inlineCodes.length}__`;
+    inlineCodes.push(`<code>${escapeHtml(code)}</code>`);
+    return placeholder;
   });
 
   html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
@@ -66,8 +76,6 @@ const marked = (text: string): string => {
 
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
   html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
     const fullUrl = src.startsWith('http') ? src : `/blogs/${slug.value}/${src}`;
@@ -78,17 +86,14 @@ const marked = (text: string): string => {
 
   const lines = html.split('\n');
   const paragraphs: string[] = [];
-  let inCodeBlock = false;
   let currentParagraph = '';
 
   for (const line of lines) {
-    if (line.startsWith('<pre') || line.startsWith('<h') || line.startsWith('<img') || inCodeBlock) {
+    if (line.startsWith('__CODE_BLOCK_') || line.startsWith('<h') || line.startsWith('<img')) {
       if (currentParagraph.trim()) {
         paragraphs.push(`<p>${currentParagraph}</p>`);
         currentParagraph = '';
       }
-      if (line.startsWith('<pre')) inCodeBlock = true;
-      if (line.includes('</pre>')) inCodeBlock = false;
       paragraphs.push(line);
     } else if (line.trim() === '') {
       if (currentParagraph.trim()) {
@@ -96,7 +101,7 @@ const marked = (text: string): string => {
         currentParagraph = '';
       }
     } else {
-      currentParagraph += line;
+      currentParagraph += line + '<br>';
     }
   }
 
@@ -104,7 +109,19 @@ const marked = (text: string): string => {
     paragraphs.push(`<p>${currentParagraph}</p>`);
   }
 
-  return paragraphs.join('\n');
+  html = paragraphs.join('\n');
+
+  html = html.replace(/__INLINE_CODE_(\d+)__/g, (match, index) => {
+    return inlineCodes[parseInt(index)];
+  });
+
+  html = html.replace(/__CODE_BLOCK_(\d+)__/g, (match, index) => {
+    return codeBlocks[parseInt(index)];
+  });
+
+  html = html.replace(/<br><\/p>/g, '</p>');
+
+  return html;
 };
 
 const renderMarkdown = () => {
@@ -185,39 +202,40 @@ onMounted(async () => {
     </div>
 
     <div v-else-if="error" class="flex flex-col items-center justify-center min-h-screen">
-      <div class="w-16 h-16 border-4 border-red-500 text-red-500 flex items-center justify-center mb-4 rounded">
+      <div class="w-16 h-16 border border-red-500 text-red-500 flex items-center justify-center mb-4 cyber-glass">
         <i class="fas fa-exclamation-triangle text-xl"></i>
       </div>
-      <p class="text-xs text-[var(--color-secondary)] mb-6">{{ error }}</p>
-      <button @click="goBack" class="premium-btn">
-        <i class="fas fa-arrow-left mr-2"></i>返回 // BACK
+      <p class="text-xs text-[var(--color-secondary)] mb-6 font-mono tracking-widest">> ERROR: {{ error }}</p>
+      <button @click="goBack" class="btn-terminal">
+        [ BACK.SYS ]
       </button>
     </div>
 
-    <article v-else-if="article" class="max-w-3xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
-      <button @click="goBack" class="premium-btn mb-8 !px-3 !py-1.5 !text-xs">
-        <i class="fas fa-arrow-left mr-2"></i>[ BACK.SYS ]
+    <article v-else-if="article" class="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+      <button @click="goBack" class="btn-terminal mb-8">
+        [ SYS.RETURN ]
       </button>
 
-      <div class="premium-card p-6 md:p-8 bg-[var(--color-card)] border-4 border-[var(--color-text)] mb-8">
+      <div class="cyber-glass p-6 md:p-8 mb-8 relative">
+        <div class="absolute -top-3 -left-3 font-art text-[60px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">HEADER</div>
         <div class="text-center">
-          <h1 class="text-2xl md:text-3xl font-black text-[var(--color-brand)] mb-4 font-sans">> {{ title }}</h1>
-          <div class="flex items-center justify-center gap-4 text-[10px] text-[var(--color-text-dim)] font-mono">
-            <span v-if="date">[{{ date }}]</span>
-            <span v-for="tag in tags" :key="tag" class="border border-[var(--color-text-dim)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] font-bold">#{{ tag }}</span>
+          <h1 class="text-2xl md:text-3xl font-art text-[var(--color-brand)] mb-4 tracking-wider">> {{ title }}</h1>
+          <div class="flex items-center justify-center gap-4 text-[10px] text-[var(--color-text-dim)] font-mono opacity-80">
+            <span v-if="date">[TIME: {{ date }}]</span>
+            <span v-for="tag in tags" :key="tag" class="border border-[var(--color-border)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] text-[var(--color-brand)]">#{{ tag }}</span>
           </div>
         </div>
       </div>
 
-      <div v-if="article.config.cover" class="mb-8 rounded border-4 border-[var(--color-text)] overflow-hidden">
-        <img :src="getImageUrl(article.config.cover)" class="w-full pixelated" @error="($event.target as HTMLImageElement).style.display='none'" />
+      <div v-if="article.config.cover" class="mb-8 border border-[var(--color-border)] overflow-hidden">
+        <img :src="getImageUrl(article.config.cover)" class="w-full filter grayscale hover:grayscale-0 transition-all duration-500" @error="($event.target as HTMLImageElement).style.display='none'" />
       </div>
 
-      <div v-if="article.config.summary" class="premium-card !p-4 text-center text-xs text-[var(--color-text-dim)] italic mb-8">
-        " {{ article.config.summary }} "
+      <div v-if="article.config.summary" class="cyber-glass !p-6 text-center text-[12px] md:text-[14px] text-[var(--color-text-dim)] font-mono tracking-wide mb-8 border-l-2 border-l-[var(--color-brand)]">
+        // {{ article.config.summary }}
       </div>
 
-      <div class="blog-content font-sans text-[var(--color-text)]" v-html="marked(article.markdown)"></div>
+      <div class="blog-content text-[var(--color-text)] text-[18px] md:text-[20px] leading-loose" style="font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;" v-html="marked(article.markdown)"></div>
     </article>
   </div>
 </template>
@@ -226,32 +244,32 @@ onMounted(async () => {
 .blog-content h1 {
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-text);
   margin: 2rem 0 1rem;
 }
 
 .blog-content h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-text);
   margin: 1.75rem 0 0.875rem;
 }
 
 .blog-content h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-text);
   margin: 1.5rem 0 0.75rem;
 }
 
 .blog-content p {
   color: var(--color-secondary);
-  line-height: 1.8;
+  line-height: 2;
   margin-bottom: 1rem;
 }
 
 .blog-content strong {
-  color: var(--color-primary);
+  color: var(--color-brand);
   font-weight: 700;
 }
 
@@ -265,6 +283,7 @@ onMounted(async () => {
   border-radius: 0.25rem;
   font-family: monospace;
   font-size: 0.875em;
+  color: var(--color-text);
 }
 
 .blog-content pre[class*="language-"] {
@@ -283,116 +302,68 @@ onMounted(async () => {
   text-shadow: none !important;
 }
 
-/* Prism Token Colors - Light Theme */
-html:not(.dark) .blog-content pre[class*="language-"] .token.comment,
-html:not(.dark) .blog-content pre[class*="language-"] .token.prolog,
-html:not(.dark) .blog-content pre[class*="language-"] .token.doctype,
-html:not(.dark) .blog-content pre[class*="language-"] .token.cdata {
-  color: #708090;
+/* Prism Token Colors - Minimalist Terminal Theme (Green/White) */
+.blog-content pre[class*="language-"] .token.comment,
+.blog-content pre[class*="language-"] .token.prolog,
+.blog-content pre[class*="language-"] .token.doctype,
+.blog-content pre[class*="language-"] .token.cdata {
+  color: var(--color-text-dim);
+  opacity: 0.6;
+  font-style: italic;
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.punctuation {
-  color: #999;
+.blog-content pre[class*="language-"] .token.punctuation {
+  color: var(--color-text-dim);
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.property,
-html:not(.dark) .blog-content pre[class*="language-"] .token.tag,
-html:not(.dark) .blog-content pre[class*="language-"] .token.boolean,
-html:not(.dark) .blog-content pre[class*="language-"] .token.number,
-html:not(.dark) .blog-content pre[class*="language-"] .token.constant,
-html:not(.dark) .blog-content pre[class*="language-"] .token.symbol,
-html:not(.dark) .blog-content pre[class*="language-"] .token.deleted {
-  color: #905;
+.blog-content pre[class*="language-"] .token.namespace {
+  opacity: .7;
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.selector,
-html:not(.dark) .blog-content pre[class*="language-"] .token.attr-name,
-html:not(.dark) .blog-content pre[class*="language-"] .token.string,
-html:not(.dark) .blog-content pre[class*="language-"] .token.char,
-html:not(.dark) .blog-content pre[class*="language-"] .token.builtin,
-html:not(.dark) .blog-content pre[class*="language-"] .token.inserted {
-  color: #690;
+.blog-content pre[class*="language-"] .token.property,
+.blog-content pre[class*="language-"] .token.tag,
+.blog-content pre[class*="language-"] .token.boolean,
+.blog-content pre[class*="language-"] .token.number,
+.blog-content pre[class*="language-"] .token.constant,
+.blog-content pre[class*="language-"] .token.symbol,
+.blog-content pre[class*="language-"] .token.deleted {
+  color: var(--color-brand);
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.operator,
-html:not(.dark) .blog-content pre[class*="language-"] .token.entity,
-html:not(.dark) .blog-content pre[class*="language-"] .token.url,
-html:not(.dark) .blog-content pre[class*="language-"] .token.language-css .token.string,
-html:not(.dark) .blog-content pre[class*="language-"] .token.style .token.string {
-  color: #9a6e3a;
+.blog-content pre[class*="language-"] .token.selector,
+.blog-content pre[class*="language-"] .token.attr-name,
+.blog-content pre[class*="language-"] .token.string,
+.blog-content pre[class*="language-"] .token.char,
+.blog-content pre[class*="language-"] .token.builtin,
+.blog-content pre[class*="language-"] .token.inserted {
+  color: var(--color-text);
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.atrule,
-html:not(.dark) .blog-content pre[class*="language-"] .token.attr-value,
-html:not(.dark) .blog-content pre[class*="language-"] .token.keyword {
-  color: #07a;
+.blog-content pre[class*="language-"] .token.operator,
+.blog-content pre[class*="language-"] .token.entity,
+.blog-content pre[class*="language-"] .token.url,
+.blog-content pre[class*="language-"] .token.language-css .token.string,
+.blog-content pre[class*="language-"] .token.style .token.string {
+  color: var(--color-brand);
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.function,
-html:not(.dark) .blog-content pre[class*="language-"] .token.class-name {
-  color: #DD4A68;
+.blog-content pre[class*="language-"] .token.atrule,
+.blog-content pre[class*="language-"] .token.attr-value,
+.blog-content pre[class*="language-"] .token.keyword {
+  color: var(--color-brand);
+  font-weight: bold;
 }
 
-html:not(.dark) .blog-content pre[class*="language-"] .token.regex,
-html:not(.dark) .blog-content pre[class*="language-"] .token.important,
-html:not(.dark) .blog-content pre[class*="language-"] .token.variable {
-  color: #e90;
+.blog-content pre[class*="language-"] .token.function,
+.blog-content pre[class*="language-"] .token.class-name {
+  color: var(--color-text);
+  font-weight: bold;
 }
 
-/* Prism Token Colors - Dark Theme (Tomorrow) */
-html.dark .blog-content pre[class*="language-"] .token.comment,
-html.dark .blog-content pre[class*="language-"] .token.prolog,
-html.dark .blog-content pre[class*="language-"] .token.doctype,
-html.dark .blog-content pre[class*="language-"] .token.cdata {
-  color: #999;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.punctuation {
-  color: #ccc;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.property,
-html.dark .blog-content pre[class*="language-"] .token.tag,
-html.dark .blog-content pre[class*="language-"] .token.boolean,
-html.dark .blog-content pre[class*="language-"] .token.number,
-html.dark .blog-content pre[class*="language-"] .token.constant,
-html.dark .blog-content pre[class*="language-"] .token.symbol,
-html.dark .blog-content pre[class*="language-"] .token.deleted {
-  color: #f2777a;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.selector,
-html.dark .blog-content pre[class*="language-"] .token.attr-name,
-html.dark .blog-content pre[class*="language-"] .token.string,
-html.dark .blog-content pre[class*="language-"] .token.char,
-html.dark .blog-content pre[class*="language-"] .token.builtin,
-html.dark .blog-content pre[class*="language-"] .token.inserted {
-  color: #9c9;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.operator,
-html.dark .blog-content pre[class*="language-"] .token.entity,
-html.dark .blog-content pre[class*="language-"] .token.url,
-html.dark .blog-content pre[class*="language-"] .token.language-css .token.string,
-html.dark .blog-content pre[class*="language-"] .token.style .token.string {
-  color: #9a6e3a;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.atrule,
-html.dark .blog-content pre[class*="language-"] .token.attr-value,
-html.dark .blog-content pre[class*="language-"] .token.keyword {
-  color: #cc99cd;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.function,
-html.dark .blog-content pre[class*="language-"] .token.class-name {
-  color: #f8c555;
-}
-
-html.dark .blog-content pre[class*="language-"] .token.regex,
-html.dark .blog-content pre[class*="language-"] .token.important,
-html.dark .blog-content pre[class*="language-"] .token.variable {
-  color: #e90;
+.blog-content pre[class*="language-"] .token.regex,
+.blog-content pre[class*="language-"] .token.important,
+.blog-content pre[class*="language-"] .token.variable {
+  color: var(--color-brand);
 }
 
 .blog-content img {

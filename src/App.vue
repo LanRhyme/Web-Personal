@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import Preloader from './components/Preloader.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Lenis from 'lenis';
@@ -8,6 +9,10 @@ import Lenis from 'lenis';
 const isLoaded = ref(false);
 const router = useRouter();
 const route = useRoute();
+
+const handlePreloaderComplete = () => {
+  isLoaded.value = true;
+};
 
 const isAdmin = computed(() => route.path.startsWith('/admin'));
 
@@ -267,10 +272,6 @@ watch(() => route.path, (newPath) => {
 let idleTimer: number | null = null;
 
 onMounted(() => {
-  setTimeout(() => {
-    isLoaded.value = true;
-  }, 100);
-
   document.addEventListener('contextmenu', (e: MouseEvent) => {
     if (!import.meta.env.DEV) {
       e.preventDefault();
@@ -323,7 +324,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app-root relative" :class="{ 'is-loaded': isLoaded }">
+  <Preloader v-if="!isAdmin" @complete="handlePreloaderComplete" />
+  <div class="app-root relative" :class="{ 'is-loaded': isLoaded || isAdmin }">
     <!-- Custom Fluid Cursor (Square Framing style) -->
     <div v-if="!isAdmin" class="custom-cursor-wrapper hidden md:block">
       <div class="cursor-dot" :class="{ 'hovering': isHovering, 'clicking': isClicking }" :style="{ transform: `translate(${mouseX}px, ${mouseY}px)` }"></div>
@@ -368,9 +370,8 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Scanlines & Noise Background Overlay -->
+    <!-- Scanlines Background Overlay -->
     <div class="scanlines"></div>
-    <div class="noise-overlay"></div>
     
     <!-- Matrix ASCII Canvas -->
     <canvas ref="canvasRef" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50"></canvas>

@@ -1,63 +1,71 @@
 <template>
-  <div class="page-content flex flex-col items-center w-full reveal is-visible font-sans">
-    <section class="text-center mb-12" id="works-intro" v-show="currentView === 'all'">
-      <h2 class="text-4xl md:text-5xl font-extrabold mb-4 relative inline-block text-brand-gradient ">
-        我的作品 // ART_ARCHIVE
+  <div class="page-content flex flex-col items-center w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-8">
+    <section class="w-full" id="works-intro" v-show="currentView === 'all'">
+      <div class="border-b border-[var(--color-border)] pb-4 mb-8 relative flex justify-between items-end">
+        <div>
+          <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
+          <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> ART_ARCHIVE</h2>
+        </div>
         <button
           @click="open3DView"
-          class="absolute -right-20 top-1 text-[10px] font-bold tracking-wider bg-[var(--color-brand)]/10 border-2 border-[var(--color-text)] text-[var(--color-text)] hover:bg-[var(--color-brand)] hover:text-white px-3 py-1 rounded shadow-md transform rotate-6 hover:rotate-0 hover:scale-105 transition-all cursor-pointer backdrop-blur-sm"
+          class="btn-terminal !px-4 !py-1"
           title="Enter 3D Gallery"
         >
-          [ 3D ARCADE ]
+          [ 3D_ARCADE ]
         </button>
-      </h2>
-      <p class="text-base md:text-lg text-[var(--color-secondary)] max-w-3xl mx-auto font-medium font-sans">
-        光与影的交织，色彩与情感的碰撞，这里是我想象力的乐园 // PLAYGROUND
-      </p>
+      </div>
     </section>
 
-    <div class="text-center mb-6" v-show="currentView === 'portfolio'">
-      <button @click="switchToAllWorks" class="premium-btn">
-        <i class="fas fa-arrow-left"></i> 返回所有作品
+    <div class="w-full mb-8 text-left" v-show="currentView === 'portfolio'">
+      <button @click="switchToAllWorks" class="btn-terminal mb-6">
+        [ SYS.RETURN ]
       </button>
-      <h3 class="text-3xl font-bold mt-8 mb-8 text-[var(--color-primary)] drop-shadow-sm">> {{ currentPortfolioTitle }}</h3>
+      <h3 class="text-2xl font-art tracking-widest text-[var(--color-brand)] border-b border-[var(--color-border)] pb-4">> {{ currentPortfolioTitle.toUpperCase() }}</h3>
     </div>
 
     <div class="gallery-transition-container w-full max-w-[1400px]" :class="{ 'fade-out-content': isTransitioning }">
       
-      <!-- Portfolios Section (only in 'all' view) -->
       <div v-if="currentView === 'all' && allPortfolios.length > 0" class="mb-12">
-        <h3 class="section-heading justify-center mb-8 text-2xl font-sans">> PORTFOLIO_INDEX</h3>
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-sm font-mono tracking-widest opacity-60">> PORTFOLIO_INDEX</span>
+          <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+        </div>
         <div class="gallery-grid stagger-children">
           <div
             v-for="portfolio in allPortfolios"
             :key="portfolio.id"
-            class="premium-card !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
             @click="switchToPortfolio(portfolio)"
           >
-            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-102">
-            <div class="p-5 border-t-2 border-[var(--color-text)] bg-[var(--color-card)] relative z-10">
-              <div class="font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-primary)] font-sans">> {{ portfolio.title }}</div>
-              <div class="text-xs text-[var(--color-secondary)] font-sans font-medium">{{ portfolio.description }}</div>
+            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)] relative z-10">
+              <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide">> {{ portfolio.title }}</div>
+              <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed">{{ portfolio.description }}</div>
+            </div>
+            <!-- Decorative Barcode -->
+            <div class="absolute top-4 right-4 flex gap-[2px] opacity-30 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)] mix-blend-difference z-20">
+              <div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Individual Works Section (or Portfolio Works) -->
       <div v-if="displayedWorks.length > 0">
-        <h3 v-if="currentView === 'all'" class="section-heading justify-center mb-8 text-2xl font-sans">> ILLUSTRATION_LOGS</h3>
+        <div v-if="currentView === 'all'" class="flex items-center gap-4 mb-6">
+          <span class="text-sm font-mono tracking-widest opacity-60">> ILLUSTRATION_LOGS</span>
+          <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+        </div>
         <div class="gallery-grid stagger-children">
           <div
             v-for="(work, index) in displayedWorks"
             :key="work.id"
-            class="premium-card !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
             @click="openLightbox(index)"
           >
-            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-102">
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-5 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10">
-              <div class="font-bold text-base mb-1 text-[var(--color-brand)] drop-shadow-[0_0_8px_rgba(var(--brand-rgb),0.8)] font-sans">> {{ work.title || 'UNNAMED_WORK' }}</div>
-              <div class="text-xs opacity-90 font-sans font-medium">{{ work.description || 'Illustration Log' }}</div>
+            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px]">
+              <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider">> {{ work.title || 'UNNAMED_WORK' }}</div>
+              <div class="text-[10px] opacity-70 font-mono tracking-widest">{{ work.description || 'Illustration Log' }}</div>
             </div>
           </div>
         </div>
@@ -171,9 +179,9 @@
             :class="{ 'scale-100': lightbox.visible, 'scale-95': !lightbox.visible }"
             @click.stop
           >
-          <div class="mt-6 text-center text-white reveal is-visible active">
-             <h3 class="text-2xl font-bold text-[var(--color-brand)]">{{ lightbox.works[lightbox.index]?.title }}</h3>
-             <p class="text-[var(--color-secondary)] mt-2">{{ lightbox.works[lightbox.index]?.description }}</p>
+          <div class="mt-6 text-center text-[var(--color-text)] reveal is-visible active">
+             <h3 class="text-2xl font-art tracking-wider text-[var(--color-brand)]">> {{ lightbox.works[lightbox.index]?.title }}</h3>
+             <p class="text-[12px] font-mono opacity-60 tracking-widest mt-2 uppercase">{{ lightbox.works[lightbox.index]?.description }}</p>
           </div>
         </div>
       </div>

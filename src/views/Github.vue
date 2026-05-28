@@ -196,19 +196,23 @@ onMounted(() => {
 <template>
   <div class="flex flex-col items-center w-full reveal is-visible font-sans">
     <!-- Header -->
-    <section class="w-full py-10">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 ">
-          <span>GITHUB // MAINFRAME_SYNC</span>
-        </h2>
-        <p class="text-xs text-[var(--color-secondary)] font-medium font-sans">最近的代码动态与开源仓库 // ACTIVE DATABASE STREAMS</p>
+    <section class="w-full py-10 max-w-[1400px] mx-auto px-4 md:px-12">
+      <div class="border-b border-[var(--color-border)] pb-4 mb-12 relative">
+        <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GITHUB</div>
+        <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> MAINFRAME_SYNC</h2>
+        <p class="text-[12px] font-mono text-[var(--color-text-dim)] tracking-widest mt-2 opacity-60">
+          ACTIVE DATABASE STREAMS // RECENT LOGS
+        </p>
       </div>
 
       <div class="flex flex-col gap-10 px-4 max-w-5xl mx-auto">
         
         <!-- Pinned Repositories -->
         <div class="w-full">
-          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> PINNED_NODES</h3>
+          <div class="flex items-center gap-4 mb-6">
+            <span class="text-sm font-mono tracking-widest opacity-60">> PINNED_NODES</span>
+            <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+          </div>
           
           <div v-if="loadingPinned" class="flex justify-center py-12">
             <div class="cursor-blink"></div>
@@ -216,7 +220,7 @@ onMounted(() => {
           
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
             <a v-for="repo in pinnedRepos" :key="repo.id" :href="repo.html_url" target="_blank" 
-               class="premium-card !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
+               class="cyber-glass !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
               <div class="flex justify-between items-start mb-4">
                 <h4 class="font-bold text-base text-[var(--color-brand)] group-hover:text-[var(--color-text)] transition-colors flex items-center gap-2">
                   <i class="fa-solid fa-bookmark text-xs"></i>
@@ -242,7 +246,10 @@ onMounted(() => {
 
         <!-- Recent Repositories -->
         <div class="w-full">
-          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> RECENT_NODES</h3>
+          <div class="flex items-center gap-4 mb-6">
+            <span class="text-sm font-mono tracking-widest opacity-60">> RECENT_NODES</span>
+            <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+          </div>
           
           <div v-if="loadingRepos" class="flex justify-center py-12">
             <div class="cursor-blink"></div>
@@ -250,7 +257,7 @@ onMounted(() => {
           
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
             <a v-for="repo in repos" :key="repo.id" :href="repo.html_url" target="_blank" 
-               class="premium-card !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
+               class="cyber-glass !p-5 group relative overflow-hidden transition-all duration-500 reveal is-visible">
               <div class="flex justify-between items-start mb-4">
                 <h4 class="font-bold text-base text-[var(--color-brand)] group-hover:text-[var(--color-text)] transition-colors">{{ repo.name }}</h4>
                 <span class="text-[9px] border border-[var(--color-text)] px-1.5 py-0.5 uppercase bg-[var(--color-bg)] font-bold">
@@ -273,7 +280,10 @@ onMounted(() => {
 
         <!-- Recent Activity -->
         <div class="w-full">
-          <h3 class="section-heading mb-6 text-xl font-bold font-sans">> DATA_FLOWS</h3>
+          <div class="flex items-center gap-4 mb-6">
+            <span class="text-sm font-mono tracking-widest opacity-60">> DATA_FLOWS</span>
+            <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+          </div>
           
           <div v-if="loadingEvents" class="flex justify-center py-12">
             <div class="cursor-blink"></div>
@@ -285,7 +295,7 @@ onMounted(() => {
             <div v-for="event in events" :key="event.id" class="relative pl-8 reveal is-visible">
               <div class="timeline-dot w-2 h-2 bg-[var(--color-brand)] border-2 border-black absolute left-0 top-6 rotate-45"></div>
               
-              <div class="premium-card !p-5 group">
+              <div class="cyber-glass !p-5 group">
                 <div class="flex justify-between items-center mb-2">
                   <span class="font-bold text-xs text-[var(--color-brand)] flex items-center gap-1.5">
                     <i class="fa-solid fa-bolt text-[10px]"></i>

@@ -5,6 +5,7 @@ import ClockCard from '../components/ClockCard.vue';
 import CalendarCard from '../components/CalendarCard.vue';
 import MeCard from '../components/MeCard.vue';
 import HitokotoCard from '../components/HitokotoCard.vue';
+import ParticleText from '../components/ParticleText.vue';
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -89,11 +90,10 @@ onMounted(async () => {
         <!-- Huge Glitched Typography & Artistic Mixed Headline -->
         <div class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8">
           <div class="animate-float-slow">
-            <h1 
-              class="text-[14vw] xl:text-[9vw] leading-[0.9] font-art italic glitch-hover" 
-              data-text="LanRhyme."
-            >
-              LanRhyme.
+            <h1 class="w-[90vw] sm:w-[80vw] xl:w-[850px] max-w-full -mt-2">
+              <ParticleText 
+                text="LanRhyme." 
+              />
             </h1>
             <p class="font-mono text-lg md:text-xl mt-6 text-[var(--color-text-dim)] leading-relaxed tracking-wide">
               Designing <span class="text-[var(--color-text)] border-b border-[var(--color-brand)]">digital interfaces</span> &amp;<br>

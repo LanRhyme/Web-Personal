@@ -857,94 +857,65 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="page-container py-8 font-sans text-[var(--color-text)]">
-    <!-- Retro Handheld Console Shell -->
-    <div class="max-w-4xl mx-auto premium-card p-6 sm:p-8 bg-slate-300 border-4 border-black shadow-lg rounded-2xl relative select-none">
-      
-      <!-- Console Header / Bezel -->
-      <div class="w-full flex justify-between items-center text-[10px] text-slate-700 font-mono mb-4 border-b border-slate-400 pb-2">
-        <span class="flex items-center gap-1 font-bold">
-          <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
-          DOT MATRIX WITH STEREO SOUND
-        </span>
-        <span class="font-bold tracking-widest text-[var(--color-brand)] font-sans">LANRHYME ARCADE v2.0</span>
+  <div class="page-container py-8 font-mono text-[var(--color-text)]">
+    <div class="max-w-5xl mx-auto w-full">
+      <div class="mb-6 flex items-center justify-between border-b border-[var(--color-border)] pb-2 opacity-60">
+        <span class="text-[10px] tracking-widest">[SYS.PROC.GAMES.EXE] // GRID_RUNNER_V2.0</span>
+        <span class="text-[10px] tracking-widest text-[var(--color-brand)] animate-pulse">STATUS: ONLINE</span>
       </div>
 
-      <!-- Main Game Screen Area -->
-      <div class="bg-[var(--color-bg)] border-4 border-black p-4 rounded-lg relative overflow-hidden text-[var(--color-text)]">
-        <!-- Subtle Screen curvature / CRT scanlines overlay -->
-        <div class="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/5 pointer-events-none z-10"></div>
-        <div class="absolute inset-0 bg-radial-crt pointer-events-none z-10 opacity-30"></div>
+      <!-- Main Terminal Screen Area -->
+      <div class="relative overflow-hidden text-[var(--color-text)]">
 
         <transition name="page" mode="out-in" @after-enter="onTransitionComplete">
           
-          <!-- Start Game Phase -->
-          <div v-if="phase === 'start'" class="space-y-6 py-4">
-            <div class="text-center">
-              <div class="text-6xl mb-4 animate-bounce">🎮</div>
-              <h1 class="text-3xl font-bold mb-2 tracking-wider text-[var(--color-brand)] ">
-                > COORD_CHALLENGE
-              </h1>
-              <p class="text-xs text-[var(--color-text-dim)] max-w-md mx-auto leading-relaxed">
-                测试你的坐标几何技能，通过4个递进难度等级 // SYS.EXECUTE<br>
-                识别坐标点、使用参考线索、计算面积、掌握对称与平移变换！
-              </p>
-              <div class="mt-6">
-                <button class="premium-btn text-lg px-8 py-3 !bg-[var(--color-brand)] !text-[var(--color-bg)] hover:!bg-[var(--color-text)] hover:!text-[var(--color-bg)]" @click="startGame">
-                  [ START_GAME.EXE ]
-                </button>
+          <div v-if="phase === 'start'" class="space-y-8 py-4">
+            <div class="border-b border-[var(--color-border)] pb-4 mb-8 relative">
+              <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">ARCADE</div>
+              <div class="flex justify-between items-end">
+                <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> GRID_RUNNER</h2>
+                <a href="https://github.com/ChouChiu" target="_blank" class="text-[10px] font-mono tracking-widest text-[var(--color-brand)] hover:underline opacity-80 mb-1 flex items-center gap-2 transition-all hover:opacity-100" title="Visit Author's GitHub">
+                  <i class="fab fa-github"></i>
+                  AUTHOR: ChouChiu
+                </a>
               </div>
+              
+              <div class="text-[11px] text-[var(--color-text-dim)] max-w-xl leading-relaxed mt-6 mb-6 font-mono opacity-80">
+                INITIATING GEOMETRIC TEST SEQUENCE...<br>
+                > TASKS INCLUDED:<br>
+                > [1] COORDINATE IDENTIFICATION<br>
+                > [2] SYMMETRY TRANSFORMATIONS<br>
+                > [3] TRANSLATIONAL VECTORS<br>
+                > [4] AREA CALCULATIONS
+              </div>
+              <button class="btn-terminal !text-[12px] !py-2 !px-6" @click="startGame">
+                [ SYS.EXECUTE ]
+              </button>
             </div>
 
             <!-- Game Modes Board -->
-            <div class="premium-card p-5 mt-6 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-              <h4 class="font-bold text-sm mb-4 text-center text-[var(--color-brand)]">> CHOOSE_LEVELS</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="border border-[var(--color-border)] p-4 bg-[var(--color-bg)]">
+              <div class="flex items-center gap-4 border-b border-[var(--color-border)] pb-2 mb-4 opacity-80 text-[10px] uppercase tracking-widest text-[var(--color-brand)]">
+                <span>> SELECT_DIFFICULTY</span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
                 <div
                   v-for="(mode, index) in MODES"
                   :key="mode"
-                  class="flex items-center gap-3 p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded"
+                  class="flex items-start gap-3 opacity-80 hover:opacity-100 transition-opacity"
                 >
-                  <div
-                    class="w-6 h-6 rounded flex items-center justify-center text-[var(--color-bg)] font-bold text-xs"
-                    :style="{ background: MODE_COLORS[mode] }"
-                  >
-                    {{ index + 1 }}
-                  </div>
+                  <div class="font-mono text-[var(--color-brand)]">[{{ index + 1 }}]</div>
                   <div class="flex-1">
-                    <h5 class="font-bold" :style="{ color: MODE_COLORS[mode] }">
+                    <h5 class="tracking-widest mb-1 text-[var(--color-text)]">
                       {{ MODE_LABELS[mode].toUpperCase() }}
                     </h5>
-                    <p class="text-[9px] opacity-70">
-                      <template v-if="mode === 'simple'">网格 + 标签 · 20秒 · 3选项</template>
-                      <template v-else-if="mode === 'challenge'">无网格 · 10秒 · 5选项</template>
-                      <template v-else-if="mode === 'hell'">无网格/标签 · 识别 + 对称 + 平移</template>
-                      <template v-else>面积 + 识别 + 对称 + 平移</template>
+                    <p class="text-[9px] text-[var(--color-text-dim)] opacity-70">
+                      <template v-if="mode === 'simple'">GRID:ON | LBL:ON | T:20s | OPT:3</template>
+                      <template v-else-if="mode === 'challenge'">GRID:OFF | LBL:ON | T:10s | OPT:5</template>
+                      <template v-else-if="mode === 'hell'">GRID:OFF | LBL:OFF | TEST: ID+SYM+TRANS</template>
+                      <template v-else>TEST: AREA+ID+SYM+TRANS</template>
                     </p>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quest tips description -->
-            <div class="premium-card p-5 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-              <h4 class="font-bold text-xs mb-4 text-[var(--color-brand)]">> EXPLAIN_TUTORIALS</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] opacity-80">
-                <div class="flex items-start gap-2">
-                  <span class="text-cyan-500 font-bold">> 坐标识别:</span>
-                  <span>在网格上找到指定的坐标点</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-purple-500 font-bold">> 对称变换:</span>
-                  <span>将点关于x轴、y轴或原点对称</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-red-500 font-bold">> 平移变换:</span>
-                  <span>将点按指定方向和距离平移</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-amber-500 font-bold">> 面积计算:</span>
-                  <span>计算三角形或矩形的面积</span>
                 </div>
               </div>
             </div>
@@ -955,40 +926,37 @@ onUnmounted(() => {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               
               <!-- Screen Grid / Canvas -->
-              <div class="lg:col-span-2">
-                <div class="premium-card p-3 bg-[var(--color-bg)] border-4 border-[var(--color-text)] flex justify-center items-center">
-                  <canvas ref="canvasRef" class="w-full aspect-square max-h-[380px] bg-[var(--color-card)] border border-[var(--color-text)]"></canvas>
-                </div>
+              <div class="lg:col-span-2 border border-[var(--color-border)] p-1 bg-[#0a0a0a]">
+                <canvas ref="canvasRef" class="w-full aspect-square max-h-[420px] filter contrast-125 saturate-50"></canvas>
               </div>
 
               <!-- HUD Panels -->
-              <div class="space-y-4">
+              <div class="space-y-4 font-mono text-[10px]">
                 <!-- Mission Details -->
-                <div class="premium-card p-4 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-                  <div class="flex items-center justify-between mb-3">
-                    <span
-                      class="px-2.5 py-0.5 border border-[var(--color-text)] rounded text-[10px] font-bold text-[var(--color-bg)]"
-                      :style="{ background: currentColor }"
-                    >
-                      {{ currentLabel }}
-                    </span>
-                    <span class="text-[10px] opacity-70">
-                      第 {{ modeQIdx }} / {{ currentConfig.questions }} 题
+                <div class="border border-[var(--color-border)] p-4 bg-[var(--color-bg)]">
+                  <div class="flex items-center justify-between border-b border-[var(--color-border)] pb-2 mb-3">
+                    <span class="tracking-widest text-[var(--color-brand)]">> SYS.STATUS</span>
+                    <span class="opacity-70">
+                      Q: [{{ modeQIdx }}/{{ currentConfig.questions }}]
                     </span>
                   </div>
 
-                  <div class="grid grid-cols-3 gap-1.5 text-center mb-4 text-[10px]">
-                    <div class="p-1.5 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                      <div class="opacity-50">得分</div>
-                      <p class="font-bold text-[var(--color-brand)]">{{ score }}</p>
+                  <div class="flex flex-col gap-2 mb-4">
+                    <div class="flex justify-between">
+                      <span class="opacity-50">MODE:</span>
+                      <span :style="{ color: currentColor }" class="uppercase tracking-widest">{{ currentLabel }}</span>
                     </div>
-                    <div class="p-1.5 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                      <div class="opacity-50">正确</div>
-                      <p class="font-bold text-green-500">{{ correctCount }}</p>
+                    <div class="flex justify-between">
+                      <span class="opacity-50">SCORE:</span>
+                      <span class="text-[var(--color-brand)] font-bold">{{ score }}</span>
                     </div>
-                    <div class="p-1.5 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                      <div class="opacity-50">错误</div>
-                      <p class="font-bold text-red-500">{{ wrongCount }}</p>
+                    <div class="flex justify-between">
+                      <span class="opacity-50">CORRECT:</span>
+                      <span class="text-green-500">{{ correctCount }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="opacity-50">ERROR:</span>
+                      <span class="text-red-500">{{ wrongCount }}</span>
                     </div>
                   </div>
 
@@ -1007,36 +975,35 @@ onUnmounted(() => {
                     </div>
                   </div>
 
-                  <div v-if="currentMode === 'final'" class="text-center border-t border-dashed border-[var(--color-text)] pt-2 mt-2">
-                    <span class="opacity-50 text-[10px]">已用时间:</span>
-                    <p class="font-bold text-xs">{{ finalElapsedDisplay }}秒</p>
+                  <div v-if="currentMode === 'final'" class="flex justify-between border-t border-[var(--color-border)] pt-2 mt-2">
+                    <span class="opacity-50">T_ELAPSED:</span>
+                    <p>{{ finalElapsedDisplay }}s</p>
                   </div>
                 </div>
 
                 <!-- Tips board -->
-                <div class="premium-card p-4 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-                  <div class="flex items-center gap-1.5 mb-2 text-xs font-bold text-[var(--color-brand)]">
-                    <span>💡</span>
-                    <span>TIPS // 提示</span>
+                <div class="border border-[var(--color-border)] p-4 bg-[var(--color-bg)]">
+                  <div class="border-b border-[var(--color-border)] pb-2 mb-3 text-[var(--color-brand)] uppercase tracking-widest">
+                    > SYS.INFO
                   </div>
-                  <div class="text-[10px] text-[var(--color-text-dim)] space-y-1 font-sans font-medium leading-relaxed">
-                    <p v-for="(tip, i) in currentTips" :key="i">> {{ tip }}</p>
+                  <div class="text-[9px] text-[var(--color-text-dim)] space-y-2 opacity-80 leading-relaxed">
+                    <p v-for="(tip, i) in currentTips" :key="i">[{{ i+1 }}] {{ tip }}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Quiz prompt box -->
-            <div class="premium-card p-5 bg-[var(--color-card)] border-4 border-[var(--color-text)]">
-              <p class="text-lg font-bold text-center text-[var(--color-primary)] mb-4 font-sans">
-                Q: {{ question?.prompt }}
+            <div class="border border-[var(--color-border)] p-5 bg-[#0a0a0a]">
+              <p class="text-lg font-mono text-[var(--color-brand)] mb-4 tracking-widest">
+                > AWAITING_INPUT: <span class="text-[var(--color-text)]">{{ question?.prompt }}</span>
               </p>
 
               <div
                 v-if="currentMode === 'hell' || (currentMode === 'final' && question?.type !== 'area')"
-                class="text-center text-[10px] text-[var(--color-text-dim)] mb-4"
+                class="text-[9px] font-mono text-[var(--color-text-dim)] mb-4 uppercase opacity-60"
               >
-                * 使用参考点 A 和 B 来推断点 P 的实际坐标点。
+                // Use reference points A & B to deduce P's absolute coordinate
               </div>
 
               <!-- Answer Choices -->
@@ -1044,210 +1011,86 @@ onUnmounted(() => {
                 <button
                   v-for="(choice, idx) in question?.choices"
                   :key="idx"
-                  class="choice-btn text-xs"
+                  class="border border-[var(--color-border)] py-2 px-3 text-[11px] font-mono hover:bg-[var(--color-text)] hover:text-[#000] transition-colors"
                   :class="{
-                    'correct': answerState !== 'idle' && idx === question?.correctIdx,
-                    'wrong': answerState === 'wrong' && idx === selectedIdx,
-                    'disabled': answerState !== 'idle'
+                    'bg-[var(--color-brand)] text-[#000] border-transparent': answerState !== 'idle' && idx === question?.correctIdx,
+                    'bg-red-500 text-white border-transparent': answerState === 'wrong' && idx === selectedIdx,
+                    'opacity-50 cursor-not-allowed': answerState !== 'idle'
                   }"
                   :disabled="answerState !== 'idle'"
                   @click="pickAnswer(idx)"
                 >
-                  <span class="choice-key">{{ idx + 1 }}</span>
-                  <span class="choice-label">{{ choice }}</span>
+                  <span class="opacity-50 mr-2">[{{ idx + 1 }}]</span>
+                  <span>{{ choice }}</span>
                 </button>
               </div>
 
-              <div v-if="answerState !== 'idle'" class="mt-4 text-center border-t border-dashed border-[var(--color-text)] pt-4">
+              <div v-if="answerState !== 'idle'" class="mt-4 border-t border-[var(--color-border)] pt-4 text-[11px] font-mono">
                 <p
-                  class="text-base font-bold"
+                  class="uppercase tracking-widest"
                   :class="{
-                    'text-green-500': answerState === 'correct',
+                    'text-[var(--color-brand)]': answerState === 'correct',
                     'text-red-500': answerState === 'wrong' || answerState === 'timeout'
                   }"
                 >
-                  <template v-if="answerState === 'correct'">✓ 正确！+{{ POINTS_PER_MODE[currentMode] }} POINTS</template>
-                  <template v-else-if="answerState === 'wrong'">✗ 答错！正确坐标是 {{ question?.choices[question?.correctIdx] }}</template>
-                  <template v-else>⏱ 答题超时！正确坐标是 {{ question?.choices[question?.correctIdx] }}</template>
+                  <template v-if="answerState === 'correct'">> STATUS: SUCCESS // +{{ POINTS_PER_MODE[currentMode] }} PTS</template>
+                  <template v-else-if="answerState === 'wrong'">> STATUS: FAILED // EXPECTED: {{ question?.choices[question?.correctIdx] }}</template>
+                  <template v-else>> STATUS: TIMEOUT // EXPECTED: {{ question?.choices[question?.correctIdx] }}</template>
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Transition Phase -->
-          <div v-else-if="phase === 'transition'" class="flex justify-center py-6">
-            <div class="premium-card p-8 text-center max-w-md bg-[var(--color-card)] border-4 border-[var(--color-text)]">
-              <div class="text-6xl mb-4 animate-bounce">🚀</div>
-              <h2 class="text-2xl font-bold text-[var(--color-brand)] mb-2">
-                {{ TRANSITION_MSG[currentMode]?.title }}
-              </h2>
-              <p class="text-xs text-[var(--color-text-dim)] mb-6 max-w-xs mx-auto leading-relaxed">
-                {{ TRANSITION_MSG[currentMode]?.sub }}
+          <div v-else-if="phase === 'transition'" class="flex flex-col items-center justify-center py-12 border border-[var(--color-border)] bg-[#0a0a0a]">
+            <div class="text-[var(--color-text)] font-mono text-center">
+              <h2 class="text-2xl font-art tracking-widest text-[var(--color-brand)] mb-4">> {{ TRANSITION_MSG[currentMode]?.title }}</h2>
+              <p class="text-[10px] text-[var(--color-text-dim)] mb-8 max-w-sm mx-auto leading-relaxed uppercase opacity-80">
+                // {{ TRANSITION_MSG[currentMode]?.sub }}
               </p>
-              <button class="premium-btn px-6 py-2.5 !bg-[var(--color-brand)] !text-[var(--color-bg)] hover:!bg-[var(--color-text)] hover:!text-[var(--color-bg)]" @click="continueFromTransition">
-                [ CONTINUE ]
+              <button class="btn-terminal !px-8 !py-2 !text-[12px]" @click="continueFromTransition">
+                [ SYS.CONTINUE ]
               </button>
-              <p class="text-[9px] opacity-50 mt-3 font-mono">或者按下 Enter / Space 键继续运行</p>
+              <p class="text-[9px] opacity-40 mt-4 tracking-widest">[AWAITING ENTER / SPACE]</p>
             </div>
           </div>
 
           <!-- Results Phase -->
-          <div v-else-if="phase === 'results'" class="space-y-6">
-            <div class="premium-card p-8 text-center bg-[var(--color-card)] border-4 border-[var(--color-text)]">
-              <div class="text-6xl mb-4">🏆</div>
-              <h2 class="text-2xl font-bold text-[var(--color-primary)] mb-2 font-sans">DEPLOY_COMPLETE! 游戏通关！</h2>
-              
-              <div 
-                class="inline-flex items-center gap-2 px-4 py-1 border-2 border-[var(--color-text)] bg-[var(--color-bg)] rounded mb-6 mt-2"
-                :style="{ color: getGrade.color }"
-              >
-                <span class="text-2xl font-black">{{ getGrade.grade }}</span>
-                <span class="text-xs font-bold font-sans">| {{ getGrade.message }}</span>
-              </div>
+          <div v-else-if="phase === 'results'" class="border border-[var(--color-border)] p-8 bg-[#0a0a0a] font-mono text-center">
+            <h2 class="text-3xl font-art tracking-widest text-[var(--color-brand)] mb-6">> EXECUTION_COMPLETE</h2>
+            
+            <div class="inline-block border border-[var(--color-border)] px-6 py-2 mb-8 bg-[var(--color-bg)]">
+              <span class="text-3xl font-art tracking-wider" :style="{ color: getGrade.color }">{{ getGrade.grade }}</span>
+              <span class="text-[10px] uppercase ml-3 opacity-80">// {{ getGrade.message }}</span>
+            </div>
 
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                  <div class="opacity-50 text-[10px]">最终得分</div>
-                  <p class="text-2xl font-bold text-[var(--color-brand)]">{{ score }}</p>
-                </div>
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                  <div class="opacity-50 text-[10px]">正确题数</div>
-                  <p class="text-2xl font-bold text-green-500">{{ correctCount }}</p>
-                </div>
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                  <div class="opacity-50 text-[10px]">错误题数</div>
-                  <p class="text-2xl font-bold text-red-500">{{ wrongCount }}</p>
-                </div>
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded">
-                  <div class="opacity-50 text-[10px]">正确率</div>
-                  <p class="text-2xl font-bold text-cyan-500">{{ accuracy }}%</p>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-0 mb-8 max-w-2xl mx-auto border border-[var(--color-border)]">
+              <div class="p-4 border-b md:border-b-0 border-r border-[var(--color-border)]">
+                <div class="opacity-50 text-[9px] tracking-widest mb-1">SCORE</div>
+                <p class="text-xl text-[var(--color-brand)]">{{ score }}</p>
               </div>
-
-              <div v-if="finalElapsedSec > 0" class="grid grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded text-xs">
-                  <div class="opacity-50 text-[10px]">终极挑战耗时</div>
-                  <p class="font-bold text-base">{{ finalElapsedSec }}秒</p>
-                </div>
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded text-xs">
-                  <div class="opacity-50 text-[10px]">时间额外奖励</div>
-                  <p class="font-bold text-base text-[var(--color-brand)]">+{{ timeBonus }}</p>
-                </div>
+              <div class="p-4 border-b md:border-b-0 md:border-r border-[var(--color-border)]">
+                <div class="opacity-50 text-[9px] tracking-widest mb-1">CORRECT</div>
+                <p class="text-xl text-green-500">{{ correctCount }}</p>
               </div>
-
-              <div class="grid grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded text-xs">
-                  <div class="opacity-50 text-[10px]">平均用时</div>
-                  <p class="font-bold text-base">{{ avgTime }}秒</p>
-                </div>
-                <div class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded text-xs">
-                  <div class="opacity-50 text-[10px]">最长连对纪录</div>
-                  <p class="font-bold text-base text-[var(--color-brand)]">{{ maxStreak }}题</p>
-                </div>
+              <div class="p-4 border-r border-[var(--color-border)]">
+                <div class="opacity-50 text-[9px] tracking-widest mb-1">ERRORS</div>
+                <p class="text-xl text-red-500">{{ wrongCount }}</p>
               </div>
-
-              <div class="flex gap-3 justify-center">
-                <button class="premium-btn px-6 py-2.5 !bg-[var(--color-brand)] !text-[var(--color-bg)]" @click="startGame">[ PLAY_AGAIN ]</button>
-                <button class="premium-btn px-6 py-2.5" @click="restartGame">[ LEAVE.EXE ]</button>
+              <div class="p-4">
+                <div class="opacity-50 text-[9px] tracking-widest mb-1">ACCURACY</div>
+                <p class="text-xl text-[var(--color-text)]">{{ accuracy }}%</p>
               </div>
             </div>
 
-            <!-- Stats levels list -->
-            <div class="premium-card p-6 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-              <h4 class="font-bold text-sm mb-4 text-center text-[var(--color-brand)]">> LEVEL_BREAKDOWN</h4>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div
-                  v-for="mode in MODES"
-                  :key="mode"
-                  class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded text-xs"
-                >
-                  <div class="flex items-center gap-2 mb-2">
-                    <span
-                      class="w-2.5 h-2.5 rounded-full"
-                      :style="{ background: MODE_COLORS[mode] }"
-                    ></span>
-                    <span class="font-bold text-xs" :style="{ color: MODE_COLORS[mode] }">
-                      {{ MODE_LABELS[mode] }}
-                    </span>
-                  </div>
-                  <div class="text-[11px] text-[var(--color-text-dim)] font-mono">
-                    <span class="font-semibold text-[var(--color-text)]">{{ modeStats[mode].correct }}</span>
-                    <span>/ {{ modeStats[mode].total }}</span>
-                    <span v-if="modeStats[mode].total > 0" class="ml-1">
-                      ({{ Math.round((modeStats[mode].correct / modeStats[mode].total) * 100) }}%)
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Stats types list -->
-            <div class="premium-card p-6 bg-[var(--color-card)] border-2 border-[var(--color-text)]">
-              <h4 class="font-bold text-sm mb-4 text-[var(--color-brand)]">> SKILL_ANALYSIS</h4>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                <div
-                  v-for="(type, key) in typeStats"
-                  :key="key"
-                  class="p-3 border border-[var(--color-text)] bg-[var(--color-bg)] rounded"
-                >
-                  <p class="font-bold text-xs mb-1">
-                    {{ QUESTION_TYPE_NAMES[key as QuestionType] }}
-                  </p>
-                  <div class="text-[11px] opacity-80 font-mono">
-                    <span class="font-bold text-green-500">{{ type.correct }}</span>
-                    <span>/ {{ type.total }}</span>
-                    <span v-if="type.total > 0" class="ml-1">
-                      ({{ Math.round((type.correct / type.total) * 100) }}%)
-                    </span>
-                  </div>
-                  <div v-if="type.total > 0" class="mt-2">
-                    <div class="h-2 bg-[var(--color-text)]/10 border border-[var(--color-text)] p-0.5 rounded overflow-hidden">
-                      <div
-                        class="h-full bg-[var(--color-brand)] rounded"
-                        :style="{ width: (type.correct / type.total * 100) + '%' }"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <button class="btn-terminal !px-6 !py-2 !text-[12px]" @click="startGame">[ REBOOT ]</button>
+              <button class="btn-terminal !px-6 !py-2 !text-[12px]" @click="restartGame">[ TERMINATE ]</button>
             </div>
           </div>
         </transition>
       </div>
 
-      <!-- Simulated Console Control Deck (A/B Buttons & D-Pad) -->
-      <div class="mt-6 flex flex-wrap justify-between items-center px-4 py-2 border-t border-slate-400 pt-4 gap-4">
-        <!-- D-Pad Console Cross key -->
-        <div class="flex flex-col items-center">
-          <div class="w-24 h-24 relative bg-slate-400 border-2 border-black rounded-full flex items-center justify-center shadow-inner">
-            <div class="w-16 h-6 bg-black absolute rounded"></div>
-            <div class="w-6 h-16 bg-black absolute rounded"></div>
-            <div class="w-4 h-4 bg-slate-600 rounded-full z-10"></div>
-          </div>
-        </div>
-
-        <!-- Start / Select capsule buttons -->
-        <div class="flex gap-4">
-          <div class="flex flex-col items-center">
-            <div class="w-12 h-4 bg-slate-600 border border-black rounded-full -rotate-12 cursor-pointer shadow-md hover:bg-slate-700 active:translate-y-0.5"></div>
-            <span class="text-[8px] text-slate-600 font-bold mt-1">SELECT</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <div class="w-12 h-4 bg-slate-600 border border-black rounded-full -rotate-12 cursor-pointer shadow-md hover:bg-slate-700 active:translate-y-0.5" @click="startGame"></div>
-            <span class="text-[8px] text-slate-600 font-bold mt-1">START</span>
-          </div>
-        </div>
-
-        <!-- Red A/B gaming keys -->
-        <div class="flex gap-4 items-center">
-          <div class="flex flex-col items-center">
-            <div class="w-10 h-10 bg-red-600 border-2 border-black rounded-full cursor-pointer shadow-md hover:bg-red-700 active:translate-y-0.5 flex items-center justify-center font-bold text-sm text-white" @click="startGame">B</div>
-          </div>
-          <div class="flex flex-col items-center mt-[-6px]">
-            <div class="w-10 h-10 bg-red-600 border-2 border-black rounded-full cursor-pointer shadow-md hover:bg-red-700 active:translate-y-0.5 flex items-center justify-center font-bold text-sm text-white" @click="startGame">A</div>
-          </div>
-        </div>
-      </div>
 
     </div>
   </div>
