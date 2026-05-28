@@ -4,7 +4,10 @@
     "title": "MicYou",
     "description": "一款多平台的麦克风串流软件",
     "tags": [
-      "KMP，Kotlin，Compose，工具"
+      "KMP",
+      "Kotlin",
+      "Compose",
+      "工具"
     ],
     "live_url": "",
     "source_url": "https://micyou.netlify.app/"
