@@ -19,13 +19,13 @@ const getImageUrl = (path: string) => {
 </script>
 
 <template>
-  <div class="w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-8">
-    <div class="border-b border-[var(--color-border)] pb-4 mb-8 relative">
-      <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">DEPLOY</div>
-      <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> DEPLOYED_PROJECTS</h2>
+  <div class="w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
+    <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative">
+      <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">DEPLOY</div>
+      <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> DEPLOYED_PROJECTS</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 stagger-children">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 stagger-children">
       <div
         v-for="(project, index) in projects"
         :key="index"

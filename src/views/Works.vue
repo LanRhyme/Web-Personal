@@ -1,14 +1,14 @@
 <template>
-  <div class="page-content flex flex-col items-center w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-8">
+  <div class="page-content flex flex-col items-center w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
     <section class="w-full" id="works-intro" v-show="currentView === 'all'">
-      <div class="border-b border-[var(--color-border)] pb-4 mb-8 relative flex justify-between items-end">
+      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
         <div>
-          <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
-          <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> ART_ARCHIVE</h2>
+          <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
+          <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> ART_ARCHIVE</h2>
         </div>
         <button
           @click="open3DView"
-          class="btn-terminal !px-4 !py-1"
+          class="btn-terminal !px-4 !py-1 self-start sm:self-auto"
           title="Enter 3D Gallery"
         >
           [ 3D_ARCADE ]
@@ -16,11 +16,11 @@
       </div>
     </section>
 
-    <div class="w-full mb-8 text-left" v-show="currentView === 'portfolio'">
-      <button @click="switchToAllWorks" class="btn-terminal mb-6">
+    <div class="w-full mb-6 md:mb-8 text-left" v-show="currentView === 'portfolio'">
+      <button @click="switchToAllWorks" class="btn-terminal mb-4 md:mb-6">
         [ SYS.RETURN ]
       </button>
-      <h3 class="text-2xl font-art tracking-widest text-[var(--color-brand)] border-b border-[var(--color-border)] pb-4">> {{ currentPortfolioTitle.toUpperCase() }}</h3>
+      <h3 class="text-xl md:text-2xl font-art tracking-widest text-[var(--color-brand)] border-b border-[var(--color-border)] pb-3 md:pb-4">> {{ currentPortfolioTitle.toUpperCase() }}</h3>
     </div>
 
     <div class="gallery-transition-container w-full max-w-[1400px]" :class="{ 'fade-out-content': isTransitioning }">

@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col items-center w-full gap-16 font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-8">
+  <div class="flex flex-col items-center w-full gap-12 md:gap-16 font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
 
-    <div class="w-full border-b border-[var(--color-border)] pb-4 mb-4 relative">
-      <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">REQUEST</div>
-      <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> COMMISSION_BOARD</h2>
+    <div class="w-full border-b border-[var(--color-border)] pb-3 md:pb-4 mb-4 relative">
+      <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">REQUEST</div>
+      <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> COMMISSION_BOARD</h2>
     </div>
 
     <!-- Top Row: Platforms, Invitations, Payment -->
@@ -84,29 +84,29 @@
     </div>
 
     <!-- Pricing List -->
-    <section class="w-full reveal is-visible mt-8" style="animation-delay: 0.2s;">
-      <div class="flex items-center gap-4 mb-10">
-        <h3 class="text-3xl font-art text-[var(--color-text)] tracking-widest uppercase m-0">> QUEST_WINDOW</h3>
-        <div class="flex-grow h-[1px] bg-[var(--color-border)] opacity-50"></div>
-        <span class="font-mono text-[var(--color-brand)] text-xs border border-[var(--color-brand)] px-2 py-1 bg-[var(--color-brand)]/10">ARCHIVE_ACCESS</span>
+    <section class="w-full reveal is-visible mt-6 md:mt-8" style="animation-delay: 0.2s;">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6 md:mb-10">
+        <h3 class="text-2xl md:text-3xl font-art text-[var(--color-text)] tracking-widest uppercase m-0">> QUEST_WINDOW</h3>
+        <div class="hidden sm:block flex-grow h-[1px] bg-[var(--color-border)] opacity-50"></div>
+        <span class="font-mono text-[var(--color-brand)] text-[10px] md:text-xs border border-[var(--color-brand)] px-2 py-1 bg-[var(--color-brand)]/10 self-start">ARCHIVE_ACCESS</span>
       </div>
 
-      <div v-if="!isBusinessOpen" class="cyber-glass p-16 text-center max-w-3xl mx-auto border-t-4 border-t-[var(--color-brand)] relative overflow-hidden">
+      <div v-if="!isBusinessOpen" class="cyber-glass p-8 md:p-16 text-center max-w-3xl mx-auto border-t-4 border-t-[var(--color-brand)] relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--color-brand)] opacity-5 blur-[100px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-brand)] opacity-5 blur-[100px] pointer-events-none"></div>
-        <div class="w-24 h-24 text-[var(--color-brand)] flex items-center justify-center text-4xl mx-auto mb-8 border border-[var(--color-brand)]/30 rounded relative bg-[var(--color-brand)]/5 shadow-[0_0_20px_rgba(107,143,114,0.1)]">
+        <div class="w-16 h-16 md:w-24 md:h-24 text-[var(--color-brand)] flex items-center justify-center text-2xl md:text-4xl mx-auto mb-4 md:mb-8 border border-[var(--color-brand)]/30 relative bg-[var(--color-brand)]/5 shadow-[0_0_20px_rgba(107,143,114,0.1)]">
           <div class="absolute inset-0 border border-[var(--color-brand)]/50 scale-110 opacity-30 animate-ping"></div>
           <i class="fas fa-store-slash"></i>
         </div>
-        <h4 class="text-2xl font-art text-[var(--color-text)] mb-4 tracking-widest">SHOP CURRENTLY CLOSED</h4>
-        <div class="w-12 h-1 bg-[var(--color-brand)] mx-auto mb-6 opacity-50"></div>
-        <p class="text-[var(--color-text-dim)] text-sm leading-relaxed font-mono">
+        <h4 class="text-xl md:text-2xl font-art text-[var(--color-text)] mb-3 md:mb-4 tracking-widest">SHOP CURRENTLY CLOSED</h4>
+        <div class="w-12 h-1 bg-[var(--color-brand)] mx-auto mb-4 md:mb-6 opacity-50"></div>
+        <p class="text-[var(--color-text-dim)] text-xs md:text-sm leading-relaxed font-mono">
           > 抱歉，目前暂时没有开启任何约稿橱窗哦 // OUT OF STOCK<br>
           > 请稍后再来查看，或通过上方联系方式向我发起委托
         </p>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
         <div
           v-for="(item, index) in priceList"
           :key="index"

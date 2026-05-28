@@ -48,10 +48,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] z-50 pointer-events-none">
+  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-50 pointer-events-none">
     <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] md:text-xs font-mono flex flex-col transition-all shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
       <!-- Top Status Line -->
-      <div class="flex justify-between items-center px-3 md:px-6 py-2 md:py-3 border-b border-[var(--color-border)] text-[0.6rem] md:text-xs">
+      <div class="flex justify-between items-center px-2.5 md:px-6 py-1.5 md:py-3 border-b border-[var(--color-border)] text-[0.6rem] md:text-xs">
         <div class="flex flex-wrap items-center gap-x-3 md:gap-x-6 gap-y-1">
           <span class="flex items-center gap-1.5 md:gap-2 font-bold tracking-widest text-[var(--color-text)]">
             <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block"></span>
@@ -90,13 +90,13 @@ onUnmounted(() => {
       <!-- Mobile Navigation Menu -->
       <transition name="menu">
         <nav v-if="isMenuOpen" class="md:hidden border-t border-[var(--color-border)]">
-          <div class="flex flex-col px-3 py-2">
+          <div class="flex flex-col px-2.5 py-1.5">
             <router-link
               v-for="item in navItems"
               :key="item.path"
               :to="item.path"
               @click="closeMenu"
-              class="nav-link relative py-2.5 transition-all font-mono tracking-widest text-[10px] border-b border-[var(--color-border)]/50 last:border-b-0"
+              class="nav-link relative py-2 transition-all font-mono tracking-widest text-[10px] border-b border-[var(--color-border)]/50 last:border-b-0"
               :class="route.path === item.path ? 'text-[var(--color-text)] font-bold' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'"
             >
               <span class="flex items-center gap-2">

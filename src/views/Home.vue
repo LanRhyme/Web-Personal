@@ -90,7 +90,7 @@ onMounted(async () => {
         <!-- Huge Glitched Typography & Artistic Mixed Headline -->
         <div class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8">
           <div class="animate-float-slow">
-            <h1 class="w-[90vw] sm:w-[80vw] xl:w-[850px] max-w-full -mt-2">
+            <h1 class="w-full max-w-[850px] -mt-2">
               <ParticleText 
                 text="LanRhyme." 
               />
@@ -144,75 +144,75 @@ onMounted(async () => {
         </div>
 
         <!-- Right Column: Navigation & Content (Flows down) -->
-        <div class="md:col-span-8 lg:col-span-9 flex flex-col gap-16 md:gap-24 pt-8">
+        <div class="md:col-span-8 lg:col-span-9 flex flex-col gap-12 md:gap-24 pt-0 md:pt-8">
           
           <!-- Modules -->
-          <div class="reveal flex flex-col gap-6 w-full lg:w-5/6 ml-auto relative">
+          <div class="reveal flex flex-col gap-4 md:gap-6 w-full lg:w-5/6 ml-auto relative">
             <!-- Decorative Large Watermark -->
-            <div class="absolute -top-16 -left-12 font-art text-[120px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">
+            <div class="absolute -top-16 -left-12 font-art text-[80px] md:text-[120px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">
               SYS.ARCHIVE
             </div>
 
-            <div class="border-b border-[var(--color-border)] pb-4 text-base font-bold flex justify-between font-mono tracking-[0.3em]">
+            <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 text-sm md:text-base font-bold flex justify-between font-mono tracking-[0.2em] md:tracking-[0.3em]">
               <span class="text-[var(--color-text)]">> SYS.EXPLORE</span>
               <span class="opacity-50">DIR_LIST</span>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <!-- Route Buttons as Cyber Blocks -->
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
+                class="cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 @click="$router.push('/works')"
               >
                 <div>
-                  <div class="text-sm opacity-60 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">01 / ARCHIVE</div>
-                  <div class="font-art text-3xl mb-3">> Works.</div>
-                  <div class="text-base opacity-80 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
+                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">01 / ARCHIVE</div>
+                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Works.</div>
+                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
                 </div>
                 <!-- Deco Barcode -->
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <div class="w-[2px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
+                class="cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 @click="$router.push('/projects')"
               >
                 <div>
-                  <div class="text-sm opacity-60 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">02 / DEPLOYMENTS</div>
-                  <div class="font-art text-3xl mb-3">> Projects.</div>
-                  <div class="text-base opacity-80 line-clamp-1 font-sans tracking-wide">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
+                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">02 / DEPLOYMENTS</div>
+                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Projects.</div>
+                  <div class="text-sm md:text-base opacity-80 line-clamp-1 font-sans tracking-wide">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
+                class="cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 @click="$router.push('/articles')"
               >
                 <div>
-                  <div class="text-sm opacity-60 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">03 / LOGS</div>
-                  <div class="font-art text-3xl mb-3">> Articles.</div>
-                  <div class="text-base opacity-80 font-sans tracking-wide">TECHNICAL & THOUGHTS</div>
+                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">03 / LOGS</div>
+                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Articles.</div>
+                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">TECHNICAL & THOUGHTS</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
 
               <div 
-                class="cyber-glass p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)]" 
+                class="cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 @click="$router.push('/games')"
               >
                 <div>
-                  <div class="text-sm opacity-60 mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">04 / EXE</div>
-                  <div class="font-art text-3xl mb-3">> Games.</div>
-                  <div class="text-base opacity-80 font-sans tracking-wide">SIMULATIONS</div>
+                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors">04 / EXE</div>
+                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Games.</div>
+                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">SIMULATIONS</div>
                 </div>
-                <div class="absolute bottom-6 right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
+                <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[4px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
                 </div>
               </div>
@@ -220,8 +220,8 @@ onMounted(async () => {
           </div>
 
           <!-- Pinned Nodes -->
-          <div class="reveal flex flex-col gap-6 w-full lg:w-5/6">
-            <div class="border-b border-[var(--color-border)] pb-4 text-base font-bold font-mono tracking-[0.3em]">
+          <div class="reveal flex flex-col gap-4 md:gap-6 w-full lg:w-5/6">
+            <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 text-sm md:text-base font-bold font-mono tracking-[0.2em] md:tracking-[0.3em]">
               <span class="text-[var(--color-text)]">> RECOMMENDED_NODES</span>
             </div>
             
@@ -229,14 +229,14 @@ onMounted(async () => {
               <div 
                 v-for="(item, index) in items" 
                 :key="index" 
-                class="p-6 sm:p-8 cursor-pointer relative group border-b border-[var(--color-border)] last:border-b-0 transition-all duration-500 hover:pl-10 sm:hover:pl-12 hover:bg-[rgba(107,143,114,0.05)]" 
+                class="p-4 sm:p-6 md:p-8 cursor-pointer relative group border-b border-[var(--color-border)] last:border-b-0 transition-all duration-500 hover:pl-8 sm:hover:pl-10 md:hover:pl-12 hover:bg-[rgba(107,143,114,0.05)] active:bg-[rgba(107,143,114,0.05)]" 
                 @click="openLink(item.link)"
               >
                 <!-- Hover Side Indicator -->
                 <div class="absolute left-0 top-0 w-1 h-full bg-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 relative z-10">
-                  <span class="font-art font-bold text-2xl group-hover:text-[var(--color-brand)] transition-colors duration-300 flex items-center relative">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 md:gap-3 relative z-10">
+                  <span class="font-art font-bold text-xl md:text-2xl group-hover:text-[var(--color-brand)] transition-colors duration-300 flex items-center relative">
                     <i class="fa-solid fa-link text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 absolute -left-6"></i>
                     <span class="transition-all duration-300 group-hover:translate-x-1">{{ item.title }}</span>
                   </span>
@@ -244,30 +244,30 @@ onMounted(async () => {
                     [CONNECT] <i class="fa-solid fa-arrow-right"></i>
                   </span>
                 </div>
-                <div class="text-base opacity-70 group-hover:opacity-100 mt-3 font-sans tracking-wide relative z-10 transition-opacity duration-300">{{ item.description }}</div>
+                <div class="text-sm md:text-base opacity-70 group-hover:opacity-100 mt-2 md:mt-3 font-sans tracking-wide relative z-10 transition-opacity duration-300">{{ item.description }}</div>
               </div>
             </div>
           </div>
           
           <!-- Recent Log Highlight -->
-          <div class="reveal flex flex-col gap-6 w-full lg:w-3/4 ml-auto text-right">
-            <div class="border-b border-[var(--color-border)] pb-4 text-base font-bold justify-end flex font-mono tracking-[0.3em]">
+          <div class="reveal flex flex-col gap-4 md:gap-6 w-full lg:w-3/4 ml-auto text-right">
+            <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 text-sm md:text-base font-bold justify-end flex font-mono tracking-[0.2em] md:tracking-[0.3em]">
               <span class="text-[var(--color-text)]">> RECENT_LOG</span>
             </div>
             
             <div 
-              class="cyber-glass p-8 sm:p-10 cursor-pointer hover:border-[var(--color-brand)] group text-left transition-colors" 
+              class="cyber-glass p-5 sm:p-8 md:p-10 cursor-pointer hover:border-[var(--color-brand)] active:border-[var(--color-brand)] group text-left transition-colors" 
               @click="$router.push(latestArticle ? '/article/' + latestArticle.slug : '/articles')"
             >
               <div v-if="latestArticle">
-                <div class="text-sm opacity-60 mb-4 font-mono tracking-widest">> TIMESTAMP: {{ latestArticle.date }}</div>
-                <div class="font-art text-4xl mb-6 leading-snug group-hover:text-[var(--color-brand)] transition-colors">{{ latestArticle.title }}</div>
-                <div class="text-lg opacity-80 line-clamp-3 font-sans tracking-wide leading-relaxed">{{ latestArticle.summary }}</div>
-                <div class="mt-8 flex flex-wrap gap-3">
-                  <span v-for="tag in latestArticle.tags" :key="tag" class="text-xs border border-[var(--color-border)] px-3 py-1 uppercase font-mono tracking-widest group-hover:border-[var(--color-brand)] transition-colors">{{ tag }}</span>
+                <div class="text-xs md:text-sm opacity-60 mb-3 md:mb-4 font-mono tracking-widest">> TIMESTAMP: {{ latestArticle.date }}</div>
+                <div class="font-art text-2xl md:text-4xl mb-4 md:mb-6 leading-snug group-hover:text-[var(--color-brand)] transition-colors">{{ latestArticle.title }}</div>
+                <div class="text-sm md:text-lg opacity-80 line-clamp-3 font-sans tracking-wide leading-relaxed">{{ latestArticle.summary }}</div>
+                <div class="mt-4 md:mt-8 flex flex-wrap gap-2 md:gap-3">
+                  <span v-for="tag in latestArticle.tags" :key="tag" class="text-[10px] md:text-xs border border-[var(--color-border)] px-2 md:px-3 py-0.5 md:py-1 uppercase font-mono tracking-widest group-hover:border-[var(--color-brand)] transition-colors">{{ tag }}</span>
                 </div>
               </div>
-              <div v-else class="text-base opacity-60 font-mono">NO_LOGS_FOUND_IN_DB</div>
+              <div v-else class="text-sm md:text-base opacity-60 font-mono">NO_LOGS_FOUND_IN_DB</div>
             </div>
           </div>
 

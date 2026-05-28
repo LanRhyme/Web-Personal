@@ -253,10 +253,12 @@ onUnmounted(() => {
 <style scoped>
 .particle-wrapper {
   z-index: 10;
+  overflow: hidden;
 }
 .particle-text {
   display: block;
   margin-left: -2%;
+  max-width: 104%;
 }
 .sr-only {
   position: absolute;
