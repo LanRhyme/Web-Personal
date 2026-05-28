@@ -632,11 +632,11 @@ watch(isAuthenticated, (newVal) => {
     <!-- Auth Screen -->
     <transition name="fade">
       <div v-if="!isAuthenticated" class="fixed inset-0 z-[200] flex items-center justify-center bg-[var(--color-bg)]">
-        <div class="cyber-glass max-w-md w-full mx-4 p-8 md:p-12 text-center">
-          <div class="w-16 h-16 rounded-2xl bg-[var(--color-brand)] text-white flex items-center justify-center text-2xl shadow-lg mx-auto mb-8">
+        <div class="cyber-glass max-w-md w-full mx-4 p-6 md:p-12 text-center">
+          <div class="w-12 h-12 md:w-16 md:h-16 bg-[var(--color-brand)] text-white flex items-center justify-center text-xl md:text-2xl mx-auto mb-6 md:mb-8">
               <i class="fas fa-fingerprint"></i>
           </div>
-          <h2 class="text-3xl font-black text-[var(--color-primary)] mb-8 tracking-tight">管理后台登入</h2>
+          <h2 class="text-2xl md:text-3xl font-black text-[var(--color-primary)] mb-6 md:mb-8 tracking-tight">管理后台登入</h2>
           <input 
             type="password" 
             v-model="password" 
@@ -653,24 +653,24 @@ watch(isAuthenticated, (newVal) => {
     <div v-if="isAuthenticated" class="flex flex-col lg:flex-row min-h-screen relative">
       
       <!-- Mobile Navbar Toggle -->
-      <div class="lg:hidden fixed top-6 right-6 z-[60]">
-        <button @click="toggleSidebar" class="w-12 h-12 rounded-full bg-[var(--color-brand)] text-white shadow-xl flex items-center justify-center text-xl transition-transform active:scale-95">
+      <div class="lg:hidden fixed top-4 right-4 z-[60]">
+        <button @click="toggleSidebar" class="btn-terminal !p-0 w-10 h-10 flex items-center justify-center">
           <i class="fas" :class="isSidebarOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>
       </div>
 
       <!-- Sidebar -->
       <aside 
-        class="fixed lg:sticky top-0 left-0 w-80 lg:w-85 h-screen admin-sidebar p-6 z-50 flex flex-col transition-all duration-500"
+        class="fixed lg:sticky top-0 left-0 w-72 lg:w-80 h-screen admin-sidebar p-4 lg:p-6 z-50 flex flex-col transition-all duration-300"
         :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
       >
-        <div class="flex items-center gap-4 mb-10 px-2 mt-4 lg:mt-0">
-            <div class="w-10 h-10 rounded-xl bg-[var(--color-brand)] text-white flex items-center justify-center shadow-lg"><i class="fas fa-terminal"></i></div>
-            <h1 class="text-xl font-black text-[var(--color-primary)] tracking-tight">Console<span class="font-light opacity-50">.hub</span></h1>
+        <div class="flex items-center gap-3 mb-6 lg:mb-10 px-2 mt-2 lg:mt-0">
+            <div class="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center"><i class="fas fa-terminal text-[var(--color-brand)]"></i></div>
+            <h1 class="text-lg lg:text-xl font-black text-[var(--color-primary)] tracking-tight">Console<span class="font-light opacity-50">.hub</span></h1>
         </div>
 
-        <div class="mb-8 space-y-3 px-2">
-            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="btn-terminal w-full flex items-center justify-center gap-3 py-4 font-black text-xs uppercase tracking-widest disabled:opacity-50">
+        <div class="mb-4 lg:mb-8 space-y-2 lg:space-y-3 px-2">
+            <button @click="() => { publishAllChanges(); isSidebarOpen = false; }" :disabled="isPublishing" class="btn-terminal w-full flex items-center justify-center gap-2 lg:gap-3 py-3 lg:py-4 font-black text-[10px] lg:text-xs uppercase tracking-widest disabled:opacity-50">
                 <i v-if="isPublishing" class="fas fa-sync fa-spin"></i>
                 <i v-else class="fas fa-cloud-upload-alt"></i>
                 {{ isPublishing ? '同步中...' : '发布到生产环境' }}
@@ -678,36 +678,36 @@ watch(isAuthenticated, (newVal) => {
             <button @click="() => {
                     activeTab === 'pinned' ? addPinnedItem() : activeTab === 'projects' ? addProject() : activeTab === 'commissions' ? addCommission() : activeTab === 'works' ? addWork() : addWorksSection();
                     isSidebarOpen = false;
-                }" class="btn-terminal w-full flex items-center justify-center gap-3 py-4 font-black text-xs uppercase tracking-widest">
+                }" class="btn-terminal w-full flex items-center justify-center gap-2 lg:gap-3 py-3 lg:py-4 font-black text-[10px] lg:text-xs uppercase tracking-widest">
                 <i class="fas fa-plus-circle"></i> 新增记录
             </button>
         </div>
 
-        <div class="text-[10px] font-black text-[var(--color-secondary)] opacity-40 uppercase tracking-[0.2em] mb-4 px-4">Workspace</div>
+        <div class="text-[10px] font-black text-[var(--color-secondary)] opacity-40 uppercase tracking-[0.2em] mb-2 lg:mb-4 px-4">Workspace</div>
         
-        <nav class="space-y-2 mb-10 overflow-y-auto admin-scrollbar pr-2">
+        <nav class="space-y-1 lg:space-y-2 mb-6 lg:mb-10 overflow-y-auto admin-scrollbar pr-2 flex-1">
             <button 
                 v-for="tab in tabs" 
                 :key="tab.id"
                 @click="() => { activeTab = tab.id; isSidebarOpen = false; }"
-                class="w-full admin-nav-item"
+                class="w-full admin-nav-item !p-2 lg:!p-3"
                 :class="activeTab === tab.id ? 'active' : ''"
             >
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--color-card-solid)] shadow-sm group-hover:scale-110">
-                    <i class="fas" :class="tab.icon"></i>
+                <div class="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center transition-all">
+                    <i class="fas text-sm lg:text-base" :class="tab.icon"></i>
                 </div>
                 <div class="text-left">
-                    <p class="font-bold text-sm">{{ tab.name }}</p>
-                    <p class="text-[10px] opacity-60 uppercase font-bold tracking-widest">{{ tab.file.split('.')[0] }}</p>
+                    <p class="font-bold text-xs lg:text-sm">{{ tab.name }}</p>
+                    <p class="text-[9px] lg:text-[10px] opacity-60 uppercase font-bold tracking-widest">{{ tab.file.split('.')[0] }}</p>
                 </div>
             </button>
         </nav>
 
-        <div class="mt-auto space-y-3 px-2 border-t border-[var(--color-border)] pt-8">
-            <button @click="showSettings = true" class="btn-terminal w-full flex items-center gap-3 text-xs font-bold !border-0 !p-0 text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors">
+        <div class="space-y-2 lg:space-y-3 px-2 border-t border-[var(--color-border)] pt-4 lg:pt-8">
+            <button @click="showSettings = true" class="btn-terminal w-full flex items-center gap-2 lg:gap-3 text-[10px] lg:text-xs font-bold !border-0 !p-0 text-[var(--color-secondary)] hover:text-[var(--color-brand)] transition-colors">
                 <i class="fas fa-sliders-h"></i> 存储配置
             </button>
-            <button @click="logout" class="btn-terminal w-full flex items-center gap-3 text-xs font-bold !border-0 !p-0 text-red-400 hover:text-red-500 transition-colors">
+            <button @click="logout" class="btn-terminal w-full flex items-center gap-2 lg:gap-3 text-[10px] lg:text-xs font-bold !border-0 !p-0 text-red-400 hover:text-red-500 transition-colors">
                 <i class="fas fa-sign-out-alt"></i> 退出登录
             </button>
         </div>
@@ -718,18 +718,18 @@ watch(isAuthenticated, (newVal) => {
 
       <!-- Main Content Area -->
       <main class="flex-grow flex flex-col relative min-w-0">
-        <div class="flex-grow overflow-y-auto px-6 md:px-12 pt-16 lg:pt-12 pb-32">
-            <div class="mb-12">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fas" :class="currentTabInfo?.icon + ' text-[var(--color-brand)] text-xl'"></i>
-                    <h2 class="text-4xl font-black text-[var(--color-primary)] tracking-tight">{{ currentTabInfo?.name }}</h2>
+        <div class="flex-grow overflow-y-auto px-4 md:px-12 pt-14 lg:pt-12 pb-20 lg:pb-32">
+            <div class="mb-8 lg:mb-12">
+                <div class="flex items-center gap-2 lg:gap-3 mb-2">
+                    <i class="fas" :class="currentTabInfo?.icon + ' text-[var(--color-brand)] text-lg lg:text-xl'"></i>
+                    <h2 class="text-2xl lg:text-4xl font-black text-[var(--color-primary)] tracking-tight">{{ currentTabInfo?.name }}</h2>
                 </div>
-                <p class="text-[var(--color-secondary)] font-medium max-w-2xl text-sm md:text-base">{{ currentTabInfo?.desc }} — 管理并排序您的资产。</p>
+                <p class="text-[var(--color-secondary)] font-medium max-w-2xl text-xs lg:text-base">{{ currentTabInfo?.desc }} — 管理并排序您的资产。</p>
             </div>
 
-            <div v-if="isUploading" class="fixed bottom-12 right-12 z-50 bg-[var(--color-brand)] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 animate-bounce">
+            <div v-if="isUploading" class="fixed bottom-4 right-4 lg:bottom-12 lg:right-12 z-50 bg-[var(--color-brand)] text-white px-4 py-2 lg:px-6 lg:py-3 rounded-full shadow-2xl flex items-center gap-3 lg:gap-4 animate-bounce">
                 <i class="fas fa-shield-virus fa-spin"></i>
-                <span class="text-xs font-bold uppercase tracking-widest">正在上传资产...</span>
+                <span class="text-[10px] lg:text-xs font-bold uppercase tracking-widest">正在上传资产...</span>
             </div>
 
             <div class="grid grid-cols-1 gap-6 max-w-6xl">
@@ -737,12 +737,12 @@ watch(isAuthenticated, (newVal) => {
                 <!-- Pinned Items -->
                 <template v-if="activeTab === 'pinned'">
                     <div v-for="(item, index) in pinnedItems" :key="index" class="admin-card group relative animate-fade-in-up">
-                        <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(pinnedItems, index)" class="w-8 h-8 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand-secondary)] hover:text-white text-xs shadow-sm"><i class="fas fa-arrow-down"></i></button>
-                            <button @click="removePinnedItem(index)" class="w-8 h-8 rounded-full bg-red-400/10 text-red-500 transition-all hover:bg-red-400 hover:text-white text-xs shadow-sm"><i class="fas fa-trash"></i></button>
+                        <div class="absolute top-3 right-3 md:top-4 md:right-4 flex gap-1 md:gap-2 transition-opacity z-20">
+                            <button @click="moveUp(pinnedItems, index)" class="w-7 h-7 md:w-8 md:h-8 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white text-xs"><i class="fas fa-arrow-up"></i></button>
+                            <button @click="moveDown(pinnedItems, index)" class="w-7 h-7 md:w-8 md:h-8 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand-secondary)] hover:text-white text-xs"><i class="fas fa-arrow-down"></i></button>
+                            <button @click="removePinnedItem(index)" class="w-7 h-7 md:w-8 md:h-8 bg-red-400/10 text-red-500 transition-all hover:bg-red-400 hover:text-white text-xs"><i class="fas fa-trash"></i></button>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 md:pt-0">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pt-8 md:pt-0">
                             <div class="input-terminal-group"><label>标题</label><input v-model="item.title" class="input-terminal" /></div>
                             <div class="input-terminal-group"><label>描述</label><input v-model="item.description" class="input-terminal" /></div>
                             <div class="input-terminal-group"><label>跳转链接</label><input v-model="item.link" class="input-terminal font-mono text-[10px]" /></div>
@@ -752,16 +752,16 @@ watch(isAuthenticated, (newVal) => {
 
                 <!-- Projects -->
                 <template v-if="activeTab === 'projects'">
-                    <div v-for="(project, index) in projects" :key="index" class="admin-card group animate-fade-in-up relative flex flex-col md:flex-row gap-8">
-                        <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(projects, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
-                            <button @click="removeProject(index)" class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white shadow-lg"><i class="fas fa-trash"></i></button>
+                    <div v-for="(project, index) in projects" :key="index" class="admin-card group animate-fade-in-up relative flex flex-col md:flex-row gap-4 md:gap-8">
+                        <div class="absolute top-3 right-3 md:top-4 md:right-4 flex gap-1 md:gap-2 transition-opacity z-20">
+                            <button @click="moveUp(projects, index)" class="w-8 h-8 md:w-10 md:h-10 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white"><i class="fas fa-arrow-up text-xs md:text-sm"></i></button>
+                            <button @click="moveDown(projects, index)" class="w-8 h-8 md:w-10 md:h-10 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white"><i class="fas fa-arrow-down text-xs md:text-sm"></i></button>
+                            <button @click="removeProject(index)" class="w-8 h-8 md:w-10 md:h-10 bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white"><i class="fas fa-trash text-xs md:text-sm"></i></button>
                         </div>
-                        <div class="w-full md:w-64 flex-shrink-0 pt-10 md:pt-0">
-                            <div class="aspect-video rounded-3xl overflow-hidden bg-[var(--color-bg)] border-2 border-dashed border-[var(--color-border)] relative group/img">
+                        <div class="w-full md:w-64 flex-shrink-0 pt-8 md:pt-0">
+                            <div class="aspect-video bg-[var(--color-bg)] border border-dashed border-[var(--color-border)] relative group/img">
                                 <img v-if="project.image" :src="resolveImg(project.image)" class="w-full h-full object-cover" />
-                                <div v-else class="w-full h-full flex flex-col items-center justify-center text-[var(--color-secondary)] opacity-30"><i class="fas fa-image text-3xl mb-2"></i><span class="text-[10px] font-bold">PREVIEW</span></div>
+                                <div v-else class="w-full h-full flex flex-col items-center justify-center text-[var(--color-secondary)] opacity-30"><i class="fas fa-image text-2xl md:text-3xl mb-2"></i><span class="text-[10px] font-bold">PREVIEW</span></div>
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
                                     <label class="btn-terminal !py-2 !px-4 text-[10px] cursor-pointer">
                                         更新图片
@@ -770,7 +770,7 @@ watch(isAuthenticated, (newVal) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-grow space-y-6">
+                        <div class="flex-grow space-y-4 md:space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="input-terminal-group"><label>项目标题</label><input v-model="project.title" class="input-terminal text-lg font-bold" /></div>
                                 <div class="input-terminal-group"><label>技术栈 (逗号分隔)</label><input :value="project.tags.join(', ')" @input="(e) => project.tags = (e.target as HTMLInputElement).value.split(',').map(t => t.trim())" class="input-terminal" /></div>
@@ -805,13 +805,13 @@ watch(isAuthenticated, (newVal) => {
                             </button>
                         </div>
                     </div>
-                    <div v-for="(comm, index) in commissions" :key="index" class="admin-card group animate-fade-in-up p-8 relative">
-                        <div class="absolute top-4 right-4 flex gap-2 transition-opacity z-20">
-                            <button @click="moveUp(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-up"></i></button>
-                            <button @click="moveDown(commissions, index)" class="w-10 h-10 rounded-full bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white shadow-lg"><i class="fas fa-arrow-down"></i></button>
-                            <button @click="removeCommission(index)" class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white shadow-lg"><i class="fas fa-trash"></i></button>
+                    <div v-for="(comm, index) in commissions" :key="index" class="admin-card group animate-fade-in-up p-4 md:p-8 relative">
+                        <div class="absolute top-3 right-3 md:top-4 md:right-4 flex gap-1 md:gap-2 transition-opacity z-20">
+                            <button @click="moveUp(commissions, index)" class="w-8 h-8 md:w-10 md:h-10 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white"><i class="fas fa-arrow-up text-xs md:text-sm"></i></button>
+                            <button @click="moveDown(commissions, index)" class="w-8 h-8 md:w-10 md:h-10 bg-white/10 text-[var(--color-primary)] transition-all hover:bg-[var(--color-brand)] hover:text-white"><i class="fas fa-arrow-down text-xs md:text-sm"></i></button>
+                            <button @click="removeCommission(index)" class="w-8 h-8 md:w-10 md:h-10 bg-red-500/10 text-red-500 transition-all hover:bg-red-500 hover:text-white"><i class="fas fa-trash text-xs md:text-sm"></i></button>
                         </div>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 md:pt-0">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 pt-8 md:pt-0">
                             <div class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="input-terminal-group"><label>服务名称</label><input v-model="comm.title" class="input-terminal" /></div>
@@ -842,14 +842,14 @@ watch(isAuthenticated, (newVal) => {
 
                 <!-- Gallery -->
                 <template v-if="activeTab === 'works'">
-                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                        <div v-for="(work, index) in works" :key="work.id" class="admin-card group relative animate-fade-in-up !p-4">
-                            <div class="absolute top-3 right-3 flex flex-col gap-1 z-20">
-                                <button @click="moveUp(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[var(--color-brand)] shadow-md"><i class="fas fa-chevron-up"></i></button>
-                                <button @click="moveDown(works, index)" class="w-7 h-7 rounded-sm bg-white/20 text-white hover:bg-[var(--color-brand)] shadow-md"><i class="fas fa-chevron-down"></i></button>
-                                <button @click="removeWork(index)" class="w-7 h-7 rounded-sm bg-red-500 text-white shadow-md"><i class="fas fa-times"></i></button>
+                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+                        <div v-for="(work, index) in works" :key="work.id" class="admin-card group relative animate-fade-in-up !p-3 md:!p-4">
+                            <div class="absolute top-2 right-2 md:top-3 md:right-3 flex flex-col gap-1 z-20">
+                                <button @click="moveUp(works, index)" class="w-6 h-6 md:w-7 md:h-7 bg-white/20 text-white hover:bg-[var(--color-brand)]"><i class="fas fa-chevron-up text-[10px] md:text-xs"></i></button>
+                                <button @click="moveDown(works, index)" class="w-6 h-6 md:w-7 md:h-7 bg-white/20 text-white hover:bg-[var(--color-brand)]"><i class="fas fa-chevron-down text-[10px] md:text-xs"></i></button>
+                                <button @click="removeWork(index)" class="w-6 h-6 md:w-7 md:h-7 bg-red-500 text-white"><i class="fas fa-times text-[10px] md:text-xs"></i></button>
                             </div>
-                            <div class="aspect-square rounded-2xl overflow-hidden bg-[var(--color-bg)] relative mb-4">
+                            <div class="aspect-square bg-[var(--color-bg)] relative mb-3 md:mb-4">
                                 <img v-if="work.image" :src="resolveImg(work.image)" class="w-full h-full object-cover" />
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <label class="cursor-pointer text-white p-4">
@@ -869,9 +869,9 @@ watch(isAuthenticated, (newVal) => {
                 <!-- Collections -->
                 <template v-if="activeTab === 'works_section'">
                      <div v-for="(section, index) in worksSections" :key="section.id" class="admin-card group animate-fade-in-up">
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="w-32 flex-shrink-0">
-                                <div class="aspect-square rounded-3xl overflow-hidden bg-[var(--color-bg)] relative shadow-inner border border-[var(--color-border)]">
+                        <div class="flex flex-col md:flex-row gap-4 md:gap-8">
+                            <div class="w-24 md:w-32 flex-shrink-0 mx-auto md:mx-0">
+                                <div class="aspect-square bg-[var(--color-bg)] relative border border-[var(--color-border)]">
                                     <img v-if="section.thumbnail" :src="resolveImg(section.thumbnail)" class="w-full h-full object-cover" />
                                     <label class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                                         <i class="fas fa-camera text-white"></i>
@@ -880,13 +880,13 @@ watch(isAuthenticated, (newVal) => {
                                 </div>
                             </div>
                             <div class="flex-grow">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div class="input-terminal-group"><label>合集名称</label><input v-model="section.title" class="input-terminal font-black text-xl" /></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
+                                    <div class="input-terminal-group"><label>合集名称</label><input v-model="section.title" class="input-terminal font-black text-lg md:text-xl" /></div>
                                     <div class="input-terminal-group"><label>引用键名</label><input v-model="section.id" class="input-terminal font-mono text-xs opacity-60" /></div>
                                 </div>
-                                <div class="input-terminal-group"><label>简介说明</label><textarea v-model="section.description" class="input-terminal h-20 pt-4"></textarea></div>
+                                <div class="input-terminal-group"><label>简介说明</label><textarea v-model="section.description" class="input-terminal h-16 md:h-20 pt-3 md:pt-4"></textarea></div>
                             </div>
-                            <div class="flex flex-row md:flex-col gap-2">
+                            <div class="flex flex-row md:flex-col gap-2 justify-end md:justify-start">
                                  <button @click="removeWorksSection(index)" class="btn-terminal !text-red-400 !border-red-400/20 hover:!bg-red-400 hover:!text-white py-2 shadow-sm"><i class="fas fa-trash"></i></button>
                                  <button @click="editingSectionId = editingSectionId === section.id ? null : section.id" 
                                          class="btn-terminal py-2" :class="editingSectionId === section.id ? 'btn-terminal text-white' : ''">
@@ -1014,19 +1014,19 @@ watch(isAuthenticated, (newVal) => {
        <!-- Settings Modal -->
     <transition name="fade">
         <div v-if="showSettings" class="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 backdrop-blur-xl px-4">
-            <div class="cyber-glass max-w-lg w-full p-10 relative">
-                <button @click="showSettings = false" class="absolute top-6 right-6 text-[var(--color-secondary)] hover:text-red-500"><i class="fas fa-times"></i></button>
-                <h3 class="text-2xl font-black mb-8 text-[var(--color-primary)]">GitHub 存储配置</h3>
-                <div class="space-y-6">
+            <div class="cyber-glass max-w-lg w-full p-6 md:p-10 relative">
+                <button @click="showSettings = false" class="absolute top-4 right-4 md:top-6 md:right-6 text-[var(--color-secondary)] hover:text-red-500"><i class="fas fa-times"></i></button>
+                <h3 class="text-xl md:text-2xl font-black mb-6 md:mb-8 text-[var(--color-primary)]">GitHub 存储配置</h3>
+                <div class="space-y-4 md:space-y-6">
                     <div class="input-terminal-group">
                         <label>Token</label>
                         <input v-model="githubConfig.token" type="password" class="input-terminal" placeholder="ghp_xxxx" />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div class="input-terminal-group"><label>Owner</label><input v-model="githubConfig.owner" class="input-terminal" /></div>
                         <div class="input-terminal-group"><label>Repo</label><input v-model="githubConfig.repo" class="input-terminal" /></div>
                     </div>
-                    <button @click="saveSettings" class="btn-terminal w-full py-4 mt-4">确认保存</button>
+                    <button @click="saveSettings" class="btn-terminal w-full py-3 md:py-4 mt-3 md:mt-4">确认保存</button>
                 </div>
             </div>
         </div>

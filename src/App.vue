@@ -416,7 +416,7 @@ onUnmounted(() => {
       <NavBar v-if="!isAdmin" />
 
       <!-- Main Router View -->
-      <div class="flex-grow w-full mx-auto pt-16 md:pt-28 pb-12">
+      <div class="flex-grow w-full mx-auto pt-20 md:pt-28 pb-12">
         <router-view v-slot="{ Component, route }">
           <transition name="page" mode="out-in">
             <keep-alive :max="5">

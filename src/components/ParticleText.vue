@@ -15,6 +15,8 @@ let particles: Particle[] = [];
 // Mouse physics state
 let mouse = { x: -9999, y: -9999, radius: 100 };
 let mouseVelocity = { x: 0, y: 0 };
+let mouseSpeed = 0;
+let targetMouseSpeed = 0;
 let isHovering = false;
 
 const INTERNAL_FONT_SIZE = 180; 
@@ -67,10 +69,17 @@ class Particle {
     let dy = mouse.y - this.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
     
+    // Calculate speed-based intensity (0 when still, up to 1 when fast)
+    let speedIntensity = Math.min(mouseSpeed / 15, 1);
+    // Apply easing for smoother transition
+    speedIntensity = speedIntensity * speedIntensity;
+    // Minimum intensity when hovering (so there's still a small effect when still)
+    let hoverIntensity = isHovering ? (0.1 + speedIntensity * 0.9) : 0;
+    
     if (isHovering && distance < mouse.radius) {
       // Quadratic falloff for smooth blending at the edges of the radius
       let force = (mouse.radius - distance) / mouse.radius;
-      force = force * force; 
+      force = force * force * hoverIntensity;
       
       let angle = Math.atan2(dy, dx);
       
@@ -160,6 +169,10 @@ const animate = () => {
   // Decay the mouse velocity so the fluid settles when the mouse stops moving
   mouseVelocity.x *= 0.85;
   mouseVelocity.y *= 0.85;
+  
+  // Smooth mouse speed for gradual intensity changes
+  targetMouseSpeed = Math.sqrt(mouseVelocity.x * mouseVelocity.x + mouseVelocity.y * mouseVelocity.y);
+  mouseSpeed += (targetMouseSpeed - mouseSpeed) * 0.15;
 
   for (let i = 0; i < particles.length; i++) {
     particles[i].update();
@@ -197,6 +210,8 @@ const handleMouseLeave = () => {
   mouse.y = -9999;
   mouseVelocity.x = 0;
   mouseVelocity.y = 0;
+  targetMouseSpeed = 0;
+  mouseSpeed = 0;
 };
 
 let resizeTimeout: number;
