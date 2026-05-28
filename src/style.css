@@ -7,17 +7,21 @@
 
 :root {
   /* Obsidian Core / Dark Mode Default */
-  --color-bg: #050505;
-  --color-text: #e0e0e0;
-  --color-text-dim: #7a7a7a;
+  --color-bg: #020202;
+  --color-text: #ffffff;
+  --color-text-dim: #a0a0a0;
   
   /* Desaturated Green Accent (Matrix/Terminal Feel but high-end) */
-  --color-brand: #5b7a61;
-  --color-brand-rgb: 91, 122, 97;
+  --color-brand: #6b8f72;
+  --color-brand-rgb: 107, 143, 114;
   
-  --color-border: #1a1a1a;
-  --color-card: rgba(10, 10, 10, 0.85);
-  --color-hud: rgba(91, 122, 97, 0.3);
+  --color-border: #222222;
+  --color-card: rgba(8, 8, 8, 0.95);
+  --color-hud: rgba(107, 143, 114, 0.3);
+}
+
+* {
+  cursor: none !important;
 }
 
 html {
@@ -29,7 +33,6 @@ html {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  cursor: none !important; /* Custom Cursor */
   scroll-behavior: smooth;
 }
 
@@ -126,8 +129,8 @@ a {
 .cyber-glass {
   background: var(--color-card);
   border: 1px solid var(--color-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   position: relative;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -176,8 +179,8 @@ a {
 
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(50px);
+  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal.is-visible {
   opacity: 1;
@@ -186,12 +189,32 @@ a {
 
 .reveal-left {
   opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-50px);
+  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal-left.is-visible {
   opacity: 1;
   transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* === HUD ELEMENTS === */
@@ -264,4 +287,63 @@ a {
 .page-enter-from, .page-leave-to {
   opacity: 0;
   transform: translateY(15px);
+}
+
+/* Animations */
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
+
+/* Custom Fluid Cursor (Square Framing style) */
+.custom-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  background-color: #ffffff;
+  border-radius: 0; /* Square dot */
+  transition: opacity 0.2s;
+}
+
+.cursor-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 0; /* Pure square */
+  transition: background-color 0.2s, border-color 0.2s;
+  will-change: transform, width, height;
+}
+
+.cursor-dot.hovering {
+  opacity: 0;
+}
+
+.cursor-frame.hovering {
+  border-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.05); /* Slight fill when boxing */
+}
+
+/* Add a global scale trick so clicking works with the box */
+.cursor-frame.clicking {
+  border-width: 2px;
 }
