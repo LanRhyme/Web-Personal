@@ -357,6 +357,27 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes ripple {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; letter-spacing: 0; }
+  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; letter-spacing: 1em; }
+}
+.animate-ripple {
+  animation: ripple 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.red-alert {
+  --color-brand: #ff3333;
+  --color-brand-rgb: 255, 51, 51;
+  --color-brand-secondary: #cc0000;
+  animation: red-alert-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes red-alert-shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
 /* Custom Fluid Cursor (Square Framing style) */
 .custom-cursor-wrapper {
   position: fixed;

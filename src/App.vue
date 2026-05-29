@@ -5,10 +5,14 @@ import Preloader from './components/Preloader.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Lenis from 'lenis';
+import asciiAvatarData from './data/avatar-ascii.json';
 
 const isLoaded = ref(false);
 const router = useRouter();
 const route = useRoute();
+
+const asciiAvatar = ref(asciiAvatarData?.ascii || '');
+const showAsciiOverlay = ref(false);
 
 const handlePreloaderComplete = () => {
   isLoaded.value = true;
@@ -35,6 +39,47 @@ const scrollProgress = ref(0);
 const isHovering = ref(false);
 const isClicking = ref(false);
 let hoveredElement: HTMLElement | null = null;
+
+// --- Click Ripples ---
+const clickRipples = ref<{id: number, x: number, y: number}[]>([]);
+let rippleIdCounter = 0;
+
+const addClickRipple = (x: number, y: number) => {
+  const id = rippleIdCounter++;
+  clickRipples.value.push({ id, x, y });
+  setTimeout(() => {
+    clickRipples.value = clickRipples.value.filter(r => r.id !== id);
+  }, 800);
+};
+
+// --- Konami Code Easter Egg ---
+const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiIndex = 0;
+const isRedAlert = ref(false);
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === konamiCode[konamiIndex]) {
+    konamiIndex++;
+    if (konamiIndex === konamiCode.length) {
+      triggerRedAlert();
+      konamiIndex = 0;
+    }
+  } else {
+    konamiIndex = 0;
+  }
+};
+
+const triggerRedAlert = () => {
+  if (isRedAlert.value) return;
+  isRedAlert.value = true;
+  document.documentElement.classList.add('red-alert');
+  petTalking('WARNING! UNAUTHORIZED ACCESS DETECTED!');
+  setTimeout(() => {
+    isRedAlert.value = false;
+    document.documentElement.classList.remove('red-alert');
+    petTalking('System Restored. (Phew!)');
+  }, 5000);
+};
 
 const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor;
@@ -206,7 +251,11 @@ const idleDialogues = [
   '要不要点点我？(✧ω✧)',
   '随时待命！(๑>ᴗ<๑)',
   '发现了一名可爱的访客！(≧◡≦)',
-  '发呆中... (￣▽￣*)'
+  '发呆中... (￣▽￣*)',
+  '听说按下F12会有惊喜哦...(¬‿¬)',
+  '试试键盘输入：上上下下左右左右BA？(✧ω✧)',
+  '嘘...长按我可以查看核心数据！(｀・ω・´)',
+  '在屏幕上随便点点看？有波纹哦~(￣▽￣)'
 ];
 
 const hoverDialogues = [
@@ -243,6 +292,7 @@ const petTalking = (text: string) => {
 };
 
 const triggerHappyPet = () => {
+  if (showAsciiOverlay.value) return; // Ignore click if overlay is showing
   petState.value = 'happy';
   petHappiness.value = Math.min(100, petHappiness.value + 12);
   petTalking(getRandomText(happyDialogues));
@@ -254,6 +304,23 @@ const triggerHappyPet = () => {
       petState.value = 'idle';
     }
   }, 2200);
+};
+
+let longPressTimer: number | null = null;
+const startLongPress = () => {
+  if (longPressTimer) clearTimeout(longPressTimer);
+  petTalking('正在注入核心数据...[HOLD]');
+  longPressTimer = window.setTimeout(() => {
+    showAsciiOverlay.value = true;
+    petTalking('SYSTEM_OVERRIDE_INIT!');
+  }, 1500);
+};
+
+const endLongPress = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
 };
 
 watch(() => route.path, (newPath) => {
@@ -279,9 +346,13 @@ onMounted(() => {
   });
 
   document.addEventListener('mousemove', updateMouse);
-  document.addEventListener('mousedown', () => isClicking.value = true);
+  document.addEventListener('mousedown', (e: MouseEvent) => {
+    isClicking.value = true;
+    addClickRipple(e.clientX, e.clientY);
+  });
   document.addEventListener('mouseup', () => isClicking.value = false);
   document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('keydown', handleKeyDown);
 
   // --- Lenis Smooth Scrolling ---
   const lenis = new Lenis({
@@ -318,6 +389,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', updateMouse);
+  document.removeEventListener('keydown', handleKeyDown);
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   if (idleTimer) clearInterval(idleTimer);
   if (petTalkTimer) clearTimeout(petTalkTimer);
@@ -352,6 +424,11 @@ onUnmounted(() => {
         class="cyber-glass p-2 flex flex-col items-center justify-center bg-black/60 border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-16 h-16 rounded-full animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)]"
         :class="{ 'scale-90': petState === 'happy' }"
         @click="triggerHappyPet"
+        @mousedown="startLongPress"
+        @touchstart="startLongPress"
+        @mouseup="endLongPress"
+        @mouseleave="endLongPress"
+        @touchend="endLongPress"
         @mouseenter="petTalking(getRandomText(hoverDialogues))"
       >
         <!-- Rotating Outer Ring -->
@@ -371,9 +448,41 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <!-- ASCII Avatar Easter Egg Overlay -->
+    <transition name="page">
+      <div 
+        v-if="showAsciiOverlay" 
+        class="fixed inset-0 z-[9999] bg-[var(--color-bg)] bg-opacity-95 backdrop-blur-md flex flex-col items-center justify-center text-[var(--color-brand)] overflow-hidden"
+        @click="showAsciiOverlay = false"
+      >
+        <!-- Background noise/scanlines just for overlay -->
+        <div class="absolute inset-0 scanlines opacity-50 pointer-events-none"></div>
+        <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+          <span class="font-art text-[40vw] tracking-tighter leading-none animate-pulse">OVERRIDE</span>
+        </div>
+        
+        <pre class="relative z-10 m-0 text-[8px] sm:text-[10px] md:text-xs font-mono leading-[1.1] animate-fade-in-up glitch-hover shadow-[0_0_30px_rgba(107,143,114,0.2)]">
+{{ asciiAvatar }}
+        </pre>
+        <div class="absolute bottom-10 font-mono text-xs opacity-50 tracking-[0.3em] animate-pulse">
+          > SYSTEM_OVERRIDE_ACTIVE [CLICK TO RESTORE] <
+        </div>
+      </div>
+    </transition>
+
     <!-- Scanlines Background Overlay -->
     <div class="scanlines"></div>
     
+    <!-- Click Ripples -->
+    <div 
+      v-for="ripple in clickRipples" 
+      :key="ripple.id" 
+      class="fixed pointer-events-none z-[99999] text-[var(--color-brand)] font-mono text-[10px] flex items-center justify-center -translate-x-1/2 -translate-y-1/2 animate-ripple"
+      :style="{ left: ripple.x + 'px', top: ripple.y + 'px' }"
+    >
+      [+]
+    </div>
+
     <!-- Matrix ASCII Canvas -->
     <canvas ref="canvasRef" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50"></canvas>
 

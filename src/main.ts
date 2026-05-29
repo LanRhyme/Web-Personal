@@ -3,6 +3,15 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 
+console.log(`%c
+    ██╗      █████╗ ███╗   ██╗██████╗ ██╗  ██╗██╗   ██╗███╗   ███╗███████╗
+    ██║     ██╔══██╗████╗  ██║██╔══██╗██║  ██║╚██╗ ██╔╝████╗ ████║██╔════╝
+    ██║     ███████║██╔██╗ ██║██████╔╝███████║ ╚████╔╝ ██╔████╔██║█████╗  
+    ██║     ██╔══██║██║╚██╗██║██╔══██╗██╔══██║  ╚██╔╝  ██║╚██╔╝██║██╔══╝  
+    ███████╗██║  ██║██║ ╚████║██║  ██║██║  ██║   ██║   ██║ ╚═╝ ██║███████╗
+    ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝╚══════╝
+%c SYSTEM.OS // ONLINE. AWAITING COMMAND... `, 'color: #6b8f72; font-weight: bold; font-family: monospace;', 'color: #ffffff; background: #0a0a0a; padding: 4px 8px; font-family: monospace; letter-spacing: 2px;');
+
 createApp(App)
     .use(router)
     .mount('#app')
