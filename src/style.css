@@ -419,7 +419,7 @@ a {
   height: 6px;
   background-color: #ffffff;
   border-radius: 0; /* Square dot */
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
 }
 
 .cursor-frame {
@@ -433,7 +433,8 @@ a {
 }
 
 .cursor-dot.hovering {
-  opacity: 0;
+  opacity: 1;
+  background-color: var(--color-brand);
 }
 
 .cursor-frame.hovering {
