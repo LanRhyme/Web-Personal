@@ -140,6 +140,7 @@ a {
   position: relative;
   overflow: hidden;
   cursor: none !important;
+  isolation: isolate;
 }
 
 .btn-terminal::before {
