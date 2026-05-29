@@ -586,3 +586,11 @@ a {
     transform: translateY(0); 
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   White Eclipse Theme (E-09 Protocol ARG Reward)
+   Color inversion filter effect
+   ═══════════════════════════════════════════════════ */
+html.theme-eclipse {
+  filter: invert(1);
+}

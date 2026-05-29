@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useARGState } from '../composables/useARGState';
 
 interface ArticleConfig {
   title?: string;
@@ -30,6 +31,18 @@ const date = computed(() => {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
 });
 const tags = computed(() => article.value?.config.tags || []);
+
+const { argStarted, hasKey } = useARGState();
+
+const isArgArticle = computed(() => {
+  if (!argStarted.value) return false;
+  if (hasKey('BREATH_WHITE') && hasKey('CHORD_PATTERN') && hasKey('SOS_ECHO')) {
+    const title = article.value?.config.title?.toLowerCase() || '';
+    const content = article.value?.markdown?.toLowerCase() || '';
+    return title.includes('优化') || title.includes('performance') || content.includes('优化');
+  }
+  return false;
+});
 
 const getImageUrl = (path: string | undefined) => {
   if (!path) return '';
@@ -236,6 +249,15 @@ onMounted(async () => {
       </div>
 
       <div class="blog-content text-[var(--color-text)] text-[18px] md:text-[20px] leading-loose" style="font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;" v-html="marked(article.markdown)"></div>
+
+      <!-- ARG Hidden Text -->
+      <div 
+        v-if="isArgArticle" 
+        class="mt-8 select-all cursor-default"
+        style="color: transparent; user-select: all;"
+      >
+        [回声木数据节点·备份] 此处保存了烬的研究数据碎片。解码路径：L3ZvaWQtZWNoby10ZXJtaW5hbA==
+      </div>
     </article>
   </div>
 </template>

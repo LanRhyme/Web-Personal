@@ -1,5 +1,15 @@
 [
   {
+    "slug": "web-perf-arg",
+    "title": "网页性能优化的几点思考",
+    "date": "2026-05-29",
+    "summary": "关于近期网站页面偶尔白屏加载故障的致歉与技术复盘。",
+    "tags": ["Performance", "Vue"],
+    "category": "Tech",
+    "cover": "",
+    "hidden": false
+  },
+  {
     "slug": "测试",
     "title": "我为什么要做这个功能",
     "date": "2026-03-30",

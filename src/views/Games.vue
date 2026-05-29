@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { useARGState } from '../composables/useARGState';
 
 type Phase = 'start' | 'playing' | 'transition' | 'results';
 type Mode = 'simple' | 'challenge' | 'hell' | 'final';
@@ -801,13 +802,39 @@ function restartGame() {
   showPhase('start');
 }
 
+const { addKey, hasKey, argStarted } = useARGState();
+const sosCode = ['s', 'o', 's'];
+let sosIndex = 0;
+const isHelpActive = ref(false);
+
 function handleKeydown(e: KeyboardEvent) {
   if (phase.value === 'playing' && answerState.value === 'idle' && question.value) {
     const num = parseInt(e.key, 10);
     if (num >= 1 && num <= question.value.choices.length) pickAnswer(num - 1);
   }
   if (phase.value === 'transition' && (e.key === 'Enter' || e.key === ' ')) continueFromTransition();
+
+  // ARG Logic: 输入 SOS
+  if (argStarted.value && !hasKey('SOS_ECHO') && e.key.toLowerCase() === sosCode[sosIndex]) {
+    sosIndex++;
+    if (sosIndex === sosCode.length) {
+      triggerSOSAlert();
+      sosIndex = 0;
+    }
+  } else {
+    sosIndex = e.key.toLowerCase() === 's' ? 1 : 0;
+  }
 }
+
+const triggerSOSAlert = () => {
+  if (isHelpActive.value) return;
+  isHelpActive.value = true;
+  addKey('SOS_ECHO');
+  window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'SOS_ECHO' } }));
+  setTimeout(() => {
+    isHelpActive.value = false;
+  }, 4000);
+};
 
 function handleResize() {
   if (phase.value === 'playing') {
@@ -1093,6 +1120,14 @@ onUnmounted(() => {
 
 
     </div>
+
+    <!-- ARG Toast UI -->
+    <transition name="page">
+      <div v-if="isHelpActive" class="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] cyber-glass !p-6 border-l-4 border-l-red-500 bg-black/90">
+        <div class="text-red-400 font-bold text-xl tracking-[0.3em] font-mono animate-pulse mb-1">SOS_ECHO</div>
+        <div class="text-xs opacity-60 font-mono tracking-widest">「黑铁联合体切断了所有补给线……裂缝在扩张……我们还在……」</div>
+      </div>
+    </transition>
   </div>
 </template>
 

@@ -8,6 +8,7 @@ import HitokotoCard from '../components/HitokotoCard.vue';
 import ParticleText from '../components/ParticleText.vue';
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
+import { useARGState } from '../composables/useARGState';
 
 // Load generated ASCII avatar if available
 import asciiAvatarData from '../data/avatar-ascii.json';
@@ -78,6 +79,38 @@ const handleScroll = () => {
 const footerCanvasRef = ref<HTMLCanvasElement | null>(null);
 let footerAnimId: number;
 let cleanupFooterCanvas: (() => void) | null = null;
+
+const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiIndex = 0;
+const isRedAlert = ref(false);
+
+const { addKey, hasKey, argStarted } = useARGState();
+const mossCode = ['m', 'o', 's', 's'];
+let mossIndex = 0;
+const isFrostActive = ref(false);
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === konamiCode[konamiIndex]) {
+    konamiIndex++;
+    if (konamiIndex === konamiCode.length) {
+      triggerRedAlert();
+      konamiIndex = 0;
+    }
+  } else {
+    konamiIndex = 0;
+  }
+
+  // ARG Logic: 输入 MOSS
+  if (argStarted.value && !hasKey('BREATH_WHITE') && e.key.toLowerCase() === mossCode[mossIndex]) {
+    mossIndex++;
+    if (mossIndex === mossCode.length) {
+      triggerMossAlert();
+      mossIndex = 0;
+    }
+  } else {
+    mossIndex = e.key.toLowerCase() === 'm' ? 1 : 0;
+  }
+};
 
 const initFooterCanvas = () => {
   const canvas = footerCanvasRef.value;
@@ -167,6 +200,30 @@ const initFooterCanvas = () => {
   };
 };
 
+const triggerRedAlert = () => {
+  if (isRedAlert.value) return;
+  isRedAlert.value = true;
+  document.documentElement.classList.add('red-alert');
+  // petTalking('ALERT: CONSOLE COMPROMISED!');
+  setTimeout(() => {
+    isRedAlert.value = false;
+    document.documentElement.classList.remove('red-alert');
+    // petTalking('System Restored. (Phew!)');
+  }, 5000);
+};
+
+const triggerMossAlert = () => {
+  if (isFrostActive.value) return;
+  isFrostActive.value = true;
+  document.documentElement.classList.add('frost-alert');
+  addKey('BREATH_WHITE');
+  window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'BREATH_WHITE' } }));
+  setTimeout(() => {
+    isFrostActive.value = false;
+    document.documentElement.classList.remove('frost-alert');
+  }, 5000);
+};
+
 // Scroll Reveal Logic (Optimized for repeated interactions)
 const setupScrollReveal = () => {
   const observer = new IntersectionObserver((entries) => {
@@ -193,6 +250,7 @@ onMounted(async () => {
   uptimeInterval = window.setInterval(updateUptime, 1000);
   
   window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('keydown', handleKeyDown);
   handleScroll();
 
   nextTick(() => {
@@ -203,6 +261,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('keydown', handleKeyDown);
   if (uptimeInterval) clearInterval(uptimeInterval);
   if (cleanupFooterCanvas) cleanupFooterCanvas();
 });
@@ -278,6 +337,16 @@ onUnmounted(() => {
         <div class="text-[10px] font-mono tracking-[0.3em] text-[var(--color-brand)] animate-pulse">SCROLL</div>
         <div class="w-[1px] h-12 bg-gradient-to-b from-[var(--color-brand)] to-transparent"></div>
       </div>
+      
+      <!-- Frost Alert UI -->
+      <transition name="page">
+        <div v-if="isFrostActive" class="absolute inset-0 z-50 flex items-center justify-center pointer-events-none mix-blend-screen">
+          <div class="text-[var(--color-brand)] font-bold text-2xl md:text-4xl tracking-[0.3em] animate-pulse drop-shadow-[0_0_20px_var(--color-brand)] text-center">
+            <div>BREATH_WHITE</div>
+            <div class="text-sm md:text-base opacity-70 mt-2">余火历162年·苔鸣谷·白息浓度异常上升……</div>
+          </div>
+        </div>
+      </transition>
     </section>
 
     <!-- Staggered Main Content (Offset Layout) -->

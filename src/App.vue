@@ -6,10 +6,14 @@ import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Lenis from 'lenis';
 import asciiAvatarData from './data/avatar-ascii.json';
+import { useARGState } from './composables/useARGState';
+import { argDialogues } from './data/arg-dialogues';
 
 const isLoaded = ref(false);
 const router = useRouter();
 const route = useRoute();
+const { initTheme, themeUnlocked, themeActive, toggleTheme, argStarted, petDark, startARG, hasKey, terminalUnlocked } = useARGState();
+const argTriggerCount = ref(0);
 
 const asciiAvatar = ref(asciiAvatarData?.ascii || '');
 const showAsciiOverlay = ref(false);
@@ -305,8 +309,80 @@ const petTalking = (text: string) => {
   }, 4000);
 };
 
+// ARG pet guidance
+const getArgHint = (): string | null => {
+  if (!argStarted.value) return null;
+  
+  if (route.path === '/' && !hasKey('BREATH_WHITE')) {
+    return argDialogues.fragment1_hint[Math.floor(Math.random() * argDialogues.fragment1_hint.length)];
+  }
+  if (route.path === '/projects' && !hasKey('CHORD_PATTERN')) {
+    return argDialogues.fragment2_hint[Math.floor(Math.random() * argDialogues.fragment2_hint.length)];
+  }
+  if (route.path === '/games' && !hasKey('SOS_ECHO')) {
+    return argDialogues.fragment3_hint[Math.floor(Math.random() * argDialogues.fragment3_hint.length)];
+  }
+  if (hasKey('BREATH_WHITE') && hasKey('CHORD_PATTERN') && hasKey('SOS_ECHO') && !terminalUnlocked.value) {
+    return argDialogues.phase2_hint[0];
+  }
+  return null;
+};
+
+const onFragmentFound = (e: Event) => {
+  const detail = (e as CustomEvent).detail;
+  if (detail?.key === 'BREATH_WHITE') {
+    petTalking(argDialogues.fragment1_found[0]);
+  } else if (detail?.key === 'CHORD_PATTERN') {
+    petTalking(argDialogues.fragment2_found[0]);
+  } else if (detail?.key === 'SOS_ECHO') {
+    petTalking(argDialogues.fragment3_found[0]);
+    setTimeout(() => petTalking(argDialogues.all_found[0]), 4500);
+    setTimeout(() => petTalking(argDialogues.all_found[1]), 9000);
+    setTimeout(() => petTalking(argDialogues.all_found[2]), 14000);
+    setTimeout(() => petTalking(argDialogues.all_found[3]), 20000);
+  }
+};
+
+const onFinalChoice = () => {
+  petTalking(argDialogues.final_choice[0]);
+  setTimeout(() => petTalking(argDialogues.final_choice[1]), 4000);
+};
+
 const triggerHappyPet = () => {
-  if (showAsciiOverlay.value) return; // Ignore click if overlay is showing
+  if (showAsciiOverlay.value) return;
+  
+  // ARG trigger logic
+  if (!argStarted.value) {
+    argTriggerCount.value++;
+    if (argTriggerCount.value === 1) {
+      petTalking(argDialogues.trigger[0]);
+      setTimeout(() => petTalking(argDialogues.trigger[1]), 3000);
+      setTimeout(() => petTalking(argDialogues.trigger[2]), 6000);
+      return;
+    } else if (argTriggerCount.value >= 2) {
+      startARG();
+      petTalking('信号接收已启动！(★ω★)');
+      argTriggerCount.value = 0;
+      return;
+    }
+  }
+  
+  // ARG in progress - show hint
+  if (argStarted.value) {
+    const hint = getArgHint();
+    if (hint) {
+      petTalking(hint);
+      return;
+    }
+  }
+  
+  // Pet dark idle dialogues (purge reward)
+  if (petDark.value && Math.random() > 0.5) {
+    petTalking(argDialogues.pet_dark_idle[Math.floor(Math.random() * argDialogues.pet_dark_idle.length)]);
+    return;
+  }
+  
+  // Normal happy logic
   petState.value = 'happy';
   petHappiness.value = Math.min(100, petHappiness.value + 12);
   petTalking(getRandomText(happyDialogues));
@@ -321,9 +397,13 @@ const triggerHappyPet = () => {
 };
 
 let longPressTimer: number | null = null;
+let longPressMsgTimer: number | null = null;
 const startLongPress = () => {
   if (longPressTimer) clearTimeout(longPressTimer);
-  petTalking('正在注入核心数据...[HOLD]');
+  if (longPressMsgTimer) clearTimeout(longPressMsgTimer);
+  longPressMsgTimer = window.setTimeout(() => {
+    petTalking('正在注入核心数据...[HOLD]');
+  }, 600);
   longPressTimer = window.setTimeout(() => {
     showAsciiOverlay.value = true;
     petTalking('SYSTEM_OVERRIDE_INIT!');
@@ -335,9 +415,23 @@ const endLongPress = () => {
     clearTimeout(longPressTimer);
     longPressTimer = null;
   }
+  if (longPressMsgTimer) {
+    clearTimeout(longPressMsgTimer);
+    longPressMsgTimer = null;
+  }
 };
 
 watch(() => route.path, (newPath) => {
+  // ARG hint priority
+  if (argStarted.value) {
+    const hint = getArgHint();
+    if (hint) {
+      petTalking(hint);
+      return;
+    }
+  }
+  
+  // Normal route dialogues
   if (newPath === '/projects' || newPath === '/games' || newPath === '/github') {
     petState.value = 'working';
     petTalking(getRandomText(routeDialogues));
@@ -353,6 +447,7 @@ watch(() => route.path, (newPath) => {
 let idleTimer: number | null = null;
 
 onMounted(() => {
+  initTheme();
   document.addEventListener('contextmenu', (e: MouseEvent) => {
     if (!import.meta.env.DEV) {
       e.preventDefault();
@@ -414,6 +509,9 @@ onMounted(() => {
       petTalking(getRandomText(idleDialogues));
     }
   }, 8000);
+
+  window.addEventListener('arg-fragment-found', onFragmentFound);
+  window.addEventListener('arg-final-choice', onFinalChoice);
 });
 
 onUnmounted(() => {
@@ -423,6 +521,8 @@ onUnmounted(() => {
   if (idleTimer) clearInterval(idleTimer);
   if (petTalkTimer) clearTimeout(petTalkTimer);
   if (hudTimer) clearInterval(hudTimer);
+  window.removeEventListener('arg-fragment-found', onFragmentFound);
+  window.removeEventListener('arg-final-choice', onFinalChoice);
 });
 </script>
 
@@ -452,7 +552,7 @@ onUnmounted(() => {
       <!-- AI Core Widget -->
       <div 
         class="cyber-glass p-2 flex flex-col items-center justify-center bg-black/60 border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-16 h-16 rounded-full animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)]"
-        :class="{ 'scale-90': petState === 'happy' }"
+        :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
         @click="triggerHappyPet"
         @mousedown="startLongPress"
         @touchstart="startLongPress"
@@ -467,7 +567,8 @@ onUnmounted(() => {
         <div class="relative w-10 h-10 rounded-full border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black/40">
           <!-- The Eye -->
           <div 
-            class="w-4 h-4 bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)] transition-all duration-300 shadow-[0_0_10px_currentColor]"
+            class="w-4 h-4 transition-all duration-300 shadow-[0_0_10px_currentColor]"
+            :class="petDark ? 'bg-red-800 group-hover:bg-red-600' : 'bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)]'"
             :style="{ 
               transform: `rotate(${eyeRotation}deg) translateX(4px)`,
               clipPath: petState === 'happy' ? 'polygon(0 40%, 100% 40%, 100% 60%, 0 60%)' : 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)'
@@ -553,6 +654,17 @@ onUnmounted(() => {
     <!-- Main Content Wrapper -->
     <div class="relative z-10 min-h-screen flex flex-col w-full font-mono text-[var(--color-text)]">
       <NavBar v-if="!isAdmin" />
+      
+      <!-- Theme Toggle (ARG Reward) -->
+      <button 
+        v-if="themeUnlocked && !isAdmin" 
+        @click="toggleTheme" 
+        class="fixed top-6 right-6 z-50 text-2xl drop-shadow-[0_0_8px_currentColor] transition-all duration-500 hover:scale-110"
+        :class="themeActive ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-dim)]'"
+        title="Toggle Eclipse Theme"
+      >
+        <i class="fa-solid fa-moon"></i>
+      </button>
 
       <!-- Main Router View -->
       <div class="flex-grow w-full mx-auto pt-20 md:pt-28 pb-12">
@@ -578,6 +690,14 @@ onUnmounted(() => {
 
 .app-root.is-loaded {
   opacity: 1;
+}
+
+.pet-dark {
+  border-color: #991b1b !important;
+}
+.pet-dark:hover {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 30px rgba(153, 27, 27, 0.3) !important;
 }
 
 /* Removed old cursor CSS, using style.css now */

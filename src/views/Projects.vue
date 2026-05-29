@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import projectsData from '../data/projects.json';
+import { ref } from 'vue';
+import { useARGState } from '../composables/useARGState';
 
 interface Project {
   image: string;
@@ -16,10 +18,36 @@ const getImageUrl = (path: string) => {
   if (path.startsWith('http')) return path;
   return path.startsWith('/') ? path : '/' + path;
 };
+
+const { addKey, hasKey, argStarted } = useARGState();
+const clickSequence = ref<number[]>([]);
+const isShakeActive = ref(false);
+
+const handleProjectClick = (index: number) => {
+  clickSequence.value.push(index);
+  if (clickSequence.value.length > 3) {
+    clickSequence.value.shift();
+  }
+  
+  // 正序 0→1→2 触发（念→灵→渊）
+  if (argStarted.value && !hasKey('CHORD_PATTERN') &&
+      clickSequence.value.length === 3 &&
+      clickSequence.value[0] === 0 &&
+      clickSequence.value[1] === 1 &&
+      clickSequence.value[2] === 2) {
+    
+    isShakeActive.value = true;
+    addKey('CHORD_PATTERN');
+    window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'CHORD_PATTERN' } }));
+    setTimeout(() => {
+      isShakeActive.value = false;
+    }, 3000);
+  }
+};
 </script>
 
 <template>
-  <div class="w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
+  <div class="w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8" :class="{ 'red-alert': isShakeActive }">
     <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative">
       <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">DEPLOY</div>
       <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> DEPLOYED_PROJECTS</h2>
@@ -29,7 +57,8 @@ const getImageUrl = (path: string) => {
       <div
         v-for="(project, index) in projects"
         :key="index"
-        class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal is-visible transition-colors hover:border-[var(--color-brand)]"
+        @click="handleProjectClick(index)"
+        class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal is-visible transition-colors hover:border-[var(--color-brand)] cursor-pointer"
       >
         <!-- Disk Shutter & Top Case -->
         <div class="aspect-video w-full overflow-hidden relative bg-[var(--color-bg)] flex items-center justify-center border-b border-[var(--color-border)]">
@@ -93,5 +122,13 @@ const getImageUrl = (path: string) => {
         </div>
       </div>
     </div>
+    
+    <!-- ARG Toast UI -->
+    <transition name="page">
+      <div v-if="isShakeActive" class="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] cyber-glass !p-6 border-l-4 border-l-[var(--color-brand)] bg-black/90">
+        <div class="text-[var(--color-brand)] font-bold text-xl tracking-[0.3em] font-mono animate-pulse mb-1">CHORD_PATTERN</div>
+        <div class="text-xs opacity-60 font-mono tracking-widest">弦律异常·碎月引力波与裂缝脉冲完全同步——烬的研究笔记</div>
+      </div>
+    </transition>
   </div>
 </template>

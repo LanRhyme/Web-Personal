@@ -8,8 +8,8 @@ import Admin from '../views/Admin.vue';
 import Games from '../views/Games.vue';
 import Articles from '../views/Articles.vue';
 import ArticleDetail from '../views/ArticleDetail.vue';
-
-const routes = [
+import TerminalView from '../views/TerminalView.vue';
+import PhysicalView from '../views/PhysicalView.vue';const routes = [
   { path: '/', component: Home },
   { path: '/projects', component: Projects },
   { path: '/works', component: Works },
@@ -19,6 +19,8 @@ const routes = [
   { path: '/admin', component: Admin },
   { path: '/articles', component: Articles },
   { path: '/article/:slug', component: ArticleDetail },
+  { path: '/void-echo-terminal', component: TerminalView },
+  { path: '/physical', component: PhysicalView },
 ];
 
 const router = createRouter({
