@@ -6,17 +6,17 @@
   },
   {
     "title": "ShardLauncher",
-    "description": "一款安卓Minecraft Java版启动器",
+    "description": "一款安卓Minecraft Java版启动器|已弃坑",
     "link": "shardlauncher.cn"
   },
   {
     "title": "Minecraft日志分析器",
-    "description": "支持多款启动器日志分析",
+    "description": "支持多款启动器日志分析|已停更",
     "link": "lanrhymelog.netlify.app"
   },
   {
     "title": "裂月编年：破碎之光",
-    "description": "我的oc世界观",
-    "link": "age-of-shattered-light.netlify.ap"
+    "description": "我的oc世界观|此网页暂时停止向外开放",
+    "link": ""
   }
 ]
