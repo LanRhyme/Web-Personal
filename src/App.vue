@@ -378,7 +378,7 @@ onUnmounted(() => {
     <canvas ref="canvasRef" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50"></canvas>
 
     <!-- Hardcore Brutalist HUD & Decorations -->
-    <div v-if="!isAdmin" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+    <div v-if="!isAdmin" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
       
       <!-- Blueprint Grid Lines -->
       <div class="absolute top-0 left-[8%] w-[1px] h-full bg-[var(--color-border)] opacity-30"></div>

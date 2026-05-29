@@ -8,7 +8,19 @@ const fetchGithubInfo = async () => {
     const userRes = await fetch('https://api.github.com/users/LanRhyme');
     if (!userRes.ok) throw new Error('API Error');
     const userData = await userRes.json();
-    githubInfo.value = `FLWRS:${userData.followers} / REPOS:${userData.public_repos}`;
+    
+    let totalStars = 0;
+    try {
+      const reposRes = await fetch('https://api.github.com/users/LanRhyme/repos?per_page=100');
+      if (reposRes.ok) {
+        const reposData = await reposRes.json();
+        totalStars = reposData.reduce((acc: number, repo: any) => acc + repo.stargazers_count, 0);
+      }
+    } catch (e) {
+      // Ignore repo fetch error, just show 0 stars
+    }
+
+    githubInfo.value = `FLW:${userData.followers} / REPO:${userData.public_repos} / STR:${totalStars}`;
   } catch (e) {
     githubInfo.value = 'OFFLINE';
   }
@@ -51,7 +63,7 @@ onMounted(() => {
         </div>
         <div class="flex justify-between">
           <span class="opacity-40">ATTACK_PWR</span>
-          <span class="text-[var(--color-text)]">VUE / KOTLIN</span>
+          <span class="text-[var(--color-text)]">RUST / KOTLIN</span>
         </div>
         <div class="flex justify-between">
           <span class="opacity-40">DEFENSE_PWR</span>
