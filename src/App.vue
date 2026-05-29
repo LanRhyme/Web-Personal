@@ -40,6 +40,20 @@ const isHovering = ref(false);
 const isClicking = ref(false);
 let hoveredElement: HTMLElement | null = null;
 
+// --- Simulated HUD Metrics ---
+const cpuLoad = ref(12);
+const memLoad = ref(45.2);
+
+let hudTimer: number | null = null;
+const updateHudMetrics = () => {
+  if (Math.random() > 0.85) {
+    cpuLoad.value = Math.floor(Math.random() * 60) + 30; // Spikes
+  } else {
+    cpuLoad.value = Math.floor(Math.random() * 15) + 2; // Idle
+  }
+  memLoad.value = Math.max(20, Math.min(85, memLoad.value + (Math.random() * 4 - 2)));
+};
+
 // --- Click Ripples ---
 const clickRipples = ref<{id: number, x: number, y: number}[]>([]);
 let rippleIdCounter = 0;
@@ -354,6 +368,21 @@ onMounted(() => {
   document.addEventListener('contextmenu', (e) => e.preventDefault());
   document.addEventListener('keydown', handleKeyDown);
 
+  // --- Page Title Easter Egg ---
+  const originalTitle = document.title || 'LanRhyme.OS';
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      document.title = "[ SYS.SLEEP ] 💤";
+    } else {
+      document.title = "WAKING_UP... ⚡";
+      setTimeout(() => {
+        document.title = originalTitle;
+      }, 1500);
+    }
+  });
+
+  hudTimer = window.setInterval(updateHudMetrics, 1200);
+
   // --- Lenis Smooth Scrolling ---
   const lenis = new Lenis({
     autoRaf: true,
@@ -393,6 +422,7 @@ onUnmounted(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   if (idleTimer) clearInterval(idleTimer);
   if (petTalkTimer) clearTimeout(petTalkTimer);
+  if (hudTimer) clearInterval(hudTimer);
 });
 </script>
 
@@ -505,10 +535,10 @@ onUnmounted(() => {
       </div>
 
       <!-- Top Left Data -->
-      <div class="hud-corner top-left flex flex-col gap-1 tracking-widest text-[8px] sm:text-[10px]">
-        <span class="text-[var(--color-brand)]">SYS.ON</span>
-        <span class="opacity-40">LAT: 35.86</span>
-        <span class="opacity-40">LON: 104.19</span>
+      <div class="fixed top-[45px] left-[45px] flex flex-col gap-1 tracking-widest text-[8px] sm:text-[10px] pointer-events-none z-50">
+        <span class="text-[var(--color-brand)] font-bold">SYS.ON</span>
+        <span class="opacity-50">CPU: {{ cpuLoad.toString().padStart(2, '0') }}%</span>
+        <span class="opacity-50">MEM: {{ memLoad.toFixed(1) }}%</span>
       </div>
       <div class="hud-corner hud-tl"></div>
       <div class="hud-corner hud-tr"></div>

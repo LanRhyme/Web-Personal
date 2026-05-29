@@ -35,9 +35,40 @@ const closeMenu = () => {
   isMenuOpen.value = false;
 };
 
+const scrambleText = (event: MouseEvent) => {
+  const el = event.target as HTMLElement;
+  const original = el.dataset.value;
+  if (!original) return;
+  
+  // Find the text node or span inside
+  const textSpan = el.querySelector('.scramble-target') as HTMLElement;
+  if (!textSpan) return;
+
+  let iterations = 0;
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+  
+  const interval = setInterval(() => {
+    textSpan.innerText = original
+      .split("")
+      .map((letter, index) => {
+        if (index < iterations) {
+          return original[index];
+        }
+        return letters[Math.floor(Math.random() * 43)];
+      })
+      .join("");
+      
+    if (iterations >= original.length) {
+      clearInterval(interval);
+      textSpan.innerText = original;
+    }
+    iterations += 1 / 3;
+  }, 30);
+};
+
 onMounted(() => {
   updateTime();
-  timeInterval = setInterval(updateTime, 100);
+  timeInterval = window.setInterval(updateTime, 100);
   window.addEventListener('mousemove', handleMouseMove);
 });
 
@@ -48,13 +79,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-50 pointer-events-none">
-    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] md:text-xs font-mono flex flex-col transition-all shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
+  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-50 pointer-events-none group/nav">
+    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] md:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(107,143,114,0.15)] relative overflow-hidden">
+      
+      <!-- Top Scanline decorative -->
+      <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent opacity-0 group-hover/nav:opacity-50 transition-opacity duration-1000"></div>
+
       <!-- Top Status Line -->
       <div class="flex justify-between items-center px-2.5 md:px-6 py-1.5 md:py-3 border-b border-[var(--color-border)] text-[0.6rem] md:text-xs">
         <div class="flex flex-wrap items-center gap-x-3 md:gap-x-6 gap-y-1">
           <span class="flex items-center gap-1.5 md:gap-2 font-bold tracking-widest text-[var(--color-text)]">
-            <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block"></span>
+            <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block shadow-[0_0_8px_var(--color-brand)]"></span>
             SYS.ONLINE
           </span>
           <span class="opacity-40 hidden lg:inline tracking-widest">| USER: LANRHYME.DEV</span>
@@ -76,14 +111,19 @@ onUnmounted(() => {
             v-for="item in navItems"
             :key="item.path"
             :to="item.path"
-            class="nav-link relative pb-1 transition-all font-mono tracking-widest text-xs"
-            :class="route.path === item.path ? 'text-[var(--color-text)] font-bold active-link' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'"
+            class="nav-link relative pb-1 transition-all duration-300 font-mono tracking-widest text-xs flex items-center gap-2 group/link"
+            :class="route.path === item.path ? 'text-[var(--color-text)] font-bold active-link' : 'text-[var(--color-text-dim)] hover:text-[var(--color-brand)]'"
+            @mouseenter="scrambleText"
+            :data-value="item.name"
           >
-            {{ item.name }}
+            <span v-if="route.path === item.path" class="text-[var(--color-brand)] animate-pulse font-bold">></span>
+            <span v-else class="text-transparent group-hover/link:text-[var(--color-text-dim)] transition-colors duration-300">></span>
+            <span class="scramble-target pointer-events-none">{{ item.name }}</span>
           </router-link>
         </div>
-        <a href="https://github.com/LanRhyme" target="_blank" class="nav-link relative pb-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] font-mono tracking-widest text-xs transition-colors">
-          NET.GITHUB
+        <a href="https://github.com/LanRhyme" target="_blank" class="nav-link relative pb-1 text-[var(--color-text-dim)] hover:text-[var(--color-brand)] font-mono tracking-widest text-xs transition-colors group/link flex items-center gap-2" @mouseenter="scrambleText" data-value="NET.GITHUB">
+          <span class="text-transparent group-hover/link:text-[var(--color-text-dim)] transition-colors duration-300">></span>
+          <span class="scramble-target pointer-events-none">NET.GITHUB</span>
         </a>
       </nav>
 
@@ -97,10 +137,10 @@ onUnmounted(() => {
               :to="item.path"
               @click="closeMenu"
               class="nav-link relative py-2 transition-all font-mono tracking-widest text-[10px] border-b border-[var(--color-border)]/50 last:border-b-0"
-              :class="route.path === item.path ? 'text-[var(--color-text)] font-bold' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'"
+              :class="route.path === item.path ? 'text-[var(--color-brand)] font-bold' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'"
             >
               <span class="flex items-center gap-2">
-                <span v-if="route.path === item.path" class="w-1 h-1 bg-[var(--color-brand)] inline-block"></span>
+                <span v-if="route.path === item.path" class="animate-pulse">></span>
                 {{ item.name }}
               </span>
             </router-link>

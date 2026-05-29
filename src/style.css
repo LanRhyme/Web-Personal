@@ -33,6 +33,26 @@
   -webkit-user-select: none;
 }
 
+/* Make text selection brutalist */
+::selection {
+  background: var(--color-brand);
+  color: #050505;
+  text-shadow: none;
+}
+::-moz-selection {
+  background: var(--color-brand);
+  color: #050505;
+  text-shadow: none;
+}
+
+/* Allow selection explicitly on some content text if needed, 
+   but currently everything has user-select: none. 
+   Let's override for typography elements so users CAN highlight text if they want to copy something! */
+p, h1, h2, h3, span:not(.font-mono), .allow-select {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 html {
   /* Default to dark mode strictly for that high-end vibe */
   background-color: var(--color-bg);
