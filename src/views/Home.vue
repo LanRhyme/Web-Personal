@@ -9,6 +9,7 @@ import ParticleText from '../components/ParticleText.vue';
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
+import { preloadOtherPages } from '../router/index';
 
 // Load generated ASCII avatar if available
 import asciiAvatarData from '../data/avatar-ascii.json';
@@ -248,6 +249,8 @@ onMounted(async () => {
   
   updateUptime();
   uptimeInterval = window.setInterval(updateUptime, 1000);
+  
+  preloadOtherPages();
   
   window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('keydown', handleKeyDown);
