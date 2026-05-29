@@ -9,8 +9,8 @@
       "Compose",
       "工具"
     ],
-    "live_url": "",
-    "source_url": "https://micyou.netlify.app/"
+    "live_url": "https://micyou.top",
+    "source_url": "https://github.com/LanRhyme/MicYou"
   },
   {
     "image": "img-projects/minecraftlog.png",
@@ -22,7 +22,7 @@
       "JavaScript",
       "Node.js"
     ],
-    "live_url": "https://mclog.xiaohe520.top/",
+    "live_url": "",
     "source_url": "https://github.com/LanRhyme/Web-MinecraftLogAnalyzer"
   },
   {
