@@ -59,7 +59,7 @@ onUnmounted(() => {
 
 <template>
   <div 
-    class="terminal-border p-4 font-mono text-[var(--color-text)] flex flex-col text-xs sm:text-sm group relative overflow-hidden transition-all duration-300 hover:border-[var(--color-brand)] hover:shadow-[0_0_15px_rgba(107,143,114,0.1)] cursor-crosshair"
+    class="terminal-border p-3 md:p-4 font-mono text-[var(--color-text)] flex flex-col text-xs sm:text-sm group relative overflow-hidden transition-all duration-300 hover:border-[var(--color-brand)] hover:shadow-[0_0_15px_rgba(107,143,114,0.1)] cursor-crosshair"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
   >

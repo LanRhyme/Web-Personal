@@ -79,7 +79,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-50 pointer-events-none group/nav">
+  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-[60] pointer-events-none group/nav hidden md:block">
     <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] md:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(107,143,114,0.15)] relative overflow-hidden">
       
       <!-- Top Scanline decorative -->
@@ -96,11 +96,7 @@ onUnmounted(() => {
         </div>
         
         <div class="flex items-center gap-3">
-          <span class="hidden sm:inline font-mono text-[var(--color-brand)] tracking-widest">T: {{ currentTime }}</span>
-          <!-- Mobile Menu Toggle -->
-          <button @click="toggleMenu" class="md:hidden flex items-center justify-center w-6 h-6 text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors">
-            <i class="fas" :class="isMenuOpen ? 'fa-times' : 'fa-bars'"></i>
-          </button>
+          <span class="font-mono text-[var(--color-brand)] tracking-widest">T: {{ currentTime }}</span>
         </div>
       </div>
 
@@ -126,35 +122,63 @@ onUnmounted(() => {
           <span class="scramble-target pointer-events-none">NET.GITHUB</span>
         </a>
       </nav>
-
-      <!-- Mobile Navigation Menu -->
-      <transition name="menu">
-        <nav v-if="isMenuOpen" class="md:hidden border-t border-[var(--color-border)]">
-          <div class="flex flex-col px-2.5 py-1.5">
-            <router-link
-              v-for="item in navItems"
-              :key="item.path"
-              :to="item.path"
-              @click="closeMenu"
-              class="nav-link relative py-2 transition-all font-mono tracking-widest text-[10px] border-b border-[var(--color-border)]/50 last:border-b-0"
-              :class="route.path === item.path ? 'text-[var(--color-brand)] font-bold' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'"
-            >
-              <span class="flex items-center gap-2">
-                <span v-if="route.path === item.path" class="animate-pulse">></span>
-                {{ item.name }}
-              </span>
-            </router-link>
-            <a href="https://github.com/LanRhyme" target="_blank" @click="closeMenu" class="nav-link relative py-2.5 text-[var(--color-text-dim)] hover:text-[var(--color-text)] font-mono tracking-widest text-[10px] transition-colors">
-              <span class="flex items-center gap-2">
-                <span class="w-1 h-1 bg-transparent inline-block"></span>
-                NET.GITHUB
-              </span>
-            </a>
-          </div>
-        </nav>
-      </transition>
     </header>
   </div>
+
+  <!-- Mobile Floating Action Button (FAB) -->
+  <button 
+    @click="toggleMenu" 
+    class="fixed bottom-6 left-6 z-[60] md:hidden w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(107,143,114,0.3)] glitch-hover group"
+  >
+    <!-- Crosshairs corner decorations -->
+    <div class="absolute top-0 left-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
+    <div class="absolute top-0 left-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
+    <div class="absolute bottom-0 right-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
+    <div class="absolute bottom-0 right-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
+    
+    <i class="fas transition-transform duration-300 group-active:scale-90" :class="isMenuOpen ? 'fa-times rotate-90 text-red-500' : 'fa-compass'"></i>
+  </button>
+
+  <!-- Mobile Full-Screen Menu Overlay -->
+  <transition name="mobile-menu-fade">
+    <div v-if="isMenuOpen" class="fixed inset-0 z-[55] md:hidden bg-[var(--color-bg)]/95 backdrop-blur-xl flex flex-col justify-center items-center overflow-hidden">
+      <!-- Background Grid & Scanlines -->
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+      <div class="scanlines absolute inset-0 pointer-events-none opacity-40"></div>
+      
+      <!-- System Info Overlay -->
+      <div class="absolute top-6 left-6 text-[10px] font-mono opacity-50 tracking-[0.2em] flex flex-col gap-1 pointer-events-none">
+        <span class="text-[var(--color-brand)]">> SYS.OVERRIDE</span>
+        <span>UI.STATE: MOBILE_NAV</span>
+        <span>T: {{ currentTime }}</span>
+      </div>
+
+      <nav class="flex flex-col items-start gap-8 w-[240px] relative z-10 font-mono text-xl tracking-[0.2em] uppercase mt-10">
+        <router-link
+          v-for="(item, index) in navItems"
+          :key="item.path"
+          :to="item.path"
+          @click="closeMenu"
+          class="relative group transition-all"
+          :class="route.path === item.path ? 'text-[var(--color-brand)] font-bold translate-x-4' : 'text-[var(--color-text)] opacity-70 hover:opacity-100 hover:text-[var(--color-brand)] hover:translate-x-2'"
+          :style="{ transitionDelay: `${index * 50}ms` }"
+        >
+          <span class="absolute -left-6 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--color-brand)] animate-pulse" v-if="route.path !== item.path">></span>
+          <span class="absolute -left-6 text-[var(--color-brand)] animate-pulse" v-else>></span>
+          <span class="relative z-10">{{ item.name }}</span>
+          <!-- Decorative bar -->
+          <span class="absolute -bottom-2 left-0 w-0 h-[2px] bg-[var(--color-brand)] group-hover:w-full transition-all duration-300" :class="{ 'w-full': route.path === item.path }"></span>
+        </router-link>
+        
+        <div class="w-full h-[1px] bg-[var(--color-border)] my-2 opacity-50"></div>
+        
+        <a href="https://github.com/LanRhyme" target="_blank" @click="closeMenu" class="relative group text-sm opacity-60 hover:opacity-100 hover:text-[var(--color-text)] transition-all flex items-center gap-3">
+          <i class="fab fa-github"></i>
+          <span>NET.GITHUB</span>
+        </a>
+      </nav>
+    </div>
+  </transition>
 </template>
 
 <style scoped>
@@ -175,18 +199,20 @@ onUnmounted(() => {
   }
 }
 
-.menu-enter-active, .menu-leave-active {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+.mobile-menu-fade-enter-active,
+.mobile-menu-fade-leave-active {
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.menu-enter-from, .menu-leave-to {
+.mobile-menu-fade-enter-from,
+.mobile-menu-fade-leave-to {
   opacity: 0;
-  max-height: 0;
+  transform: translateY(20px) scale(0.98);
 }
 
-.menu-enter-to, .menu-leave-from {
+.mobile-menu-fade-enter-to,
+.mobile-menu-fade-leave-from {
   opacity: 1;
-  max-height: 300px;
+  transform: translateY(0) scale(1);
 }
 </style>

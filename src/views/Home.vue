@@ -279,7 +279,7 @@ onUnmounted(() => {
         
         <!-- Huge Glitched Typography & Artistic Mixed Headline -->
         <div 
-          class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8 transition-transform duration-75"
+          class="flex-shrink-0 w-full xl:w-7/12 relative z-10 flex flex-col gap-8 transition-transform duration-75 hidden md:flex"
           :style="{ transform: `translateY(${scrollY * 0.15}px)`, opacity: Math.max(0, 1 - scrollY / 700) }"
         >
           <div class="animate-float-slow">
@@ -326,8 +326,16 @@ onUnmounted(() => {
           </div>
 
           <!-- Interactive Hitokoto Card -->
-          <div class="w-full relative z-10 reveal animate-float-rotate">
+          <div class="w-full relative z-10 reveal animate-float-rotate hidden md:block">
             <HitokotoCard />
+          </div>
+        </div>
+        
+        <!-- Mobile Simple Banner Block -->
+        <div class="w-full md:hidden flex flex-col items-center text-center mt-8 mb-4">
+          <div class="text-[var(--color-brand)] font-art text-4xl mb-2 glitch-hover">LanRhyme.</div>
+          <div class="font-mono text-[10px] opacity-60 tracking-widest uppercase">
+            SYS_UPTIME: {{ sysUptime }} <span class="text-[var(--color-brand)] animate-pulse inline-block ml-1">_</span>
           </div>
         </div>
       </div>
@@ -352,19 +360,20 @@ onUnmounted(() => {
       </transition>
     </section>
 
-    <!-- Staggered Main Content (Offset Layout) -->
+    <!-- Staggered Main Content (Offset Layout) / Mobile Bento Grid -->
     <section class="w-full max-w-[1400px] mx-auto px-4 md:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-20 items-start relative">
+      <!-- On mobile: dense 2-column grid. On desktop: 12-column grid. -->
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-12 md:gap-20 items-start relative">
         
-        <!-- Left Column: Identity & Modules (Sticky) -->
-        <div class="md:col-span-4 lg:col-span-3 flex flex-col gap-8 md:sticky md:top-32 z-20">
-          <div class="reveal-left" style="transition-delay: 0.1s;"><MeCard /></div>
-          <div class="reveal-left" style="transition-delay: 0.2s;"><ClockCard /></div>
-          <div class="reveal-left" style="transition-delay: 0.3s;"><CalendarCard /></div>
+        <!-- Left Column: Identity & Modules (Sticky on desktop, Bento parts on mobile) -->
+        <div class="col-span-2 md:col-span-4 lg:col-span-3 grid grid-cols-2 gap-3 md:flex md:flex-col md:gap-8 md:sticky md:top-32 z-20">
+          <div class="reveal-left col-span-2 md:col-span-1" style="transition-delay: 0.1s;"><MeCard /></div>
+          <div class="reveal-left col-span-1 md:col-span-1" style="transition-delay: 0.2s;"><ClockCard /></div>
+          <div class="reveal-left col-span-1 md:col-span-1" style="transition-delay: 0.3s;"><CalendarCard /></div>
         </div>
 
         <!-- Right Column: Navigation & Content (Flows down) -->
-        <div class="md:col-span-8 lg:col-span-9 flex flex-col gap-12 md:gap-24 pt-0 md:pt-8">
+        <div class="col-span-2 md:col-span-8 lg:col-span-9 flex flex-col gap-8 md:gap-24 pt-4 md:pt-8">
           
           <!-- Modules -->
           <div class="flex flex-col gap-4 md:gap-6 w-full lg:w-5/6 ml-auto relative">
@@ -381,17 +390,17 @@ onUnmounted(() => {
               <span class="opacity-50">DIR_LIST</span>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+            <div class="grid grid-cols-2 gap-3 md:gap-6">
               <!-- Route Buttons as Cyber Blocks -->
               <div 
-                class="reveal-scale cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
+                class="col-span-2 reveal-scale cyber-glass p-4 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[100px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 style="transition-delay: 0.1s;"
                 @click="$router.push('/works')"
               >
                 <div>
-                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">01 / ARCHIVE</div>
-                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Works.</div>
-                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
+                  <div class="text-[10px] md:text-sm opacity-60 mb-1 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">01 / ARCHIVE</div>
+                  <div class="font-art text-xl md:text-3xl mb-1 md:mb-3">> Works.</div>
+                  <div class="text-[10px] md:text-base opacity-80 font-sans tracking-wide">CREATIVE PORTFOLIO</div>
                 </div>
                 <!-- Deco Barcode -->
                 <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex items-end gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
@@ -401,14 +410,14 @@ onUnmounted(() => {
               </div>
 
               <div 
-                class="reveal-scale cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
+                class="col-span-1 reveal-scale cyber-glass p-4 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[100px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 style="transition-delay: 0.2s;"
                 @click="$router.push('/projects')"
               >
                 <div>
-                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">02 / DEPLOYMENTS</div>
-                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Projects.</div>
-                  <div class="text-sm md:text-base opacity-80 line-clamp-1 font-sans tracking-wide">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
+                  <div class="text-[10px] md:text-sm opacity-60 mb-1 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">02 / DEPLOYMENTS</div>
+                  <div class="font-art text-lg md:text-3xl mb-1 md:mb-3">> Projects.</div>
+                  <div class="text-[10px] md:text-base opacity-80 line-clamp-1 font-sans tracking-wide truncate">LATEST: {{ latestProject?.title?.toUpperCase() || 'NULL' }}</div>
                 </div>
                 <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex items-end gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <span class="text-[8px] mr-1 leading-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-mono">0x{{ hexCodes[1] }}</span>
@@ -417,14 +426,14 @@ onUnmounted(() => {
               </div>
 
               <div 
-                class="reveal-scale cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
+                class="col-span-1 reveal-scale cyber-glass p-4 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[100px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 style="transition-delay: 0.3s;"
                 @click="$router.push('/articles')"
               >
                 <div>
-                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">03 / LOGS</div>
-                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Articles.</div>
-                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">TECHNICAL & THOUGHTS</div>
+                  <div class="text-[10px] md:text-sm opacity-60 mb-1 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">03 / LOGS</div>
+                  <div class="font-art text-lg md:text-3xl mb-1 md:mb-3">> Articles.</div>
+                  <div class="text-[10px] md:text-base opacity-80 font-sans tracking-wide truncate">TECHNICAL & THOUGHTS</div>
                 </div>
                 <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex items-end gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <span class="text-[8px] mr-1 leading-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-mono">0x{{ hexCodes[2] }}</span>
@@ -433,14 +442,14 @@ onUnmounted(() => {
               </div>
 
               <div 
-                class="reveal-scale cyber-glass p-5 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[120px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
+                class="col-span-2 reveal-scale cyber-glass p-4 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[100px] md:min-h-[160px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] active:border-[var(--color-brand)]" 
                 style="transition-delay: 0.4s;"
                 @click="$router.push('/games')"
               >
                 <div>
-                  <div class="text-xs md:text-sm opacity-60 mb-2 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">04 / EXE</div>
-                  <div class="font-art text-2xl md:text-3xl mb-2 md:mb-3">> Games.</div>
-                  <div class="text-sm md:text-base opacity-80 font-sans tracking-wide">SIMULATIONS</div>
+                  <div class="text-[10px] md:text-sm opacity-60 mb-1 md:mb-4 font-mono tracking-widest group-hover:text-[var(--color-brand)] transition-colors glitch-hover">04 / EXE</div>
+                  <div class="font-art text-xl md:text-3xl mb-1 md:mb-3">> Games.</div>
+                  <div class="text-[10px] md:text-base opacity-80 font-sans tracking-wide">SIMULATIONS</div>
                 </div>
                 <div class="absolute bottom-4 right-6 md:bottom-6 md:right-8 flex items-end gap-[3px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)]">
                   <span class="text-[8px] mr-1 leading-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-mono">0x{{ hexCodes[3] }}</span>
@@ -521,7 +530,7 @@ onUnmounted(() => {
       <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-bg)] via-transparent to-[var(--color-bg)] z-10 pointer-events-none"></div>
 
       <!-- Content -->
-      <div class="relative z-20 flex flex-col items-center gap-4 mt-12 drop-shadow-[0_0_10px_rgba(107,143,114,0.3)] reveal">
+      <div class="relative z-20 flex flex-col items-center gap-4 mt-8 md:mt-12 drop-shadow-[0_0_10px_rgba(107,143,114,0.3)] reveal">
         
         <!-- Slugcat Pixel SVG -->
         <div class="slugcat-icon relative group cursor-pointer" title="The Survivor">

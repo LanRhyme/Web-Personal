@@ -636,7 +636,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Top Left Data -->
-      <div class="fixed top-[45px] left-[45px] flex flex-col gap-1 tracking-widest text-[8px] sm:text-[10px] pointer-events-none z-50">
+      <div class="fixed top-[45px] left-[45px] hidden md:flex flex-col gap-1 tracking-widest text-[8px] sm:text-[10px] pointer-events-none z-50">
         <span class="text-[var(--color-brand)] font-bold">SYS.ON</span>
         <span class="opacity-50">CPU: {{ cpuLoad.toString().padStart(2, '0') }}%</span>
         <span class="opacity-50">MEM: {{ memLoad.toFixed(1) }}%</span>

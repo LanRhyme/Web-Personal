@@ -35,7 +35,7 @@ onUnmounted(() => {
 
 <template>
   <div 
-    class="terminal-border p-4 font-mono flex flex-col justify-center relative overflow-hidden group cursor-crosshair transition-colors duration-300"
+    class="terminal-border p-3 md:p-4 font-mono flex flex-col justify-center relative overflow-hidden group cursor-crosshair transition-colors duration-300"
     :class="isHovering ? 'bg-[var(--color-brand)] text-[var(--color-bg)]' : 'text-[var(--color-brand)]'"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
