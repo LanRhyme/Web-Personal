@@ -169,7 +169,8 @@ class MatrixDrop {
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
-    this.speed = Math.random() * 2 + 1;
+    // Multiplied by 2 to compensate for the 30fps throttle
+    this.speed = (Math.random() * 2 + 1) * 2;
     this.chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*".split('');
     this.char = this.chars[Math.floor(Math.random() * this.chars.length)];
   }
@@ -178,9 +179,10 @@ class MatrixDrop {
     this.y += this.speed;
     if (this.y > height) {
       this.y = -20;
-      this.speed = Math.random() * 2 + 1;
+      this.speed = (Math.random() * 2 + 1) * 2;
     }
-    if (Math.random() < 0.05) {
+    // Doubled chance to keep the same visual flickering rate
+    if (Math.random() < 0.1) {
       this.char = this.chars[Math.floor(Math.random() * this.chars.length)];
     }
   }
@@ -239,15 +241,18 @@ const initCanvas = () => {
     }
   };
 
-  // Run canvas logic in the same animation frame loop
-  const loop = () => {
-    animate();
+  // Run canvas logic in the same animation frame loop (throttled for performance)
+  let lastTime = 0;
+  const loop = (time: number) => {
     requestAnimationFrame(loop);
+    if (time - lastTime < 33) return; // Cap at ~30fps
+    lastTime = time;
+    animate();
   };
 
   window.addEventListener('resize', resize);
   resize();
-  loop();
+  requestAnimationFrame(loop);
 };
 
 // --- Brutalist AI Companion (LanPet Refactor) ---

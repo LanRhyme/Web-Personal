@@ -12,7 +12,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['vue', 'vue-router', 'three']
+          vendor: ['vue', 'vue-router']
         }
       }
     }
@@ -23,7 +23,7 @@ export default defineConfig({
   plugins: [
     vue(),
     prismjsPlugin({
-      languages: ['typescript', 'javascript', 'css', 'python', 'bash', 'json', 'markdown', 'yaml', 'java', 'go', 'rust', 'c', 'cpp', 'csharp', 'sql', 'docker', 'kotlin', 'dart', 'php', 'ruby', 'swift', 'objectivec', 'powershell', 'toml', 'ini', 'diff', 'git', 'nginx', 'http', 'applescript', 'lua', 'perl', 'scala', 'haskell', 'elixir', 'erlang', 'clike', 'jsx', 'tsx'],
+      languages: ['typescript', 'javascript', 'css', 'json', 'markdown', 'yaml', 'bash', 'python', 'java', 'c', 'cpp', 'go', 'rust', 'sql', 'html'],
       plugins: [],
       theme: 'tomorrow',
       css: true
