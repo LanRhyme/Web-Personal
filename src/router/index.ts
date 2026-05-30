@@ -12,6 +12,7 @@ const Articles = () => import('../views/Articles.vue');
 const ArticleDetail = () => import('../views/ArticleDetail.vue');
 const TerminalView = () => import('../views/TerminalView.vue');
 const PhysicalView = () => import('../views/PhysicalView.vue');
+const Worldview = () => import('../views/Worldview.vue');
 
 // 预加载其他页面，仅在 Wi-Fi 或良好网络环境下触发
 export const preloadOtherPages = () => {
@@ -34,7 +35,7 @@ export const preloadOtherPages = () => {
 
   if (shouldPreload) {
     const componentsToPreload = [
-      Projects, Works, Commissions, Github, Admin, Games, Articles, ArticleDetail, TerminalView, PhysicalView
+      Projects, Works, Commissions, Github, Admin, Games, Articles, ArticleDetail, TerminalView, PhysicalView, Worldview
     ];
 
     const load = () => {
@@ -64,6 +65,7 @@ const routes = [
   { path: '/article/:slug', component: ArticleDetail },
   { path: '/void-echo-terminal', component: TerminalView },
   { path: '/physical', component: PhysicalView },
+  { path: '/worldview', component: Worldview },
 ];
 
 const router = createRouter({

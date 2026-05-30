@@ -18,14 +18,15 @@ const handleMouseMove = (e: MouseEvent) => {
   mouseCoords.value = { x: e.clientX, y: e.clientY };
 };
 
-const navItems = [
+const navItems = ref([
   { path: '/', name: 'SYS.HOME' },
   { path: '/projects', name: 'DIR.PROJECTS' },
   { path: '/works', name: 'DIR.WORKS' },
   { path: '/commissions', name: 'DIR.QUESTS' },
   { path: '/articles', name: 'DIR.LOGS' },
-  { path: '/games', name: 'EXE.GAMES' }
-];
+  { path: '/games', name: 'EXE.GAMES' },
+  { path: '/worldview', name: '0xERR_&$#@' }
+]);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -66,14 +67,29 @@ const scrambleText = (event: MouseEvent) => {
   }, 30);
 };
 
+let garbleInterval: number;
+
 onMounted(() => {
   updateTime();
   timeInterval = window.setInterval(updateTime, 100);
   window.addEventListener('mousemove', handleMouseMove);
+  
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+  garbleInterval = window.setInterval(() => {
+    const worldviewItem = navItems.value.find(item => item.path === '/worldview');
+    if (worldviewItem) {
+      let garbled = "";
+      for (let i = 0; i < 10; i++) {
+        garbled += letters[Math.floor(Math.random() * letters.length)];
+      }
+      worldviewItem.name = garbled;
+    }
+  }, 80);
 });
 
 onUnmounted(() => {
   clearInterval(timeInterval);
+  clearInterval(garbleInterval);
   window.removeEventListener('mousemove', handleMouseMove);
 });
 </script>

@@ -23,6 +23,7 @@ const handlePreloaderComplete = () => {
 };
 
 const isAdmin = computed(() => route.path.startsWith('/admin'));
+const isWorldview = computed(() => route.path === '/worldview');
 
 // --- Custom Physics Cursor (Square Framing style) ---
 const mouseX = ref(window.innerWidth / 2);
@@ -478,12 +479,19 @@ onMounted(() => {
 
   hudTimer = window.setInterval(updateHudMetrics, 1200);
 
-  // --- Lenis Smooth Scrolling ---
   const lenis = new Lenis({
     autoRaf: true,
     duration: 1.5,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
   });
+  
+  watch(() => route.path, (newPath) => {
+    if (newPath === '/worldview') {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+  }, { immediate: true });
   
   lenis.on('scroll', (e: any) => {
     scrollProgress.value = e.progress;
@@ -618,7 +626,7 @@ onUnmounted(() => {
     <canvas ref="canvasRef" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50"></canvas>
 
     <!-- Hardcore Brutalist HUD & Decorations -->
-    <div v-if="!isAdmin" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
+    <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
       
       <!-- Blueprint Grid Lines -->
       <div class="absolute top-0 left-[8%] w-[1px] h-full bg-[var(--color-border)] opacity-30"></div>
@@ -667,7 +675,7 @@ onUnmounted(() => {
       </button>
 
       <!-- Main Router View -->
-      <div class="flex-grow w-full mx-auto pt-20 md:pt-28 pb-12">
+      <div :class="isWorldview ? 'fixed inset-0 z-0 bg-black w-full h-screen overflow-hidden' : 'flex-grow w-full mx-auto pt-20 md:pt-28 pb-12'">
         <router-view v-slot="{ Component, route }">
           <transition name="page" mode="out-in">
             <keep-alive :max="5">
@@ -677,7 +685,7 @@ onUnmounted(() => {
         </router-view>
       </div>
 
-      <Footer v-if="!isAdmin" />
+      <Footer v-if="!isAdmin && !isWorldview" />
     </div>
   </div>
 </template>
