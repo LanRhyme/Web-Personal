@@ -2,12 +2,32 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import fs from 'fs'
 import path from 'path'
+import { prismjsPlugin } from 'vite-plugin-prismjs'
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  build: {
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router', 'three']
+        }
+      }
+    }
+  },
+  esbuild: {
+    drop: ['debugger'],
+  },
   plugins: [
     vue(),
+    prismjsPlugin({
+      languages: ['typescript', 'javascript', 'css', 'python', 'bash', 'json', 'markdown', 'yaml', 'java', 'go', 'rust', 'c', 'cpp', 'csharp', 'sql', 'docker', 'kotlin', 'dart', 'php', 'ruby', 'swift', 'objectivec', 'powershell', 'toml', 'ini', 'diff', 'git', 'nginx', 'http', 'applescript', 'lua', 'perl', 'scala', 'haskell', 'elixir', 'erlang', 'clike', 'jsx', 'tsx'],
+      plugins: [],
+      theme: 'tomorrow',
+      css: true
+    }),
     {
       name: 'local-upload-server',
       configureServer(server) {

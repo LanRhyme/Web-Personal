@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
+import Prism from 'prismjs';
 
 interface ArticleConfig {
   title?: string;
@@ -178,23 +179,8 @@ onMounted(async () => {
 
     await nextTick();
 
-    const waitForPrism = () => {
-      return new Promise<void>((resolve) => {
-        const check = () => {
-          if (typeof (window as any).Prism !== 'undefined' && (window as any).Prism.highlightElement) {
-            resolve();
-          } else {
-            setTimeout(check, 50);
-          }
-        };
-        check();
-      });
-    };
-
-    await waitForPrism();
-
     document.querySelectorAll('.blog-content pre code[class*="language-"]').forEach((block) => {
-      (window as any).Prism.highlightElement(block as HTMLElement);
+      Prism.highlightElement(block as HTMLElement);
     });
     document.querySelectorAll('.blog-content').forEach(el => {
       el.addEventListener('click', handleCopyCode);
