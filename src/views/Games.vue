@@ -884,8 +884,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="page-container py-8 font-mono text-[var(--color-text)]">
-    <div class="max-w-5xl mx-auto w-full">
+  <div class="page-container py-8 font-mono text-[var(--color-text)] relative">
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-tl hidden md:block"></div>
+    <div class="hud-corner hud-tr hidden md:block"></div>
+    <div class="scanlines"></div>
+
+    <div class="max-w-5xl mx-auto w-full relative z-10">
       <div class="mb-6 flex items-center justify-between border-b border-[var(--color-border)] pb-2 opacity-60">
         <span class="text-[10px] tracking-widest">[SYS.PROC.GAMES.EXE] // GRID_RUNNER_V2.0</span>
         <span class="text-[10px] tracking-widest text-[var(--color-brand)] animate-pulse">STATUS: ONLINE</span>
@@ -900,7 +905,7 @@ onUnmounted(() => {
             <div class="border-b border-[var(--color-border)] pb-4 mb-8 relative">
               <div class="absolute -top-6 -left-4 font-art text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">ARCADE</div>
               <div class="flex justify-between items-end">
-                <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> GRID_RUNNER</h2>
+                <h2 class="text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> GRID_RUNNER</h2>
                 <a href="https://github.com/ChouChiu" target="_blank" class="text-[10px] font-mono tracking-widest text-[var(--color-brand)] hover:underline opacity-80 mb-1 flex items-center gap-2 transition-all hover:opacity-100" title="Visit Author's GitHub">
                   <i class="fab fa-github"></i>
                   AUTHOR: ChouChiu
@@ -953,7 +958,13 @@ onUnmounted(() => {
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               
               <!-- Screen Grid / Canvas -->
-              <div class="lg:col-span-2 border border-[var(--color-border)] p-1 bg-[#0a0a0a]">
+              <div class="lg:col-span-2 border border-[var(--color-border)] p-1 bg-[#0a0a0a] relative group">
+                <!-- Inner HUD Corners for Canvas -->
+                <div class="absolute top-2 left-2 w-4 h-4 border-t border-l border-[var(--color-brand)] opacity-50"></div>
+                <div class="absolute top-2 right-2 w-4 h-4 border-t border-r border-[var(--color-brand)] opacity-50"></div>
+                <div class="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-[var(--color-brand)] opacity-50"></div>
+                <div class="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-[var(--color-brand)] opacity-50"></div>
+                
                 <canvas ref="canvasRef" class="w-full aspect-square max-h-[420px] filter contrast-125 saturate-50"></canvas>
               </div>
 

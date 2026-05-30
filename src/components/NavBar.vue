@@ -79,16 +79,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed top-3 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] md:w-[95%] max-w-[1200px] z-[60] pointer-events-none group/nav hidden md:block">
-    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] md:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(107,143,114,0.15)] relative overflow-hidden">
+  <div class="fixed top-3 lg:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] lg:w-[95%] max-w-[1200px] z-[60] pointer-events-none group/nav hidden lg:block">
+    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] lg:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(107,143,114,0.15)] relative overflow-hidden">
       
       <!-- Top Scanline decorative -->
       <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent opacity-0 group-hover/nav:opacity-50 transition-opacity duration-1000"></div>
 
       <!-- Top Status Line -->
-      <div class="flex justify-between items-center px-2.5 md:px-6 py-1.5 md:py-3 border-b border-[var(--color-border)] text-[0.6rem] md:text-xs">
-        <div class="flex flex-wrap items-center gap-x-3 md:gap-x-6 gap-y-1">
-          <span class="flex items-center gap-1.5 md:gap-2 font-bold tracking-widest text-[var(--color-text)]">
+      <div class="flex justify-between items-center px-2.5 lg:px-6 py-1.5 lg:py-3 border-b border-[var(--color-border)] text-[0.6rem] lg:text-xs">
+        <div class="flex flex-wrap items-center gap-x-3 lg:gap-x-6 gap-y-1">
+          <span class="flex items-center gap-1.5 lg:gap-2 font-bold tracking-widest text-[var(--color-text)]">
             <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block shadow-[0_0_8px_var(--color-brand)]"></span>
             SYS.ONLINE
           </span>
@@ -101,7 +101,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Desktop Navigation Links -->
-      <nav class="hidden md:flex justify-between items-center px-6 py-3 gap-4">
+      <nav class="hidden lg:flex justify-between items-center px-6 py-3 gap-4">
         <div class="flex gap-8">
           <router-link
             v-for="item in navItems"
@@ -126,22 +126,24 @@ onUnmounted(() => {
   </div>
 
   <!-- Mobile Floating Action Button (FAB) -->
-  <button 
-    @click="toggleMenu" 
-    class="fixed bottom-6 left-6 z-[60] md:hidden w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(107,143,114,0.3)] glitch-hover group"
-  >
-    <!-- Crosshairs corner decorations -->
-    <div class="absolute top-0 left-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
-    <div class="absolute top-0 left-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
-    <div class="absolute bottom-0 right-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
-    <div class="absolute bottom-0 right-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
-    
-    <i class="fas transition-transform duration-300 group-active:scale-90" :class="isMenuOpen ? 'fa-times rotate-90 text-red-500' : 'fa-compass'"></i>
-  </button>
+  <div class="fixed bottom-6 left-6 z-[60] lg:hidden">
+    <button 
+      @click="toggleMenu" 
+      class="w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(107,143,114,0.3)] glitch-hover group"
+    >
+      <!-- Crosshairs corner decorations -->
+      <div class="absolute top-0 left-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
+      <div class="absolute top-0 left-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
+      <div class="absolute bottom-0 right-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>
+      <div class="absolute bottom-0 right-0 w-[1px] h-2 bg-[var(--color-brand)] opacity-50"></div>
+      
+      <i class="fas transition-transform duration-300 group-active:scale-90" :class="isMenuOpen ? 'fa-times rotate-90 text-red-500' : 'fa-compass'"></i>
+    </button>
+  </div>
 
   <!-- Mobile Full-Screen Menu Overlay -->
   <transition name="mobile-menu-fade">
-    <div v-if="isMenuOpen" class="fixed inset-0 z-[55] md:hidden bg-[var(--color-bg)]/95 backdrop-blur-xl flex flex-col justify-center items-center overflow-hidden">
+    <div v-if="isMenuOpen" class="fixed inset-0 z-[55] lg:hidden bg-[var(--color-bg)]/95 backdrop-blur-xl flex flex-col justify-center items-center overflow-hidden">
       <!-- Background Grid & Scanlines -->
       <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
       <div class="scanlines absolute inset-0 pointer-events-none opacity-40"></div>

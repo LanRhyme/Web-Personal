@@ -47,11 +47,27 @@ const handleProjectClick = (index: number) => {
 </script>
 
 <template>
-  <div class="w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8" :class="{ 'red-alert': isShakeActive }">
-    <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative">
-      <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">DEPLOY</div>
-      <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> DEPLOYED_PROJECTS</h2>
+  <div class="w-full font-sans relative" :class="{ 'red-alert': isShakeActive }">
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-tl hidden md:block"></div>
+    <div class="hud-corner hud-tr hidden md:block"></div>
+    <div class="scanlines"></div>
+
+    <!-- Right Side HUD Text -->
+    <div class="hidden xl:block fixed right-6 top-1/2 -translate-y-1/2 hud-text-vertical">
+      SYS.DEPLOYMENT_NODES // 0x{{ Math.random().toString(16).substring(2, 6).toUpperCase() }}
     </div>
+
+    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8 relative z-10">
+      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex justify-between items-end">
+        <div>
+          <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">DEPLOY</div>
+          <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> DEPLOYED_PROJECTS</h2>
+        </div>
+        <div class="hidden md:block font-mono text-[10px] text-[var(--color-brand)] opacity-60 tracking-[0.2em] animate-pulse">
+           [ ACTIVE_NODES: {{ projects.length }} ]
+        </div>
+      </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 stagger-children">
       <div
@@ -107,20 +123,26 @@ const handleProjectClick = (index: number) => {
           <!-- Sticker Grid background effect -->
           <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMCIvPgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KPC9zdmc+')] opacity-20 pointer-events-none"></div>
 
-          <h3 class="text-xl font-art tracking-wide text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-3 flex items-center gap-2">
+          <h3 class="text-xl font-art tracking-wide text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-3 flex items-center gap-2 glitch-hover">
+            <span class="animate-pulse text-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity absolute -left-4">></span>
             > {{ project.title.toUpperCase() }}
             <span class="opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-2 group-hover:translate-x-0 font-mono text-[10px]">></span>
           </h3>
-          <p class="text-[13px] text-[var(--color-text-dim)] mb-6 flex-grow leading-relaxed font-sans">{{ project.description }}</p>
+          <p class="text-[13px] text-[var(--color-text-dim)] mb-6 flex-grow leading-relaxed font-sans relative z-10">{{ project.description }}</p>
 
           <div class="flex flex-wrap gap-2 mt-auto">
             <span
               v-for="(tag, tIndex) in project.tags"
               :key="tIndex"
-              class="text-[10px] border border-[var(--color-border)] px-2 py-1 uppercase font-mono tracking-widest bg-[var(--color-bg)] group-hover:border-[var(--color-brand)] transition-colors opacity-80"
+              class="text-[10px] border border-[var(--color-border)] px-2 py-1 uppercase font-mono tracking-widest bg-[var(--color-bg)] group-hover:border-[var(--color-brand)]/50 group-hover:text-[var(--color-brand)] transition-colors opacity-80"
             >
               #{{ tag }}
             </span>
+          </div>
+
+          <!-- Bottom Right Decorative Hex -->
+          <div class="absolute bottom-6 right-6 font-mono text-[8px] opacity-10 group-hover:opacity-40 transition-opacity text-[var(--color-brand)]">
+            SYS_{{ Math.random().toString(16).substring(2, 6).toUpperCase() }}
           </div>
         </div>
       </div>
@@ -133,5 +155,6 @@ const handleProjectClick = (index: number) => {
         <div class="text-xs opacity-60 font-mono tracking-widest">弦律异常·碎月引力波与裂缝脉冲完全同步——烬的研究笔记</div>
       </div>
     </transition>
+    </div>
   </div>
 </template>

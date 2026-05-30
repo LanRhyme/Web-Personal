@@ -78,11 +78,21 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full transition-colors duration-500 font-sans">
-    <div class="page-container py-6 md:py-12 px-4 md:px-8 lg:px-12 max-w-[1200px] mx-auto">
-      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative">
-        <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">BLOG</div>
-        <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> BLOG_LOGS</h2>
+  <div class="w-full transition-colors duration-500 font-sans relative">
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-tl hidden md:block"></div>
+    <div class="hud-corner hud-tr hidden md:block"></div>
+    <div class="scanlines"></div>
+
+    <div class="page-container py-6 md:py-12 px-4 md:px-8 lg:px-12 max-w-[1200px] mx-auto relative z-10">
+      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex justify-between items-end">
+        <div>
+          <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">BLOG</div>
+          <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> BLOG_LOGS</h2>
+        </div>
+        <div class="hidden md:block font-mono text-[10px] text-[var(--color-brand)] opacity-60 tracking-[0.2em] animate-pulse">
+           [ SYS.DB_CONNECTION_ESTABLISHED ]
+        </div>
       </div>
 
       <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
@@ -127,8 +137,8 @@ onMounted(async () => {
                 </div>
                 
                 <!-- Title -->
-                <div class="flex-grow px-4 py-3 md:px-6 md:py-5">
-                  <h3 class="text-sm md:text-xl tracking-wide font-art text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-1 md:mb-2">
+                <div class="flex-grow px-4 py-3 md:px-6 md:py-5 relative z-10">
+                  <h3 class="text-sm md:text-xl tracking-wide font-art text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-1 md:mb-2 glitch-hover">
                     > {{ article.title }}
                   </h3>
                   <div class="flex gap-1.5 md:gap-2 flex-wrap">
@@ -144,10 +154,14 @@ onMounted(async () => {
                 </div>
 
                 <!-- Actions -->
-                <div class="px-6 hidden md:flex items-center self-stretch border-l border-[var(--color-border)]/50 bg-[var(--color-bg)]/50 group-hover:bg-[var(--color-brand)]/5 transition-colors">
-                  <span class="text-[11px] font-mono uppercase text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors tracking-widest whitespace-nowrap">
+                <div class="px-6 hidden md:flex flex-col justify-center items-end self-stretch border-l border-[var(--color-border)]/50 bg-[var(--color-bg)]/50 group-hover:bg-[var(--color-brand)]/5 transition-colors relative overflow-hidden">
+                  <span class="text-[11px] font-mono uppercase text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors tracking-widest whitespace-nowrap z-10">
                     [ READ.EXE ]
                   </span>
+                  <!-- Barcode Deco -->
+                  <div class="absolute bottom-2 right-6 flex items-end gap-[2px] opacity-10 group-hover:opacity-40 transition-opacity text-[var(--color-brand)] pointer-events-none">
+                     <div class="w-[1px] h-3 bg-current"></div><div class="w-[3px] h-3 bg-current"></div><div class="w-[2px] h-3 bg-current"></div><div class="w-[1px] h-3 bg-current"></div><div class="w-[4px] h-3 bg-current"></div>
+                  </div>
                 </div>
               </div>
             </div>

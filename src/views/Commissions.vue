@@ -1,10 +1,16 @@
 <template>
-  <div class="flex flex-col items-center w-full gap-12 md:gap-16 font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
+  <div class="flex flex-col items-center w-full font-sans relative">
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-tl hidden md:block"></div>
+    <div class="hud-corner hud-tr hidden md:block"></div>
+    <div class="scanlines"></div>
 
-    <div class="w-full border-b border-[var(--color-border)] pb-3 md:pb-4 mb-4 relative">
-      <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">REQUEST</div>
-      <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> COMMISSION_BOARD</h2>
-    </div>
+    <div class="w-full flex flex-col items-center gap-12 md:gap-16 max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8 relative z-10">
+
+      <div class="w-full border-b border-[var(--color-border)] pb-3 md:pb-4 mb-4 relative">
+        <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">REQUEST</div>
+        <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> COMMISSION_BOARD</h2>
+      </div>
 
     <!-- Top Row: Platforms, Invitations, Payment -->
     <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -29,7 +35,7 @@
             <div class="absolute inset-0 bg-black/50 z-10"></div>
             <i class="fa-solid fa-palette text-4xl text-[var(--color-text)] relative z-0"></i>
             <h4 class="text-sm font-bold text-[var(--color-primary)] tracking-wide relative z-0">画加</h4>
-            <p class="text-[10px] font-mono text-red-400 relative z-0">[ LOCKED ]</p>
+            <p class="text-[10px] font-mono text-red-400 relative z-0 animate-pulse">[ LOCKED ]</p>
           </div>
         </div>
       </section>
@@ -120,7 +126,7 @@
               <div class="w-[3px] h-full bg-[var(--color-text)] opacity-30"></div>
             </div>
             <!-- Status Tab -->
-            <div class="absolute top-0 right-6 px-3 h-7 bg-[var(--color-brand)] flex items-center justify-center text-[10px] text-black font-bold font-mono tracking-widest z-20">
+            <div class="absolute top-0 right-6 px-3 h-7 bg-[var(--color-brand)] flex items-center justify-center text-[10px] text-black font-bold font-mono tracking-widest z-20 animate-pulse">
               [ACTIVE]
             </div>
 
@@ -156,7 +162,7 @@
             <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMCIvPgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KPC9zdmc+')] opacity-[0.03] pointer-events-none group-hover:opacity-[0.08] transition-opacity duration-500"></div>
 
             <div class="flex justify-between items-start mb-4 relative z-10">
-              <h3 class="text-2xl font-art tracking-wide text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors flex items-center gap-3">
+              <h3 class="text-2xl font-art tracking-wide text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors flex items-center gap-3 glitch-hover">
                 > {{ item.title.toUpperCase() }}
                 <span class="opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-2 group-hover:translate-x-0 font-mono text-[12px] text-[var(--color-brand)] animate-pulse">_</span>
               </h3>
@@ -226,6 +232,7 @@
         </div>
       </div>
     </Teleport>
+    </div>
   </div>
 </template>
 

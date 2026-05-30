@@ -1,20 +1,27 @@
 <template>
-  <div class="page-content flex flex-col items-center w-full font-sans max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8">
-    <section class="w-full" id="works-intro" v-show="currentView === 'all'">
-      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
-        <div>
-          <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
-          <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase">> ART_ARCHIVE</h2>
+  <div class="page-content flex flex-col items-center w-full font-sans relative">
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-tl hidden md:block"></div>
+    <div class="hud-corner hud-tr hidden md:block"></div>
+    <div class="scanlines"></div>
+
+    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8 w-full relative z-10">
+      <section class="w-full" id="works-intro" v-show="currentView === 'all'">
+        <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
+          <div>
+            <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
+            <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> ART_ARCHIVE</h2>
+          </div>
+          <button
+            @click="open3DView"
+            class="btn-terminal !px-4 !py-1 self-start sm:self-auto group relative overflow-hidden"
+            title="Enter 3D Gallery"
+          >
+            <div class="absolute inset-0 bg-[var(--color-brand)] opacity-0 group-hover:opacity-20 animate-pulse transition-opacity pointer-events-none z-[-1]"></div>
+            <span class="relative z-10">[ 3D_ARCADE ]</span>
+          </button>
         </div>
-        <button
-          @click="open3DView"
-          class="btn-terminal !px-4 !py-1 self-start sm:self-auto"
-          title="Enter 3D Gallery"
-        >
-          [ 3D_ARCADE ]
-        </button>
-      </div>
-    </section>
+      </section>
 
     <div class="w-full mb-6 md:mb-8 text-left" v-show="currentView === 'portfolio'">
       <button @click="switchToAllWorks" class="btn-terminal mb-4 md:mb-6">
@@ -66,6 +73,11 @@
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px]">
               <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider">> {{ work.title || 'UNNAMED_WORK' }}</div>
               <div class="text-[10px] opacity-70 font-mono tracking-widest">{{ work.description || 'Illustration Log' }}</div>
+              
+              <!-- Decorative Barcode -->
+              <div class="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-[2px] opacity-30 text-[var(--color-brand)]">
+                <div class="h-[1px] w-4 bg-current"></div><div class="h-[3px] w-4 bg-current"></div><div class="h-[2px] w-4 bg-current"></div><div class="h-[1px] w-4 bg-current"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -189,6 +201,7 @@
       </div>
     </Teleport>
 
+    </div>
   </div>
 </template>
 
