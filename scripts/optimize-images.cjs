@@ -6,6 +6,20 @@ const MAX_WIDTH = 1920;
 const QUALITY = 80;
 const SIZE_THRESHOLD = 500 * 1024; // 500 KB
 
+const CACHE_FILE = path.join(__dirname, '.optimization-cache.json');
+let optimizedCache = {};
+if (fs.existsSync(CACHE_FILE)) {
+    try {
+        optimizedCache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+    } catch (e) {
+        optimizedCache = {};
+    }
+}
+
+function saveCache() {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(optimizedCache, null, 2));
+}
+
 async function optimizeImage(filePath, size) {
     console.log(`Optimizing: ${filePath} (${(size / 1024 / 1024).toFixed(2)} MB)`);
     try {
@@ -17,13 +31,15 @@ async function optimizeImage(filePath, size) {
             changed = true;
         }
 
-        // Always apply quality down to 80 to reduce file size
         image.quality(QUALITY);
-        
         await image.writeAsync(filePath);
         
         const newSize = fs.statSync(filePath).size;
         console.log(`[Success] -> New Size: ${(newSize / 1024 / 1024).toFixed(2)} MB`);
+        
+        // Record the file size after optimization to prevent re-running
+        optimizedCache[filePath] = newSize;
+        saveCache();
     } catch (err) {
         console.error(`[Error] processing ${filePath}:`, err.message);
     }
@@ -38,8 +54,11 @@ async function processDirectory(dir) {
         if (stat.isDirectory()) {
             await processDirectory(fullPath);
         } else if (/\.(png|jpe?g)$/i.test(fullPath)) {
-            // Only optimize if file size > 500KB
             if (stat.size > SIZE_THRESHOLD) {
+                // Skip if this exact file size is already in our cache (meaning we already compressed it)
+                if (optimizedCache[fullPath] === stat.size) {
+                    continue;
+                }
                 await optimizeImage(fullPath, stat.size);
             }
         }
