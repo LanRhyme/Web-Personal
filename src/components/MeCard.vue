@@ -44,7 +44,7 @@ onMounted(() => {
       <div class="flex items-center gap-4">
         <!-- Minimalist Avatar Frame -->
         <div class="w-14 h-14 bg-transparent flex items-center justify-center border border-[var(--color-brand)] overflow-hidden relative">
-          <img src="/img/avatar.png" alt="Avatar" class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale hover:grayscale-0 transition-all duration-500" />
+          <img src="/img/avatar.png" alt="Avatar" loading="lazy" decoding="async" class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale hover:grayscale-0 transition-all duration-500" />
           <div class="absolute inset-0 border border-[var(--color-brand)] mix-blend-overlay"></div>
         </div>
         <div class="flex flex-col gap-1 tracking-widest">

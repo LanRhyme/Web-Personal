@@ -92,7 +92,7 @@ const marked = (text: string): string => {
 
   html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
     const fullUrl = src.startsWith('http') ? src : `/blogs/${slug.value}/${src}`;
-    return `<img alt="${alt}" src="${fullUrl}" class="blog-img" />`;
+    return `<img alt="${alt}" src="${fullUrl}" loading="lazy" decoding="async" class="blog-img" />`;
   });
 
   html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
@@ -241,7 +241,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="article.config.cover" class="mb-8 border border-[var(--color-border)] overflow-hidden">
-        <img :src="getImageUrl(article.config.cover)" class="w-full filter grayscale hover:grayscale-0 transition-all duration-500" @error="($event.target as HTMLImageElement).style.display='none'" />
+        <img :src="getImageUrl(article.config.cover)" loading="lazy" decoding="async" class="w-full filter grayscale hover:grayscale-0 transition-all duration-500" @error="($event.target as HTMLImageElement).style.display='none'" />
       </div>
 
       <div v-if="article.config.summary" class="cyber-glass !p-6 text-center text-[12px] md:text-[14px] text-[var(--color-text-dim)] font-mono tracking-wide mb-8 border-l-2 border-l-[var(--color-brand)]">

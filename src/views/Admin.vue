@@ -760,7 +760,7 @@ watch(isAuthenticated, (newVal) => {
                         </div>
                         <div class="w-full md:w-64 flex-shrink-0 pt-8 md:pt-0">
                             <div class="aspect-video bg-[var(--color-bg)] border border-dashed border-[var(--color-border)] relative group/img">
-                                <img v-if="project.image" :src="resolveImg(project.image)" class="w-full h-full object-cover" />
+                                <img v-if="project.image" :src="resolveImg(project.image)" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                 <div v-else class="w-full h-full flex flex-col items-center justify-center text-[var(--color-secondary)] opacity-30"><i class="fas fa-image text-2xl md:text-3xl mb-2"></i><span class="text-[10px] font-bold">PREVIEW</span></div>
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
                                     <label class="btn-terminal !py-2 !px-4 text-[10px] cursor-pointer">
@@ -828,7 +828,7 @@ watch(isAuthenticated, (newVal) => {
                                 <label class="text-[10px] font-black uppercase tracking-widest text-[var(--color-brand)]">预览图示</label>
                                 <div class="grid grid-cols-3 gap-3">
                                     <div v-for="(img, i) in comm.images" :key="i" class="aspect-square rounded-2xl overflow-hidden bg-[var(--color-bg)] group/img relative shadow-sm">
-                                        <img :src="resolveImg(img)" class="w-full h-full object-cover" />
+                                        <img :src="resolveImg(img)" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                         <button @click="comm.images.splice(i, 1)" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 text-white text-[8px]"><i class="fas fa-times"></i></button>
                                     </div>
                                     <label class="aspect-square rounded-2xl border-2 border-dashed border-[var(--color-border)] flex flex-col items-center justify-center text-[var(--color-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] cursor-pointer transition-all">
@@ -854,7 +854,7 @@ watch(isAuthenticated, (newVal) => {
                                 <button @click="removeWork(index)" class="w-6 h-6 md:w-7 md:h-7 bg-red-500 text-white"><i class="fas fa-times text-[10px] md:text-xs"></i></button>
                             </div>
                             <div class="aspect-square bg-[var(--color-bg)] relative mb-3 md:mb-4">
-                                <img v-if="work.image" :src="resolveImg(work.image)" class="w-full h-full object-cover" />
+                                <img v-if="work.image" :src="resolveImg(work.image)" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <label class="cursor-pointer text-white p-4">
                                         <i class="fas fa-cloud-upload-alt text-2xl"></i>
@@ -876,7 +876,7 @@ watch(isAuthenticated, (newVal) => {
                         <div class="flex flex-col md:flex-row gap-4 md:gap-8">
                             <div class="w-24 md:w-32 flex-shrink-0 mx-auto md:mx-0">
                                 <div class="aspect-square bg-[var(--color-bg)] relative border border-[var(--color-border)]">
-                                    <img v-if="section.thumbnail" :src="resolveImg(section.thumbnail)" class="w-full h-full object-cover" />
+                                    <img v-if="section.thumbnail" :src="resolveImg(section.thumbnail)" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                     <label class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                                         <i class="fas fa-camera text-white"></i>
                                         <input type="file" class="hidden" @change="(e) => handleFileUpload(e, section, 'thumbnail', 'img-works')" />
@@ -906,7 +906,7 @@ watch(isAuthenticated, (newVal) => {
                                       class="aspect-square rounded-xl overflow-hidden cursor-pointer relative transition-all"
                                       :class="section.work_ids.includes(work.id) ? 'ring-4 ring-[var(--color-brand)] scale-95 opacity-100' : 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0'"
                                  >
-                                      <img :src="resolveImg(work.image)" class="w-full h-full object-cover" />
+                                      <img :src="resolveImg(work.image)" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                       <div v-if="section.work_ids.includes(work.id)" class="absolute inset-0 flex items-center justify-center bg-[var(--color-brand)]/20">
                                           <i class="fas fa-check-circle text-white text-2xl shadow-lg"></i>
                                       </div>
@@ -955,7 +955,7 @@ watch(isAuthenticated, (newVal) => {
                                     </label>
                                 </div>
                                 <div v-if="articleCoverPreview" class="mt-3 w-32 h-32 rounded-xl overflow-hidden bg-[var(--color-bg)]">
-                                    <img :src="articleCoverPreview" class="w-full h-full object-cover" />
+                                    <img :src="articleCoverPreview" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                                 </div>
                             </div>
                             <div class="input-terminal-group">

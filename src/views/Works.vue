@@ -37,7 +37,7 @@
             class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
             @click="switchToPortfolio(portfolio)"
           >
-            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
             <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)] relative z-10">
               <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide">> {{ portfolio.title }}</div>
               <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed">{{ portfolio.description }}</div>
@@ -62,7 +62,7 @@
             class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
             @click="openLightbox(index)"
           >
-            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px]">
               <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider">> {{ work.title || 'UNNAMED_WORK' }}</div>
               <div class="text-[10px] opacity-70 font-mono tracking-widest">{{ work.description || 'Illustration Log' }}</div>
@@ -137,7 +137,7 @@
               @click.stop="focusItem(index)"
              >
                 <div class="relative h-[250px] md:h-[350px] w-auto rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--color-brand)]/50 group-hover:shadow-[0_0_30px_rgba(var(--brand-rgb),0.3)] bg-gray-900/40 backface-hidden flex justify-center items-center backdrop-blur-sm">
-                  <img :src="getImageUrl(work.image)" class="h-full w-auto max-w-[500px] object-contain" />
+                  <img :src="getImageUrl(work.image)" loading="lazy" decoding="async" class="h-full w-auto max-w-[500px] object-contain" />
                   <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 pointer-events-none"></div>
                   <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none">
                     <h3 class="text-white font-bold truncate text-sm">{{ work.title }}</h3>
@@ -145,7 +145,7 @@
                 </div>
                 <!-- Reflection -->
                 <div v-if="['cylinder', 'helix', 'grid'].includes(currentLayout)" class="absolute top-full left-0 w-full h-full transform scale-y-[-1] opacity-20 mask-gradient pointer-events-none mt-2 transition-opacity duration-500">
-                   <img :src="getImageUrl(work.image)" class="w-full h-full object-cover rounded-2xl blur-[2px]" />
+                   <img :src="getImageUrl(work.image)" loading="lazy" decoding="async" class="w-full h-full object-cover rounded-2xl blur-[2px]" />
                 </div>
              </div>
           </div>
@@ -175,6 +175,8 @@
           <img
             :src="lightbox.image"
             alt="Enlarged work"
+            loading="lazy"
+            decoding="async"
             class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transition-transform duration-500 select-none"
             :class="{ 'scale-100': lightbox.visible, 'scale-95': !lightbox.visible }"
             @click.stop

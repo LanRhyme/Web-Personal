@@ -129,6 +129,8 @@
               @click="openImageModal(getImageUrl(item.currentImage || item.images[0] || ''))"
               class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter brightness-75 group-hover:brightness-100 cursor-pointer z-10"
               alt="Commission Reference"
+              loading="lazy"
+              decoding="async"
             >
             
             <div class="absolute bottom-3 right-3 z-20 flex gap-2" v-if="item.images && item.images.length > 1">
@@ -195,13 +197,13 @@
             <div class="text-center group">
               <p class="text-xs font-mono font-bold mb-3 text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors">> WECHAT</p>
               <div class="p-2 border border-[var(--color-border)] group-hover:border-[var(--color-brand)] transition-colors bg-white">
-                 <img alt="WeChat Pay" class="w-full h-auto" src="/img/wx.jpg">
+                 <img alt="WeChat Pay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/wx.jpg">
               </div>
             </div>
             <div class="text-center group">
               <p class="text-xs font-mono font-bold mb-3 text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors">> ALIPAY</p>
               <div class="p-2 border border-[var(--color-border)] group-hover:border-[var(--color-brand)] transition-colors bg-white">
-                 <img alt="Alipay" class="w-full h-auto" src="/img/zfb.jpg">
+                 <img alt="Alipay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/zfb.jpg">
               </div>
             </div>
           </div>
@@ -220,7 +222,7 @@
           <button @click="closeImageModal" class="absolute -top-5 -right-5 w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-sm border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-colors z-10 cursor-pointer shadow-[0_0_15px_rgba(107,143,114,0.3)]">
             <i class="fas fa-times text-lg"></i>
           </button>
-          <img :src="modalImageUrl" class="block max-w-full max-h-[90vh] object-contain border border-[var(--color-border)] shadow-[0_0_50px_rgba(0,0,0,1)]" alt="Enlarged">
+          <img :src="modalImageUrl" loading="lazy" decoding="async" class="block max-w-full max-h-[90vh] object-contain border border-[var(--color-border)] shadow-[0_0_50px_rgba(0,0,0,1)]" alt="Enlarged">
         </div>
       </div>
     </Teleport>

@@ -71,9 +71,12 @@ const handleProjectClick = (index: number) => {
           <div class="absolute top-0 right-4 w-6 h-4 bg-[var(--color-brand)] opacity-80 z-10"></div>
 
           <img
+            v-if="project.image"
             :src="getImageUrl(project.image)"
             :alt="project.title"
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
           >
           
           <!-- Overlay Actions -->
