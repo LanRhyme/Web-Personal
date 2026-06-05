@@ -107,42 +107,54 @@ const initThree = () => {
 
       void main() {
         vec2 uv = vUv;
+        // Correct aspect ratio so geography isn't stretched
         uv.x *= uResolution.x / uResolution.y;
 
-        // Scale coordinates to make the map vast and elegant
-        vec2 st = uv * 2.0;
+        // Scale coordinates for vast landscape
+        vec2 st = uv * 1.5;
 
-        // Pan the map slowly over time, plus mouse parallax
-        vec2 pan = vec2(uTime * 0.04, uTime * 0.02) + uMouse * 0.08;
+        // Pan slowly
+        vec2 pan = vec2(uTime * 0.03, uTime * 0.015) + uMouse * 0.05;
         vec2 pos = st + pan;
 
-        // Use static 2D noise (Z=0.0) so the map doesn't morph/boil, it just pans
-        float n1 = snoise(vec3(pos, 0.0));
-        // Add a tiny bit of detail for realistic geography
-        float n2 = snoise(vec3(pos * 3.0, 0.0)) * 0.1;
-        float noiseVal = n1 + n2;
+        // FBM (Fractal Brownian Motion) for realistic geography
+        float noiseVal = 0.0;
+        float amplitude = 0.5;
+        float frequency = 1.0;
+        
+        for (int i = 0; i < 4; i++) {
+            noiseVal += amplitude * snoise(vec3(pos * frequency, 0.0));
+            frequency *= 2.0;
+            amplitude *= 0.5;
+        }
 
-        // Contour lines spacing (fewer lines = more elegant map)
-        float linesCount = 8.0;
-        float f = fract(noiseVal * linesCount);
+        // Density of elevation changes
+        float linesCount = 8.0; 
+        float f = noiseVal * linesCount;
         
-        // Very thin, precise line thickness
-        float lineThickness = 0.015;
-        float edgeSoftness = 0.015;
+        // Use standard derivatives for perfectly uniform line thickness everywhere
+        float df = fwidth(f);
         
-        // Draw crisp line at boundary
-        float lineAlpha = smoothstep(lineThickness + edgeSoftness, lineThickness, f) 
-                        + smoothstep(1.0 - lineThickness - edgeSoftness, 1.0 - lineThickness, f);
+        // Distance to the nearest integer elevation
+        float contour = fract(f);
+        float distToLine = min(contour, 1.0 - contour);
+        
+        // Uniform thickness in pixels (e.g. 1.2 pixels wide to look super crisp)
+        float halfWidth = 1.2 * df;
+        
+        // Smooth anti-aliased line
+        float lineAlpha = 1.0 - smoothstep(0.0, halfWidth, distToLine);
 
         // High-end minimalist color scheme: subtle metallic grey/silver
         vec3 lineColor = vec3(0.5, 0.55, 0.52);
 
-        // Alpha is kept subtle (max 0.4) so it stays perfectly in the background
+        // Max opacity kept subtle
         gl_FragColor = vec4(lineColor, lineAlpha * 0.4);
       }
     `,
     transparent: true,
-    depthWrite: false
+    depthWrite: false,
+    extensions: { derivatives: true }
   });
 
   planeMesh = new THREE.Mesh(geometry, shaderMaterial);
