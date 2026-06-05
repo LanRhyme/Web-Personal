@@ -326,7 +326,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Interactive Hitokoto Card -->
-          <div class="w-full relative z-10 reveal animate-float-rotate hidden md:block">
+          <div class="w-full relative z-10 reveal hidden md:block">
             <HitokotoCard />
           </div>
         </div>

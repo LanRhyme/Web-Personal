@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vite:*)",
+      "WebFetch(domain:world-aosl.lanrhyme.top)",
+      "WebFetch(domain:kayiseisagu.com)",
+      "WebSearch"
+    ]
+  }
+}
