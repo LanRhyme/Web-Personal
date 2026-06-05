@@ -103,7 +103,7 @@ onMounted(() => {
     @click="fetchHitokoto"
   >
     <!-- Static Frosted Glass Layer (No 3D Transform to preserve backdrop-filter) -->
-    <div class="absolute inset-0 cyber-glass transition-transform duration-100" :style="isHovered ? 'transform: scale(1.02);' : ''"></div>
+    <div class="!absolute inset-0 w-full h-full cyber-glass transition-transform duration-100" :style="isHovered ? 'transform: scale(1.02);' : ''"></div>
 
     <!-- 3D Tilting Content Layer -->
     <div 
