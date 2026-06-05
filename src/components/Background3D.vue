@@ -110,29 +110,44 @@ const initThree = () => {
         // Correct aspect ratio so geography isn't stretched
         uv.x *= uResolution.x / uResolution.y;
 
-        // Scale coordinates for elegant, wide curves
-        vec2 st = uv * 2.0;
+        // Scale coordinates for vast landscape
+        vec2 st = uv * 1.5;
 
         // Pan slowly
-        vec2 pan = vec2(uTime * 0.02, uTime * 0.015) + uMouse * 0.03;
+        vec2 pan = vec2(uTime * 0.015, uTime * 0.01) + uMouse * 0.04;
         vec2 pos = st + pan;
 
-        // Standard Smooth FBM (removes the abs() ridge which caused severe math aliasing/jaggedness)
+        // 1. Domain Warping: Distorts the grid to create sweeping tectonic flows and geological faults
+        float warpX = snoise(vec3(pos * 0.4, 0.0));
+        float warpY = snoise(vec3(pos * 0.4 + 100.0, 0.0));
+        vec2 warpedPos = pos + vec2(warpX, warpY) * 0.8;
+
+        // 2. Multi-Octave FBM (Fractal Brownian Motion)
         float noiseVal = 0.0;
         float amplitude = 0.5;
         float frequency = 1.0;
         
-        for (int i = 0; i < 4; i++) {
-            noiseVal += amplitude * snoise(vec3(pos * frequency, 0.0));
+        for (int i = 0; i < 5; i++) {
+            // Map snoise from [-1, 1] to [0, 1]
+            float n = snoise(vec3(warpedPos * frequency, 0.0)) * 0.5 + 0.5;
+            noiseVal += amplitude * n;
             frequency *= 2.0;
             amplitude *= 0.5;
         }
 
+        // Ensure noiseVal is cleanly in [0, 1]
+        noiseVal = clamp(noiseVal, 0.0, 1.0);
+
+        // 3. Terrain Sculpting
+        // Using exponentiation to create vast flat plains (sparse lines) and steep mountains (dense lines)
+        noiseVal = pow(noiseVal, 1.8);
+
         // Density of elevation changes
-        float linesCount = 10.0; 
+        // Higher count needed because mountains are steep and plains are sparse
+        float linesCount = 25.0; 
         float f = noiseVal * linesCount;
         
-        // Screen-space derivative for perfectly uniform lines
+        // Screen-space derivative for perfectly uniform lines everywhere
         float df = fwidth(f);
         
         // Distance to the nearest integer elevation
@@ -143,24 +158,24 @@ const initThree = () => {
         float lineIndex = floor(f);
         bool majorLine = mod(lineIndex, 5.0) < 0.5;
         
-        // PERFECT ANTI-ALIASING: 
-        // A core solid thickness, plus a 1.5px soft edge blend to completely eliminate jaggedness
-        float lineThickness = majorLine ? 0.4 * df : 0.05 * df; 
-        float edgeSoftness = 1.5 * df; // 1.5 pixels of smoothing
+        // Core solid thickness, plus a soft edge blend
+        float lineThickness = majorLine ? 0.3 * df : 0.05 * df; 
+        float edgeSoftness = 1.5 * df; 
         
         // Crisp buttery-smooth core line
         float lineAlpha = 1.0 - smoothstep(lineThickness, lineThickness + edgeSoftness, distToLine);
         
-        // Soft glowing halo effect for major lines only
-        float glowWidth = majorLine ? 4.0 * df : 0.0;
-        float glowAlpha = majorLine ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.4 : 0.0;
+        // Soft glowing halo effect for major lines
+        float glowWidth = majorLine ? 3.0 * df : 0.0;
+        float glowAlpha = majorLine ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.5 : 0.0;
 
-        // Color mapping matching website's elegant cyber-glass vibe (#6b8f72 base)
+        // Base color: pale mint / silver matching site theme #6b8f72
         vec3 colDeep = vec3(0.42, 0.56, 0.45); // Desaturated Mint Green
         vec3 colHigh = vec3(0.85, 0.90, 0.88); // Silver / White Glow
         
         // Smoothly mix colors based on elevation
-        vec3 baseColor = mix(colDeep, colHigh, smoothstep(-0.5, 0.5, noiseVal));
+        vec3 baseColor = mix(colDeep, colHigh, noiseVal);
+        vec3 finalColor = majorLine ? baseColor * 1.2 : baseColor;
         
         // Combine crisp line and glow
         float totalAlpha = lineAlpha + glowAlpha;
@@ -168,7 +183,10 @@ const initThree = () => {
         // Keep opacities highly refined and subtle
         float opacityMult = majorLine ? 0.6 : 0.25;
 
-        gl_FragColor = vec4(baseColor, totalAlpha * opacityMult);
+        // 4. Negative Space: Fade out lines at the very bottom (ocean/plains level)
+        float terrainFade = smoothstep(0.01, 0.05, noiseVal);
+
+        gl_FragColor = vec4(finalColor, totalAlpha * opacityMult * terrainFade);
       }
     `,
     transparent: true,
