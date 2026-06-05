@@ -148,7 +148,6 @@ onMounted(() => {
 
 <style scoped>
 .hitokoto-container {
-  transform-style: preserve-3d;
   will-change: transform;
 }
 
