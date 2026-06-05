@@ -140,8 +140,9 @@ const initThree = () => {
         // 3. Smoother Terrain Sculpting
         noiseVal = pow(noiseVal, 1.5);
 
-        // 4. Extremely dense lines
-        float linesCount = 45.0; 
+        // 4. EXTREMELY DENSE LINES (Adding Micro-texture)
+        // Scaled up to 200 so we can inject thousands of faint micro-lines between the major lines
+        float linesCount = 200.0; 
         float f = noiseVal * linesCount;
         
         // Screen-space derivative for perfectly uniform lines everywhere
@@ -151,17 +152,23 @@ const initThree = () => {
         float contour = fract(f);
         float distToLine = min(contour, 1.0 - contour);
         
-        // 3-Tier Importance Hierarchy (Major, Intermediate, Minor)
+        // 4-Tier Importance Hierarchy (Major, Intermediate, Minor, Micro)
+        // The modulo scaling preserves the exact physical spacing of the previous 45 lines, 
+        // while injecting 4 new 'micro' lines into every gap!
         float lineIndex = floor(f);
-        float mod10 = mod(lineIndex, 10.0);
-        float mod5 = mod(lineIndex, 5.0);
         
-        bool isMajor = mod10 < 0.5;
-        bool isInter = (!isMajor) && (mod5 < 0.5);
-        bool isMinor = (!isMajor) && (!isInter);
+        bool isMajor = mod(lineIndex, 50.0) < 0.5;
+        bool isInter = (!isMajor) && (mod(lineIndex, 25.0) < 0.5);
+        bool isMinor = (!isMajor) && (!isInter) && (mod(lineIndex, 5.0) < 0.5);
+        bool isMicro = (!isMajor) && (!isInter) && (!isMinor);
         
-        // Thickness
-        float lineThickness = isMajor ? 0.4 * df : (isInter ? 0.15 * df : 0.02 * df); 
+        // Thickness hierarchy
+        float lineThickness = 0.0;
+        if (isMajor) lineThickness = 0.4 * df;
+        else if (isInter) lineThickness = 0.15 * df;
+        else if (isMinor) lineThickness = 0.03 * df;
+        else lineThickness = 0.01 * df; // Micro lines are insanely thin
+        
         float edgeSoftness = 1.5 * df; 
         
         // Crisp buttery-smooth core line
@@ -182,8 +189,12 @@ const initThree = () => {
         // Combine crisp line and glow
         float totalAlpha = lineAlpha + glowAlpha;
         
-        // Vastly reduced opacity for unimportant lines!
-        float opacityMult = isMajor ? 0.8 : (isInter ? 0.35 : 0.08);
+        // 4-Tier Opacity System
+        float opacityMult = 0.0;
+        if (isMajor) opacityMult = 0.8;
+        else if (isInter) opacityMult = 0.35;
+        else if (isMinor) opacityMult = 0.12;
+        else opacityMult = 0.04; // Micro lines act as a faint fingerprint texture
 
         // Fade out perfectly smooth at the bottom 
         float terrainFade = smoothstep(0.0, 0.08, noiseVal);
