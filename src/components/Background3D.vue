@@ -8,6 +8,7 @@ let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
 let planeMesh: THREE.Mesh;
 let animationId: number;
+const clock = new THREE.Clock();
 
 const mouseX = ref(0);
 const mouseY = ref(0);
@@ -105,7 +106,7 @@ const initThree = () => {
       }
 
       void main() {
-        vec2 uv = gl_FragCoord.xy / uResolution.xy;
+        vec2 uv = vUv;
         uv.x *= uResolution.x / uResolution.y;
 
         // Shift UV by mouse interaction
@@ -151,7 +152,7 @@ const initThree = () => {
 const animate = () => {
   animationId = requestAnimationFrame(animate);
 
-  const time = Date.now() * 0.001;
+  const time = clock.getElapsedTime();
   
   targetX.value += (mouseX.value - targetX.value) * 0.05;
   targetY.value += (mouseY.value - targetY.value) * 0.05;
