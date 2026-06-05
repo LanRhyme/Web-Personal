@@ -9,6 +9,7 @@ let renderer: THREE.WebGLRenderer;
 let planeMesh: THREE.Mesh;
 let animationId: number;
 const clock = new THREE.Clock();
+let lastTime = 0;
 
 const mouseX = ref(0);
 const mouseY = ref(0);
@@ -153,19 +154,18 @@ const initThree = () => {
         float distToLine = min(contour, 1.0 - contour);
         
         // 4-Tier Importance Hierarchy (Major, Intermediate, Minor, Micro)
-        // The modulo scaling preserves the exact physical spacing of the previous 45 lines, 
-        // while injecting 4 new 'micro' lines into every gap!
         float lineIndex = floor(f);
         
-        bool isMajor = mod(lineIndex, 50.0) < 0.5;
-        bool isInter = (!isMajor) && (mod(lineIndex, 25.0) < 0.5);
-        bool isMinor = (!isMajor) && (!isInter) && (mod(lineIndex, 5.0) < 0.5);
+        // Make Major lines more widespread (every 20 lines instead of 50)
+        bool isMajor = mod(lineIndex, 20.0) < 0.5;
+        bool isInter = (!isMajor) && (mod(lineIndex, 10.0) < 0.5);
+        bool isMinor = (!isMajor) && (!isInter) && (mod(lineIndex, 2.0) < 0.5);
         bool isMicro = (!isMajor) && (!isInter) && (!isMinor);
         
-        // Thickness hierarchy
+        // Thickness hierarchy: Made Major lines significantly thinner
         float lineThickness = 0.0;
-        if (isMajor) lineThickness = 0.4 * df;
-        else if (isInter) lineThickness = 0.15 * df;
+        if (isMajor) lineThickness = 0.2 * df;
+        else if (isInter) lineThickness = 0.1 * df;
         else if (isMinor) lineThickness = 0.03 * df;
         else lineThickness = 0.01 * df; // Micro lines are insanely thin
         
@@ -174,9 +174,9 @@ const initThree = () => {
         // Crisp buttery-smooth core line
         float lineAlpha = 1.0 - smoothstep(lineThickness, lineThickness + edgeSoftness, distToLine);
         
-        // Glow only for Major lines
-        float glowWidth = isMajor ? 4.0 * df : 0.0;
-        float glowAlpha = isMajor ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.6 : 0.0;
+        // Glow only for Major lines (reduced intensity to make it less obvious)
+        float glowWidth = isMajor ? 2.5 * df : 0.0;
+        float glowAlpha = isMajor ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.4 : 0.0;
 
         // Base color: pale mint / silver matching site theme #6b8f72
         vec3 colDeep = vec3(0.42, 0.56, 0.45); 
@@ -184,22 +184,26 @@ const initThree = () => {
         
         // Color mix based on elevation
         vec3 baseColor = mix(colDeep, colHigh, noiseVal);
-        vec3 finalColor = isMajor ? baseColor * 1.3 : baseColor;
+        vec3 finalColor = isMajor ? baseColor * 1.2 : baseColor;
         
         // Combine crisp line and glow
         float totalAlpha = lineAlpha + glowAlpha;
         
-        // 4-Tier Opacity System
+        // 4-Tier Opacity System (Lowered top opacity to blend better)
         float opacityMult = 0.0;
-        if (isMajor) opacityMult = 0.8;
-        else if (isInter) opacityMult = 0.35;
-        else if (isMinor) opacityMult = 0.12;
-        else opacityMult = 0.04; // Micro lines act as a faint fingerprint texture
+        if (isMajor) opacityMult = 0.55;
+        else if (isInter) opacityMult = 0.25;
+        else if (isMinor) opacityMult = 0.10;
+        else opacityMult = 0.04; 
 
         // Fade out perfectly smooth at the bottom 
         float terrainFade = smoothstep(0.0, 0.08, noiseVal);
+        
+        // Cinematic Vignette: subtly darken the screen edges to frame the website content
+        float distToCenter = length(vUv - 0.5);
+        float vignette = 1.0 - smoothstep(0.4, 0.85, distToCenter);
 
-        gl_FragColor = vec4(finalColor, totalAlpha * opacityMult * terrainFade);
+        gl_FragColor = vec4(finalColor, totalAlpha * opacityMult * terrainFade * vignette);
       }
     `,
     transparent: true,
@@ -217,9 +221,13 @@ const animate = () => {
   animationId = requestAnimationFrame(animate);
 
   const time = clock.getElapsedTime();
+  const delta = time - lastTime;
+  lastTime = time;
   
-  targetX.value += (mouseX.value - targetX.value) * 0.05;
-  targetY.value += (mouseY.value - targetY.value) * 0.05;
+  // Frame-rate independent easing for incredibly smooth parallax on all devices
+  const ease = 1.0 - Math.exp(-5.0 * delta);
+  targetX.value += (mouseX.value - targetX.value) * ease;
+  targetY.value += (mouseY.value - targetY.value) * ease;
 
   if (planeMesh) {
     const mat = planeMesh.material as THREE.ShaderMaterial;
