@@ -6,7 +6,8 @@ const containerRef = ref<HTMLElement | null>(null);
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
-let particlesMesh: THREE.Points;
+let linesGroup: THREE.Group;
+let shaderMaterial: THREE.ShaderMaterial;
 let animationId: number;
 
 const mouseX = ref(0);
@@ -19,75 +20,53 @@ const initThree = () => {
 
   scene = new THREE.Scene();
   
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 12;
+  // Create camera with a low angle looking across the terrain
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 500);
+  camera.position.set(0, 20, 80);
+  camera.lookAt(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   containerRef.value.appendChild(renderer.domElement);
 
-  // Generate Base Geometry (Mobius-like Ribbon)
-  // parameters: radius, tube, tubularSegments, radialSegments, p, q
-  const baseGeometry = new THREE.TorusKnotGeometry(3.5, 1.2, 400, 64, 1, 3);
-  
-  // Create Particles from the geometry vertices
-  const particlesGeometry = new THREE.BufferGeometry();
-  const positionAttribute = baseGeometry.getAttribute('position');
-  
-  const vertexCount = positionAttribute.count;
-  const colorArray = new Float32Array(vertexCount * 3);
-  const offsetArray = new Float32Array(vertexCount); 
+  linesGroup = new THREE.Group();
+  scene.add(linesGroup);
 
-  for (let i = 0; i < vertexCount; i++) {
-    // Random black & white / grey tones for each particle
-    const shade = 0.3 + Math.random() * 0.7; // 0.3 to 1.0
-    colorArray[i * 3] = shade;
-    colorArray[i * 3 + 1] = shade;
-    colorArray[i * 3 + 2] = shade;
-    // Random offset for organic breathing animation
-    offsetArray[i] = Math.random() * Math.PI * 2;
-  }
-
-  particlesGeometry.setAttribute('position', positionAttribute);
-  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-  particlesGeometry.setAttribute('aOffset', new THREE.BufferAttribute(offsetArray, 1));
-
-  // Custom Shader Material for dynamic particle breathing and glowing effect
-  const shaderMaterial = new THREE.ShaderMaterial({
+  // Custom Shader Material for Topographic Lines
+  shaderMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 }
     },
     vertexShader: `
       uniform float uTime;
-      attribute vec3 color;
-      attribute float aOffset;
-      varying vec3 vColor;
+      varying float vDepth;
       
       void main() {
-        vColor = color;
         vec3 pos = position;
         
-        // Organic breathing effect
-        vec3 dir = normalize(pos);
-        float displacement = sin(uTime * 2.0 + aOffset) * 0.15;
-        pos += dir * displacement;
-
-        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        // Fluid topographic noise using combined sine waves
+        float wave1 = sin(pos.x * 0.05 + uTime * 0.6) * 6.0;
+        float wave2 = sin(pos.z * 0.04 + uTime * 0.4) * 8.0;
+        float wave3 = sin((pos.x + pos.z) * 0.03 - uTime * 0.3) * 5.0;
         
-        // Size attenuation
-        gl_PointSize = (2.0 + sin(uTime * 3.0 + aOffset) * 1.5) * (30.0 / -mvPosition.z);
+        pos.y = wave1 + wave2 + wave3;
+        
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;
+        
+        // Pass original Z to fragment for depth fading
+        vDepth = pos.z;
       }
     `,
     fragmentShader: `
-      varying vec3 vColor;
+      varying float vDepth;
       void main() {
-        // Soft circular particle with gradient
-        float dist = length(gl_PointCoord - vec2(0.5));
-        if (dist > 0.5) discard;
-        float alpha = (0.5 - dist) * 2.0;
-        gl_FragColor = vec4(vColor, alpha * 0.7);
+        // Fade out lines in the distance (z goes from -150 to 150)
+        // front is ~100, back is ~-100
+        float alpha = smoothstep(-150.0, 80.0, vDepth);
+        // Soft mint/grey tone to fit the site aesthetic
+        gl_FragColor = vec4(0.7, 0.8, 0.75, alpha * 0.3);
       }
     `,
     transparent: true,
@@ -95,8 +74,28 @@ const initThree = () => {
     blending: THREE.AdditiveBlending
   });
 
-  particlesMesh = new THREE.Points(particlesGeometry, shaderMaterial);
-  scene.add(particlesMesh);
+  // Generate parallel lines for the topography
+  const lineCount = 100; // Number of horizontal lines
+  const pointsPerLine = 150;
+  const width = 300;
+  const depth = 300;
+
+  for (let i = 0; i < lineCount; i++) {
+    const points = new Float32Array(pointsPerLine * 3);
+    const zPos = (i / (lineCount - 1)) * depth - depth / 2;
+    
+    for (let j = 0; j < pointsPerLine; j++) {
+      const xPos = (j / (pointsPerLine - 1)) * width - width / 2;
+      points[j * 3] = xPos;
+      points[j * 3 + 1] = 0; // Y is calculated in shader
+      points[j * 3 + 2] = zPos;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(points, 3));
+    const line = new THREE.Line(geometry, shaderMaterial);
+    linesGroup.add(line);
+  }
 
   animate();
 };
@@ -104,19 +103,21 @@ const initThree = () => {
 const animate = () => {
   animationId = requestAnimationFrame(animate);
 
-  const time = Date.now() * 0.0005;
+  const time = Date.now() * 0.001;
   
+  // Mouse parallax interpolation
   targetX.value += (mouseX.value - targetX.value) * 0.05;
   targetY.value += (mouseY.value - targetY.value) * 0.05;
 
-  if (particlesMesh) {
-    // Rotate the entire mobius strip
-    particlesMesh.rotation.y = time * 0.2 + targetX.value * 0.3;
-    particlesMesh.rotation.x = time * 0.1 + targetY.value * 0.3;
-    particlesMesh.rotation.z = time * 0.05;
+  if (linesGroup) {
+    // Subtle rotation based on mouse
+    linesGroup.rotation.y = targetX.value * 0.15;
+    linesGroup.rotation.x = targetY.value * 0.1;
     
-    // Pass time to shader
-    (particlesMesh.material as THREE.ShaderMaterial).uniforms.uTime.value = time;
+    // Update shader time
+    if (shaderMaterial) {
+      shaderMaterial.uniforms.uTime.value = time;
+    }
   }
 
   renderer.render(scene, camera);
@@ -148,13 +149,18 @@ onUnmounted(() => {
     containerRef.value.removeChild(renderer.domElement);
     renderer.dispose();
   }
-  if (particlesMesh) {
-    particlesMesh.geometry.dispose();
-    (particlesMesh.material as THREE.Material).dispose();
+  if (linesGroup) {
+    linesGroup.children.forEach(child => {
+      const line = child as THREE.Line;
+      line.geometry.dispose();
+    });
+  }
+  if (shaderMaterial) {
+    shaderMaterial.dispose();
   }
 });
 </script>
 
 <template>
-  <div ref="containerRef" class="fixed inset-0 pointer-events-none z-[-1] opacity-70"></div>
+  <div ref="containerRef" class="fixed inset-0 pointer-events-none z-[-1] opacity-80"></div>
 </template>
