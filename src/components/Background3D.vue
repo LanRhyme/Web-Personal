@@ -6,54 +6,59 @@ const containerRef = ref<HTMLElement | null>(null);
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
-let mesh: THREE.Mesh;
+let particlesMesh: THREE.Points;
 let animationId: number;
 
 const mouseX = ref(0);
 const mouseY = ref(0);
+const targetX = ref(0);
+const targetY = ref(0);
 
 const initThree = () => {
   if (!containerRef.value) return;
 
   scene = new THREE.Scene();
   
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 5;
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+  camera.position.z = 800;
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   containerRef.value.appendChild(renderer.domElement);
 
-  // Geometry: TorusKnot used as an animated Mobius strip / ribbon
-  const geometry = new THREE.TorusKnotGeometry(2.2, 0.6, 256, 64, 1, 3);
-  
-  // Material: Premium physical material
-  const material = new THREE.MeshPhysicalMaterial({
-    color: 0x6b8f72,
-    metalness: 0.8,
-    roughness: 0.3,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.1,
-    wireframe: false,
+  // Create Particles
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesCount = 8000;
+  const posArray = new Float32Array(particlesCount * 3);
+  const colorArray = new Float32Array(particlesCount * 3);
+
+  for(let i = 0; i < particlesCount * 3; i+=3) {
+    // Spread particles in a wide area
+    posArray[i] = (Math.random() - 0.5) * 3000;
+    posArray[i+1] = (Math.random() - 0.5) * 3000;
+    posArray[i+2] = (Math.random() - 0.5) * 3000;
+    
+    // Black and White shades (mostly white/grey with different intensities)
+    const colorVal = Math.random() * 0.5 + 0.5; // 0.5 to 1.0 (grey to white)
+    colorArray[i] = colorVal;
+    colorArray[i+1] = colorVal;
+    colorArray[i+2] = colorVal;
+  }
+
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 2.5,
+    vertexColors: true,
     transparent: true,
-    opacity: 0.9
+    opacity: 0.8,
+    sizeAttenuation: true,
   });
 
-  mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
-
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
-
-  const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-  dirLight.position.set(5, 5, 5);
-  scene.add(dirLight);
-
-  const pointLight = new THREE.PointLight(0x6b8f72, 5, 10);
-  pointLight.position.set(0, 0, 2);
-  scene.add(pointLight);
+  particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particlesMesh);
 
   animate();
 };
@@ -61,12 +66,20 @@ const initThree = () => {
 const animate = () => {
   animationId = requestAnimationFrame(animate);
 
-  const time = Date.now() * 0.0005;
+  const time = Date.now() * 0.0001;
   
-  if (mesh) {
-    mesh.rotation.y = time * 0.3 + mouseX.value * 0.5;
-    mesh.rotation.x = time * 0.2 + mouseY.value * 0.5;
-    mesh.rotation.z = time * 0.15;
+  // Smoothly interpolate target mouse position
+  targetX.value += (mouseX.value - targetX.value) * 0.05;
+  targetY.value += (mouseY.value - targetY.value) * 0.05;
+
+  if (particlesMesh) {
+    // Slow continuous rotation
+    particlesMesh.rotation.y = time * 0.5;
+    particlesMesh.rotation.x = time * 0.2;
+    
+    // Mouse parallax
+    particlesMesh.position.x = -targetX.value * 200;
+    particlesMesh.position.y = -targetY.value * 200;
   }
 
   renderer.render(scene, camera);
@@ -98,13 +111,13 @@ onUnmounted(() => {
     containerRef.value.removeChild(renderer.domElement);
     renderer.dispose();
   }
-  if (mesh) {
-    mesh.geometry.dispose();
-    (mesh.material as THREE.Material).dispose();
+  if (particlesMesh) {
+    particlesMesh.geometry.dispose();
+    (particlesMesh.material as THREE.Material).dispose();
   }
 });
 </script>
 
 <template>
-  <div ref="containerRef" class="fixed inset-0 pointer-events-none z-[-1] opacity-60"></div>
+  <div ref="containerRef" class="fixed inset-0 pointer-events-none z-[-1] opacity-70"></div>
 </template>
