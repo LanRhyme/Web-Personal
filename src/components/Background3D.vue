@@ -110,29 +110,26 @@ const initThree = () => {
         // Correct aspect ratio so geography isn't stretched
         uv.x *= uResolution.x / uResolution.y;
 
-        // Scale coordinates for vast landscape
-        vec2 st = uv * 1.3;
+        // Scale coordinates for elegant, wide curves
+        vec2 st = uv * 2.0;
 
         // Pan slowly
-        vec2 pan = vec2(uTime * 0.02, uTime * 0.015) + uMouse * 0.04;
+        vec2 pan = vec2(uTime * 0.02, uTime * 0.015) + uMouse * 0.03;
         vec2 pos = st + pan;
 
-        // Ridged FBM (Fractal Brownian Motion) for highly realistic, sharp mountain geography
+        // Standard Smooth FBM (removes the abs() ridge which caused severe math aliasing/jaggedness)
         float noiseVal = 0.0;
         float amplitude = 0.5;
         float frequency = 1.0;
         
-        for (int i = 0; i < 5; i++) {
-            float n = snoise(vec3(pos * frequency, 0.0));
-            n = 1.0 - abs(n); // Create sharp ridges
-            n = n * n; // Sharpen further
-            noiseVal += amplitude * n;
+        for (int i = 0; i < 4; i++) {
+            noiseVal += amplitude * snoise(vec3(pos * frequency, 0.0));
             frequency *= 2.0;
             amplitude *= 0.5;
         }
 
         // Density of elevation changes
-        float linesCount = 12.0; 
+        float linesCount = 10.0; 
         float f = noiseVal * linesCount;
         
         // Screen-space derivative for perfectly uniform lines
@@ -142,38 +139,36 @@ const initThree = () => {
         float contour = fract(f);
         float distToLine = min(contour, 1.0 - contour);
         
-        // Create "Major" (Index) and "Minor" contour lines like real maps
+        // Create "Major" (Index) and "Minor" contour lines
         float lineIndex = floor(f);
-        float modLine = mod(lineIndex, 5.0);
-        bool majorLine = modLine < 0.5; // Every 5th line is a major contour
+        bool majorLine = mod(lineIndex, 5.0) < 0.5;
         
-        // Ultra-thin minor lines (0.6px), slightly thicker major lines (1.2px)
-        float halfWidth = majorLine ? 1.0 * df : 0.4 * df;
+        // PERFECT ANTI-ALIASING: 
+        // A core solid thickness, plus a 1.5px soft edge blend to completely eliminate jaggedness
+        float lineThickness = majorLine ? 0.4 * df : 0.05 * df; 
+        float edgeSoftness = 1.5 * df; // 1.5 pixels of smoothing
         
-        // Crisp anti-aliased core line
-        float lineAlpha = 1.0 - smoothstep(0.0, halfWidth, distToLine);
+        // Crisp buttery-smooth core line
+        float lineAlpha = 1.0 - smoothstep(lineThickness, lineThickness + edgeSoftness, distToLine);
         
-        // Soft glowing halo effect
-        float glowWidth = majorLine ? 4.0 * df : 2.0 * df;
-        float glowAlpha = 1.0 - smoothstep(0.0, glowWidth, distToLine);
+        // Soft glowing halo effect for major lines only
+        float glowWidth = majorLine ? 4.0 * df : 0.0;
+        float glowAlpha = majorLine ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.4 : 0.0;
 
-        // Color mapping: Emerald Green (Valleys) to Luminous Yellow (Peaks)
-        vec3 colDeep = vec3(0.05, 0.6, 0.3);   // Green
-        vec3 colHigh = vec3(0.95, 0.85, 0.1);  // Yellow
+        // Color mapping matching website's elegant cyber-glass vibe (#6b8f72 base)
+        vec3 colDeep = vec3(0.42, 0.56, 0.45); // Desaturated Mint Green
+        vec3 colHigh = vec3(0.85, 0.90, 0.88); // Silver / White Glow
         
-        // Map noise to color gradient
-        vec3 baseColor = mix(colDeep, colHigh, smoothstep(0.2, 0.8, noiseVal));
-        
-        // Major lines get a slight brightness boost
-        vec3 finalColor = majorLine ? baseColor * 1.2 : baseColor;
+        // Smoothly mix colors based on elevation
+        vec3 baseColor = mix(colDeep, colHigh, smoothstep(-0.5, 0.5, noiseVal));
         
         // Combine crisp line and glow
-        float totalAlpha = lineAlpha + glowAlpha * 0.4;
+        float totalAlpha = lineAlpha + glowAlpha;
         
-        // Varied opacities
-        float opacityMult = majorLine ? 0.8 : 0.3;
+        // Keep opacities highly refined and subtle
+        float opacityMult = majorLine ? 0.6 : 0.25;
 
-        gl_FragColor = vec4(finalColor, totalAlpha * opacityMult);
+        gl_FragColor = vec4(baseColor, totalAlpha * opacityMult);
       }
     `,
     transparent: true,
