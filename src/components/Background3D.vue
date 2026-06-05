@@ -272,9 +272,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed inset-0 pointer-events-none z-[-1]">
-    <div ref="containerRef" class="absolute inset-0 opacity-70"></div>
-    <!-- Black semi-transparent overlay mask -->
-    <div class="absolute inset-0 bg-black/50"></div>
-  </div>
+  <div ref="containerRef" class="fixed inset-0 pointer-events-none z-[-1] opacity-70"></div>
 </template>
