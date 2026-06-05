@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import Background3D from './components/Background3D.vue';
 import Preloader from './components/Preloader.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -155,105 +156,7 @@ const updateMouse = (e: MouseEvent) => {
   }
 };
 
-// --- Terminal Grid Background ---
-const canvasRef = ref<HTMLCanvasElement | null>(null);
-let ctx: CanvasRenderingContext2D | null = null;
-
-class MatrixDrop {
-  x: number;
-  y: number;
-  speed: number;
-  chars: string[];
-  char: string;
-  
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    // Multiplied by 2 to compensate for the 30fps throttle
-    this.speed = (Math.random() * 2 + 1) * 2;
-    this.chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*".split('');
-    this.char = this.chars[Math.floor(Math.random() * this.chars.length)];
-  }
-
-  update(height: number) {
-    this.y += this.speed;
-    if (this.y > height) {
-      this.y = -20;
-      this.speed = (Math.random() * 2 + 1) * 2;
-    }
-    // Doubled chance to keep the same visual flickering rate
-    if (Math.random() < 0.1) {
-      this.char = this.chars[Math.floor(Math.random() * this.chars.length)];
-    }
-  }
-
-  draw(ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number) {
-    // Distance from mouse
-    const dx = this.x - mouseX;
-    const dy = this.y - mouseY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    
-    // Repel effect
-    let drawX = this.x;
-    let drawY = this.y;
-    if (dist < 100) {
-      const force = (100 - dist) / 100;
-      drawX += (dx / dist) * force * 15;
-      drawY += (dy / dist) * force * 15;
-      ctx.fillStyle = `rgba(91, 122, 97, ${0.3 + force * 0.7})`; // Highlight near mouse
-    } else {
-      ctx.fillStyle = 'rgba(91, 122, 97, 0.15)'; // Dim standard color
-    }
-    
-    ctx.fillText(this.char, drawX, drawY);
-  }
-}
-
-let drops: MatrixDrop[] = [];
-
-const initCanvas = () => {
-  if (!canvasRef.value) return;
-  const canvas = canvasRef.value;
-  ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    drops = [];
-    const columns = Math.floor(canvas.width / 30); // column width
-    for (let i = 0; i < columns; i++) {
-      for(let j = 0; j < 5; j++) {
-        drops.push(new MatrixDrop(i * 30, Math.random() * canvas.height));
-      }
-    }
-  };
-
-  const animate = () => {
-    if (!ctx || !canvas) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '14px "JetBrains Mono"';
-    ctx.textAlign = 'center';
-    
-    for (let i = 0; i < drops.length; i++) {
-      drops[i].update(canvas.height);
-      drops[i].draw(ctx, targetX.value, targetY.value);
-    }
-  };
-
-  // Run canvas logic in the same animation frame loop (throttled for performance)
-  let lastTime = 0;
-  const loop = (time: number) => {
-    requestAnimationFrame(loop);
-    if (time - lastTime < 33) return; // Cap at ~30fps
-    lastTime = time;
-    animate();
-  };
-
-  window.addEventListener('resize', resize);
-  resize();
-  requestAnimationFrame(loop);
-};
+// --- 3D Fluid Geometry Background ---
 
 // --- Brutalist AI Companion (LanPet Refactor) ---
 const petState = ref<'idle' | 'happy' | 'working' | 'active'>('idle');
@@ -511,8 +414,6 @@ onMounted(() => {
   frameY.value = targetY.value;
   renderCursor();
   
-  initCanvas();
-  
   setTimeout(() => {
     petTalking('你好呀主人！ヾ(•ω•`)o');
   }, 1500);
@@ -627,8 +528,8 @@ onUnmounted(() => {
       [+]
     </div>
 
-    <!-- Matrix ASCII Canvas -->
-    <canvas ref="canvasRef" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50"></canvas>
+    <!-- 3D Fluid Geometry Background -->
+    <Background3D />
 
     <!-- Hardcore Brutalist HUD & Decorations -->
     <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
