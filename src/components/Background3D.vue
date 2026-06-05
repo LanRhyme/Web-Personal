@@ -41,6 +41,7 @@ const initThree = () => {
       varying vec2 vUv;
       void main() {
         vUv = uv;
+        // Bypassing standard projection to ensure it fills the screen perfectly
         gl_Position = vec4(position, 1.0);
       }
     `,
@@ -111,25 +112,30 @@ const initThree = () => {
         vec2 st = uv + uMouse * 0.05;
 
         // Base noise
-        float n1 = snoise(vec3(st * 2.0, uTime * 0.1));
+        float n1 = snoise(vec3(st * 1.5, uTime * 0.08));
         // Add detail
-        float n2 = snoise(vec3(st * 4.0, uTime * 0.15)) * 0.5;
+        float n2 = snoise(vec3(st * 3.0, uTime * 0.12)) * 0.5;
         float noiseVal = n1 + n2;
 
-        // Contour math
+        // Contour math - safer implementation without fwidth
         float linesCount = 12.0;
         float f = fract(noiseVal * linesCount);
-        float df = fwidth(noiseVal * linesCount);
         
-        // Draw crisp line where fraction hits 0/1 (requires WebGL standard derivatives which is native in WebGL2)
-        float lineAlpha = smoothstep(df * 1.5, df * 0.5, f) + smoothstep(1.0 - df * 1.5, 1.0 - df * 0.5, f);
+        // Fixed thickness to avoid WebGL derivative issues on some machines
+        float lineThickness = 0.03;
+        float edgeSoftness = 0.03;
+        
+        // Draw lines at boundaries (f is close to 0 or 1)
+        float lineAlpha = smoothstep(lineThickness + edgeSoftness, lineThickness, f) 
+                        + smoothstep(1.0 - lineThickness - edgeSoftness, 1.0 - lineThickness, f);
 
         // Gradient color for lines
         vec3 color1 = vec3(0.5, 0.6, 0.55); // darker greyish green
         vec3 color2 = vec3(0.8, 0.9, 0.85); // lighter glow
-        vec3 finalColor = mix(color1, color2, (noiseVal + 1.0) * 0.5);
+        // Normalize noiseVal approx from [-1.5, 1.5] to [0, 1]
+        vec3 finalColor = mix(color1, color2, clamp((noiseVal + 1.0) * 0.5, 0.0, 1.0));
 
-        gl_FragColor = vec4(finalColor, lineAlpha * 0.6);
+        gl_FragColor = vec4(finalColor, lineAlpha * 0.7);
       }
     `,
     transparent: true,
