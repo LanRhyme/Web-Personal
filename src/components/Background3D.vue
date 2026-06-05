@@ -25,8 +25,8 @@ const initThree = () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   containerRef.value.appendChild(renderer.domElement);
 
-  // Geometry: Icosahedron for abstract shape
-  const geometry = new THREE.IcosahedronGeometry(2, 64);
+  // Geometry: TorusKnot used as an animated Mobius strip / ribbon
+  const geometry = new THREE.TorusKnotGeometry(2.2, 0.6, 256, 64, 1, 3);
   
   // Material: Premium physical material
   const material = new THREE.MeshPhysicalMaterial({
@@ -64,8 +64,9 @@ const animate = () => {
   const time = Date.now() * 0.0005;
   
   if (mesh) {
-    mesh.rotation.y = time * 0.2 + mouseX.value * 0.5;
-    mesh.rotation.x = time * 0.1 + mouseY.value * 0.5;
+    mesh.rotation.y = time * 0.3 + mouseX.value * 0.5;
+    mesh.rotation.x = time * 0.2 + mouseY.value * 0.5;
+    mesh.rotation.z = time * 0.15;
   }
 
   renderer.render(scene, camera);
