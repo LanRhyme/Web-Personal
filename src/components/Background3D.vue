@@ -111,45 +111,69 @@ const initThree = () => {
         uv.x *= uResolution.x / uResolution.y;
 
         // Scale coordinates for vast landscape
-        vec2 st = uv * 1.5;
+        vec2 st = uv * 1.3;
 
         // Pan slowly
-        vec2 pan = vec2(uTime * 0.03, uTime * 0.015) + uMouse * 0.05;
+        vec2 pan = vec2(uTime * 0.02, uTime * 0.015) + uMouse * 0.04;
         vec2 pos = st + pan;
 
-        // FBM (Fractal Brownian Motion) for realistic geography
+        // Ridged FBM (Fractal Brownian Motion) for highly realistic, sharp mountain geography
         float noiseVal = 0.0;
         float amplitude = 0.5;
         float frequency = 1.0;
         
-        for (int i = 0; i < 4; i++) {
-            noiseVal += amplitude * snoise(vec3(pos * frequency, 0.0));
+        for (int i = 0; i < 5; i++) {
+            float n = snoise(vec3(pos * frequency, 0.0));
+            n = 1.0 - abs(n); // Create sharp ridges
+            n = n * n; // Sharpen further
+            noiseVal += amplitude * n;
             frequency *= 2.0;
             amplitude *= 0.5;
         }
 
         // Density of elevation changes
-        float linesCount = 8.0; 
+        float linesCount = 12.0; 
         float f = noiseVal * linesCount;
         
-        // Use standard derivatives for perfectly uniform line thickness everywhere
+        // Screen-space derivative for perfectly uniform lines
         float df = fwidth(f);
         
         // Distance to the nearest integer elevation
         float contour = fract(f);
         float distToLine = min(contour, 1.0 - contour);
         
-        // Uniform thickness in pixels (e.g. 1.2 pixels wide to look super crisp)
-        float halfWidth = 1.2 * df;
+        // Create "Major" (Index) and "Minor" contour lines like real maps
+        float lineIndex = floor(f);
+        float modLine = mod(lineIndex, 5.0);
+        bool majorLine = modLine < 0.5; // Every 5th line is a major contour
         
-        // Smooth anti-aliased line
+        // Ultra-thin minor lines (0.6px), slightly thicker major lines (1.2px)
+        float halfWidth = majorLine ? 1.0 * df : 0.4 * df;
+        
+        // Crisp anti-aliased core line
         float lineAlpha = 1.0 - smoothstep(0.0, halfWidth, distToLine);
+        
+        // Soft glowing halo effect
+        float glowWidth = majorLine ? 4.0 * df : 2.0 * df;
+        float glowAlpha = 1.0 - smoothstep(0.0, glowWidth, distToLine);
 
-        // High-end minimalist color scheme: subtle metallic grey/silver
-        vec3 lineColor = vec3(0.5, 0.55, 0.52);
+        // Color mapping: Emerald Green (Valleys) to Luminous Yellow (Peaks)
+        vec3 colDeep = vec3(0.05, 0.6, 0.3);   // Green
+        vec3 colHigh = vec3(0.95, 0.85, 0.1);  // Yellow
+        
+        // Map noise to color gradient
+        vec3 baseColor = mix(colDeep, colHigh, smoothstep(0.2, 0.8, noiseVal));
+        
+        // Major lines get a slight brightness boost
+        vec3 finalColor = majorLine ? baseColor * 1.2 : baseColor;
+        
+        // Combine crisp line and glow
+        float totalAlpha = lineAlpha + glowAlpha * 0.4;
+        
+        // Varied opacities
+        float opacityMult = majorLine ? 0.8 : 0.3;
 
-        // Max opacity kept subtle
-        gl_FragColor = vec4(lineColor, lineAlpha * 0.4);
+        gl_FragColor = vec4(finalColor, totalAlpha * opacityMult);
       }
     `,
     transparent: true,
