@@ -19,45 +19,83 @@ const initThree = () => {
 
   scene = new THREE.Scene();
   
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-  camera.position.z = 800;
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 12;
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   containerRef.value.appendChild(renderer.domElement);
 
-  // Create Particles
+  // Generate Base Geometry (Mobius-like Ribbon)
+  // parameters: radius, tube, tubularSegments, radialSegments, p, q
+  const baseGeometry = new THREE.TorusKnotGeometry(3.5, 1.2, 400, 64, 1, 3);
+  
+  // Create Particles from the geometry vertices
   const particlesGeometry = new THREE.BufferGeometry();
-  const particlesCount = 8000;
-  const posArray = new Float32Array(particlesCount * 3);
-  const colorArray = new Float32Array(particlesCount * 3);
+  const positionAttribute = baseGeometry.getAttribute('position');
+  
+  const vertexCount = positionAttribute.count;
+  const colorArray = new Float32Array(vertexCount * 3);
+  const offsetArray = new Float32Array(vertexCount); 
 
-  for(let i = 0; i < particlesCount * 3; i+=3) {
-    // Spread particles in a wide area
-    posArray[i] = (Math.random() - 0.5) * 3000;
-    posArray[i+1] = (Math.random() - 0.5) * 3000;
-    posArray[i+2] = (Math.random() - 0.5) * 3000;
-    
-    // Black and White shades (mostly white/grey with different intensities)
-    const colorVal = Math.random() * 0.5 + 0.5; // 0.5 to 1.0 (grey to white)
-    colorArray[i] = colorVal;
-    colorArray[i+1] = colorVal;
-    colorArray[i+2] = colorVal;
+  for (let i = 0; i < vertexCount; i++) {
+    // Random black & white / grey tones for each particle
+    const shade = 0.3 + Math.random() * 0.7; // 0.3 to 1.0
+    colorArray[i * 3] = shade;
+    colorArray[i * 3 + 1] = shade;
+    colorArray[i * 3 + 2] = shade;
+    // Random offset for organic breathing animation
+    offsetArray[i] = Math.random() * Math.PI * 2;
   }
 
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  particlesGeometry.setAttribute('position', positionAttribute);
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+  particlesGeometry.setAttribute('aOffset', new THREE.BufferAttribute(offsetArray, 1));
 
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 2.5,
-    vertexColors: true,
+  // Custom Shader Material for dynamic particle breathing and glowing effect
+  const shaderMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 }
+    },
+    vertexShader: `
+      uniform float uTime;
+      attribute vec3 color;
+      attribute float aOffset;
+      varying vec3 vColor;
+      
+      void main() {
+        vColor = color;
+        vec3 pos = position;
+        
+        // Organic breathing effect
+        vec3 dir = normalize(pos);
+        float displacement = sin(uTime * 2.0 + aOffset) * 0.15;
+        pos += dir * displacement;
+
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        
+        // Size attenuation
+        gl_PointSize = (2.0 + sin(uTime * 3.0 + aOffset) * 1.5) * (30.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      void main() {
+        // Soft circular particle with gradient
+        float dist = length(gl_PointCoord - vec2(0.5));
+        if (dist > 0.5) discard;
+        float alpha = (0.5 - dist) * 2.0;
+        gl_FragColor = vec4(vColor, alpha * 0.7);
+      }
+    `,
     transparent: true,
-    opacity: 0.8,
-    sizeAttenuation: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
   });
 
-  particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+  particlesMesh = new THREE.Points(particlesGeometry, shaderMaterial);
   scene.add(particlesMesh);
 
   animate();
@@ -66,20 +104,19 @@ const initThree = () => {
 const animate = () => {
   animationId = requestAnimationFrame(animate);
 
-  const time = Date.now() * 0.0001;
+  const time = Date.now() * 0.0005;
   
-  // Smoothly interpolate target mouse position
   targetX.value += (mouseX.value - targetX.value) * 0.05;
   targetY.value += (mouseY.value - targetY.value) * 0.05;
 
   if (particlesMesh) {
-    // Slow continuous rotation
-    particlesMesh.rotation.y = time * 0.5;
-    particlesMesh.rotation.x = time * 0.2;
+    // Rotate the entire mobius strip
+    particlesMesh.rotation.y = time * 0.2 + targetX.value * 0.3;
+    particlesMesh.rotation.x = time * 0.1 + targetY.value * 0.3;
+    particlesMesh.rotation.z = time * 0.05;
     
-    // Mouse parallax
-    particlesMesh.position.x = -targetX.value * 200;
-    particlesMesh.position.y = -targetY.value * 200;
+    // Pass time to shader
+    (particlesMesh.material as THREE.ShaderMaterial).uniforms.uTime.value = time;
   }
 
   renderer.render(scene, camera);
