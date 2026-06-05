@@ -109,34 +109,36 @@ const initThree = () => {
         vec2 uv = vUv;
         uv.x *= uResolution.x / uResolution.y;
 
-        // Shift UV by mouse interaction
-        vec2 st = uv + uMouse * 0.05;
+        // Scale coordinates to make the map vast and elegant
+        vec2 st = uv * 2.0;
 
-        // Base noise
-        float n1 = snoise(vec3(st * 1.5, uTime * 0.08));
-        // Add detail
-        float n2 = snoise(vec3(st * 3.0, uTime * 0.12)) * 0.5;
+        // Pan the map slowly over time, plus mouse parallax
+        vec2 pan = vec2(uTime * 0.04, uTime * 0.02) + uMouse * 0.08;
+        vec2 pos = st + pan;
+
+        // Use static 2D noise (Z=0.0) so the map doesn't morph/boil, it just pans
+        float n1 = snoise(vec3(pos, 0.0));
+        // Add a tiny bit of detail for realistic geography
+        float n2 = snoise(vec3(pos * 3.0, 0.0)) * 0.1;
         float noiseVal = n1 + n2;
 
-        // Contour math - safer implementation without fwidth
-        float linesCount = 12.0;
+        // Contour lines spacing (fewer lines = more elegant map)
+        float linesCount = 8.0;
         float f = fract(noiseVal * linesCount);
         
-        // Fixed thickness to avoid WebGL derivative issues on some machines
-        float lineThickness = 0.03;
-        float edgeSoftness = 0.03;
+        // Very thin, precise line thickness
+        float lineThickness = 0.015;
+        float edgeSoftness = 0.015;
         
-        // Draw lines at boundaries (f is close to 0 or 1)
+        // Draw crisp line at boundary
         float lineAlpha = smoothstep(lineThickness + edgeSoftness, lineThickness, f) 
                         + smoothstep(1.0 - lineThickness - edgeSoftness, 1.0 - lineThickness, f);
 
-        // Gradient color for lines
-        vec3 color1 = vec3(0.5, 0.6, 0.55); // darker greyish green
-        vec3 color2 = vec3(0.8, 0.9, 0.85); // lighter glow
-        // Normalize noiseVal approx from [-1.5, 1.5] to [0, 1]
-        vec3 finalColor = mix(color1, color2, clamp((noiseVal + 1.0) * 0.5, 0.0, 1.0));
+        // High-end minimalist color scheme: subtle metallic grey/silver
+        vec3 lineColor = vec3(0.5, 0.55, 0.52);
 
-        gl_FragColor = vec4(finalColor, lineAlpha * 0.7);
+        // Alpha is kept subtle (max 0.4) so it stays perfectly in the background
+        gl_FragColor = vec4(lineColor, lineAlpha * 0.4);
       }
     `,
     transparent: true,
