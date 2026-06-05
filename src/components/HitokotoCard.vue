@@ -29,21 +29,7 @@ const cardStyle = computed(() => {
   return `transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02);`;
 });
 
-const glareStyle = computed(() => {
-  if (!isHovered.value || !cardRef.value) return 'opacity: 0;';
-  
-  const rect = cardRef.value.getBoundingClientRect();
-  const x = mouseX.value - rect.left;
-  const y = mouseY.value - rect.top;
-  
-  const percentX = (x / rect.width) * 100;
-  const percentY = (y / rect.height) * 100;
-  
-  return `
-    background: radial-gradient(circle at ${percentX}% ${percentY}%, rgba(255,255,255,0.15) 0%, transparent 50%);
-    opacity: 1;
-  `;
-});
+
 
 const handleMouseMove = (e: MouseEvent) => {
   mouseX.value = e.clientX;
@@ -102,17 +88,14 @@ onMounted(() => {
     @mouseleave="handleMouseLeave"
     @click="fetchHitokoto"
   >
-    <!-- Static Frosted Glass Layer (No 3D Transform to preserve backdrop-filter) -->
-    <div class="!absolute inset-0 w-full h-full cyber-glass transition-transform duration-100" :style="isHovered ? 'transform: scale(1.02);' : ''"></div>
+    <!-- Static Frosted Glass Layer (No transforms, absolutely static to guarantee backdrop-filter) -->
+    <div class="!absolute inset-0 w-full h-full cyber-glass"></div>
 
     <!-- 3D Tilting Content Layer -->
     <div 
       class="hitokoto-container absolute inset-0 w-full h-full"
       :style="cardStyle"
     >
-      <!-- Glare Effect -->
-      <div class="absolute inset-0 pointer-events-none transition-opacity duration-300 z-20" :style="glareStyle"></div>
-      
       <!-- Scanning Laser & HUD elements -->
       <div class="absolute top-0 left-0 w-full h-[1px] bg-[var(--color-brand)] shadow-[0_0_15px_rgba(107,143,114,0.8)] opacity-0 group-hover:opacity-50 animate-scan pointer-events-none z-10 transition-opacity duration-500"></div>
       <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--color-brand)] opacity-40 transition-all duration-300 group-hover:opacity-100 group-hover:w-6 group-hover:h-6"></div>
