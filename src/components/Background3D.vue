@@ -16,10 +16,23 @@ const mouseY = ref(0);
 const targetX = ref(0);
 const targetY = ref(0);
 const isGlitching = ref(false);
+let shockwaveStartTime = -100.0;
+let shockwaveX = 0.5;
+let shockwaveY = 0.5;
+let warpPhase = 0.0;
+let warpVelocity = 0.0;
 
 const handleGlitch = (e: Event) => {
   const customEvent = e as CustomEvent;
   isGlitching.value = customEvent.detail.active;
+};
+
+const handleShockwave = (e: Event) => {
+  const customEvent = e as CustomEvent;
+  shockwaveStartTime = clock.getElapsedTime();
+  shockwaveX = customEvent.detail.x;
+  shockwaveY = customEvent.detail.y;
+  warpVelocity += 3.0; // Strong impulse for the spring
 };
 
 const initThree = () => {
@@ -44,7 +57,10 @@ const initThree = () => {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       uMouse: { value: new THREE.Vector2(0, 0) },
-      uGlitch: { value: 0.0 }
+      uGlitch: { value: 0.0 },
+      uShockwaveTime: { value: -100.0 },
+      uShockwavePos: { value: new THREE.Vector2(0.5, 0.5) },
+      uWarpPhase: { value: 0.0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -59,6 +75,9 @@ const initThree = () => {
       uniform vec2 uResolution;
       uniform vec2 uMouse;
       uniform float uGlitch;
+      uniform float uShockwaveTime;
+      uniform vec2 uShockwavePos;
+      uniform float uWarpPhase;
       varying vec2 vUv;
 
       // Simplex 3D Noise
@@ -119,11 +138,26 @@ const initThree = () => {
         // Correct aspect ratio so geography isn't stretched
         uv.x *= uResolution.x / uResolution.y;
 
+        vec2 clickPos = uShockwavePos;
+        clickPos.x *= uResolution.x / uResolution.y;
+
         // ZOOM IN: 0.6 scale makes the terrain features huge and localized
         vec2 st = uv * 0.6;
 
         // Pan slowly
         vec2 pan = vec2(uTime * 0.015, uTime * 0.01) + uMouse * 0.03;
+
+        // Subtle organic shockwave ripple
+        vec2 dir = normalize(uv - clickPos);
+        float distToClick = distance(uv, clickPos);
+        float shockTime = max(0.0, uShockwaveTime);
+        float waveFront = shockTime * 1.5;
+        float distFromFront = distToClick - waveFront;
+        float rippleWindow = smoothstep(0.2, 0.0, abs(distFromFront));
+        
+        // Very slight UV wobble to lightly perturb the contour lines
+        float uvDisplacement = sin(distFromFront * 30.0) * rippleWindow * exp(-shockTime * 2.0) * 0.015;
+        pan += dir * uvDisplacement;
         
         // Subtle glitch offset instead of earthquake
         if (uGlitch > 0.5) {
@@ -132,21 +166,23 @@ const initThree = () => {
         
         vec2 pos = st + pan;
 
-        // 1. Reduced Domain Warping: Less chaotic, more elegant sweeping curves
-        float warpX = snoise(vec3(pos * 0.8, 0.0));
-        float warpY = snoise(vec3(pos * 0.8 + 100.0, 0.0));
+        // 1. Domain Warping: Driven by click impulses (uWarpPhase)
+        float warpX = snoise(vec3(pos * 0.8, uWarpPhase));
+        float warpY = snoise(vec3(pos * 0.8 + 100.0, uWarpPhase * 0.8));
         vec2 warpedPos = pos + vec2(warpX, warpY) * 0.25;
 
         // 2. Smoother FBM (4 octaves, lower high-freq gain to remove chaos)
         float noiseVal = 0.0;
         float amplitude = 0.55;
         float frequency = 1.0;
+        float timeEvo = uWarpPhase * 0.5;
         
         for (int i = 0; i < 4; i++) {
-            float n = snoise(vec3(warpedPos * frequency, 0.0)) * 0.5 + 0.5;
+            float n = snoise(vec3(warpedPos * frequency, timeEvo)) * 0.5 + 0.5;
             noiseVal += amplitude * n;
             frequency *= 2.0;
             amplitude *= 0.4; // Less chaotic high details
+            timeEvo *= 1.2;
         }
 
         // Ensure noiseVal is cleanly in [0, 1]
@@ -215,6 +251,13 @@ const initThree = () => {
             opacityMult *= 1.3; // Gentle flash instead of blinding
         }
 
+        // Subtle Ripple Glow
+        float flash = rippleWindow * exp(-shockTime * 2.0);
+        if (flash > 0.01) {
+            finalColor = mix(finalColor, vec3(1.0, 1.0, 1.0), min(flash * 0.5, 1.0));
+            opacityMult += flash * 0.2;
+        }
+
         // Fade out perfectly smooth at the bottom 
         float terrainFade = smoothstep(0.0, 0.08, noiseVal);
         
@@ -247,12 +290,23 @@ const animate = () => {
   const ease = 1.0 - Math.exp(-5.0 * delta);
   targetX.value += (mouseX.value - targetX.value) * ease;
   targetY.value += (mouseY.value - targetY.value) * ease;
+  
+  // Update warp physics (Critically damped spring targeting 0)
+  const springStiffness = 4.0;
+  const springDamping = 4.0; // 2 * sqrt(4) = 4.0
+  
+  const force = -springStiffness * warpPhase - springDamping * warpVelocity;
+  warpVelocity += force * delta;
+  warpPhase += warpVelocity * delta;
 
   if (planeMesh) {
     const mat = planeMesh.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = time;
     mat.uniforms.uMouse.value.set(targetX.value, targetY.value);
     mat.uniforms.uGlitch.value = isGlitching.value ? 1.0 : 0.0;
+    mat.uniforms.uShockwaveTime.value = time - shockwaveStartTime;
+    mat.uniforms.uShockwavePos.value.set(shockwaveX, shockwaveY);
+    mat.uniforms.uWarpPhase.value = warpPhase;
   }
 
   renderer.render(scene, camera);
@@ -275,6 +329,7 @@ onMounted(() => {
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('global-glitch', handleGlitch);
+  window.addEventListener('shockwave', handleShockwave);
 });
 
 onUnmounted(() => {
@@ -282,6 +337,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', onWindowResize);
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('global-glitch', handleGlitch);
+  window.removeEventListener('shockwave', handleShockwave);
   if (renderer && containerRef.value) {
     containerRef.value.removeChild(renderer.domElement);
     renderer.dispose();

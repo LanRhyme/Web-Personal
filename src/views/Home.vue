@@ -456,7 +456,7 @@ onUnmounted(() => {
           :style="{ transform: `translateY(${scrollY * 0.15}px)`, opacity: Math.max(0, 1 - scrollY / 700) }"
         >
           <div class="animate-float-slow">
-            <h1 class="w-full max-w-[850px] -mt-2">
+            <h1 class="w-full max-w-[850px] -mt-2" style="transform: translateX(45px);">
               <ParticleText 
                 text="LanRhyme." 
               />
@@ -506,7 +506,9 @@ onUnmounted(() => {
         
         <!-- Mobile Simple Banner Block -->
         <div class="w-full md:hidden flex flex-col items-center text-center -mt-16 sm:-mt-24">
-          <div class="text-[var(--color-brand)] font-art text-4xl mb-2 glitch-hover">LanRhyme.</div>
+          <div class="w-full max-w-[320px] mb-2 -ml-2">
+            <ParticleText text="LanRhyme." />
+          </div>
           <div class="font-mono text-[10px] opacity-60 tracking-widest uppercase">
             SYS_UPTIME: {{ sysUptime }} <span class="text-[var(--color-brand)] animate-pulse inline-block ml-1">_</span>
           </div>

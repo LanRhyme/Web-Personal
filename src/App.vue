@@ -452,12 +452,12 @@ onUnmounted(() => {
     <!-- Minimalist AI Companion -->
     <div 
       v-if="!isAdmin" 
-      class="fixed bottom-8 right-8 z-40 pointer-events-auto flex flex-col items-end select-none font-mono"
+      class="lanpet-container pointer-events-auto flex flex-col select-none font-mono"
     >
       <transition name="page">
         <div 
           v-if="bubbleText" 
-          class="cyber-glass !px-3 !py-1 mb-3 text-xs bg-black/60 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold text-right tracking-widest relative uppercase"
+          class="bubble-text cyber-glass !px-3 !py-1 mb-3 text-xs bg-black/60 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase"
         >
           > {{ bubbleText }} <span class="animate-pulse">_</span>
         </div>
@@ -614,5 +614,43 @@ onUnmounted(() => {
   box-shadow: 0 0 30px rgba(153, 27, 27, 0.3) !important;
 }
 
-/* Removed old cursor CSS, using style.css now */
+/* --- LanPet Responsive Positioning --- */
+.lanpet-container {
+  position: fixed;
+  z-index: 60;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 1024px) {
+  .lanpet-container {
+    bottom: 2rem;
+    right: 2rem;
+    align-items: flex-end;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .bubble-text {
+    text-align: right;
+  }
+}
+
+@media (max-width: 1023px) {
+  .lanpet-container {
+    bottom: 2rem;
+    right: 1.5rem;
+    transform: translateY(20px) scale(0.9);
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .bubble-text {
+    text-align: right;
+  }
+  body.menu-open .lanpet-container {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+}
 </style>

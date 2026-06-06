@@ -30,10 +30,12 @@ const navItems = ref([
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
+  document.body.classList.toggle('menu-open', isMenuOpen.value);
 };
 
 const closeMenu = () => {
   isMenuOpen.value = false;
+  document.body.classList.remove('menu-open');
 };
 
 const scrambleText = (event: MouseEvent) => {
@@ -91,6 +93,7 @@ onUnmounted(() => {
   clearInterval(timeInterval);
   clearInterval(garbleInterval);
   window.removeEventListener('mousemove', handleMouseMove);
+  document.body.classList.remove('menu-open');
 });
 </script>
 
