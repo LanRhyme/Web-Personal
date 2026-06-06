@@ -522,8 +522,8 @@ onUnmounted(() => {
     <div 
       v-for="ripple in clickRipples" 
       :key="ripple.id" 
-      class="fixed pointer-events-none z-[99999] text-[var(--color-brand)] font-mono text-[10px] flex items-center justify-center -translate-x-1/2 -translate-y-1/2 animate-ripple"
-      :style="{ left: ripple.x + 'px', top: ripple.y + 'px' }"
+      class="fixed pointer-events-none z-[99999] text-[var(--color-brand)] font-mono text-[10px] flex items-center justify-center animate-ripple"
+      :style="{ left: ripple.x + 'px', top: ripple.y + 'px', width: '20px', height: '20px', marginLeft: '-10px', marginTop: '-10px' }"
     >
       [+]
     </div>

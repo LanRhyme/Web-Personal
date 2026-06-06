@@ -380,11 +380,11 @@ a {
 }
 
 @keyframes ripple {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; letter-spacing: 0; }
-  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; letter-spacing: 1em; }
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(3.5); opacity: 0; }
 }
 .animate-ripple {
-  animation: ripple 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: ripple 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .red-alert {
