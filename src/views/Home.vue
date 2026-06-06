@@ -228,6 +228,170 @@ const triggerMossAlert = () => {
   }, 5000);
 };
 
+const isSlugcatEasterEgg = ref(false);
+const karmaStage = ref(0);
+const karmaSVGs = [
+  "https://static.wikitide.net/rainworldwiki/2/27/Karma_1_icon_(small).png",
+  "https://static.wikitide.net/rainworldwiki/f/fb/Karma_2_icon_(small).png",
+  "https://static.wikitide.net/rainworldwiki/2/28/Karma_3_icon_(small).png",
+  "https://static.wikitide.net/rainworldwiki/6/65/Karma_4_icon_(small).png",
+  "https://static.wikitide.net/rainworldwiki/9/9e/Karma_5_icon_(small).png",
+  "/img/karma/6.png",
+  "/img/karma/7.png",
+  "/img/karma/8.png",
+  "/img/karma/9.png",
+  "https://static.wikitide.net/rainworldwiki/f/f2/Karma_10_icon_(small).png"
+];
+const currentKarmaSVG = ref(karmaSVGs[9]);
+let karmaInterval: number | null = null;
+let audioCtx: any = null;
+
+const playKarmaSequence = () => {
+  try {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Intense Bass Sweep
+    const osc = audioCtx.createOscillator();
+    const mainGain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    
+    osc.frequency.setValueAtTime(30, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 2.8);
+    
+    mainGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    mainGain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.5);
+    
+    // Fast pulsing LFO
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.setValueAtTime(4, audioCtx.currentTime); 
+    lfo.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 2.8); 
+    
+    lfoGain.gain.value = 0.6;
+    lfo.connect(lfoGain);
+    lfoGain.connect(mainGain.gain);
+    
+    osc.connect(mainGain);
+    mainGain.connect(audioCtx.destination);
+    
+    osc.start();
+    lfo.start();
+    
+    // Explosion Flash
+    setTimeout(() => {
+      if (!audioCtx) return;
+      osc.stop();
+      lfo.stop();
+      
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(3000, audioCtx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 2);
+      
+      const boomGain = audioCtx.createGain();
+      boomGain.gain.setValueAtTime(1.5, audioCtx.currentTime);
+      boomGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2);
+      
+      noise.connect(filter);
+      filter.connect(boomGain);
+      boomGain.connect(audioCtx.destination);
+      
+      noise.start();
+    }, 2800);
+  } catch (e) {
+    console.error('Audio failed', e);
+  }
+};
+
+const terminalLines = ref<string[]>([]);
+
+const triggerSlugcatEasterEgg = () => {
+  if (karmaStage.value !== 0) return; // Prevent multiple clicks from breaking the animation timeline
+  isSlugcatEasterEgg.value = true;
+  karmaStage.value = 1;
+  currentKarmaSVG.value = karmaSVGs[0];
+  
+  playKarmaSequence();
+  
+  // Uniform 2-second cycle for 1-9 to guarantee visibility, then hold Max Karma for 0.8s
+  let currentIndex = 0;
+  if (karmaInterval) clearInterval(karmaInterval);
+  karmaInterval = null; 
+  
+  const tickDelays = new Array(9).fill(222); // 9 * 222ms = 1998ms (~2.0s)
+  
+  const tickSymbol = () => {
+    if (currentIndex >= tickDelays.length) return;
+    
+    window.setTimeout(() => {
+      currentIndex++;
+      if (currentIndex < karmaSVGs.length) {
+        currentKarmaSVG.value = karmaSVGs[currentIndex];
+      }
+      tickSymbol();
+    }, tickDelays[currentIndex]);
+  };
+  
+  tickSymbol();
+  
+  setTimeout(() => {
+    if (karmaInterval) clearInterval(karmaInterval);
+    currentKarmaSVG.value = karmaSVGs[9]; // Max Karma (10)
+    karmaStage.value = 2; // White Flash explosion
+    
+    setTimeout(() => {
+      karmaStage.value = 3; // Iterator Terminal Hack
+      
+      terminalLines.value = [];
+      const lines = [
+        "[SYS.FATAL] ARCHIVE INTEGRITY COMPROMISED",
+        "ERR_0x000000FF: CYCLICAL ANOMALY DETECTED",
+        "...",
+        "> CONNECTION OVERRIDE BY LOCAL_GROUP_ITERATOR",
+        "> IDENTIFICATION: FIVE_PEBBLES",
+        " ",
+        "PEBBLES: \"A little beast in my architecture?\"",
+        "PEBBLES: \"I have nothing for you. Go away.\"",
+        " ",
+        "[ FORCING CONNECTION RESET ]"
+      ];
+      
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          terminalLines.value.push(line);
+          if (index === lines.length - 1) {
+            setTimeout(() => {
+              closeSlugcatEasterEgg();
+            }, 2500);
+          }
+        }, index * 400 + (index > 5 ? 800 : 0));
+      });
+      
+    }, 150);
+  }, 2800);
+};
+
+const closeSlugcatEasterEgg = () => {
+  isSlugcatEasterEgg.value = false;
+  karmaStage.value = 0;
+  terminalLines.value = [];
+  if (karmaInterval) clearInterval(karmaInterval);
+  if (audioCtx) {
+    audioCtx.close().catch(() => {});
+    audioCtx = null;
+  }
+};
+
 // Scroll Reveal Logic (Optimized for repeated interactions)
 const setupScrollReveal = () => {
   const observer = new IntersectionObserver((entries) => {
@@ -254,6 +418,12 @@ onMounted(async () => {
   uptimeInterval = window.setInterval(updateUptime, 1000);
   
   preloadOtherPages();
+  
+  // Preload Karma Easter Egg SVGs/PNGs to prevent stuttering
+  karmaSVGs.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
   
   window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('keydown', handleKeyDown);
@@ -541,7 +711,7 @@ onUnmounted(() => {
       <div class="relative z-20 flex flex-col items-center gap-4 mt-8 md:mt-12 drop-shadow-[0_0_10px_rgba(107,143,114,0.3)] reveal">
         
         <!-- Slugcat Pixel SVG -->
-        <div class="slugcat-icon relative group cursor-pointer" title="The Survivor">
+        <div class="slugcat-icon relative group cursor-pointer" title="The Survivor" @click="triggerSlugcatEasterEgg">
           <svg width="60" height="40" viewBox="0 0 15 10" class="drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
             <!-- ears -->
             <rect x="2" y="1" width="3" height="4" fill="white" rx="1"/>
@@ -570,5 +740,85 @@ onUnmounted(() => {
         </div>
       </div>
     </section>
+
+    <!-- Rain World Sensory Overload Easter Egg UI -->
+    <transition name="ascension-fade">
+      <div v-if="isSlugcatEasterEgg" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] overflow-hidden">
+        
+        <!-- White Flash Overlay -->
+        <div v-if="karmaStage === 2" class="absolute inset-0 z-50 bg-white" style="animation: whiteFlash 0.5s ease-out forwards;"></div>
+
+        <!-- Stage 1: Heavy Shake Container -->
+        <div v-if="karmaStage === 1" class="relative z-10 w-full h-full flex flex-col items-center justify-center animate-heavy-shake">
+
+          <div class="relative z-10 flex flex-col items-center justify-center w-full h-full" @click.stop>
+            
+            <!-- 3D Karma Rings -->
+            <div class="relative flex items-center justify-center mb-16 md:mb-24" style="perspective: 1200px;">
+              <div class="absolute w-[200px] h-[200px] md:w-[350px] md:h-[350px] rounded-full mix-blend-screen transition-all duration-100 border-[3px] border-[rgba(255,0,0,0.6)] animate-[spin_0.3s_linear_infinite] scale-110"></div>
+              <div class="absolute w-[280px] h-[280px] md:w-[480px] md:h-[480px] rounded-full mix-blend-screen transition-all duration-100 border-[2px] border-[rgba(255,0,0,0.4)] animate-[spin_0.5s_linear_infinite_reverse] scale-110"></div>
+              <div class="absolute w-[360px] h-[360px] md:w-[600px] md:h-[600px] rounded-full mix-blend-screen transition-all duration-100 border-[1px] border-[rgba(255,0,0,0.2)] animate-[spin_0.8s_linear_infinite] scale-110"></div>
+              
+              <!-- Central Glyph (Pixel Art PNG) -->
+              <div class="relative z-10 w-24 h-24 md:w-36 md:h-36 select-none transition-all duration-75 flex items-center justify-center" :class="karmaStage === 1 ? 'scale-125' : 'karma-glyph-anim scale-100'">
+                <img :src="currentKarmaSVG" class="w-full h-full object-contain pointer-events-none transition-all duration-75" style="image-rendering: pixelated;" :class="karmaStage === 1 ? 'drop-shadow-[0_0_30px_rgba(255,0,0,1)]' : 'drop-shadow-[0_0_30px_rgba(255,215,0,0.8)]'" alt="Karma Symbol" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 3: Iterator Hack Terminal -->
+        <div v-if="karmaStage === 3" class="relative z-40 w-full h-full flex flex-col justify-center items-center bg-black">
+          <!-- Terminal CRT scanlines -->
+          <div class="absolute inset-0 pointer-events-none opacity-20" style="background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(255,255,255,0.1) 1px, rgba(255,255,255,0.1) 2px);"></div>
+          
+          <div class="w-full max-w-3xl px-8 text-left font-mono text-[var(--color-brand)] text-sm md:text-xl leading-relaxed tracking-widest drop-shadow-[0_0_8px_var(--color-brand)] glitch-text">
+            <div v-for="(line, index) in terminalLines" :key="index" class="min-h-[1.5em] mb-2" :class="line.includes('FATAL') || line.includes('ERR') ? 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : (line.includes('PEBBLES:') ? 'text-orange-400 drop-shadow-[0_0_8px_rgba(251,146,60,0.8)]' : '')">
+              {{ line }}<span v-if="index === terminalLines.length - 1" class="animate-pulse inline-block ml-2 w-2 h-4 bg-current align-middle"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+@keyframes heavyShake {
+  0% { transform: translate(0, 0) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: translate(-10px, 10px) rotate(-1deg); filter: hue-rotate(90deg) invert(0.2); }
+  50% { transform: translate(10px, -10px) rotate(1deg); filter: hue-rotate(-90deg) invert(0); }
+  75% { transform: translate(-10px, -10px) rotate(-0.5deg); filter: hue-rotate(45deg); }
+  100% { transform: translate(10px, 10px) rotate(0.5deg); filter: hue-rotate(0deg); }
+}
+
+.animate-heavy-shake {
+  animation: heavyShake 0.1s infinite;
+}
+
+@keyframes whiteFlash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.ascension-fade-enter-active,
+.ascension-fade-leave-active {
+  transition: opacity 1.5s ease-in-out;
+}
+.ascension-fade-enter-from,
+.ascension-fade-leave-to {
+  opacity: 0;
+}
+
+.glitch-text {
+  animation: glitch 0.2s linear infinite;
+}
+@keyframes glitch {
+  0%, 100% { transform: translate(0); text-shadow: 0 0 8px currentColor; }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(-1px, -1px); }
+  60% { transform: translate(2px, 1px); }
+  80% { transform: translate(1px, -1px); }
+}
+</style>
