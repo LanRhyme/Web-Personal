@@ -6,6 +6,7 @@ import CalendarCard from '../components/CalendarCard.vue';
 import MeCard from '../components/MeCard.vue';
 import HitokotoCard from '../components/HitokotoCard.vue';
 import ParticleText from '../components/ParticleText.vue';
+import MusicCard from '../components/MusicCard.vue';
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
@@ -144,9 +145,11 @@ const initFooterCanvas = () => {
 
   const animate = () => {
     if (!canvas) return;
-    // Dark background trail for motion blur (simulate heavy atmosphere)
-    ctx.fillStyle = 'rgba(2, 2, 2, 0.4)';
+    // Fade out previous frame for motion blur trails without painting a solid background
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = 'source-over';
 
     // Rain Color (pale green/grey)
     const rainColor = 'rgba(150, 170, 150, 0.6)';
@@ -299,7 +302,7 @@ onUnmounted(() => {
               <span class="text-[var(--color-brand)] font-bold animate-pulse">> STATUS: ONLINE</span><br><br>
               FULL-STACK DEVELOPER<br>
               DIGITAL ARTIST & CREATOR<br>
-              SYSTEM_VERSION: 4.1.12<br>
+              SYSTEM_VERSION: 4.3.10<br>
               SYS_UPTIME: <span class="text-[var(--color-text)]">{{ sysUptime }}</span>
             </div>
             <div class="hidden md:block w-[1px] h-20 bg-[var(--color-border)]"></div>
@@ -312,7 +315,7 @@ onUnmounted(() => {
         
         <!-- Dual Column Panel: ASCII + Live Console -->
         <div 
-          class="flex flex-col items-end w-full xl:w-[480px] relative mt-16 xl:mt-0 transition-transform duration-75"
+          class="hidden md:flex flex-col items-end w-full xl:w-[480px] relative mt-16 xl:mt-0 transition-transform duration-75"
           :style="{ transform: `translateY(${scrollY * 0.08}px)` }"
         >
           
@@ -332,7 +335,7 @@ onUnmounted(() => {
         </div>
         
         <!-- Mobile Simple Banner Block -->
-        <div class="w-full md:hidden flex flex-col items-center text-center mt-8 mb-4">
+        <div class="w-full md:hidden flex flex-col items-center text-center -mt-16 sm:-mt-24">
           <div class="text-[var(--color-brand)] font-art text-4xl mb-2 glitch-hover">LanRhyme.</div>
           <div class="font-mono text-[10px] opacity-60 tracking-widest uppercase">
             SYS_UPTIME: {{ sysUptime }} <span class="text-[var(--color-brand)] animate-pulse inline-block ml-1">_</span>
@@ -368,8 +371,13 @@ onUnmounted(() => {
         <!-- Left Column: Identity & Modules (Sticky on desktop, Bento parts on mobile) -->
         <div class="col-span-2 md:col-span-4 lg:col-span-3 grid grid-cols-2 gap-3 md:flex md:flex-col md:gap-8 md:sticky md:top-32 z-20">
           <div class="reveal-left col-span-2 md:col-span-1" style="transition-delay: 0.1s;"><MeCard /></div>
-          <div class="reveal-left col-span-1 md:col-span-1" style="transition-delay: 0.2s;"><ClockCard /></div>
-          <div class="reveal-left col-span-1 md:col-span-1" style="transition-delay: 0.3s;"><CalendarCard /></div>
+          
+          <div class="col-span-1 md:col-span-1 flex flex-col gap-3 md:gap-8">
+            <div class="reveal-left" style="transition-delay: 0.2s;"><ClockCard /></div>
+            <div class="reveal-left flex-grow flex flex-col" style="transition-delay: 0.4s;"><MusicCard class="h-full flex-grow" /></div>
+          </div>
+
+          <div class="reveal-left col-span-1 md:col-span-1 flex flex-col" style="transition-delay: 0.3s;"><CalendarCard class="h-full flex-grow" /></div>
         </div>
 
         <!-- Right Column: Navigation & Content (Flows down) -->
@@ -519,15 +527,15 @@ onUnmounted(() => {
     </section>
 
     <!-- End of File Decoration: Rain World Theme -->
-    <section class="w-full relative overflow-hidden mt-10 md:mt-16 flex flex-col items-center justify-end text-center pb-12">
+    <section class="w-full relative mt-16 md:mt-24 pt-16 flex flex-col items-center justify-end text-center pb-12">
       
-      <!-- Rain Canvas Container -->
-      <div class="absolute inset-0 z-0 pointer-events-none opacity-60">
+      <!-- Rain Canvas Container with Smooth Fade Mask -->
+      <div 
+        class="absolute inset-0 z-0 pointer-events-none opacity-50"
+        style="mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);"
+      >
         <canvas ref="footerCanvasRef" class="w-full h-full object-cover"></canvas>
       </div>
-      
-      <!-- Fades -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-bg)] via-transparent to-[var(--color-bg)] z-10 pointer-events-none"></div>
 
       <!-- Content -->
       <div class="relative z-20 flex flex-col items-center gap-4 mt-8 md:mt-12 drop-shadow-[0_0_10px_rgba(107,143,114,0.3)] reveal">

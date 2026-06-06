@@ -78,13 +78,7 @@ const handleProjectClick = (index: number) => {
       >
         <!-- Disk Shutter & Top Case -->
         <div class="aspect-video w-full overflow-hidden relative bg-[var(--color-bg)] flex items-center justify-center border-b border-[var(--color-border)]">
-          <!-- Slide Shutter CSS graphic -->
-          <div class="absolute top-2 left-6 w-24 h-16 bg-[var(--color-border)]/50 border border-[var(--color-border)] flex justify-between p-2 opacity-50 z-10">
-            <div class="w-4 h-full bg-[var(--color-text)] opacity-20"></div>
-            <div class="w-1.5 h-full bg-[var(--color-text)] opacity-20"></div>
-          </div>
-          <!-- Write Protect Tab -->
-          <div class="absolute top-0 right-4 w-6 h-4 bg-[var(--color-brand)] opacity-80 z-10"></div>
+
 
           <img
             v-if="project.image"
@@ -96,12 +90,12 @@ const handleProjectClick = (index: number) => {
           >
           
           <!-- Overlay Actions -->
-          <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
+          <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2 z-20">
             <a
               v-if="project.live_url"
               :href="project.live_url"
               target="_blank"
-              class="btn-terminal"
+              class="btn-terminal !px-2 !py-1 !text-[10px] !bg-black/70 !backdrop-blur-md"
               title="预览"
             >
               [ RUN.EXE ]
@@ -110,7 +104,7 @@ const handleProjectClick = (index: number) => {
               v-if="project.source_url"
               :href="project.source_url"
               target="_blank"
-              class="btn-terminal"
+              class="btn-terminal !px-2 !py-1 !text-[10px] !bg-black/70 !backdrop-blur-md"
               title="源码"
             >
               [ SOURCE ]

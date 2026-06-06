@@ -20,7 +20,7 @@ const fetchGithubInfo = async () => {
       // Ignore repo fetch error, just show 0 stars
     }
 
-    githubInfo.value = `FLW:${userData.followers} / REPO:${userData.public_repos} / STR:${totalStars}`;
+    githubInfo.value = `FLW:${userData.followers} / STR:${totalStars}`;
   } catch (e) {
     githubInfo.value = 'OFFLINE';
   }
@@ -68,6 +68,10 @@ onMounted(() => {
         <div class="flex justify-between">
           <span class="opacity-40">DEFENSE_PWR</span>
           <span class="text-[var(--color-text)]">ILLUSTRATION</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="opacity-40">MBTI</span>
+          <span class="text-[var(--color-text)]">INFP</span>
         </div>
         <div class="flex justify-between mt-2 pt-2 border-t border-[var(--color-border)] border-dashed">
           <span class="opacity-40">GITHUB_NET</span>
