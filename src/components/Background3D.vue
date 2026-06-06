@@ -15,6 +15,12 @@ const mouseX = ref(0);
 const mouseY = ref(0);
 const targetX = ref(0);
 const targetY = ref(0);
+const isGlitching = ref(false);
+
+const handleGlitch = (e: Event) => {
+  const customEvent = e as CustomEvent;
+  isGlitching.value = customEvent.detail.active;
+};
 
 const initThree = () => {
   if (!containerRef.value) return;
@@ -37,7 +43,8 @@ const initThree = () => {
     uniforms: {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      uMouse: { value: new THREE.Vector2(0, 0) }
+      uMouse: { value: new THREE.Vector2(0, 0) },
+      uGlitch: { value: 0.0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -51,6 +58,7 @@ const initThree = () => {
       uniform float uTime;
       uniform vec2 uResolution;
       uniform vec2 uMouse;
+      uniform float uGlitch;
       varying vec2 vUv;
 
       // Simplex 3D Noise
@@ -116,6 +124,12 @@ const initThree = () => {
 
         // Pan slowly
         vec2 pan = vec2(uTime * 0.015, uTime * 0.01) + uMouse * 0.03;
+        
+        // Subtle glitch offset instead of earthquake
+        if (uGlitch > 0.5) {
+            pan += vec2(sin(uTime * 60.0) * 0.05, cos(uTime * 80.0) * 0.05);
+        }
+        
         vec2 pos = st + pan;
 
         // 1. Reduced Domain Warping: Less chaotic, more elegant sweeping curves
@@ -196,6 +210,11 @@ const initThree = () => {
         else if (isMinor) opacityMult = 0.10;
         else opacityMult = 0.04; 
 
+        if (uGlitch > 0.5) {
+            finalColor = vec3(1.0, 1.0, 1.0); // Pure white when glitching
+            opacityMult *= 1.3; // Gentle flash instead of blinding
+        }
+
         // Fade out perfectly smooth at the bottom 
         float terrainFade = smoothstep(0.0, 0.08, noiseVal);
         
@@ -233,6 +252,7 @@ const animate = () => {
     const mat = planeMesh.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = time;
     mat.uniforms.uMouse.value.set(targetX.value, targetY.value);
+    mat.uniforms.uGlitch.value = isGlitching.value ? 1.0 : 0.0;
   }
 
   renderer.render(scene, camera);
@@ -254,12 +274,14 @@ onMounted(() => {
   initThree();
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('global-glitch', handleGlitch);
 });
 
 onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
   window.removeEventListener('resize', onWindowResize);
   window.removeEventListener('mousemove', onMouseMove);
+  window.removeEventListener('global-glitch', handleGlitch);
   if (renderer && containerRef.value) {
     containerRef.value.removeChild(renderer.domElement);
     renderer.dispose();

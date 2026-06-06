@@ -37,6 +37,7 @@ const displayTitle = ref(currentTrack.value.title);
 
 // Visualizer data
 const visualizerBars = ref<number[]>(Array(16).fill(0));
+const dotRhythm = ref(0);
 let animationId: number;
 let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
@@ -192,20 +193,29 @@ const updateVisualizer = () => {
       newBars.push(val);
     }
     visualizerBars.value = newBars;
+    
+    // Extract bass for dot rhythm
+    let bassSum = 0;
+    for (let i = 0; i < 4; i++) bassSum += newBars[i];
+    dotRhythm.value = bassSum / 4;
   } else {
     visualizerBars.value = visualizerBars.value.map(val => Math.max(0, val - 0.05));
+    dotRhythm.value = Math.max(0, dotRhythm.value - 0.05);
   }
 };
 
 const triggerGlitch = () => {
   if (isGlitching.value) return;
   isGlitching.value = true;
+  window.dispatchEvent(new CustomEvent('global-glitch', { detail: { active: true } }));
+  
   if (audioRef.value && isPlaying.value) {
     audioRef.value.playbackRate = 0.5; // Pitch down
   }
   
   setTimeout(() => {
     isGlitching.value = false;
+    window.dispatchEvent(new CustomEvent('global-glitch', { detail: { active: false } }));
     if (audioRef.value) {
       audioRef.value.playbackRate = 1.0;
     }
@@ -227,6 +237,7 @@ let fakeVisInterval: number;
 const runFakeVisualizer = () => {
   if (!isPlaying.value && !audioContext) {
     visualizerBars.value = visualizerBars.value.map(() => Math.random() * 0.3);
+    dotRhythm.value = Math.random() * 0.3;
   }
 };
 
@@ -294,8 +305,9 @@ const handleRouletteWheel = (e: WheelEvent) => {
     ></audio>
 
     <!-- Background Deco -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMCIvPgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KPC9zdmc+')] opacity-5 group-hover:opacity-10 transition-opacity"></div>
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0 transition-colors duration-200" :class="{ 'bg-white/5': isGlitching }">
+      <div class="absolute w-[200%] h-[200%] -top-[50%] -left-[50%] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMCIvPgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iIzIyMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KPC9zdmc+')] transition-all duration-200" 
+           :class="isGlitching ? 'opacity-40 invert animate-bg-glitch' : (isPlaying ? 'opacity-15 animate-bg-scroll' : 'opacity-5 group-hover:opacity-15 animate-bg-scroll')"></div>
     </div>
 
     <!-- View Transition Wrapper -->
@@ -323,18 +335,24 @@ const handleRouletteWheel = (e: WheelEvent) => {
               <i class="fa-solid fa-backward-step"></i>
             </button>
             
+            <!-- Bouncing Dot Button -->
             <div 
-              class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 border border-[var(--color-border)] flex items-center justify-center relative overflow-hidden cursor-pointer shadow-[0_0_10px_rgba(0,0,0,0.5)] active:scale-[0.98] transition-transform duration-100"
-              :class="{ 'animate-spin-slow': isPlaying }"
+              class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 border flex items-center justify-center relative cursor-pointer group active:scale-[0.98] transition-all duration-300 bg-[var(--color-bg)] overflow-hidden rounded-sm"
+              :class="isPlaying ? 'border-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)]' : 'border-[var(--color-border)] hover:border-[var(--color-text)]'"
               @click="togglePlay"
             >
-              <div class="absolute inset-0 bg-[var(--color-text)] opacity-10"></div>
-              <div class="w-3 h-3 bg-[var(--color-bg)] border border-[var(--color-border)] z-10"></div>
-              <div class="absolute inset-2 border border-[var(--color-border)] opacity-30"></div>
-              <div class="absolute inset-3 border border-[var(--color-border)] opacity-30"></div>
+              <!-- The Dot -->
+              <div class="w-2.5 h-2.5 rounded-full transition-all duration-75" 
+                   :class="isPlaying ? (isGlitching ? 'bg-white' : 'bg-[var(--color-brand)]') : 'bg-[var(--color-text)] opacity-40'"
+                   :style="{ 
+                     transform: isPlaying ? `scale(${1 + Math.pow(dotRhythm, 2) * 4})` : 'scale(1)',
+                     boxShadow: isPlaying ? `0 0 ${5 + Math.pow(dotRhythm, 2) * 50}px ${isGlitching ? 'white' : 'var(--color-brand)'}` : 'none'
+                   }">
+              </div>
               
-              <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity z-20" :class="{ 'opacity-100': !isPlaying }">
-                <i class="fa-solid" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+              <!-- Icon overlay -->
+              <div class="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/80 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity z-20" :class="{ 'opacity-100': !isPlaying }">
+                <i class="fa-solid" :class="isPlaying ? 'fa-pause text-[var(--color-brand)]' : 'fa-play text-[var(--color-text)]'"></i>
               </div>
             </div>
 
@@ -361,11 +379,11 @@ const handleRouletteWheel = (e: WheelEvent) => {
           <div 
             v-for="(val, idx) in visualizerBars" 
             :key="idx"
-            class="flex-1 transition-all duration-75"
-            :class="hoverVisualizerIdx !== null && Math.abs(hoverVisualizerIdx - idx) <= 1 ? 'bg-[var(--color-text)]' : 'bg-[var(--color-brand)]'"
+            class="flex-1 transition-all duration-75 relative rounded-t-sm"
+            :class="hoverVisualizerIdx !== null && Math.abs(hoverVisualizerIdx - idx) <= 1 ? 'bg-[var(--color-text)] shadow-[0_0_8px_var(--color-text)] z-10' : (isGlitching ? 'bg-white shadow-[0_0_6px_white]' : 'bg-[var(--color-brand)] shadow-[0_0_4px_var(--color-brand)]')"
             :style="{ 
               height: `${Math.max(4, (val * 100) + (hoverVisualizerIdx !== null ? Math.max(0, 30 - Math.abs(hoverVisualizerIdx - idx) * 15) : 0))}%`,
-              opacity: hoverVisualizerIdx !== null && Math.abs(hoverVisualizerIdx - idx) <= 2 ? 1 : 0.8
+              opacity: hoverVisualizerIdx !== null && Math.abs(hoverVisualizerIdx - idx) <= 2 ? 1 : (isPlaying ? 0.9 : 0.6)
             }"
           ></div>
         </div>
@@ -415,8 +433,8 @@ const handleRouletteWheel = (e: WheelEvent) => {
             :key="idx"
             class="absolute w-full max-w-[280px] px-4 py-2 border cursor-pointer flex justify-between items-center transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94)"
             :class="{
-              'border-[var(--color-brand)] bg-[var(--color-brand)]/10 text-[var(--color-brand)] font-bold shadow-[0_0_15px_rgba(0,0,0,0.5)]': currentTrackIndex === idx,
-              'border-[var(--color-border)]/50 bg-[var(--color-bg)]/80 backdrop-blur-sm text-[var(--color-text)]': currentTrackIndex !== idx
+              'border-[var(--color-brand)] bg-[var(--color-brand)]/10 text-[var(--color-brand)] font-bold shadow-[0_0_20px_var(--color-brand)] scale-105': currentTrackIndex === idx,
+              'border-[var(--color-border)]/50 bg-[var(--color-bg)]/80 backdrop-blur-sm text-[var(--color-text)] hover:border-[var(--color-text)]/50': currentTrackIndex !== idx
             }"
             :style="getRouletteStyle(idx)"
             @click="playTrack(idx)"
@@ -444,6 +462,26 @@ const handleRouletteWheel = (e: WheelEvent) => {
 <style scoped>
 .animate-spin-slow {
   animation: spin 4s linear infinite;
+}
+
+@keyframes bg-scroll {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(20px, 20px); }
+}
+.animate-bg-scroll {
+  animation: bg-scroll 3s linear infinite;
+}
+
+@keyframes bg-glitch-scroll {
+  0% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(15px, -15px) scale(1.05); }
+  40% { transform: translate(-25px, 20px) scale(0.95); }
+  60% { transform: translate(30px, 5px) scale(1.1); }
+  80% { transform: translate(-10px, -30px) scale(1); }
+  100% { transform: translate(5px, 0) scale(1.02); }
+}
+.animate-bg-glitch {
+  animation: bg-glitch-scroll 0.15s infinite;
 }
 
 /* 3D Classes */
@@ -475,7 +513,8 @@ const handleRouletteWheel = (e: WheelEvent) => {
 
 .glitch-text {
   animation: text-glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
-  text-shadow: 2px 0 var(--color-brand), -2px 0 cyan;
+  text-shadow: 2px 0 #ffffff, -2px 0 rgba(255, 255, 255, 0.6);
+  color: #ffffff;
 }
 
 @keyframes container-glitch {
