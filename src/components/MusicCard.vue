@@ -287,6 +287,31 @@ const handleRouletteWheel = (e: WheelEvent) => {
   wheelTimeout = window.setTimeout(() => { wheelTimeout = null; }, 300);
 };
 
+// Touch support for mobile swipe
+let touchStartY = 0;
+let touchEndY = 0;
+
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartY = e.changedTouches[0].screenY;
+};
+
+const handleTouchEnd = (e: TouchEvent) => {
+  touchEndY = e.changedTouches[0].screenY;
+  handleSwipe();
+};
+
+const handleSwipe = () => {
+  const diff = touchStartY - touchEndY;
+  if (Math.abs(diff) > 30) { // Threshold
+    if (diff > 0) {
+      nextTrack(); // Swipe up
+    } else {
+      prevTrack(); // Swipe down
+    }
+  }
+};
+
+
 </script>
 
 <template>
@@ -427,6 +452,9 @@ const handleRouletteWheel = (e: WheelEvent) => {
           class="flex-grow flex items-center justify-center relative w-full perspective-[800px] preserve-3d" 
           style="min-height: 140px;"
           @wheel.stop.prevent="handleRouletteWheel"
+          @touchstart="handleTouchStart"
+          @touchmove.stop.prevent
+          @touchend="handleTouchEnd"
         >
           <div 
             v-for="(track, idx) in playlist" 
