@@ -1049,10 +1049,10 @@ onUnmounted(() => {
                 <button
                   v-for="(choice, idx) in question?.choices"
                   :key="idx"
-                  class="border border-[var(--color-border)] py-2 px-3 text-[11px] font-mono hover:bg-[var(--color-text)] hover:text-[#000] transition-colors"
+                  class="btn-terminal !py-2 !px-3 !text-[11px] font-mono hover:!bg-[var(--color-text)] hover:!text-[#000] w-full text-center transition-colors"
                   :class="{
-                    'bg-[var(--color-brand)] text-[#000] border-transparent': answerState !== 'idle' && idx === question?.correctIdx,
-                    'bg-red-500 text-white border-transparent': answerState === 'wrong' && idx === selectedIdx,
+                    '!bg-[var(--color-brand)] !text-[#000] !border-[var(--color-brand)]': answerState !== 'idle' && idx === question?.correctIdx,
+                    '!bg-red-500 !text-white !border-red-500': answerState === 'wrong' && idx === selectedIdx,
                     'opacity-50 cursor-not-allowed': answerState !== 'idle'
                   }"
                   :disabled="answerState !== 'idle'"
@@ -1080,14 +1080,14 @@ onUnmounted(() => {
           </div>
 
           <!-- Transition Phase -->
-          <div v-else-if="phase === 'transition'" class="flex flex-col items-center justify-center py-12 border border-[var(--color-border)] bg-[#0a0a0a]">
+          <div v-else-if="phase === 'transition'" class="flex flex-col items-center justify-center py-12 border border-[var(--color-border)] bg-[#0a0a0a] animate-[glitch-decode_0.5s_ease-out]">
             <div class="text-[var(--color-text)] font-mono text-center">
-              <h2 class="text-2xl font-art tracking-widest text-[var(--color-brand)] mb-4">> {{ TRANSITION_MSG[currentMode]?.title }}</h2>
-              <p class="text-[10px] text-[var(--color-text-dim)] mb-8 max-w-sm mx-auto leading-relaxed uppercase opacity-80">
+              <h2 class="text-2xl font-art tracking-widest text-[var(--color-brand)] mb-4 glitch-hover">> {{ TRANSITION_MSG[currentMode]?.title }}</h2>
+              <p class="text-[10px] text-[var(--color-text-dim)] mb-8 max-w-sm mx-auto leading-relaxed uppercase opacity-80 animate-pulse">
                 // {{ TRANSITION_MSG[currentMode]?.sub }}
               </p>
-              <button class="btn-terminal !px-8 !py-2 !text-[12px]" @click="continueFromTransition">
-                [ SYS.CONTINUE ]
+              <button class="btn-terminal !px-8 !py-3 !text-[12px] group" @click="continueFromTransition">
+                <span class="group-hover:animate-[glitch-decode_0.3s_ease-out] inline-block">[ SYS.CONTINUE ]</span>
               </button>
               <p class="text-[9px] opacity-40 mt-4 tracking-widest">[AWAITING ENTER / SPACE]</p>
             </div>

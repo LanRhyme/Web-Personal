@@ -1,26 +1,43 @@
 <template>
-  <div class="page-content flex flex-col items-center w-full font-sans relative">
+  <div class="page-content flex flex-col items-center w-full font-sans relative pb-24">
     <!-- HUD Corners -->
     <div class="hud-corner hud-tl hidden md:block"></div>
     <div class="hud-corner hud-tr hidden md:block"></div>
     <div class="scanlines"></div>
 
-    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8 w-full relative z-10">
-      <section class="w-full" id="works-intro" v-show="currentView === 'all'">
-        <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
-          <div>
-            <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">GALLERY</div>
-            <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> ART_ARCHIVE</h2>
-          </div>
-          <button
-            @click="open3DView"
-            class="btn-terminal !px-4 !py-1 self-start sm:self-auto group relative overflow-hidden"
-            title="Enter 3D Gallery"
-          >
-            <div class="absolute inset-0 bg-[var(--color-brand)] opacity-0 group-hover:opacity-20 animate-pulse transition-opacity pointer-events-none z-[-1]"></div>
-            <span class="relative z-10">[ 3D_ARCADE ]</span>
-          </button>
+    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 w-full relative z-10">
+      
+      <!-- Enhanced Hero Section -->
+      <section class="w-full relative mb-16 md:mb-24 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 pt-12 md:pt-0" id="works-intro" v-show="currentView === 'all'">
+        <!-- Parallax Background Watermark -->
+        <div 
+          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[80px] md:text-[140px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75"
+          :style="{ transform: `translateX(${scrollY * 0.1}px)` }"
+        >
+          GALLERY
         </div>
+        
+        <div class="reveal-left" style="transition-delay: 0.1s;">
+          <h2 class="text-3xl md:text-5xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover flex items-center gap-4">
+            <span class="animate-pulse text-[var(--color-brand)]">></span> ART_ARCHIVE
+          </h2>
+          <div class="mt-4 font-mono text-xs md:text-sm text-[var(--color-text-dim)] tracking-[0.2em] uppercase">
+            [ VISUAL_DATA_REPOSITORY ]
+          </div>
+        </div>
+
+        <button
+          @click="open3DView"
+          class="reveal-right btn-terminal !px-6 !py-3 self-start sm:self-auto group relative overflow-hidden"
+          title="Enter 3D Gallery"
+          style="transition-delay: 0.2s;"
+        >
+          <div class="absolute inset-0 bg-[var(--color-brand)] opacity-0 group-hover:opacity-20 animate-pulse transition-opacity pointer-events-none z-[-1]"></div>
+          <span class="relative z-10 flex items-center gap-2">
+            <i class="fa-solid fa-cube text-[10px]"></i>
+            [ ENTER_3D_ARCADE ]
+          </span>
+        </button>
       </section>
 
     <div class="w-full mb-6 md:mb-8 text-left" v-show="currentView === 'portfolio'">
@@ -39,15 +56,20 @@
         </div>
         <div class="gallery-grid stagger-children">
           <div
-            v-for="portfolio in allPortfolios"
+            v-for="(portfolio, index) in allPortfolios"
             :key="portfolio.id"
-            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_5px_20px_-10px_var(--color-brand)] border border-[var(--color-border)] hover:border-[var(--color-brand)]"
             @click="switchToPortfolio(portfolio)"
+            :style="{ transitionDelay: `${0.1 * (index % 4)}s` }"
           >
             <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
-            <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)] relative z-10">
-              <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide">> {{ portfolio.title }}</div>
-              <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed">{{ portfolio.description }}</div>
+            
+            <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)] relative z-10 group-hover:bg-black/80 backdrop-blur-md transition-colors duration-300">
+              <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide flex items-center gap-2">
+                <span class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--color-brand)] animate-pulse">></span>
+                {{ portfolio.title }}
+              </div>
+              <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed group-hover:text-[var(--color-text)] transition-colors">{{ portfolio.description }}</div>
             </div>
             <!-- Decorative Barcode -->
             <div class="absolute top-4 right-4 flex gap-[2px] opacity-30 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)] mix-blend-difference z-20">
@@ -66,13 +88,20 @@
           <div
             v-for="(work, index) in displayedWorks"
             :key="work.id"
-            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal is-visible border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_5px_20px_-10px_var(--color-brand)] border border-[var(--color-border)] hover:border-[var(--color-brand)]"
             @click="openLightbox(index)"
+            :style="{ transitionDelay: `${0.1 * (index % 4)}s` }"
           >
             <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px]">
-              <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider">> {{ work.title || 'UNNAMED_WORK' }}</div>
-              <div class="text-[10px] opacity-70 font-mono tracking-widest">{{ work.description || 'Illustration Log' }}</div>
+              <!-- Decode Glitch Effect Container -->
+              <div class="relative overflow-hidden">
+                <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider flex items-center gap-2 group-hover:animate-[glitch-decode_0.5s_ease-out]">
+                  <span class="animate-pulse">></span> {{ work.title || 'UNNAMED_WORK' }}
+                </div>
+                <div class="text-[10px] opacity-70 font-mono tracking-widest uppercase group-hover:animate-[glitch-decode_0.6s_ease-out]">{{ work.description || 'Illustration Log' }}</div>
+              </div>
               
               <!-- Decorative Barcode -->
               <div class="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-[2px] opacity-30 text-[var(--color-brand)]">
@@ -209,6 +238,25 @@
 import { ref, computed, onMounted, onUnmounted, reactive } from 'vue';
 import worksData from '../data/works.json';
 import sectionsData from '../data/works_section.json';
+
+const scrollY = ref(0);
+const handleScroll = () => { scrollY.value = window.scrollY; };
+
+const setupScrollReveal = () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      } else {
+        const rect = entry.target.getBoundingClientRect();
+        if (rect.top > window.innerHeight * 0.8) {
+          entry.target.classList.remove('is-visible');
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+};
 
 interface Work {
   id: string;
@@ -567,7 +615,10 @@ const handle3DMouseMove = (e: MouseEvent | TouchEvent) => {
 const handle3DMouseUp = () => { isDragging.value = false; };
 const resetFocus = () => { if (isClickValid.value) focusedIndex.value = null; };
 
-onUnmounted(() => stopUpdateLoop());
+onUnmounted(() => {
+  stopUpdateLoop();
+  window.removeEventListener('scroll', handleScroll);
+});
 
 const lightbox = reactive({
   visible: false,
@@ -611,6 +662,9 @@ onMounted(() => {
     if (e.key === 'ArrowLeft') prevImage();
     if (e.key === 'ArrowRight') nextImage();
   });
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+  setTimeout(setupScrollReveal, 100);
 });
 
 </script>
@@ -680,5 +734,12 @@ onMounted(() => {
 
 .bg-gradient-radial {
   background: radial-gradient(circle at 50% 50%, var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to));
+}
+
+@keyframes glitch-decode {
+  0% { opacity: 0; filter: blur(4px) hue-rotate(90deg); transform: translateX(-5px); }
+  30% { opacity: 0.8; filter: blur(0px) hue-rotate(0deg); transform: translateX(2px); }
+  60% { opacity: 0.6; transform: translateX(-1px); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 </style>

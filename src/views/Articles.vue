@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
 interface Article {
@@ -17,6 +17,25 @@ const articles = ref<Article[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const router = useRouter();
+
+const scrollY = ref(0);
+const handleScroll = () => { scrollY.value = window.scrollY; };
+
+const setupScrollReveal = () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      } else {
+        const rect = entry.target.getBoundingClientRect();
+        if (rect.top > window.innerHeight * 0.8) {
+          entry.target.classList.remove('is-visible');
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+};
 
 const groupedArticles = computed(() => {
   const sorted = [...articles.value].sort((a, b) => {
@@ -74,6 +93,14 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+  setTimeout(setupScrollReveal, 100);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -84,14 +111,32 @@ onMounted(async () => {
     <div class="hud-corner hud-tr hidden md:block"></div>
     <div class="scanlines"></div>
 
-    <div class="page-container py-6 md:py-12 px-4 md:px-8 lg:px-12 max-w-[1200px] mx-auto relative z-10">
-      <div class="border-b border-[var(--color-border)] pb-3 md:pb-4 mb-6 md:mb-8 relative flex justify-between items-end">
-        <div>
-          <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">BLOG</div>
-          <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> BLOG_LOGS</h2>
+    <div class="page-container py-12 md:py-20 px-4 md:px-8 lg:px-12 max-w-[1200px] mx-auto relative z-10 pb-24">
+      
+      <!-- Enhanced Hero Section -->
+      <div class="relative mb-16 md:mb-24 flex flex-col md:flex-row md:justify-between md:items-end gap-6 pt-12 md:pt-0">
+        <!-- Parallax Background Watermark -->
+        <div 
+          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[80px] md:text-[140px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75"
+          :style="{ transform: `translateX(${scrollY * 0.1}px)` }"
+        >
+          BLOG
         </div>
-        <div class="hidden md:block font-mono text-[10px] text-[var(--color-brand)] opacity-60 tracking-[0.2em] animate-pulse">
+        
+        <div class="reveal-left" style="transition-delay: 0.1s;">
+          <h2 class="text-3xl md:text-5xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover flex items-center gap-4">
+            <span class="animate-pulse text-[var(--color-brand)]">></span> BLOG_LOGS
+          </h2>
+          <div class="mt-4 font-mono text-xs md:text-sm text-[var(--color-text-dim)] tracking-[0.2em] uppercase">
+            [ TECHNICAL_AND_THOUGHTS ]
+          </div>
+        </div>
+        
+        <div class="reveal-right hidden md:block font-mono text-[10px] text-[var(--color-brand)] opacity-60 tracking-[0.2em] animate-pulse text-right" style="transition-delay: 0.2s;">
            [ SYS.DB_CONNECTION_ESTABLISHED ]
+           <div class="flex items-center justify-end gap-2 mt-2 opacity-50">
+             <div class="w-[2px] h-3 bg-current"></div><div class="w-[4px] h-3 bg-current"></div><div class="w-[1px] h-3 bg-current"></div>
+           </div>
         </div>
       </div>
 
@@ -113,8 +158,8 @@ onMounted(async () => {
       </div>
 
       <div v-else class="space-y-16">
-        <div v-for="year in groupedArticles.years" :key="year" class="font-mono animate-[fadeIn_0.5s_ease-out_forwards]">
-          <div class="flex items-center gap-4 border-b border-[var(--color-border)] pb-3 mb-6 opacity-80 text-[13px] uppercase tracking-widest text-[var(--color-brand)]">
+        <div v-for="year in groupedArticles.years" :key="year" class="font-mono">
+          <div class="reveal flex items-center gap-4 border-b border-[var(--color-border)] pb-3 mb-6 opacity-80 text-[13px] uppercase tracking-widest text-[var(--color-brand)]">
             <span class="font-bold">> ARCHIVE_YEAR: {{ year }}</span>
             <div class="flex-grow h-[1px] bg-[var(--color-border)] opacity-50 relative">
                <div class="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-[var(--color-brand)] to-transparent opacity-30"></div>
@@ -122,12 +167,13 @@ onMounted(async () => {
             <span class="border border-[var(--color-brand)] bg-[var(--color-brand)]/10 px-3 py-1 font-bold shadow-[0_0_10px_rgba(107,143,114,0.1)]">VOL: {{ groupedArticles.groups[year].length }}</span>
           </div>
 
-          <div class="flex flex-col gap-3 md:gap-4">
+          <div class="flex flex-col gap-3 md:gap-4 stagger-children">
             <div
-              v-for="article in groupedArticles.groups[year]"
+              v-for="(article, index) in groupedArticles.groups[year]"
               :key="article.slug"
               @click="viewArticle(article.slug)"
-              class="cyber-glass group overflow-hidden flex flex-col md:flex-row md:items-center justify-between !p-0 cursor-pointer border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-300 active:border-[var(--color-brand)]"
+              class="reveal-scale cyber-glass group overflow-hidden flex flex-col md:flex-row md:items-center justify-between !p-0 cursor-pointer border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:shadow-[0_0_20px_-5px_var(--color-brand)] transition-all duration-300 hover:-translate-y-1 active:border-[var(--color-brand)]"
+              :style="{ transitionDelay: `${0.05 * (index % 10)}s` }"
             >
               <div class="flex flex-col md:flex-row md:items-center w-full">
                 <!-- Status/Date indicator -->

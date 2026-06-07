@@ -5,17 +5,32 @@
     <div class="hud-corner hud-tr hidden md:block"></div>
     <div class="scanlines"></div>
 
-    <div class="w-full flex flex-col items-center gap-12 md:gap-16 max-w-[1400px] mx-auto px-4 md:px-12 py-6 md:py-8 relative z-10">
+    <div class="w-full flex flex-col items-center gap-12 md:gap-16 max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 relative z-10">
 
-      <div class="w-full border-b border-[var(--color-border)] pb-3 md:pb-4 mb-4 relative">
-        <div class="absolute -top-6 -left-4 font-art text-[60px] md:text-[80px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">REQUEST</div>
-        <h2 class="text-2xl md:text-3xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover">> COMMISSION_BOARD</h2>
+      <!-- Enhanced Hero Section -->
+      <div class="w-full relative mb-12 md:mb-16 flex flex-col pt-8 md:pt-0 border-b border-[var(--color-border)] pb-4 md:pb-6">
+        <!-- Parallax Background Watermark -->
+        <div 
+          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[60px] md:text-[120px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75"
+          :style="{ transform: `translateX(${scrollY * 0.1}px)` }"
+        >
+          COMMISSION
+        </div>
+        
+        <div class="reveal">
+          <h2 class="text-3xl md:text-5xl font-art tracking-widest text-[var(--color-text)] uppercase glitch-hover flex items-center gap-4">
+            <span class="animate-pulse text-[var(--color-brand)]">></span> COMMISSION_BOARD
+          </h2>
+          <div class="mt-4 font-mono text-xs md:text-sm text-[var(--color-text-dim)] tracking-[0.2em] uppercase">
+            [ REQUEST_CREATIVE_WORK ]
+          </div>
+        </div>
       </div>
 
     <!-- Top Row: Platforms, Invitations, Payment -->
     <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Commission Platforms -->
-      <section class="reveal is-visible relative" style="animation-delay: 0.05s;">
+      <section class="reveal relative" style="transition-delay: 0.1s;">
         <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-[var(--color-brand)] opacity-50"></div>
         <h2 class="section-heading mb-6 text-xl font-sans font-bold tracking-wider flex items-center gap-3">
           <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse block"></span>
@@ -28,7 +43,7 @@
             target="_blank"
           >
             <i class="fab fa-bilibili text-4xl text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors"></i>
-            <h4 class="text-sm font-bold text-[var(--color-primary)] tracking-wide">Bili工坊</h4>
+            <h4 class="text-sm font-bold text-[var(--color-primary)] tracking-wide">B站工坊</h4>
             <p class="text-[10px] font-mono text-[var(--color-brand)] opacity-80">> ESTABLISH.EXE</p>
           </a>
           <div class="cyber-glass !p-5 flex flex-col items-center justify-center gap-3 text-center opacity-30 cursor-not-allowed py-6 relative overflow-hidden">
@@ -41,7 +56,7 @@
       </section>
 
       <!-- Invitations -->
-      <section class="reveal is-visible relative" style="animation-delay: 0.1s;">
+      <section class="reveal relative" style="transition-delay: 0.2s;">
         <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-[var(--color-brand)] opacity-50"></div>
         <h2 class="section-heading mb-6 text-xl font-sans font-bold tracking-wider flex items-center gap-3">
           <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse block" style="animation-delay: 0.2s"></span>
@@ -70,7 +85,7 @@
       </section>
 
       <!-- Payment -->
-      <section class="reveal is-visible flex flex-col relative" style="animation-delay: 0.15s;">
+      <section class="reveal flex flex-col relative" style="transition-delay: 0.3s;">
         <div class="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-[var(--color-brand)] opacity-50"></div>
         <h2 class="section-heading mb-6 text-xl font-sans font-bold tracking-wider flex items-center gap-3">
           <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse block" style="animation-delay: 0.4s"></span>
@@ -90,7 +105,7 @@
     </div>
 
     <!-- Pricing List -->
-    <section class="w-full reveal is-visible mt-6 md:mt-8" style="animation-delay: 0.2s;">
+    <section class="w-full reveal mt-12 md:mt-16">
       <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6 md:mb-10">
         <h3 class="text-2xl md:text-3xl font-art text-[var(--color-text)] tracking-widest uppercase m-0">> QUEST_WINDOW</h3>
         <div class="hidden sm:block flex-grow h-[1px] bg-[var(--color-border)] opacity-50"></div>
@@ -116,7 +131,8 @@
         <div
           v-for="(item, index) in priceList"
           :key="index"
-          class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal is-visible transition-all duration-500 hover:border-[var(--color-brand)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.8),_inset_0_0_15px_rgba(107,143,114,0.1)] hover:-translate-y-2 relative"
+          class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal-scale transition-all duration-500 hover:border-[var(--color-brand)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.8),_inset_0_0_15px_rgba(107,143,114,0.1)] hover:-translate-y-2 relative"
+          :style="{ transitionDelay: `${0.1 * index}s` }"
         >
           <!-- Top Image Area -->
           <div class="aspect-video w-full overflow-hidden relative bg-[var(--color-bg)] flex items-center justify-center border-b border-[var(--color-border)]">
@@ -190,7 +206,7 @@
         class="fixed inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center z-[1000] transition-opacity"
         @click.self="showPaymentModal = false"
       >
-        <div class="cyber-glass !p-8 bg-[var(--color-bg)] relative max-w-md w-full mx-4 reveal is-visible active border-t-4 border-t-[var(--color-brand)]">
+        <div class="cyber-glass !p-8 bg-[var(--color-bg)] relative max-w-md w-full mx-4 border-t-4 border-t-[var(--color-brand)] animate-[fadeIn_0.3s_ease-out]">
           <button @click="showPaymentModal = false" class="absolute top-4 right-4 text-[var(--color-text-dim)] hover:text-[var(--color-brand)] text-2xl transition-colors">
             <i class="fas fa-times"></i>
           </button>
@@ -237,7 +253,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import commissionsData from '../data/commissions.json';
 
 interface CommissionItem {
@@ -274,16 +290,32 @@ const closeImageModal = () => {
   modalImageUrl.value = '';
 };
 
-onMounted(() => {
+const scrollY = ref(0);
+const handleScroll = () => { scrollY.value = window.scrollY; };
+
+const setupScrollReveal = () => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
+        entry.target.classList.add('is-visible');
+      } else {
+        const rect = entry.target.getBoundingClientRect();
+        if (rect.top > window.innerHeight * 0.8) {
+          entry.target.classList.remove('is-visible');
+        }
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+};
 
-  document.querySelectorAll('.reveal is-visible').forEach(el => observer.observe(el));
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+  setTimeout(setupScrollReveal, 100);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
