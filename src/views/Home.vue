@@ -695,7 +695,7 @@ onUnmounted(() => {
     <section class="w-full relative mt-16 md:mt-24 pt-16 flex flex-col items-center justify-end text-center pb-12">
 
       <!-- Content -->
-      <div class="relative z-20 flex flex-col items-center gap-4 mt-8 md:mt-12 drop-shadow-[0_0_10px_rgba(107,143,114,0.3)] reveal">
+      <div class="relative z-20 flex flex-col items-center gap-4 mt-8 md:mt-12 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] reveal">
         
         <!-- Slugcat Pixel SVG -->
         <div class="slugcat-icon relative group cursor-pointer" title="The Survivor" @click="triggerSlugcatEasterEgg">

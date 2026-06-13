@@ -97,7 +97,7 @@ onMounted(() => {
       :style="cardStyle"
     >
       <!-- Scanning Laser & HUD elements -->
-      <div class="absolute top-0 left-0 w-full h-[1px] bg-[var(--color-brand)] shadow-[0_0_15px_rgba(107,143,114,0.8)] opacity-0 group-hover:opacity-50 animate-scan pointer-events-none z-10 transition-opacity duration-500"></div>
+      <div class="absolute top-0 left-0 w-full h-[1px] bg-[var(--color-brand)] shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 group-hover:opacity-50 animate-scan pointer-events-none z-10 transition-opacity duration-500"></div>
       <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--color-brand)] opacity-40 transition-all duration-300 group-hover:opacity-100 group-hover:w-6 group-hover:h-6"></div>
       <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--color-brand)] opacity-40 transition-all duration-300 group-hover:opacity-100 group-hover:w-6 group-hover:h-6"></div>
       <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--color-brand)] opacity-40 transition-all duration-300 group-hover:opacity-100 group-hover:w-6 group-hover:h-6"></div>

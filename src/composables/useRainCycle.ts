@@ -111,7 +111,7 @@ const startCycle = () => {
         if (intensity.value >= 0.4) {
           intensity.value = 0.4;
           cycleStage.value = 'HEAVY';
-          document.querySelector('.app-root')?.classList.add('screen-shaking-light');
+          document.querySelector('.shake-container')?.classList.add('screen-shaking-light');
         }
       } else if (cycleStage.value === 'HEAVY') {
         // Heavy rain lasts 10 seconds, intensity 0.4 -> 1
@@ -120,8 +120,8 @@ const startCycle = () => {
           intensity.value = 1;
           cycleStage.value = 'DEATH_RAIN';
           isShaking.value = true;
-          document.querySelector('.app-root')?.classList.remove('screen-shaking-light');
-          document.querySelector('.app-root')?.classList.add('screen-shaking-violent');
+          document.querySelector('.shake-container')?.classList.remove('screen-shaking-light');
+          document.querySelector('.shake-container')?.classList.add('screen-shaking-violent');
         }
       } else if (cycleStage.value === 'DEATH_RAIN') {
         // Death rain lasts 10 seconds, keeping intensity at 1
@@ -129,7 +129,7 @@ const startCycle = () => {
         if (intensity.value >= 11) { // 1 + 10s
           cycleStage.value = 'COLLAPSE';
           isCollapsed.value = true;
-          document.querySelector('.app-root')?.classList.add('page-collapse');
+          document.querySelector('.shake-container')?.classList.add('page-collapse');
           // Do NOT remove screen-shaking-violent here, so it shakes while collapsing
           
           // Trigger canvas shatter effect
@@ -138,17 +138,25 @@ const startCycle = () => {
           });
         }
       } else if (cycleStage.value === 'COLLAPSE') {
-        // Complete system failure for 4 seconds
+        // Complete system failure: 4s collapse + 3s total collapse
         intensity.value += dt;
-        if (intensity.value >= 15) { // 11 + 4s
+        
+        // At 4s into collapse, escalate to total collapse
+        if (intensity.value >= 15 && !document.querySelector('.shake-container')?.classList.contains('total-collapse')) {
+          document.querySelector('.shake-container')?.classList.remove('page-collapse');
+          document.querySelector('.shake-container')?.classList.add('total-collapse');
+        }
+        
+        if (intensity.value >= 18) { // 11 + 4s + 3s
           // Snap reset
           intensity.value = 0.02;
           cycleStage.value = 'DRY';
           dryTimeLeft.value = dryTotalTime;
           isCollapsed.value = false;
           isShaking.value = false;
-          document.querySelector('.app-root')?.classList.remove('page-collapse');
-          document.querySelector('.app-root')?.classList.remove('screen-shaking-violent');
+          document.querySelector('.shake-container')?.classList.remove('page-collapse');
+          document.querySelector('.shake-container')?.classList.remove('total-collapse');
+          document.querySelector('.shake-container')?.classList.remove('screen-shaking-violent');
           if (shatterCleanup) {
             shatterCleanup();
             shatterCleanup = null;

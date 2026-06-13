@@ -514,7 +514,7 @@ a {
 
 .cursor-frame.hovering {
   border-color: var(--color-brand);
-  background-color: rgba(74, 124, 89, 0.1); /* Slight fill when boxing */
+  background-color: rgba(255, 255, 255, 0.08); /* Slight fill when boxing */
 }
 
 /* Add a global scale trick so clicking works with the box */

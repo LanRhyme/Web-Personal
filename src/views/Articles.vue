@@ -164,7 +164,7 @@ onUnmounted(() => {
             <div class="flex-grow h-[1px] bg-[var(--color-border)] opacity-50 relative">
                <div class="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-[var(--color-brand)] to-transparent opacity-30"></div>
             </div>
-            <span class="border border-[var(--color-brand)] bg-[var(--color-brand)]/10 px-3 py-1 font-bold shadow-[0_0_10px_rgba(107,143,114,0.1)]">VOL: {{ groupedArticles.groups[year].length }}</span>
+            <span class="border border-[var(--color-brand)] bg-[var(--color-brand)]/10 px-3 py-1 font-bold shadow-[0_0_10px_rgba(255,255,255,0.1)]">VOL: {{ groupedArticles.groups[year].length }}</span>
           </div>
 
           <div class="flex flex-col gap-3 md:gap-4 stagger-children">

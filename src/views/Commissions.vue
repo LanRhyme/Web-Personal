@@ -115,7 +115,7 @@
       <div v-if="!isBusinessOpen" class="cyber-glass p-8 md:p-16 text-center max-w-3xl mx-auto border-t-4 border-t-[var(--color-brand)] relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--color-brand)] opacity-5 blur-[100px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-brand)] opacity-5 blur-[100px] pointer-events-none"></div>
-        <div class="w-16 h-16 md:w-24 md:h-24 text-[var(--color-brand)] flex items-center justify-center text-2xl md:text-4xl mx-auto mb-4 md:mb-8 border border-[var(--color-brand)]/30 relative bg-[var(--color-brand)]/5 shadow-[0_0_20px_rgba(107,143,114,0.1)]">
+        <div class="w-16 h-16 md:w-24 md:h-24 text-[var(--color-brand)] flex items-center justify-center text-2xl md:text-4xl mx-auto mb-4 md:mb-8 border border-[var(--color-brand)]/30 relative bg-[var(--color-brand)]/5 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
           <div class="absolute inset-0 border border-[var(--color-brand)]/50 scale-110 opacity-30 animate-ping"></div>
           <i class="fas fa-store-slash"></i>
         </div>
@@ -131,7 +131,7 @@
         <div
           v-for="(item, index) in priceList"
           :key="index"
-          class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal-scale transition-all duration-500 hover:border-[var(--color-brand)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.8),_inset_0_0_15px_rgba(107,143,114,0.1)] hover:-translate-y-2 relative"
+          class="cyber-glass group overflow-hidden flex flex-col h-full !p-0 reveal-scale transition-all duration-500 hover:border-[var(--color-brand)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.8),_inset_0_0_15px_rgba(255,255,255,0.1)] hover:-translate-y-2 relative"
           :style="{ transitionDelay: `${0.1 * index}s` }"
         >
           <!-- Top Image Area -->
@@ -164,7 +164,7 @@
                 class="w-10 h-10 object-cover cursor-pointer border-2 filter grayscale hover:grayscale-0 transition-all duration-300"
                 :class="[
                   (item.currentImage === img || (!item.currentImage && imgIndex === 0))
-                    ? 'border-[var(--color-brand)] grayscale-0 opacity-100 shadow-[0_0_10px_rgba(107,143,114,0.5)]'
+                    ? 'border-[var(--color-brand)] grayscale-0 opacity-100 shadow-[0_0_10px_rgba(255,255,255,0.5)]'
                     : 'border-[var(--color-border)] opacity-60 hover:opacity-100'
                 ]"
                 alt="Thumbnail"
@@ -241,7 +241,7 @@
         @click.self="closeImageModal"
       >
         <div class="relative max-w-[95%] max-h-[95%]">
-          <button @click="closeImageModal" class="absolute -top-5 -right-5 w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-sm border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-colors z-10 cursor-pointer shadow-[0_0_15px_rgba(107,143,114,0.3)]">
+          <button @click="closeImageModal" class="absolute -top-5 -right-5 w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-sm border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-colors z-10 cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.3)]">
             <i class="fas fa-times text-lg"></i>
           </button>
           <img :src="modalImageUrl" loading="lazy" decoding="async" class="block max-w-full max-h-[90vh] object-contain border border-[var(--color-border)] shadow-[0_0_50px_rgba(0,0,0,1)]" alt="Enlarged">

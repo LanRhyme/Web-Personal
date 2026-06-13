@@ -99,7 +99,7 @@ onUnmounted(() => {
 
 <template>
   <div class="fixed top-3 lg:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] lg:w-[95%] max-w-[1200px] z-[60] pointer-events-none group/nav hidden lg:block">
-    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] lg:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(107,143,114,0.15)] relative overflow-hidden">
+    <header class="w-full border border-[var(--color-border)] bg-[var(--color-bg)]/60 backdrop-blur-xl uppercase text-[10px] lg:text-xs font-mono flex flex-col transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto hover:border-[var(--color-brand)]/50 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] relative overflow-hidden">
       
       <!-- Top Scanline decorative -->
       <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent opacity-0 group-hover/nav:opacity-50 transition-opacity duration-1000"></div>
@@ -148,7 +148,7 @@ onUnmounted(() => {
   <div class="fixed bottom-6 left-6 z-[60] lg:hidden">
     <button 
       @click="toggleMenu" 
-      class="w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(107,143,114,0.3)] glitch-hover group"
+      class="w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] glitch-hover group"
     >
       <!-- Crosshairs corner decorations -->
       <div class="absolute top-0 left-0 w-2 h-[1px] bg-[var(--color-brand)] opacity-50"></div>

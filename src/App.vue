@@ -485,7 +485,7 @@ onUnmounted(() => {
 
         <!-- AI Core Widget (Iterator / Ruin Style) -->
         <div 
-          class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)] rotate-45"
+          class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] rotate-45"
           :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
           @click="triggerHappyPet"
           @mousedown="startLongPress"
@@ -527,7 +527,7 @@ onUnmounted(() => {
           <span class="font-art text-[40vw] tracking-tighter leading-none animate-pulse">OVERRIDE</span>
         </div>
         
-        <pre class="relative z-10 m-0 text-[8px] sm:text-[10px] md:text-xs font-mono leading-[1.1] animate-fade-in-up glitch-hover shadow-[0_0_30px_rgba(107,143,114,0.2)]">
+        <pre class="relative z-10 m-0 text-[8px] sm:text-[10px] md:text-xs font-mono leading-[1.1] animate-fade-in-up glitch-hover shadow-[0_0_30px_rgba(255,255,255,0.2)]">
 {{ asciiAvatar }}
         </pre>
         <div class="absolute bottom-10 font-mono text-xs opacity-50 tracking-[0.3em] animate-pulse">
@@ -551,9 +551,6 @@ onUnmounted(() => {
 
     <!-- 3D Fluid Geometry Background -->
     <Background3D />
-
-    <!-- Rain World Global Heavy Rain -->
-    <GlobalRain />
 
     <!-- Hardcore Brutalist HUD & Decorations -->
     <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
@@ -589,8 +586,8 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Main Content Wrapper -->
-    <div class="relative z-10 min-h-screen flex flex-col w-full font-mono text-[var(--color-text)]">
+    <!-- Main Content Wrapper (shake target - fixed elements stay outside) -->
+    <div class="shake-container relative z-10 min-h-screen flex flex-col w-full font-mono text-[var(--color-text)]">
       <NavBar v-if="!isAdmin" />
       
       <!-- Theme Toggle (ARG Reward) -->
@@ -618,6 +615,9 @@ onUnmounted(() => {
       <Footer v-if="!isAdmin && !isWorldview" />
     </div>
   </div>
+
+  <!-- Rain World Global Heavy Rain (Outside app-root so shatter effect won't hide it) -->
+  <GlobalRain />
 </template>
 
 <style>
@@ -628,6 +628,69 @@ onUnmounted(() => {
 
 .app-root.is-loaded {
   opacity: 1;
+}
+
+/* Screen shaking animations for rain cycle - applied to .shake-container to avoid breaking fixed positioning */
+@keyframes shake-light {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4px, 2px); }
+  30% { transform: translate(4px, -3px); }
+  50% { transform: translate(-3px, 4px); }
+  70% { transform: translate(3px, -4px); }
+  90% { transform: translate(-4px, -2px); }
+}
+
+@keyframes shake-violent {
+  0%, 100% { transform: translate(0, 0); }
+  5% { transform: translate(-14px, 8px); }
+  15% { transform: translate(12px, -10px); }
+  25% { transform: translate(-10px, 14px); }
+  35% { transform: translate(14px, -6px); }
+  45% { transform: translate(-8px, -12px); }
+  55% { transform: translate(10px, 12px); }
+  65% { transform: translate(-12px, -8px); }
+  75% { transform: translate(8px, 10px); }
+  85% { transform: translate(-14px, 6px); }
+  95% { transform: translate(12px, -14px); }
+}
+
+.shake-container.screen-shaking-light {
+  animation: shake-light 0.15s infinite;
+}
+
+.shake-container.screen-shaking-violent {
+  animation: shake-violent 0.08s infinite;
+}
+
+.shake-container.page-collapse {
+  animation: shake-violent 0.05s infinite;
+}
+
+@keyframes shake-total-collapse {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  3% { transform: translate(-80px, 40px) rotate(-4.5deg) scale(1.02); }
+  7% { transform: translate(60px, -70px) rotate(3.8deg) scale(0.98); }
+  11% { transform: translate(-50px, 75px) rotate(-3.2deg) scale(1.03); }
+  16% { transform: translate(75px, -35px) rotate(5deg) scale(0.97); }
+  21% { transform: translate(-40px, -65px) rotate(-4deg) scale(1.01); }
+  26% { transform: translate(65px, 55px) rotate(2.5deg) scale(1.04); }
+  31% { transform: translate(-70px, -40px) rotate(-5deg) scale(0.96); }
+  37% { transform: translate(45px, 60px) rotate(3.5deg) scale(1.02); }
+  43% { transform: translate(-60px, 30px) rotate(-2.8deg) scale(0.98); }
+  49% { transform: translate(70px, -75px) rotate(4.5deg) scale(1.05); }
+  55% { transform: translate(-55px, 50px) rotate(-3.5deg) scale(0.95); }
+  61% { transform: translate(80px, -45px) rotate(5deg) scale(1.03); }
+  67% { transform: translate(-75px, 65px) rotate(-4.2deg) scale(0.97); }
+  73% { transform: translate(50px, -60px) rotate(3deg) scale(1.04); }
+  79% { transform: translate(-65px, -50px) rotate(-5deg) scale(0.96); }
+  85% { transform: translate(55px, 70px) rotate(4deg) scale(1.02); }
+  91% { transform: translate(-80px, -30px) rotate(-3.8deg) scale(1.05); }
+  97% { transform: translate(70px, -55px) rotate(4.8deg) scale(0.97); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+.shake-container.total-collapse {
+  animation: shake-total-collapse 0.04s infinite;
 }
 
 .pet-dark {
