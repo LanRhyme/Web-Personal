@@ -110,7 +110,7 @@ onMounted(() => {
         [ 警告 // WARNING ]
       </div>
       <div class="text-[2.6vw] font-bold tracking-[0.2em] text-white text-center mt-8 max-w-[85%] leading-relaxed">
-        光敏性癫痫警告：本网站包含高频闪烁及强烈的屏幕抖动特效，光敏性癫痫患者请谨慎浏览。
+        光敏性癫痫警告：本网站包含高频闪烁及强烈的屏幕抖动特效，光敏性癫痫患者请谨慎浏览
       </div>
       <div class="text-[1.2vw] font-bold tracking-[0.3em] text-white text-center mt-6 max-w-[85%] uppercase leading-relaxed opacity-70">
         PHOTOSENSITIVE EPILEPSY WARNING: THIS SITE CONTAINS FLASHING LIGHTS AND INTENSE MOTION/SHAKING EFFECTS. VIEW WITH CAUTION.
