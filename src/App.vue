@@ -42,18 +42,25 @@ const isAdmin = computed(() => route.path.startsWith('/admin'));
 const isWorldview = computed(() => route.path === '/worldview');
 
 // --- Custom Physics Cursor (Square Framing style) ---
-const mouseX = ref(window.innerWidth / 2);
-const mouseY = ref(window.innerHeight / 2);
+const cursorDotRef = ref<HTMLElement | null>(null);
+const cursorFrameRef = ref<HTMLElement | null>(null);
 
-const targetX = ref(window.innerWidth / 2);
-const targetY = ref(window.innerHeight / 2);
-const frameX = ref(window.innerWidth / 2);
-const frameY = ref(window.innerHeight / 2);
+let rawMouseX = window.innerWidth / 2;
+let rawMouseY = window.innerHeight / 2;
+let latestEventTarget: HTMLElement | null = null;
 
-const targetW = ref(24);
-const targetH = ref(24);
-const frameW = ref(24);
-const frameH = ref(24);
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+
+let targetX = window.innerWidth / 2;
+let targetY = window.innerHeight / 2;
+let frameX = window.innerWidth / 2;
+let frameY = window.innerHeight / 2;
+
+let targetW = 24;
+let targetH = 24;
+let frameW = 24;
+let frameH = 24;
 
 const scrollProgress = ref(0);
 
@@ -121,73 +128,93 @@ const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor;
 };
 
+const eyeRotation = ref(0);
+let lastHoveredElement: HTMLElement | null = null;
+let lastHoveredRect: DOMRect | null = null;
+
 let animationFrameId: number;
 const renderCursor = () => {
-  frameX.value = lerp(frameX.value, targetX.value, 0.25);
-  frameY.value = lerp(frameY.value, targetY.value, 0.25);
-  frameW.value = lerp(frameW.value, targetW.value, 0.25);
-  frameH.value = lerp(frameH.value, targetH.value, 0.25);
+  // 1. Update mouse coordinates
+  mouseX = rawMouseX;
+  mouseY = rawMouseY;
+
+  // 2. Direct DOM update for cursor-dot (zero latency tracking)
+  if (cursorDotRef.value) {
+    cursorDotRef.value.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  }
+
+  // 3. Process hover and snap logic once per frame
+  if (latestEventTarget) {
+    const isExcluded = latestEventTarget.closest('.no-cursor-snap');
+    const clickable = !isExcluded && (latestEventTarget.closest('a') || latestEventTarget.closest('button') || latestEventTarget.closest('.cursor-pointer') || latestEventTarget.closest('.nav-link'));
+    
+    if (clickable) {
+      isHovering.value = true;
+      const hoverEl = clickable as HTMLElement;
+      hoveredElement = hoverEl;
+      
+      // Cache getBoundingClientRect to avoid layout thrashing
+      if (hoverEl !== lastHoveredElement || !lastHoveredRect) {
+        lastHoveredRect = hoverEl.getBoundingClientRect();
+        lastHoveredElement = hoverEl;
+      }
+      
+      const rect = lastHoveredRect;
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // Magnetic Pull (Parallax effect)
+      const pullX = (mouseX - centerX) * 0.2;
+      const pullY = (mouseY - centerY) * 0.2;
+      
+      targetX = centerX + pullX;
+      targetY = centerY + pullY;
+      targetW = rect.width + 16;
+      targetH = rect.height + 16;
+    } else {
+      isHovering.value = false;
+      hoveredElement = null;
+      lastHoveredElement = null;
+      lastHoveredRect = null;
+      targetX = mouseX;
+      targetY = mouseY;
+      targetW = 24;
+      targetH = 24;
+    }
+  }
+
+  // 4. Lerp custom physics cursor
+  frameX = lerp(frameX, targetX, 0.25);
+  frameY = lerp(frameY, targetY, 0.25);
+  frameW = lerp(frameW, targetW, 0.25);
+  frameH = lerp(frameH, targetH, 0.25);
+
+  // 5. Direct DOM update for cursor-frame (using hardware accelerated translate3d)
+  if (cursorFrameRef.value) {
+    cursorFrameRef.value.style.transform = `translate3d(calc(${frameX}px - 50%), calc(${frameY}px - 50%), 0)`;
+    cursorFrameRef.value.style.width = `${frameW}px`;
+    cursorFrameRef.value.style.height = `${frameH}px`;
+  }
+
+  // 6. Update eye rotation once per frame
+  const petScreenX = window.innerWidth - 60; 
+  const petScreenY = window.innerHeight - 60;
+  const dx = mouseX - petScreenX;
+  const dy = mouseY - petScreenY;
+  eyeRotation.value = Math.atan2(dy, dx) * (180 / Math.PI);
+
   animationFrameId = requestAnimationFrame(renderCursor);
 };
 
-const updateHoverRect = () => {
-  if (hoveredElement && isHovering.value) {
-    const rect = hoveredElement.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Magnetic Pull (Parallax effect)
-    const pullX = (mouseX.value - centerX) * 0.2;
-    const pullY = (mouseY.value - centerY) * 0.2;
-    
-    targetX.value = centerX + pullX;
-    targetY.value = centerY + pullY;
-    targetW.value = rect.width + 16;
-    targetH.value = rect.height + 16;
-  }
-};
-
 const updateMouse = (e: MouseEvent) => {
-  mouseX.value = e.clientX;
-  mouseY.value = e.clientY;
+  rawMouseX = e.clientX;
+  rawMouseY = e.clientY;
+  latestEventTarget = e.target as HTMLElement;
 
-  // Set CSS variables for high-end glowing spotlight backdrop in CSS
+  // Set CSS variables for high-end glowing spotlight backdrop in CSS (throttled to mousemove rate is fine, or inside rAF)
   document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
   document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-
-  const target = e.target as HTMLElement;
-  const isExcluded = target.closest('.no-cursor-snap');
-  const clickable = !isExcluded && (target.closest('a') || target.closest('button') || target.closest('.cursor-pointer') || target.closest('.nav-link'));
-  
-  if (clickable) {
-    isHovering.value = true;
-    hoveredElement = clickable as HTMLElement;
-    updateHoverRect();
-  } else {
-    isHovering.value = false;
-    hoveredElement = null;
-    targetX.value = e.clientX;
-    targetY.value = e.clientY;
-    targetW.value = 24;
-    targetH.value = 24;
-  }
 };
-
-// --- 3D Fluid Geometry Background ---
-
-// --- Brutalist AI Companion (LanPet Refactor) ---
-const petState = ref<'idle' | 'happy' | 'working' | 'active'>('idle');
-const petHappiness = ref(85);
-const bubbleText = ref('');
-const eyeRotation = computed(() => {
-  // AI eye tracking mouse
-  const petScreenX = window.innerWidth - 60; 
-  const petScreenY = window.innerHeight - 60;
-  const dx = mouseX.value - petScreenX;
-  const dy = mouseY.value - petScreenY;
-  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-  return angle;
-});
 
 const idleDialogues = [
   '好无聊呀...( ´ ▽ ` )',
@@ -427,15 +454,34 @@ onMounted(() => {
   
   lenis.on('scroll', (e: any) => {
     scrollProgress.value = e.progress;
-    updateHoverRect();
+    lastHoveredRect = null;
   });
   
-  mouseX.value = window.innerWidth / 2;
-  mouseY.value = window.innerHeight / 2;
-  targetX.value = window.innerWidth / 2;
-  targetY.value = window.innerHeight / 2;
-  frameX.value = targetX.value;
-  frameY.value = targetY.value;
+  rawMouseX = window.innerWidth / 2;
+  rawMouseY = window.innerHeight / 2;
+  mouseX = window.innerWidth / 2;
+  mouseY = window.innerHeight / 2;
+  targetX = window.innerWidth / 2;
+  targetY = window.innerHeight / 2;
+  frameX = targetX;
+  frameY = targetY;
+
+  if (cursorDotRef.value) {
+    cursorDotRef.value.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  }
+  if (cursorFrameRef.value) {
+    cursorFrameRef.value.style.transform = `translate3d(calc(${frameX}px - 50%), calc(${frameY}px - 50%), 0)`;
+    cursorFrameRef.value.style.width = `${frameW}px`;
+    cursorFrameRef.value.style.height = `${frameH}px`;
+  }
+
+  // Set initial eye rotation
+  const petScreenX = window.innerWidth - 60; 
+  const petScreenY = window.innerHeight - 60;
+  const dx = mouseX - petScreenX;
+  const dy = mouseY - petScreenY;
+  eyeRotation.value = Math.atan2(dy, dx) * (180 / Math.PI);
+
   renderCursor();
   
   setTimeout(() => {
@@ -488,8 +534,8 @@ onUnmounted(() => {
   <div class="app-root relative" :class="{ 'is-loaded': isLoaded || isAdmin }">
     <!-- Custom Fluid Cursor (Square Framing style) -->
     <div v-if="!isAdmin" class="custom-cursor-wrapper hidden md:block">
-      <div class="cursor-dot" :class="{ 'hovering': isHovering, 'clicking': isClicking }" :style="{ transform: `translate(${mouseX}px, ${mouseY}px)` }"></div>
-      <div class="cursor-frame" :class="{ 'hovering': isHovering, 'clicking': isClicking }" :style="{ transform: `translate(calc(${frameX}px - 50%), calc(${frameY}px - 50%))`, width: `${frameW}px`, height: `${frameH}px` }"></div>
+      <div ref="cursorDotRef" class="cursor-dot" :class="{ 'hovering': isHovering, 'clicking': isClicking }"></div>
+      <div ref="cursorFrameRef" class="cursor-frame" :class="{ 'hovering': isHovering, 'clicking': isClicking }"></div>
     </div>
 
     <!-- Rain World Cycle Indicator (Left Side on Desktop, Bottom on Mobile) -->

@@ -493,6 +493,7 @@ a {
   background-color: var(--color-brand);
   border-radius: 50%; /* Circle dot */
   transition: opacity 0.2s, background-color 0.2s, transform 0.1s;
+  will-change: transform;
 }
 
 .cursor-frame {
