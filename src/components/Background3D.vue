@@ -239,12 +239,12 @@ const initThree = () => {
         // Combine crisp line and glow
         float totalAlpha = lineAlpha + glowAlpha;
         
-        // 4-Tier Opacity System (Lowered top opacity to blend better)
+        // 4-Tier Opacity System (Range updated to 40% - 60% opacity)
         float opacityMult = 0.0;
-        if (isMajor) opacityMult = 0.55;
-        else if (isInter) opacityMult = 0.25;
-        else if (isMinor) opacityMult = 0.10;
-        else opacityMult = 0.04; 
+        if (isMajor) opacityMult = 0.60;
+        else if (isInter) opacityMult = 0.53;
+        else if (isMinor) opacityMult = 0.47;
+        else opacityMult = 0.40; 
 
         if (uGlitch > 0.5) {
             finalColor = vec3(1.0, 1.0, 1.0); // Pure white when glitching
