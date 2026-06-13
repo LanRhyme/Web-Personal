@@ -104,6 +104,19 @@ onMounted(() => {
     class="fixed inset-0 z-[99999] bg-[var(--color-bg)] flex flex-col justify-center items-center overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
     :class="{ 'opacity-0 scale-[1.05] pointer-events-none blur-[10px]': isClosing }"
   >
+    <!-- Background Watermark: Photosensitive Epilepsy Warning -->
+    <div class="absolute inset-0 z-0 flex flex-col justify-center items-center pointer-events-none opacity-[0.03] select-none font-mono">
+      <div class="text-[6vw] font-black tracking-[0.2em] text-white uppercase text-center leading-none animate-pulse">
+        [ 警告 // WARNING ]
+      </div>
+      <div class="text-[2.6vw] font-bold tracking-[0.2em] text-white text-center mt-8 max-w-[85%] leading-relaxed">
+        光敏性癫痫警告：本网站包含高频闪烁及强烈的屏幕抖动特效，光敏性癫痫患者请谨慎浏览。
+      </div>
+      <div class="text-[1.2vw] font-bold tracking-[0.3em] text-white text-center mt-6 max-w-[85%] uppercase leading-relaxed opacity-70">
+        PHOTOSENSITIVE EPILEPSY WARNING: THIS SITE CONTAINS FLASHING LIGHTS AND INTENSE MOTION/SHAKING EFFECTS. VIEW WITH CAUTION.
+      </div>
+    </div>
+
     <div 
       class="relative z-10 flex flex-col items-center select-none transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
       :class="{ 'translate-y-[-40px] opacity-0': isClosing }"
@@ -164,9 +177,9 @@ onMounted(() => {
 
 <style scoped>
 .loader-counter {
-  text-shadow: 0 0 8px rgba(107, 143, 114, 0.4);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 .preloader-svg {
-  filter: drop-shadow(0 0 6px rgba(107, 143, 114, 0.15));
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
 }
 </style>

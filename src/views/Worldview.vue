@@ -13,6 +13,25 @@ const showTruth = ref(false);
 // Easter egg state
 const blastTriggered = ref(false);
 
+// Garbled text refs
+const garbledProject = ref('Project: Age of Shattered Light');
+const garbledLog = ref('Interaction Log // High-Dimensional Observation');
+const garbledHold = ref('- [ HOLD ] Logic breakdown');
+const garbledBlast = ref('- [ R-CLICK ] Energy burst');
+const garbledScroll = ref('- [ SCROLL ] Observe');
+const garbledTitle = ref('SHATTERED\nLIGHT');
+const garbledSubtitle = ref('THE 13TH TIDE');
+
+let scrambleInterval: ReturnType<typeof setInterval> | null = null;
+const chars = '█▓░░▒▓█▄▀■▲▼Æ§Ø°±¶µ¼½¾×÷κλμνξοπρστυφχψω§ΔΨΩαβγδεζηθικ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_@#%*';
+
+const scramble = (str: string, intensity = 0.5) => {
+  return str.split('').map(char => {
+    if (char === ' ' || char === '\n' || char === ':' || char === '-' || char === '/' || char === '[' || char === ']') return char;
+    return Math.random() < intensity ? chars[Math.floor(Math.random() * chars.length)] : char;
+  }).join('');
+};
+
 // State tracking
 let isHolding = false;
 let holdValue = 0; // 0 to 1
@@ -446,9 +465,20 @@ const animate = () => {
 
 onMounted(() => {
   initThree();
+  scrambleInterval = setInterval(() => {
+    const intensityFactor = isHolding ? 0.85 : 0.35;
+    garbledProject.value = scramble('Project: Age of Shattered Light', intensityFactor * 0.9);
+    garbledLog.value = scramble('Interaction Log // High-Dimensional Observation', intensityFactor * 1.1);
+    garbledHold.value = scramble('- [ HOLD ] Logic breakdown', intensityFactor * 0.8);
+    garbledBlast.value = scramble('- [ R-CLICK ] Energy burst', intensityFactor * 0.8);
+    garbledScroll.value = scramble('- [ SCROLL ] Observe', intensityFactor * 0.8);
+    garbledTitle.value = scramble('SHATTERED\nLIGHT', intensityFactor);
+    garbledSubtitle.value = scramble('THE 13TH TIDE', intensityFactor * 1.1);
+  }, 120);
 });
 
 onUnmounted(() => {
+  if (scrambleInterval) clearInterval(scrambleInterval);
   cancelAnimationFrame(animationId);
   window.removeEventListener('resize', onWindowResize);
   window.removeEventListener('mousemove', handleMouseMove);
@@ -490,19 +520,19 @@ onUnmounted(() => {
       
       <!-- Logs -->
       <div class="font-mono text-[9px] md:text-[10px] tracking-[0.2em] uppercase opacity-60 leading-relaxed border-l border-white/20 pl-4">
-        <p class="text-white/80 font-bold mb-3">Project: Age of Shattered Light</p>
-        <p class="text-white/50 mb-1">Interaction Log // High-Dimensional Observation</p>
-        <p class="text-white/40" :class="{'text-[var(--color-brand)]': isHolding}">- [ HOLD ] Logic breakdown</p>
-        <p class="text-white/40" :class="{'text-red-400': blastTriggered}">- [ R-CLICK ] Energy burst</p>
-        <p class="text-white/40">- [ SCROLL ] Observe</p>
+        <p class="text-white/80 font-bold mb-3">{{ garbledProject }}</p>
+        <p class="text-white/50 mb-1">{{ garbledLog }}</p>
+        <p class="text-white/40" :class="{'text-[var(--color-brand)]': isHolding}">{{ garbledHold }}</p>
+        <p class="text-white/40" :class="{'text-red-400': blastTriggered}">{{ garbledBlast }}</p>
+        <p class="text-white/40">{{ garbledScroll }}</p>
       </div>
 
       <!-- Title -->
       <div class="text-left mt-2">
-        <h1 class="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter mix-blend-overlay opacity-80" style="font-family: 'Inter', sans-serif; line-height: 0.9;">
-          SHATTERED<br>LIGHT
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter mix-blend-overlay opacity-80 whitespace-pre-line" style="font-family: 'Inter', sans-serif; line-height: 0.9;">
+          {{ garbledTitle }}
         </h1>
-        <p class="font-mono text-[9px] md:text-[10px] tracking-[0.5em] mt-2 opacity-50">THE 13TH TIDE</p>
+        <p class="font-mono text-[9px] md:text-[10px] tracking-[0.5em] mt-2 opacity-50">{{ garbledSubtitle }}</p>
       </div>
 
     </div>

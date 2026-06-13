@@ -313,12 +313,14 @@ const triggerShake = () => {
 };
 // Hitokoto Logic
 const hitokotoText = ref("在这个下雨的废墟中寻找哪怕是一丝的光芒。");
+const hitokotoFrom = ref("System");
 const fetchHitokoto = async () => {
   try {
     const res = await fetch('https://v1.hitokoto.cn');
     const data = await res.json();
     if (data.hitokoto) {
       hitokotoText.value = data.hitokoto;
+      hitokotoFrom.value = data.from || 'Unknown';
     }
   } catch (err) {
     console.error('Hitokoto fetch error:', err);
@@ -484,13 +486,15 @@ onUnmounted(() => {
               <span class="text-[var(--color-brand)] animate-pulse">■</span>
             </div>
             <transition name="glitch-fade" mode="out-in">
-              <div :key="hitokotoText" class="font-art text-lg md:text-xl text-[var(--color-text)] leading-relaxed italic opacity-90 glitch-hover hitokoto-text">
-                "{{ hitokotoText }}"
+              <div :key="hitokotoText" class="w-full">
+                <div class="font-art text-lg md:text-xl text-[var(--color-text)] leading-relaxed italic opacity-90 glitch-hover hitokoto-text">
+                  "{{ hitokotoText }}"
+                </div>
+                <div class="text-right mt-3 text-xs font-mono tracking-widest text-[var(--color-text-dim)]">
+                  - {{ hitokotoFrom }}
+                </div>
               </div>
             </transition>
-            <div class="text-right mt-3 text-xs font-mono tracking-widest text-[var(--color-text-dim)]">
-              - Iterator_Log_0x{{ hexCodes[0] }}
-            </div>
           </div>
         </div>
       </div>
