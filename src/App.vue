@@ -3,6 +3,7 @@ import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Background3D from './components/Background3D.vue';
 import GlobalRain from './components/GlobalRain.vue';
+import CycleIndicator from './components/CycleIndicator.vue';
 import Preloader from './components/Preloader.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -69,10 +70,6 @@ const addClickRipple = (x: number, y: number) => {
   const id = rippleIdCounter++;
   clickRipples.value.push({ id, x, y });
   
-  // Screen shake on interaction
-  document.body.classList.add('shake-active');
-  setTimeout(() => document.body.classList.remove('shake-active'), 150);
-
   setTimeout(() => {
     clickRipples.value = clickRipples.value.filter(r => r.id !== id);
   }, 800);
@@ -146,7 +143,8 @@ const updateMouse = (e: MouseEvent) => {
   document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
 
   const target = e.target as HTMLElement;
-  const clickable = target.closest('a') || target.closest('button') || target.closest('.cursor-pointer') || target.closest('.nav-link');
+  const isExcluded = target.closest('.no-cursor-snap');
+  const clickable = !isExcluded && (target.closest('a') || target.closest('button') || target.closest('.cursor-pointer') || target.closest('.nav-link'));
   
   if (clickable) {
     isHovering.value = true;
@@ -455,46 +453,54 @@ onUnmounted(() => {
       <div class="cursor-frame" :class="{ 'hovering': isHovering, 'clicking': isClicking }" :style="{ transform: `translate(calc(${frameX}px - 50%), calc(${frameY}px - 50%))`, width: `${frameW}px`, height: `${frameH}px` }"></div>
     </div>
 
-    <!-- Minimalist AI Companion -->
+    <!-- Rain World Cycle Indicator (Left Side) -->
+    <div class="fixed z-50 pointer-events-auto left-4 md:left-8 top-1/2 -translate-y-1/2">
+      <CycleIndicator v-if="!isAdmin" />
+    </div>
+
+    <!-- AI Companion (LanPet Refactor) -->
     <div 
       v-if="!isAdmin" 
-      class="lanpet-container pointer-events-auto flex flex-col select-none font-mono"
+      class="fixed z-50 pointer-events-auto flex items-end gap-6"
+      :style="{ bottom: '30px', right: '30px' }"
     >
-      <transition name="page">
-        <div 
-          v-if="bubbleText" 
-          class="bubble-text cyber-glass !px-3 !py-1 mb-3 text-xs bg-black/60 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase"
-        >
-          > {{ bubbleText }} <span class="animate-pulse">_</span>
-        </div>
-      </transition>
-
-      <!-- AI Core Widget (Iterator / Ruin Style) -->
-      <div 
-        class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)] rotate-45"
-        :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
-        @click="triggerHappyPet"
-        @mousedown="startLongPress"
-        @touchstart="startLongPress"
-        @mouseup="endLongPress"
-        @mouseleave="endLongPress"
-        @touchend="endLongPress"
-        @mouseenter="petTalking(getRandomText(hoverDialogues))"
-      >
-        <!-- Inner rotating square -->
-        <div class="absolute inset-0 border border-dashed border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] animate-spin-slow opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        
-        <!-- The Core Center -->
-        <div class="relative w-8 h-8 border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black -rotate-45">
-          <!-- The Eye/Sensor -->
+      <div class="lanpet-container flex flex-col select-none font-mono">
+        <transition name="page">
           <div 
-            class="w-full h-1 transition-all duration-300 shadow-[0_0_10px_currentColor]"
-            :class="petDark ? 'bg-red-800 group-hover:bg-red-600' : 'bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)]'"
-            :style="{ 
-              transform: `translateY(${Math.sin(eyeRotation) * 4}px)`,
-              height: petState === 'happy' ? '4px' : '2px'
-            }"
-          ></div>
+            v-if="bubbleText" 
+            class="bubble-text cyber-glass !px-3 !py-1 mb-3 text-xs bg-black/60 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase"
+          >
+            > {{ bubbleText }} <span class="animate-pulse">_</span>
+          </div>
+        </transition>
+
+        <!-- AI Core Widget (Iterator / Ruin Style) -->
+        <div 
+          class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)] rotate-45"
+          :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
+          @click="triggerHappyPet"
+          @mousedown="startLongPress"
+          @touchstart="startLongPress"
+          @mouseup="endLongPress"
+          @mouseleave="endLongPress"
+          @touchend="endLongPress"
+          @mouseenter="petTalking(getRandomText(hoverDialogues))"
+        >
+          <!-- Inner rotating square -->
+          <div class="absolute inset-0 border border-dashed border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] animate-spin-slow opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+          
+          <!-- The Core Center -->
+          <div class="relative w-8 h-8 border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black -rotate-45">
+            <!-- The Eye/Sensor -->
+            <div 
+              class="w-full h-1 transition-all duration-300 shadow-[0_0_10px_currentColor]"
+              :class="petDark ? 'bg-red-800 group-hover:bg-red-600' : 'bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)]'"
+              :style="{ 
+                transform: `translateY(${Math.sin(eyeRotation) * 4}px)`,
+                height: petState === 'happy' ? '4px' : '2px'
+              }"
+            ></div>
+          </div>
         </div>
       </div>
     </div>

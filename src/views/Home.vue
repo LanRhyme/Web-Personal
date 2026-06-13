@@ -304,6 +304,10 @@ const closeSlugcatEasterEgg = () => {
   }
 };
 
+const triggerShake = () => {
+  document.body.classList.add('shake-active');
+  setTimeout(() => document.body.classList.remove('shake-active'), 150);
+};
 // Hitokoto Logic
 const hitokotoText = ref("在这个下雨的废墟中寻找哪怕是一丝的光芒。");
 const fetchHitokoto = async () => {
@@ -426,7 +430,7 @@ onUnmounted(() => {
         :style="{ transform: `translate(calc(-50% + 55px), calc(-50% + ${scrollY * 0.3}px)) scale(${1 + scrollY * 0.0005})`, opacity: Math.max(0, 1 - scrollY / 400), filter: `blur(${scrollY * 0.015}px)` }"
       >
         <div class="anime-fade-up">
-          <h1 class="w-full max-w-[850px] m-0 p-0 pointer-events-auto">
+          <h1 class="w-full max-w-[850px] m-0 p-0 pointer-events-auto cursor-pointer no-cursor-snap transition-transform hover:scale-[1.02] active:scale-[0.98]" @click="triggerShake">
             <ParticleText text="LanRhyme." />
           </h1>
         </div>
@@ -434,7 +438,7 @@ onUnmounted(() => {
 
       <!-- Mobile Title (Hidden on md) -->
       <div class="w-full md:hidden flex flex-col items-center text-center absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div class="w-full max-w-[320px] mb-2 -ml-2 anime-fade-up">
+        <div class="w-full max-w-[320px] mb-2 -ml-2 anime-fade-up cursor-pointer no-cursor-snap active:scale-[0.98] transition-transform" @click="triggerShake">
           <ParticleText text="LanRhyme." />
         </div>
       </div>
