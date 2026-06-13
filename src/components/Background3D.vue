@@ -352,7 +352,7 @@ onUnmounted(() => {
 <template>
   <div class="fixed inset-0 pointer-events-none z-[-1]">
     <div ref="containerRef" class="absolute inset-0"></div>
-    <!-- Gray-green / Original background color mask with 70% opacity -->
-    <div class="absolute inset-0 bg-[var(--color-bg)] opacity-70"></div>
+    <!-- Gray-green / Original background color mask with 90% opacity -->
+    <div class="absolute inset-0 bg-[var(--color-bg)] opacity-90"></div>
   </div>
 </template>

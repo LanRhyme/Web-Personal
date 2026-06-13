@@ -2,6 +2,7 @@
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Background3D from './components/Background3D.vue';
+import GlobalRain from './components/GlobalRain.vue';
 import Preloader from './components/Preloader.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -67,6 +68,11 @@ let rippleIdCounter = 0;
 const addClickRipple = (x: number, y: number) => {
   const id = rippleIdCounter++;
   clickRipples.value.push({ id, x, y });
+  
+  // Screen shake on interaction
+  document.body.classList.add('shake-active');
+  setTimeout(() => document.body.classList.remove('shake-active'), 150);
+
   setTimeout(() => {
     clickRipples.value = clickRipples.value.filter(r => r.id !== id);
   }, 800);
@@ -463,9 +469,9 @@ onUnmounted(() => {
         </div>
       </transition>
 
-      <!-- AI Core Widget -->
+      <!-- AI Core Widget (Iterator / Ruin Style) -->
       <div 
-        class="cyber-glass p-2 flex flex-col items-center justify-center bg-black/60 border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-16 h-16 rounded-full animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)]"
+        class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(107,143,114,0.3)] rotate-45"
         :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
         @click="triggerHappyPet"
         @mousedown="startLongPress"
@@ -475,20 +481,20 @@ onUnmounted(() => {
         @touchend="endLongPress"
         @mouseenter="petTalking(getRandomText(hoverDialogues))"
       >
-        <!-- Rotating Outer Ring -->
-        <div class="absolute inset-0 border border-dashed border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] rounded-full animate-spin-slow opacity-20 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <!-- Inner rotating square -->
+        <div class="absolute inset-0 border border-dashed border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] animate-spin-slow opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         
-        <div class="relative w-10 h-10 rounded-full border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black/40">
-          <!-- The Eye -->
+        <!-- The Core Center -->
+        <div class="relative w-8 h-8 border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black -rotate-45">
+          <!-- The Eye/Sensor -->
           <div 
-            class="w-4 h-4 transition-all duration-300 shadow-[0_0_10px_currentColor]"
+            class="w-full h-1 transition-all duration-300 shadow-[0_0_10px_currentColor]"
             :class="petDark ? 'bg-red-800 group-hover:bg-red-600' : 'bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)]'"
             :style="{ 
-              transform: `rotate(${eyeRotation}deg) translateX(4px)`,
-              clipPath: petState === 'happy' ? 'polygon(0 40%, 100% 40%, 100% 60%, 0 60%)' : 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)'
+              transform: `translateY(${Math.sin(eyeRotation) * 4}px)`,
+              height: petState === 'happy' ? '4px' : '2px'
             }"
           ></div>
-          <div class="absolute inset-0 rounded-full shadow-[inset_0_0_15px_rgba(91,122,97,0)] group-hover:shadow-[inset_0_0_20px_rgba(91,122,97,0.4)] transition-all duration-500"></div>
         </div>
       </div>
     </div>
@@ -530,6 +536,9 @@ onUnmounted(() => {
 
     <!-- 3D Fluid Geometry Background -->
     <Background3D />
+
+    <!-- Rain World Global Heavy Rain -->
+    <GlobalRain />
 
     <!-- Hardcore Brutalist HUD & Decorations -->
     <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
