@@ -98,10 +98,20 @@ export async function triggerShatterEffect(): Promise<() => void> {
     container.remove();
     flash.remove();
     if (appRoot) {
-      appRoot.style.transition = '';
+      appRoot.style.transition = 'transform 1.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.5s ease-out, filter 1.5s ease-out';
       appRoot.style.transform = '';
-      appRoot.style.opacity = '';
+      appRoot.style.opacity = '1';
       appRoot.style.filter = '';
+      
+      // Clean up inline styles after the reappearance animation completes
+      setTimeout(() => {
+        if (appRoot.style.opacity === '1') {
+          appRoot.style.transition = '';
+          appRoot.style.opacity = '';
+          appRoot.style.filter = '';
+          appRoot.style.transformOrigin = '';
+        }
+      }, 1800);
     }
   };
 }

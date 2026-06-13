@@ -460,7 +460,7 @@ onUnmounted(() => {
             </p>
           </div>
           
-          <div class="flex flex-col gap-2 anime-glitch">
+          <div class="flex flex-col gap-2 anime-glitch hidden md:flex">
             <div class="text-xs sm:text-sm tracking-[0.3em] uppercase font-mono text-[var(--color-text-dim)] text-left">
               <span class="text-[var(--color-brand)] font-bold animate-pulse">> ITERATOR: ONLINE</span><br>
               SYSTEM_CYCLE: 4.3.10<br>

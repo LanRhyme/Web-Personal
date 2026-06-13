@@ -13,6 +13,7 @@ const ArticleDetail = () => import('../views/ArticleDetail.vue');
 const TerminalView = () => import('../views/TerminalView.vue');
 const PhysicalView = () => import('../views/PhysicalView.vue');
 const Worldview = () => import('../views/Worldview.vue');
+const NotFound = () => import('../views/NotFound.vue');
 
 // 预加载其他页面，仅在 Wi-Fi 或良好网络环境下触发
 export const preloadOtherPages = () => {
@@ -66,6 +67,7 @@ const routes = [
   { path: '/void-echo-terminal', component: TerminalView },
   { path: '/physical', component: PhysicalView },
   { path: '/worldview', component: Worldview },
+  { path: '/:pathMatch(.*)*', component: NotFound },
 ];
 
 const router = createRouter({

@@ -462,8 +462,8 @@ onUnmounted(() => {
       <div class="cursor-frame" :class="{ 'hovering': isHovering, 'clicking': isClicking }" :style="{ transform: `translate(calc(${frameX}px - 50%), calc(${frameY}px - 50%))`, width: `${frameW}px`, height: `${frameH}px` }"></div>
     </div>
 
-    <!-- Rain World Cycle Indicator (Left Side) -->
-    <div class="fixed z-50 pointer-events-auto left-4 md:left-8 top-1/2 -translate-y-1/2">
+    <!-- Rain World Cycle Indicator (Left Side on Desktop, Bottom on Mobile) -->
+    <div class="fixed z-50 pointer-events-auto bottom-4 left-1/2 -translate-x-1/2 translate-y-0 top-auto md:bottom-auto md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
       <CycleIndicator v-if="!isAdmin" />
     </div>
 
