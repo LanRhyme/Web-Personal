@@ -449,7 +449,7 @@ const handleSwipe = () => {
 
         <!-- 3D Roulette Container -->
         <div 
-          class="flex-grow flex items-center justify-center relative w-full perspective-[800px] preserve-3d" 
+          class="flex-grow flex items-center justify-center relative w-full music-card-perspective preserve-3d" 
           style="min-height: 140px;"
           @wheel.stop.prevent="handleRouletteWheel"
           @touchstart="handleTouchStart"
@@ -513,7 +513,7 @@ const handleSwipe = () => {
 }
 
 /* 3D Classes */
-.perspective-\\[800px\\] {
+.music-card-perspective {
   perspective: 800px;
 }
 .preserve-3d {
