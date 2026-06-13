@@ -5,8 +5,8 @@ type CycleStage = 'DRY' | 'PRE_RAIN' | 'HEAVY' | 'DEATH_RAIN' | 'COLLAPSE';
 
 const cycleStage = ref<CycleStage>('DRY');
 const intensity = ref(0.02); // Minimum 0.02
-const dryTimeLeft = ref(60);
-const dryTotalTime = 60;
+const dryTimeLeft = ref(120);
+const dryTotalTime = 120;
 const isShaking = ref(false);
 const isCollapsed = ref(false);
 const isLocked = ref(false);
