@@ -33,15 +33,15 @@ onMounted(() => {
   const drops: {x: number, y: number, speed: number, length: number, thickness: number}[] = [];
   const splashes: {x: number, y: number, vx: number, vy: number, life: number}[] = [];
 
-  // Heavy storm max drops
-  const MAX_DROPS = 1200;
+  const isMobile = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  const MAX_DROPS = isMobile ? 300 : 1200;
   for(let i = 0; i < MAX_DROPS; i++) {
     drops.push({
       x: Math.random() * logicalW,
       y: Math.random() * logicalH,
-      speed: Math.random() * 30 + 25, // Much faster
-      length: Math.random() * 80 + 40, // Much longer
-      thickness: Math.random() > 0.8 ? 1 : 0.5 // Thinner
+      speed: Math.random() * 30 + 25,
+      length: Math.random() * 80 + 40,
+      thickness: Math.random() > 0.8 ? 1 : 0.5
     });
   }
 
@@ -75,9 +75,11 @@ onMounted(() => {
       drop.y += currentSpeed;
 
       // Splashing - more aggressive at higher intensity
-      const splashChance = intensity.value > 0.8 ? 0.95 : 0.99;
+      const baseSplashChance = isMobile ? 0.98 : 0.95;
+      const splashChance = intensity.value > 0.8 ? baseSplashChance : 0.99;
       if (drop.y > logicalH - 10 || Math.random() > splashChance) {
-        if (Math.random() < intensity.value * 0.6) { // More splashes when heavier
+        const maxSplashChance = isMobile ? 0.2 : 0.6;
+        if (Math.random() < intensity.value * maxSplashChance) {
           const splashCount = intensity.value > 0.8 ? 4 : 2;
           for(let k = 0; k < splashCount; k++) {
             splashes.push({
