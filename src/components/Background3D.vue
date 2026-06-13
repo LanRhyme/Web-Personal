@@ -228,9 +228,9 @@ const initThree = () => {
         float glowWidth = isMajor ? 2.5 * df : 0.0;
         float glowAlpha = isMajor ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.4 : 0.0;
 
-        // Base color: pale mint / silver matching site theme #6b8f72
-        vec3 colDeep = vec3(0.42, 0.56, 0.45); 
-        vec3 colHigh = vec3(0.85, 0.90, 0.88); 
+        // Base color: clean monochrome grey/silver shades
+        vec3 colDeep = vec3(0.35, 0.35, 0.35); 
+        vec3 colHigh = vec3(0.75, 0.75, 0.75); 
         
         // Color mix based on elevation
         vec3 baseColor = mix(colDeep, colHigh, noiseVal);

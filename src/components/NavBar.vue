@@ -108,7 +108,7 @@ onUnmounted(() => {
       <div class="flex justify-between items-center px-2.5 lg:px-6 py-1.5 lg:py-3 border-b border-[var(--color-border)] text-[0.6rem] lg:text-xs">
         <div class="flex flex-wrap items-center gap-x-3 lg:gap-x-6 gap-y-1">
           <span class="flex items-center gap-1.5 lg:gap-2 font-bold tracking-widest text-[var(--color-text)]">
-            <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block shadow-[0_0_8px_var(--color-brand)]"></span>
+            <span class="w-1.5 h-1.5 bg-[var(--color-accent)] animate-pulse inline-block shadow-[0_0_8px_var(--color-accent)]"></span>
             SYS.ONLINE
           </span>
           <span class="opacity-40 hidden lg:inline tracking-widest">| USER: LANRHYME.DEV</span>
@@ -131,7 +131,7 @@ onUnmounted(() => {
             @mouseenter="scrambleText"
             :data-value="item.name"
           >
-            <span v-if="route.path === item.path" class="text-[var(--color-brand)] animate-pulse font-bold">></span>
+            <span v-if="route.path === item.path" class="text-[var(--color-accent)] animate-pulse font-bold">></span>
             <span v-else class="text-transparent group-hover/link:text-[var(--color-text-dim)] transition-colors duration-300">></span>
             <span class="scramble-target pointer-events-none">{{ item.name }}</span>
           </router-link>

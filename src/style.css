@@ -7,19 +7,24 @@
 
 :root {
   color-scheme: dark;
-  /* Ultra Clean Pure Black */
-  --color-bg: #000000;
+  /* Premium Dark Gray Background (Slightly darker shade) */
+  --color-bg: #09090b;
   --color-text: #ffffff;
   --color-text-dim: #888888;
   
-  /* Desaturated Ruin Green (Moss / Pale Sage) */
-  --color-brand: #6b8f72;
-  --color-brand-rgb: 107, 143, 114;
-  --color-brand-secondary: #3b5240;
+  /* Cool Silver-Gray as Main Brand Color (Monochromatic theme) */
+  --color-brand: #d4d4d8;
+  --color-brand-rgb: 212, 212, 212;
+  --color-brand-secondary: #262626;
+
+  /* Green as a subtle embellishment/accent only */
+  --color-accent: #6b8f72;
+  --color-accent-rgb: 107, 143, 114;
+  --color-accent-secondary: #3b5240;
   
-  --color-border: #111111;
-  --color-card: rgba(5, 5, 5, 0.5);
-  --color-card-solid: #050505;
+  --color-border: #1a1a1c;
+  --color-card: rgba(18, 18, 20, 0.5);
+  --color-card-solid: #121214;
   --color-hud: rgba(255, 255, 255, 0.05);
   
   /* Primary and Secondary colors */

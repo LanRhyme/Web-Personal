@@ -101,7 +101,7 @@ onMounted(() => {
 <template>
   <div 
     v-if="!isDone"
-    class="fixed inset-0 z-[99999] bg-[#020202] flex flex-col justify-center items-center overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
+    class="fixed inset-0 z-[99999] bg-[var(--color-bg)] flex flex-col justify-center items-center overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
     :class="{ 'opacity-0 scale-[1.05] pointer-events-none blur-[10px]': isClosing }"
   >
     <div 

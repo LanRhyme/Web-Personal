@@ -36,7 +36,7 @@ onMounted(() => {
     <!-- Header -->
     <div class="border-b border-[var(--color-border)] pb-4 mb-6 flex justify-between items-center text-[10px] tracking-widest">
       <span class="font-bold opacity-60">STATUS: LANRHYME.OS</span>
-      <span class="animate-pulse text-[var(--color-brand)] font-bold">● ACTIVE</span>
+      <span class="animate-pulse text-[var(--color-accent)] font-bold">● ACTIVE</span>
     </div>
 
     <!-- Avatar Placeholder & Core Stats -->

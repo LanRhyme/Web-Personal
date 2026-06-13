@@ -569,8 +569,8 @@ onUnmounted(() => {
       
       <!-- Scroll Progress Tracker -->
       <div class="absolute top-[30%] right-[3%] w-[1px] h-[40%] bg-[var(--color-border)] opacity-40">
-        <div class="w-[3px] bg-[var(--color-brand)] -ml-[1px] transition-all duration-75 shadow-[0_0_8px_rgba(107,143,114,0.8)]" :style="{ height: `${scrollProgress * 100}%` }"></div>
-        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-[var(--color-brand)] tracking-widest">{{ Math.round(scrollProgress * 100) }}%</div>
+        <div class="w-[3px] bg-[var(--color-accent)] -ml-[1px] transition-all duration-75 shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.8)]" :style="{ height: `${scrollProgress * 100}%` }"></div>
+        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-[var(--color-accent)] tracking-widest">{{ Math.round(scrollProgress * 100) }}%</div>
       </div>
 
       <!-- Top Left Data -->
