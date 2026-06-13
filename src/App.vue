@@ -14,6 +14,7 @@ import { useRainCycle } from './composables/useRainCycle';
 import { argDialogues } from './data/arg-dialogues';
 
 const isLoaded = ref(false);
+const showEpilepsyWarning = ref(false);
 const router = useRouter();
 const route = useRoute();
 const { isLocked } = useRainCycle();
@@ -25,6 +26,15 @@ const showAsciiOverlay = ref(false);
 
 const handlePreloaderComplete = () => {
   isLoaded.value = true;
+  // Show photosensitive epilepsy warning on top of homepage/site content for 5 seconds only on the first visit of the session
+  const hasShown = sessionStorage.getItem('has_shown_epilepsy_warning');
+  if (!hasShown) {
+    showEpilepsyWarning.value = true;
+    sessionStorage.setItem('has_shown_epilepsy_warning', 'true');
+    setTimeout(() => {
+      showEpilepsyWarning.value = false;
+    }, 5000);
+  }
 };
 
 const isAdmin = computed(() => route.path.startsWith('/admin'));
@@ -455,6 +465,25 @@ onUnmounted(() => {
 
 <template>
   <Preloader v-if="!isAdmin" @complete="handlePreloaderComplete" />
+  
+  <!-- Global Photosensitive Epilepsy Warning Overlay (Shows for 5s after entering the site) -->
+  <transition name="warning-fade">
+    <div 
+      v-if="showEpilepsyWarning && !isAdmin" 
+      class="fixed inset-0 z-[99999] bg-[#09090b]/90 backdrop-blur-md flex flex-col justify-center items-center select-none font-mono"
+    >
+      <div class="text-[6vw] font-black tracking-[0.2em] text-white uppercase text-center leading-none animate-pulse mb-8">
+        [ 警告 // WARNING ]
+      </div>
+      <div class="text-[2.6vw] font-bold tracking-[0.2em] text-white text-center max-w-[85%] leading-relaxed">
+        光敏性癫痫警告：本网站包含高频闪烁及强烈的屏幕抖动特效，光敏性癫痫患者请谨慎浏览。
+      </div>
+      <div class="text-[1.2vw] font-bold tracking-[0.3em] text-white text-center mt-6 max-w-[85%] uppercase leading-relaxed opacity-70">
+        PHOTOSENSITIVE EPILEPSY WARNING: THIS SITE CONTAINS FLASHING LIGHTS AND INTENSE MOTION/SHAKING EFFECTS. VIEW WITH CAUTION.
+      </div>
+    </div>
+  </transition>
+
   <div class="app-root relative" :class="{ 'is-loaded': isLoaded || isAdmin }">
     <!-- Custom Fluid Cursor (Square Framing style) -->
     <div v-if="!isAdmin" class="custom-cursor-wrapper hidden md:block">
@@ -621,6 +650,17 @@ onUnmounted(() => {
 </template>
 
 <style>
+/* Photosensitive Epilepsy Warning Transition */
+.warning-fade-enter-active,
+.warning-fade-leave-active {
+  transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 1.5s ease-out;
+}
+.warning-fade-enter-from,
+.warning-fade-leave-to {
+  opacity: 0;
+  filter: blur(8px);
+}
+
 .app-root {
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
