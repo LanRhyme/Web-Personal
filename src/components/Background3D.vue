@@ -80,6 +80,7 @@ const initThree = () => {
       uniform float uShockwaveTime;
       uniform vec2 uShockwavePos;
       uniform float uWarpPhase;
+      uniform bool uLowPower;
       varying vec2 vUv;
 
       // Simplex 3D Noise
@@ -179,7 +180,9 @@ const initThree = () => {
         float frequency = 1.0;
         float timeEvo = uWarpPhase * 0.5;
         
+        int octaves = uLowPower ? 2 : 4;
         for (int i = 0; i < 4; i++) {
+            if (i >= octaves) break;
             float n = snoise(vec3(warpedPos * frequency, timeEvo)) * 0.5 + 0.5;
             noiseVal += amplitude * n;
             frequency *= 2.0;
