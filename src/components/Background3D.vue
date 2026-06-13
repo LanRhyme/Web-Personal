@@ -44,9 +44,10 @@ const initThree = () => {
   camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   camera.position.z = 1;
 
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const isMobileDevice = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(isMobileDevice ? 1.0 : Math.min(window.devicePixelRatio, 1.5));
   containerRef.value.appendChild(renderer.domElement);
 
   // Full screen plane
@@ -60,7 +61,8 @@ const initThree = () => {
       uGlitch: { value: 0.0 },
       uShockwaveTime: { value: -100.0 },
       uShockwavePos: { value: new THREE.Vector2(0.5, 0.5) },
-      uWarpPhase: { value: 0.0 }
+      uWarpPhase: { value: 0.0 },
+      uLowPower: { value: isMobileDevice }
     },
     vertexShader: `
       varying vec2 vUv;
