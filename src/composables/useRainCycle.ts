@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue';
+import { triggerShatterEffect } from '../utils/shatterEffect';
 
 type CycleStage = 'DRY' | 'PRE_RAIN' | 'HEAVY' | 'DEATH_RAIN' | 'COLLAPSE';
 
@@ -8,17 +9,24 @@ const dryTimeLeft = ref(60);
 const dryTotalTime = 60;
 const isShaking = ref(false);
 const isCollapsed = ref(false);
+const isLocked = ref(false);
+let shatterCleanup: (() => void) | null = null;
 
 let cycleInterval: ReturnType<typeof setInterval> | null = null;
 let lastTickTime = 0;
 
-// Web Audio API Rain Synthesizer
 let audioCtx: AudioContext | null = null;
 let gainNode: GainNode | null = null;
 let filter: BiquadFilterNode | null = null;
+let audioInitialized = false;
 
 const initAudio = () => {
-  if (audioCtx) return;
+  if (audioCtx) {
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(e => console.error('Audio resume failed:', e));
+    }
+    return;
+  }
   const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
   if (!AudioContextClass) return;
   
@@ -54,13 +62,29 @@ const initAudio = () => {
   filter.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   noiseSource.start();
+  audioInitialized = true;
+};
+
+const toggleLock = () => {
+  isLocked.value = !isLocked.value;
+};
+
+const accelerateCycle = () => {
+  if (cycleStage.value === 'DRY') {
+    dryTimeLeft.value -= 5;
+    if (dryTimeLeft.value <= 0) {
+      dryTimeLeft.value = 0;
+      cycleStage.value = 'PRE_RAIN';
+    }
+  }
 };
 
 const startCycle = () => {
   if (cycleInterval) return;
   
-  window.addEventListener('click', initAudio, { once: true });
-  window.addEventListener('keydown', initAudio, { once: true });
+  window.addEventListener('click', initAudio);
+  window.addEventListener('keydown', initAudio);
+  window.addEventListener('touchstart', initAudio);
   
   cycleStage.value = 'DRY';
   intensity.value = 0.02;
@@ -74,59 +98,73 @@ const startCycle = () => {
     const dt = (now - lastTickTime) / 1000;
     lastTickTime = now;
     
-    if (cycleStage.value === 'DRY') {
-      dryTimeLeft.value -= dt;
-      if (dryTimeLeft.value <= 0) {
-        dryTimeLeft.value = 0;
-        cycleStage.value = 'PRE_RAIN';
-      }
-    } else if (cycleStage.value === 'PRE_RAIN') {
-      // Pre-rain lasts 15 seconds, intensity 0.02 -> 0.4
-      intensity.value += dt / 15 * 0.38;
-      if (intensity.value >= 0.4) {
-        intensity.value = 0.4;
-        cycleStage.value = 'HEAVY';
-        document.body.classList.add('screen-shaking-light');
-      }
-    } else if (cycleStage.value === 'HEAVY') {
-      // Heavy rain lasts 10 seconds, intensity 0.4 -> 1
-      intensity.value += dt / 10 * 0.6;
-      if (intensity.value >= 1) {
-        intensity.value = 1;
-        cycleStage.value = 'DEATH_RAIN';
-        isShaking.value = true;
-        document.body.classList.remove('screen-shaking-light');
-        document.body.classList.add('screen-shaking-violent');
-      }
-    } else if (cycleStage.value === 'DEATH_RAIN') {
-      // Death rain lasts 10 seconds, keeping intensity at 1
-      intensity.value += dt; // use intensity to track time > 1
-      if (intensity.value >= 11) { // 1 + 10s
-        cycleStage.value = 'COLLAPSE';
-        isCollapsed.value = true;
-        document.body.classList.add('page-collapse');
-        // Do NOT remove screen-shaking-violent here, so it shakes while collapsing
-      }
-    } else if (cycleStage.value === 'COLLAPSE') {
-      // Complete system failure for 4 seconds
-      intensity.value += dt;
-      if (intensity.value >= 15) { // 11 + 4s
-        // Snap reset
-        intensity.value = 0.02;
-        cycleStage.value = 'DRY';
-        dryTimeLeft.value = dryTotalTime;
-        isCollapsed.value = false;
-        isShaking.value = false;
-        document.body.classList.remove('page-collapse');
-        document.body.classList.remove('screen-shaking-violent');
+    if (!isLocked.value) {
+      if (cycleStage.value === 'DRY') {
+        dryTimeLeft.value -= dt;
+        if (dryTimeLeft.value <= 0) {
+          dryTimeLeft.value = 0;
+          cycleStage.value = 'PRE_RAIN';
+        }
+      } else if (cycleStage.value === 'PRE_RAIN') {
+        // Pre-rain lasts 15 seconds, intensity 0.02 -> 0.4
+        intensity.value += dt / 15 * 0.38;
+        if (intensity.value >= 0.4) {
+          intensity.value = 0.4;
+          cycleStage.value = 'HEAVY';
+          document.querySelector('.app-root')?.classList.add('screen-shaking-light');
+        }
+      } else if (cycleStage.value === 'HEAVY') {
+        // Heavy rain lasts 10 seconds, intensity 0.4 -> 1
+        intensity.value += dt / 10 * 0.6;
+        if (intensity.value >= 1) {
+          intensity.value = 1;
+          cycleStage.value = 'DEATH_RAIN';
+          isShaking.value = true;
+          document.querySelector('.app-root')?.classList.remove('screen-shaking-light');
+          document.querySelector('.app-root')?.classList.add('screen-shaking-violent');
+        }
+      } else if (cycleStage.value === 'DEATH_RAIN') {
+        // Death rain lasts 10 seconds, keeping intensity at 1
+        intensity.value += dt; // use intensity to track time > 1
+        if (intensity.value >= 11) { // 1 + 10s
+          cycleStage.value = 'COLLAPSE';
+          isCollapsed.value = true;
+          document.querySelector('.app-root')?.classList.add('page-collapse');
+          // Do NOT remove screen-shaking-violent here, so it shakes while collapsing
+          
+          // Trigger canvas shatter effect
+          triggerShatterEffect().then(cleanup => {
+            shatterCleanup = cleanup;
+          });
+        }
+      } else if (cycleStage.value === 'COLLAPSE') {
+        // Complete system failure for 4 seconds
+        intensity.value += dt;
+        if (intensity.value >= 15) { // 11 + 4s
+          // Snap reset
+          intensity.value = 0.02;
+          cycleStage.value = 'DRY';
+          dryTimeLeft.value = dryTotalTime;
+          isCollapsed.value = false;
+          isShaking.value = false;
+          document.querySelector('.app-root')?.classList.remove('page-collapse');
+          document.querySelector('.app-root')?.classList.remove('screen-shaking-violent');
+          if (shatterCleanup) {
+            shatterCleanup();
+            shatterCleanup = null;
+          }
+        }
       }
     }
     
-    // Update Audio
+    // Update Audio (using manual lerp instead of setTargetAtTime to prevent Web Audio timeline bloat)
     if (audioCtx && gainNode && filter) {
-       const targetGain = cycleStage.value === 'COLLAPSE' ? 0 : (intensity.value * 0.08);
-       gainNode.gain.setTargetAtTime(targetGain, audioCtx.currentTime, 0.5);
-       filter.frequency.setTargetAtTime(800 + (intensity.value > 1 ? 1 : intensity.value) * 1500, audioCtx.currentTime, 0.5);
+       const targetGain = cycleStage.value === 'COLLAPSE' ? 0 : (intensity.value * 0.5);
+       const targetFreq = 800 + (intensity.value > 1 ? 1 : intensity.value) * 2000;
+       
+       // Smooth lerp (10% per 50ms tick)
+       gainNode.gain.value += (targetGain - gainNode.gain.value) * 0.1;
+       filter.frequency.value += (targetFreq - filter.frequency.value) * 0.1;
     }
   }, 50);
 };
@@ -140,12 +178,15 @@ export function useRainCycle() {
     cycleStage,
     intensity: computed(() => {
       if (cycleStage.value === 'COLLAPSE') return 0;
-      return Math.min(1, Math.max(0.02, cycleStage.value === 'DEATH_RAIN' || cycleStage.value === 'COLLAPSE' ? 1 : intensity.value));
+      return Math.min(1, Math.max(0.02, cycleStage.value === 'DEATH_RAIN' ? 1 : intensity.value));
     }),
     dryTimeLeft,
     dryTotalTime,
     isShaking,
     isCollapsed,
+    isLocked,
+    toggleLock,
+    accelerateCycle,
     pipsCount: computed(() => {
       return Math.ceil((dryTimeLeft.value / dryTotalTime) * 12);
     })

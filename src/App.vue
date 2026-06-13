@@ -10,11 +10,13 @@ import { useRouter, useRoute } from 'vue-router';
 import Lenis from 'lenis';
 import asciiAvatarData from './data/avatar-ascii.json';
 import { useARGState } from './composables/useARGState';
+import { useRainCycle } from './composables/useRainCycle';
 import { argDialogues } from './data/arg-dialogues';
 
 const isLoaded = ref(false);
 const router = useRouter();
 const route = useRoute();
+const { isLocked } = useRainCycle();
 const { initTheme, themeUnlocked, themeActive, toggleTheme, argStarted, petDark, startARG, hasKey, terminalUnlocked } = useARGState();
 const argTriggerCount = ref(0);
 
@@ -354,6 +356,13 @@ watch(() => route.path, (newPath) => {
   } else {
     petState.value = 'idle';
     petTalking('我回来啦！(＾▽＾)');
+  }
+  
+  // Auto-lock rain cycle on non-home pages
+  if (newPath !== '/') {
+    isLocked.value = true;
+  } else {
+    isLocked.value = false;
   }
 });
 

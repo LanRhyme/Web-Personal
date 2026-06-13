@@ -396,16 +396,7 @@ a {
   animation: light-shake 0.2s infinite cubic-bezier(.36,.07,.19,.97) both;
 }
 
-@keyframes safe-collapse {
-  0% { filter: blur(0px) brightness(1) contrast(1); transform: scale(1) translateY(0); }
-  20% { filter: blur(2px) brightness(0.8) contrast(1.2); transform: scale(1.01) translateY(2px); }
-  50% { filter: blur(6px) brightness(0.4) contrast(1.5); transform: scale(0.99) translateY(5px); }
-  80% { filter: blur(12px) brightness(0.1) contrast(2); transform: scale(1.02) translateY(10px); }
-  100% { filter: blur(20px) brightness(0) contrast(1); transform: scale(1.05) translateY(20px); opacity: 0; }
-}
-
 .page-collapse {
-  animation: safe-collapse 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   overflow: hidden !important;
   pointer-events: none;
   background-color: black;

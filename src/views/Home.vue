@@ -10,12 +10,14 @@ import MusicCard from '../components/MusicCard.vue';
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
+import { useRainCycle } from '../composables/useRainCycle';
 import { preloadOtherPages } from '../router/index';
 
 // Load generated ASCII avatar if available
 import asciiAvatarData from '../data/avatar-ascii.json';
 
 const router = useRouter();
+const { accelerateCycle } = useRainCycle();
 
 const sysUptime = ref('');
 const hexCodes = ref<string[]>(Array.from({length: 4}, () => Math.random().toString(16).substring(2, 6).toUpperCase()));
@@ -306,6 +308,7 @@ const closeSlugcatEasterEgg = () => {
 
 const triggerShake = () => {
   document.body.classList.add('shake-active');
+  accelerateCycle();
   setTimeout(() => document.body.classList.remove('shake-active'), 150);
 };
 // Hitokoto Logic

@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { useRainCycle } from '../composables/useRainCycle';
 
-const { pipsCount, isShaking, cycleStage, isCollapsed, intensity } = useRainCycle();
+const { pipsCount, isShaking, cycleStage, isCollapsed, intensity, isLocked, toggleLock } = useRainCycle();
 </script>
 
 <template>
   <div 
-    class="relative flex flex-col items-center justify-end gap-2 p-2 transition-all duration-300" 
-    :class="{ 'animate-pulse scale-110': isShaking || intensity > 0.8, 'opacity-0': isCollapsed }"
+    class="relative flex flex-col items-center justify-end gap-2 p-2 transition-all duration-300 cursor-pointer select-none" 
+    :class="{ 'animate-pulse scale-110': isShaking || intensity > 0.8, 'opacity-0': isCollapsed, 'opacity-40': isLocked }"
+    @dblclick="toggleLock"
+    title="Double click to lock/unlock cycle"
   >
     <!-- Outer Glow -->
     <div 
       class="absolute inset-0 blur-md opacity-20 transition-colors duration-500"
-      :class="isShaking ? 'bg-red-600' : 'bg-white'"
-      v-show="intensity > 0.5"
+      :class="isShaking ? 'bg-red-600' : (isLocked ? 'bg-[var(--color-brand)]' : 'bg-white')"
+      v-show="intensity > 0.5 || isLocked"
     ></div>
     
     <!-- Vertical Stack of 12 Pips -->
@@ -31,9 +33,9 @@ const { pipsCount, isShaking, cycleStage, isCollapsed, intensity } = useRainCycl
     <!-- Bottom Icon/Text -->
     <div 
       class="mt-2 font-mono font-bold tracking-tighter transition-colors duration-500" 
-      :class="isShaking || cycleStage === 'DEATH_RAIN' ? 'text-[#ff3333]' : 'text-white'"
+      :class="isShaking || cycleStage === 'DEATH_RAIN' ? 'text-[#ff3333]' : (isLocked ? 'text-[var(--color-brand)]' : 'text-white')"
     >
-      <span class="text-[10px]">{{ cycleStage === 'DRY' ? pipsCount : (isShaking ? 'ERR' : '...') }}</span>
+      <span class="text-[10px]">{{ isLocked ? 'LOCK' : (cycleStage === 'DRY' ? pipsCount : (isShaking ? 'ERR' : '...')) }}</span>
     </div>
   </div>
 </template>

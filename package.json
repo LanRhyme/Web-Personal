@@ -13,6 +13,7 @@
     "@tsparticles/vue3": "^3.0.1",
     "@types/three": "^0.184.1",
     "animejs": "^3.2.2",
+    "html2canvas": "^1.4.1",
     "lenis": "^1.3.23",
     "prismjs": "^1.30.0",
     "three": "^0.184.0",
