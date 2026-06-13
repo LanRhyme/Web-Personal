@@ -44,10 +44,9 @@ const initThree = () => {
   camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   camera.position.z = 1;
 
-  const isMobileDevice = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(isMobileDevice ? 1.0 : Math.min(window.devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   containerRef.value.appendChild(renderer.domElement);
 
   // Full screen plane
@@ -61,8 +60,7 @@ const initThree = () => {
       uGlitch: { value: 0.0 },
       uShockwaveTime: { value: -100.0 },
       uShockwavePos: { value: new THREE.Vector2(0.5, 0.5) },
-      uWarpPhase: { value: 0.0 },
-      uLowPower: { value: isMobileDevice }
+      uWarpPhase: { value: 0.0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -80,7 +78,6 @@ const initThree = () => {
       uniform float uShockwaveTime;
       uniform vec2 uShockwavePos;
       uniform float uWarpPhase;
-      uniform bool uLowPower;
       varying vec2 vUv;
 
       // Simplex 3D Noise
@@ -180,9 +177,7 @@ const initThree = () => {
         float frequency = 1.0;
         float timeEvo = uWarpPhase * 0.5;
         
-        int octaves = uLowPower ? 2 : 4;
         for (int i = 0; i < 4; i++) {
-            if (i >= octaves) break;
             float n = snoise(vec3(warpedPos * frequency, timeEvo)) * 0.5 + 0.5;
             noiseVal += amplitude * n;
             frequency *= 2.0;
