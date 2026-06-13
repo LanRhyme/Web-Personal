@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import Background3D from './components/Background3D.vue';
+import { defineAsyncComponent } from 'vue';
+const Background3D = defineAsyncComponent(() => import('./components/Background3D.vue'));
 import GlobalRain from './components/GlobalRain.vue';
 import CycleIndicator from './components/CycleIndicator.vue';
 import Preloader from './components/Preloader.vue';
