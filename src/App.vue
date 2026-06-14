@@ -280,7 +280,10 @@ const getArgHint = (): string | null => {
   if (route.path === '/games' && !hasKey('SOS_ECHO')) {
     return argDialogues.fragment3_hint[Math.floor(Math.random() * argDialogues.fragment3_hint.length)];
   }
-  if (hasKey('BREATH_WHITE') && hasKey('CHORD_PATTERN') && hasKey('SOS_ECHO') && !terminalUnlocked.value) {
+  if (hasKey('BREATH_WHITE') && hasKey('CHORD_PATTERN') && hasKey('SOS_ECHO') && !hasKey('VOID_RESONANCE')) {
+    return '检测到机密终端存在虚空阻断，我们需要引导虚空共鸣……试着故意进入一个不存在的网址看看？';
+  }
+  if (hasKey('BREATH_WHITE') && hasKey('CHORD_PATTERN') && hasKey('SOS_ECHO') && hasKey('VOID_RESONANCE') && !terminalUnlocked.value) {
     return argDialogues.phase2_hint[0];
   }
   return null;
@@ -298,6 +301,8 @@ const onFragmentFound = (e: Event) => {
     setTimeout(() => petTalking(argDialogues.all_found[1]), 9000);
     setTimeout(() => petTalking(argDialogues.all_found[2]), 14000);
     setTimeout(() => petTalking(argDialogues.all_found[3]), 20000);
+  } else if (detail?.key === 'VOID_RESONANCE') {
+    petTalking('虚空共鸣成功！空间轨道恢复同步！(≧◡≦)');
   }
 };
 

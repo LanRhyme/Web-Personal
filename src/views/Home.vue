@@ -89,8 +89,6 @@ let konamiIndex = 0;
 const isRedAlert = ref(false);
 
 const { addKey, hasKey, argStarted } = useARGState();
-const mossCode = ['m', 'o', 's', 's'];
-let mossIndex = 0;
 const isFrostActive = ref(false);
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -102,17 +100,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
     }
   } else {
     konamiIndex = 0;
-  }
-
-  // ARG Logic: 输入 MOSS
-  if (argStarted.value && !hasKey('BREATH_WHITE') && e.key.toLowerCase() === mossCode[mossIndex]) {
-    mossIndex++;
-    if (mossIndex === mossCode.length) {
-      triggerMossAlert();
-      mossIndex = 0;
-    }
-  } else {
-    mossIndex = e.key.toLowerCase() === 'm' ? 1 : 0;
   }
 };
 
@@ -136,6 +123,8 @@ const triggerMossAlert = () => {
   document.documentElement.classList.add('frost-alert');
   addKey('BREATH_WHITE');
   window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'BREATH_WHITE' } }));
+  // Reset the hitokoto card to a normal state
+  fetchHitokoto();
   setTimeout(() => {
     isFrostActive.value = false;
     document.documentElement.classList.remove('frost-alert');
@@ -314,16 +303,39 @@ const triggerShake = () => {
 // Hitokoto Logic
 const hitokotoText = ref("在这个下雨的废墟中寻找哪怕是一丝的光芒。");
 const hitokotoFrom = ref("System");
+const glitchClickCount = ref(0);
+
 const fetchHitokoto = async () => {
   try {
     const res = await fetch('https://v1.hitokoto.cn');
     const data = await res.json();
     if (data.hitokoto) {
-      hitokotoText.value = data.hitokoto;
+      hitokotoText.value = `“${data.hitokoto}”`;
       hitokotoFrom.value = data.from || 'Unknown';
     }
   } catch (err) {
     console.error('Hitokoto fetch error:', err);
+  }
+};
+
+const handleHitokotoClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (target.classList.contains('arg-node-trigger')) {
+    triggerMossAlert();
+    return;
+  }
+
+  if (argStarted.value && !hasKey('BREATH_WHITE')) {
+    glitchClickCount.value++;
+    if (glitchClickCount.value % 2 === 1) {
+      hitokotoText.value = "「……这里是苔鸣谷，我们正受到真理财阀无菌肃清队的合围……<span class='arg-node-trigger text-[var(--color-brand)] font-bold cursor-pointer animate-pulse hover:scale-125 inline-block mx-1 shadow-[0_0_10px_var(--color-brand)]'>❖</span>……救……」";
+      hitokotoFrom.value = "烬·最后广播";
+    } else {
+      hitokotoText.value = "「……已封锁所有下行通道，灵核剥离室负压警告……<span class='arg-node-trigger text-[var(--color-brand)] font-bold cursor-pointer animate-pulse hover:scale-125 inline-block mx-1 shadow-[0_0_10px_var(--color-brand)]'>❖</span>……有人能听到吗……」";
+      hitokotoFrom.value = "烬·脑域备份";
+    }
+  } else {
+    fetchHitokoto();
   }
 };
 
@@ -349,7 +361,12 @@ const setupScrollReveal = () => {
 onMounted(async () => {
   await loadArticles();
   
-  fetchHitokoto();
+  if (argStarted.value && !hasKey('BREATH_WHITE')) {
+    hitokotoText.value = "地表数据流受阻。检测到非自然波频阻断。系统正尝试截获微弱信号……";
+    hitokotoFrom.value = "SYS.WARN";
+  } else {
+    fetchHitokoto();
+  }
   
   updateUptime();
   uptimeInterval = window.setInterval(updateUptime, 1000);
@@ -479,7 +496,7 @@ onUnmounted(() => {
         <div class="hidden md:flex flex-col items-end w-full max-w-[400px] relative">
           <div 
             class="w-full relative z-10 anime-fade-up cyber-glass p-6 text-left opacity-80 cursor-pointer hover:bg-[rgba(16,185,129,0.02)] transition-all duration-500 ease-out"
-            @click="fetchHitokoto"
+            @click="handleHitokotoClick"
           >
             <div class="text-[10px] font-mono tracking-widest text-[var(--color-text-dim)] mb-2 flex justify-between">
               <span>// RECOVERED_DATA_FRAGMENT</span>
@@ -487,8 +504,7 @@ onUnmounted(() => {
             </div>
             <transition name="glitch-fade" mode="out-in">
               <div :key="hitokotoText" class="w-full">
-                <div class="font-art text-lg md:text-xl text-[var(--color-text)] leading-relaxed italic opacity-90 glitch-hover hitokoto-text">
-                  "{{ hitokotoText }}"
+                <div class="font-art text-lg md:text-xl text-[var(--color-text)] leading-relaxed italic opacity-90 glitch-hover hitokoto-text" v-html="hitokotoText">
                 </div>
                 <div class="text-right mt-3 text-xs font-mono tracking-widest text-[var(--color-text-dim)]">
                   - {{ hitokotoFrom }}
@@ -510,10 +526,13 @@ onUnmounted(() => {
       
       <!-- Frost Alert UI -->
       <transition name="page">
-        <div v-if="isFrostActive" class="absolute inset-0 z-50 flex items-center justify-center pointer-events-none mix-blend-screen">
-          <div class="text-[var(--color-brand)] font-bold text-2xl md:text-4xl tracking-[0.3em] animate-pulse drop-shadow-[0_0_20px_var(--color-brand)] text-center">
-            <div>BREATH_WHITE</div>
-            <div class="text-sm md:text-base opacity-70 mt-2">余火历162年·苔鸣谷·白息浓度异常上升……</div>
+        <div v-if="isFrostActive" class="absolute inset-0 z-50 flex items-center justify-center pointer-events-none bg-black/80 backdrop-blur-md">
+          <div class="text-[var(--color-brand)] font-bold text-2xl md:text-4xl tracking-[0.3em] animate-pulse drop-shadow-[0_0_30px_var(--color-brand)] text-center p-8 border border-[var(--color-brand)]/20 bg-black/50 cyber-glass select-none">
+            <div>❖ BREATH_WHITE ❖</div>
+            <div class="text-sm md:text-base opacity-70 mt-4 tracking-wider leading-relaxed font-mono">
+              [ 警告：检测到真理隔离区 Node 04 异动波频 ]<br>
+              余火历162年·苔鸣谷·白息共鸣率异常飙升
+            </div>
           </div>
         </div>
       </transition>

@@ -803,26 +803,144 @@ function restartGame() {
 }
 
 const { addKey, hasKey, argStarted } = useARGState();
-const sosCode = ['s', 'o', 's'];
-let sosIndex = 0;
 const isHelpActive = ref(false);
 
+// Synthesizer Tone Helper
+const playSynthTone = (freq: number, duration: number, type: OscillatorType = 'sine') => {
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    console.warn('Synth failed:', e);
+  }
+};
+
+// Morse Code Pulse Transmitter State & Web Audio Synthesizer
+let morseAudioCtx: AudioContext | null = null;
+let morseOsc: OscillatorNode | null = null;
+let morseGain: GainNode | null = null;
+
+const startMorseBeep = () => {
+  try {
+    if (!morseAudioCtx) {
+      morseAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (morseAudioCtx.state === 'suspended') {
+      morseAudioCtx.resume();
+    }
+    
+    morseOsc = morseAudioCtx.createOscillator();
+    morseGain = morseAudioCtx.createGain();
+    
+    morseOsc.type = 'sine';
+    morseOsc.frequency.setValueAtTime(800, morseAudioCtx.currentTime); // 800Hz standard Morse beep
+    
+    morseGain.gain.setValueAtTime(0, morseAudioCtx.currentTime);
+    morseGain.gain.linearRampToValueAtTime(0.15, morseAudioCtx.currentTime + 0.01);
+    
+    morseOsc.connect(morseGain);
+    morseGain.connect(morseAudioCtx.destination);
+    
+    morseOsc.start();
+  } catch (e) {
+    console.warn('Morse beep failed:', e);
+  }
+};
+
+const stopMorseBeep = () => {
+  try {
+    if (morseOsc && morseGain && morseAudioCtx) {
+      morseGain.gain.setValueAtTime(morseGain.gain.value, morseAudioCtx.currentTime);
+      morseGain.gain.exponentialRampToValueAtTime(0.001, morseAudioCtx.currentTime + 0.02);
+      const tempOsc = morseOsc;
+      setTimeout(() => {
+        try {
+          tempOsc.stop();
+          tempOsc.disconnect();
+        } catch (e) {}
+      }, 50);
+      morseOsc = null;
+      morseGain = null;
+    }
+  } catch (e) {
+    console.warn('Morse stop failed:', e);
+  }
+};
+
+const morseInput = ref<string[]>([]);
+const lastPressTime = ref<number>(0);
+const isPressing = ref<boolean>(false);
+const isMorseSuccess = ref<boolean>(false);
+
+const startMorsePress = () => {
+  if (isMorseSuccess.value || isPressing.value) return;
+  isPressing.value = true;
+  lastPressTime.value = performance.now();
+  startMorseBeep();
+};
+
+const endMorsePress = () => {
+  if (!isPressing.value) return;
+  isPressing.value = false;
+  stopMorseBeep();
+  
+  const duration = performance.now() - lastPressTime.value;
+  const isDash = duration >= 250;
+  morseInput.value.push(isDash ? '-' : '.');
+  
+  const target = ['.', '.', '.', '-', '-', '-', '.', '.', '.'];
+  
+  // Verify prefix
+  let isCorrectPrefix = true;
+  for (let i = 0; i < morseInput.value.length; i++) {
+    if (morseInput.value[i] !== target[i]) {
+      isCorrectPrefix = false;
+      break;
+    }
+  }
+  
+  if (!isCorrectPrefix) {
+    playSynthTone(120, 0.4, 'sawtooth'); // Error buzz
+    morseInput.value = [];
+  } else if (morseInput.value.length === 9) {
+    isMorseSuccess.value = true;
+    triggerSOSAlert();
+    playSynthTone(1000, 0.5); // Success high pitch C6
+  }
+};
+
+const resetMorse = () => {
+  morseInput.value = [];
+  isMorseSuccess.value = false;
+};
+
 function handleKeydown(e: KeyboardEvent) {
+  if (argStarted.value && !hasKey('SOS_ECHO') && e.key === ' ') {
+    e.preventDefault();
+    startMorsePress();
+    return;
+  }
+
   if (phase.value === 'playing' && answerState.value === 'idle' && question.value) {
     const num = parseInt(e.key, 10);
     if (num >= 1 && num <= question.value.choices.length) pickAnswer(num - 1);
   }
   if (phase.value === 'transition' && (e.key === 'Enter' || e.key === ' ')) continueFromTransition();
+}
 
-  // ARG Logic: 输入 SOS
-  if (argStarted.value && !hasKey('SOS_ECHO') && e.key.toLowerCase() === sosCode[sosIndex]) {
-    sosIndex++;
-    if (sosIndex === sosCode.length) {
-      triggerSOSAlert();
-      sosIndex = 0;
-    }
-  } else {
-    sosIndex = e.key.toLowerCase() === 's' ? 1 : 0;
+function handleKeyup(e: KeyboardEvent) {
+  if (argStarted.value && !hasKey('SOS_ECHO') && e.key === ' ') {
+    e.preventDefault();
+    endMorsePress();
   }
 }
 
@@ -857,6 +975,7 @@ const themeObserver = ref<MutationObserver | null>(null);
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('keyup', handleKeyup);
   window.addEventListener('resize', handleResize);
   
   updateTheme();
@@ -876,6 +995,7 @@ onUnmounted(() => {
   stopCountdown();
   stopFinalClock();
   window.removeEventListener('keydown', handleKeydown);
+  window.removeEventListener('keyup', handleKeyup);
   window.removeEventListener('resize', handleResize);
   if (themeObserver.value) {
     themeObserver.value.disconnect();
@@ -895,6 +1015,66 @@ onUnmounted(() => {
         <span class="text-[10px] tracking-widest">[SYS.PROC.GAMES.EXE] // GRID_RUNNER_V2.0</span>
         <span class="text-[10px] tracking-widest text-[var(--color-brand)] animate-pulse">STATUS: ONLINE</span>
       </div>
+
+      <!-- Morse Pulse Transmitter (ARG active & SOS_ECHO missing) -->
+      <transition name="page">
+        <div 
+          v-if="argStarted && !hasKey('SOS_ECHO')"
+          class="cyber-glass !p-6 border border-red-500/50 bg-black/80 mb-8 flex flex-col md:flex-row gap-6 items-center"
+        >
+          <div class="flex-1 space-y-3">
+            <div class="flex items-center justify-between text-[11px] font-mono tracking-widest text-red-500 uppercase font-bold">
+              <span>> [真理财阀阻断波频: 0x05-SOS_ECHO]</span>
+              <span class="animate-pulse">INTERRUPT_ACTIVE</span>
+            </div>
+            <p class="text-xs text-[var(--color-text-dim)] leading-relaxed">
+              检测到极其微弱的灵魂回声脉冲……真理网格正在提取本地脑电灵核。<br>
+              请使用发送器手动敲击莫尔斯电码以取得信道同步。
+            </p>
+            <div class="text-[10px] font-mono text-[var(--color-brand)] opacity-80 flex items-center gap-4">
+              <span>目标序列: <span class="text-white font-bold font-sans tracking-[0.2em]">... --- ... (SOS)</span></span>
+              <span>• 短按 &lt; 250ms</span>
+              <span>— 长按 &gt; 250ms</span>
+            </div>
+            
+            <!-- Real-time Input Vis -->
+            <div class="h-10 bg-black/60 border border-[var(--color-border)] rounded px-3 flex items-center gap-2 overflow-x-auto font-sans text-xl tracking-[0.3em]">
+              <span class="text-[10px] font-mono text-[var(--color-text-dim)] tracking-normal mr-2">INPUT:</span>
+              <span 
+                v-for="(char, cIdx) in morseInput" 
+                :key="cIdx"
+                :class="char === '.' ? 'text-[var(--color-brand)]' : 'text-red-400 font-bold'"
+              >
+                {{ char === '.' ? '•' : '—' }}
+              </span>
+              <span v-if="isPressing" class="w-2 h-4 bg-red-500 animate-pulse"></span>
+            </div>
+          </div>
+          
+          <div class="flex flex-col gap-3 shrink-0 items-center justify-center">
+            <!-- Tap Button -->
+            <button 
+              @mousedown="startMorsePress"
+              @touchstart.prevent="startMorsePress"
+              @mouseup="endMorsePress"
+              @touchend.prevent="endMorsePress"
+              @mouseleave="endMorsePress"
+              class="w-24 h-24 rounded-full border-2 border-red-500/80 bg-red-950/20 active:bg-red-800/40 text-red-500 font-bold font-mono text-xs tracking-wider flex flex-col items-center justify-center transition-all duration-100 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer select-none no-cursor-snap"
+              :class="{ 'scale-95 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.6)]': isPressing }"
+            >
+              <span>[ TAP ]</span>
+              <span class="text-[8px] opacity-60 mt-1">SPACE_KEY</span>
+            </button>
+            
+            <button 
+              @click="resetMorse" 
+              class="btn-terminal !text-[8px] !px-3 !py-1 !text-red-400 !border-red-800 hover:!bg-red-950/40"
+            >
+              [ RE-SYNC ]
+            </button>
+          </div>
+        </div>
+      </transition>
 
       <!-- Main Terminal Screen Area -->
       <div class="relative overflow-hidden text-[var(--color-text)]">
@@ -1136,7 +1316,7 @@ onUnmounted(() => {
     <transition name="page">
       <div v-if="isHelpActive" class="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] cyber-glass !p-6 border-l-4 border-l-red-500 bg-black/90">
         <div class="text-red-400 font-bold text-xl tracking-[0.3em] font-mono animate-pulse mb-1">SOS_ECHO</div>
-        <div class="text-xs opacity-60 font-mono tracking-widest">「黑铁联合体切断了所有补给线……裂缝在扩张……我们还在……」</div>
+        <div class="text-xs opacity-60 font-mono tracking-widest">「真理财阀的肃清队在合围……他们在捕猎迷失者……剥离灵核……救救我们……」</div>
       </div>
     </transition>
   </div>

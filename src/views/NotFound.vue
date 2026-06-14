@@ -1,11 +1,115 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useARGState } from '../composables/useARGState';
 import anime from 'animejs';
 
 const router = useRouter();
 const countdown = ref(20);
 let timer: number;
+
+const { addKey, hasKey, argStarted } = useARGState();
+
+// Concentric Orbits Calibration Game State
+const hoveredRingIndex = ref<number | null>(null);
+const ringSequence = ref<number[]>([]);
+const isCalibratingError = ref(false);
+const isCalibratingSuccess = ref(false);
+
+const getSvgCoordinates = (e: MouseEvent) => {
+  const svg = e.currentTarget as SVGSVGElement;
+  const rect = svg.getBoundingClientRect();
+  const rx = e.clientX - rect.left;
+  const ry = e.clientY - rect.top;
+  const x = (rx / rect.width) * 600;
+  const y = (ry / rect.height) * 600;
+  return { x, y };
+};
+
+const getRingIndexFromCoords = (x: number, y: number) => {
+  const dx = x - 300;
+  const dy = y - 300;
+  const r = Math.sqrt(dx*dx + dy*dy);
+  
+  if (r >= 55 && r < 105) return 3; // Innermost (i = 4, r = 80)
+  if (r >= 105 && r < 155) return 2; // Ring 3 (i = 3, r = 130)
+  if (r >= 155 && r < 205) return 1; // Ring 2 (i = 2, r = 180)
+  if (r >= 205 && r < 265) return 0; // Outermost (i = 1, r = 230)
+  return null;
+};
+
+const handleSvgMouseMove = (e: MouseEvent) => {
+  if (!argStarted.value || hasKey('VOID_RESONANCE')) return;
+  const { x, y } = getSvgCoordinates(e);
+  hoveredRingIndex.value = getRingIndexFromCoords(x, y);
+};
+
+const handleSvgMouseLeave = () => {
+  hoveredRingIndex.value = null;
+};
+
+const playSynthTone = (freq: number, duration: number, type: OscillatorType = 'sine') => {
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    console.warn('Synth failed:', e);
+  }
+};
+
+const handleSvgClick = (e: MouseEvent) => {
+  if (!argStarted.value || hasKey('VOID_RESONANCE') || isCalibratingSuccess.value) return;
+  
+  const { x, y } = getSvgCoordinates(e);
+  const ringIdx = getRingIndexFromCoords(x, y);
+  
+  if (ringIdx !== null) {
+    ringSequence.value.push(ringIdx);
+    
+    // Play sound feedback: higher frequency as we go inward
+    const tones = [261.63, 329.63, 392.00, 523.25];
+    playSynthTone(tones[ringIdx], 0.3);
+    
+    // Correct sequence outer to inner: 0 ➔ 1 ➔ 2 ➔ 3
+    const target = [0, 1, 2, 3];
+    let isCorrectPrefix = true;
+    for (let i = 0; i < ringSequence.value.length; i++) {
+      if (ringSequence.value[i] !== target[i]) {
+        isCorrectPrefix = false;
+        break;
+      }
+    }
+    
+    if (!isCorrectPrefix) {
+      isCalibratingError.value = true;
+      playSynthTone(130, 0.5, 'sawtooth');
+      ringSequence.value = [];
+      setTimeout(() => {
+        isCalibratingError.value = false;
+      }, 500);
+    } else if (ringSequence.value.length === 4) {
+      isCalibratingSuccess.value = true;
+      addKey('VOID_RESONANCE');
+      window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'VOID_RESONANCE' } }));
+      countdown.value = 5; // Redirect after 5s to show success state
+      
+      // Play a beautiful major triad sweep!
+      playSynthTone(523.25, 0.4); // C5
+      setTimeout(() => playSynthTone(659.25, 0.4), 100); // E5
+      setTimeout(() => playSynthTone(783.99, 0.4), 200); // G5
+      setTimeout(() => playSynthTone(1046.50, 0.6), 300); // C6
+    }
+  }
+};
 
 const containerRef = ref<HTMLElement | null>(null);
 const diagRef = ref<HTMLElement | null>(null);
@@ -39,6 +143,9 @@ const blockChars = '░▒▓█▀▄▌▐│┤╡╢╖╕╣║╗╝╜╛
 
 onMounted(() => {
   timer = window.setInterval(() => {
+    if (argStarted.value && !hasKey('VOID_RESONANCE')) {
+      return; // Suspend countdown when calibration puzzle is active
+    }
     countdown.value--;
     if (countdown.value <= 0) { clearInterval(timer); goHome(); }
   }, 1000);
@@ -325,12 +432,32 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- SVG rings (brighter) -->
-    <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.12]">
-      <svg viewBox="0 0 600 600" class="w-[500px] h-[500px] md:w-[650px] md:h-[650px]">
-        <circle v-for="i in 4" :key="'ring-'+i" :ref="(el) => setRingRef(el, i-1)"
-          cx="300" cy="300" :r="280 - i * 50"
-          fill="none" stroke="white" :stroke-width="0.5 + i * 0.15" />
+    <!-- SVG rings (interactive under ARG) -->
+    <div 
+      class="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
+      :class="argStarted && !hasKey('VOID_RESONANCE') ? 'z-20 opacity-90' : 'pointer-events-none opacity-[0.12]'"
+    >
+      <svg 
+        viewBox="0 0 600 600" 
+        class="w-[500px] h-[500px] md:w-[650px] md:h-[650px] select-none"
+        :class="{ 'cursor-pointer': argStarted && !hasKey('VOID_RESONANCE') }"
+        @mousemove="handleSvgMouseMove"
+        @mouseleave="handleSvgMouseLeave"
+        @click="handleSvgClick"
+      >
+        <circle 
+          v-for="i in 4" 
+          :key="'ring-'+i" 
+          :ref="(el) => setRingRef(el, i-1)"
+          cx="300" 
+          cy="300" 
+          :r="280 - i * 50"
+          fill="none" 
+          :stroke="isCalibratingError ? '#f87171' : isCalibratingSuccess ? 'var(--color-brand)' : hoveredRingIndex === (i-1) || ringSequence.includes(i-1) ? 'var(--color-brand)' : 'white'"
+          :stroke-width="hoveredRingIndex === (i-1) || ringSequence.includes(i-1) ? 3 : 0.5 + i * 0.15"
+          :class="{ 'animate-pulse': isCalibratingSuccess }"
+          class="transition-all duration-300 pointer-events-none" 
+        />
       </svg>
     </div>
 
@@ -361,9 +488,9 @@ onUnmounted(() => {
       <div class="w-full flex justify-between items-center text-[9px] tracking-[0.3em] text-white/30 mb-10 uppercase">
         <span class="flex items-center gap-2">
           <span class="w-1.5 h-1.5 bg-red-500 animate-pulse shadow-[0_0_6px_rgba(255,0,0,0.5)]"></span>
-          SYS.ERROR
+          {{ argStarted && !hasKey('VOID_RESONANCE') ? 'VRT.VOID_PORT // 空间撕裂度: 98.4%' : 'SYS.ERROR' }}
         </span>
-        <span>ERR::0x194</span>
+        <span>{{ argStarted && !hasKey('VOID_RESONANCE') ? 'PORT::0x404_VOID' : 'ERR::0x194' }}</span>
       </div>
 
       <!-- ASCII 404 -->
@@ -374,32 +501,55 @@ onUnmounted(() => {
       </div>
 
       <!-- Subtitle -->
-      <div class="text-[10px] tracking-[0.5em] text-white/30 uppercase mb-6">PAGE NOT FOUND</div>
+      <div class="text-[10px] tracking-[0.5em] text-white/30 uppercase mb-6">
+        {{ argStarted && !hasKey('VOID_RESONANCE') ? '真理财阀空间隔离区: Node 0x404' : 'PAGE NOT FOUND' }}
+      </div>
 
       <!-- Separator -->
       <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
 
       <!-- Diagnostics -->
-      <div ref="diagRef" class="w-full space-y-1.5 text-[10px] sm:text-xs mb-8">
-        <div class="diag-line opacity-0 flex gap-3">
-          <span class="text-white/30 w-16 flex-shrink-0 text-right">STATUS</span>
-          <span class="text-white/15">│</span>
-          <span class="text-red-400/80">ROUTE_RESOLVE_FAILED</span>
+      <div ref="diagRef" class="w-full">
+        <!-- Runic Orbital Calibration Panel (ARG active & VOID_RESONANCE missing) -->
+        <div 
+          v-if="argStarted && !hasKey('VOID_RESONANCE')" 
+          class="w-full space-y-3 text-[10px] sm:text-xs mb-8 text-left border border-red-500/30 p-4 bg-red-950/10 font-mono"
+        >
+          <div class="text-red-500 font-bold tracking-widest flex justify-between">
+            <span>> [真理财阀·空间隔离防火墙]</span>
+            <span class="animate-pulse">{{ isCalibratingSuccess ? 'VOID_RESONANCE: SYNCED' : 'DECRYPTION_PORT: LOCKED' }}</span>
+          </div>
+          <div class="text-[var(--color-text-dim)] mt-2 leading-relaxed">
+            检测到第 4 个主锁：【虚空共鸣】。<br>
+            说明：此空域已被真理财阀物理隔离以防止数据外泄。需依次重校 4 圈碎月轨道锚点（从最外层轨道依次向最内层轨道点击）。
+          </div>
+          <div class="text-[var(--color-brand)] mt-1 flex justify-between font-bold">
+            <span>当前校准点数: {{ ringSequence.length }}/4</span>
+            <span v-if="isCalibratingSuccess" class="animate-pulse">[轨道完美重合 - 虚空回声解锁]</span>
+          </div>
         </div>
-        <div class="diag-line opacity-0 flex gap-3">
-          <span class="text-white/30 w-16 flex-shrink-0 text-right">PATH</span>
-          <span class="text-white/15">│</span>
-          <span class="text-white/50">{{ router.currentRoute.value.fullPath }}</span>
-        </div>
-        <div class="diag-line opacity-0 flex gap-3">
-          <span class="text-white/30 w-16 flex-shrink-0 text-right">MSG</span>
-          <span class="text-white/15">│</span>
-          <span class="text-white/35">The requested sector does not exist or has been lost to the void.</span>
-        </div>
-        <div class="diag-line opacity-0 flex gap-3">
-          <span class="text-white/30 w-16 flex-shrink-0 text-right">ADVICE</span>
-          <span class="text-white/15">│</span>
-          <span class="text-white/35">Return to main operational grid to avoid memory corruption.</span>
+
+        <div v-else class="space-y-1.5 text-[10px] sm:text-xs mb-8">
+          <div class="diag-line opacity-0 flex gap-3">
+            <span class="text-white/30 w-16 flex-shrink-0 text-right">STATUS</span>
+            <span class="text-white/15">│</span>
+            <span class="text-red-400/80">ROUTE_RESOLVE_FAILED</span>
+          </div>
+          <div class="diag-line opacity-0 flex gap-3">
+            <span class="text-white/30 w-16 flex-shrink-0 text-right">PATH</span>
+            <span class="text-white/15">│</span>
+            <span class="text-white/50">{{ router.currentRoute.value.fullPath }}</span>
+          </div>
+          <div class="diag-line opacity-0 flex gap-3">
+            <span class="text-white/30 w-16 flex-shrink-0 text-right">MSG</span>
+            <span class="text-white/15">│</span>
+            <span class="text-white/35">The requested sector does not exist or has been lost to the void.</span>
+          </div>
+          <div class="diag-line opacity-0 flex gap-3">
+            <span class="text-white/30 w-16 flex-shrink-0 text-right">ADVICE</span>
+            <span class="text-white/15">│</span>
+            <span class="text-white/35">Return to main operational grid to avoid memory corruption.</span>
+          </div>
         </div>
       </div>
 

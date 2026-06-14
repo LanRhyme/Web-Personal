@@ -2,6 +2,7 @@
 import projectsData from '../data/projects.json';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useARGState } from '../composables/useARGState';
+import ParticleSymbol from '../components/ParticleSymbol.vue';
 
 interface Project {
   image: string;
@@ -22,6 +23,37 @@ const getImageUrl = (path: string) => {
 const { addKey, hasKey, argStarted } = useARGState();
 const clickSequence = ref<number[]>([]);
 const isShakeActive = ref(false);
+const hoveredIndex = ref<number | null>(null);
+
+const symbols = {
+  form: 'M50 25 C30 25 20 40 20 50 C20 65 35 75 50 75 C65 75 80 65 80 50 C80 40 70 25 50 25 M35 45 L45 55 L65 35',
+  breath: 'M15 50 Q35 15 50 50 T85 50 M15 55 Q35 20 50 55 T85 55 M15 45 Q35 10 50 45 T85 45',
+  soul: 'M50 15 Q75 15 75 40 Q75 60 50 85 Q25 60 25 40 Q25 15 50 15 M40 35 Q50 25 60 35 Q65 50 50 65 Q35 50 40 35'
+};
+
+const projectSymbols: Record<number, { key: keyof typeof symbols, label: string, color: string }> = {
+  0: { key: 'form', label: '念之弦 // FORM', color: '#e8e8f0' },
+  1: { key: 'breath', label: '灵之弦 // BREATH', color: '#4379ad' },
+  2: { key: 'soul', label: '渊之弦 // SOUL', color: '#9e86d0' }
+};
+
+const playSynthTone = (freq: number, duration: number, type: OscillatorType = 'sine') => {
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    console.warn('Synth failed:', e);
+  }
+};
 
 const scrollY = ref(0);
 const handleScroll = () => { scrollY.value = window.scrollY; };
@@ -53,23 +85,32 @@ onUnmounted(() => {
 });
 
 const handleProjectClick = (index: number) => {
-  clickSequence.value.push(index);
-  if (clickSequence.value.length > 3) {
-    clickSequence.value.shift();
-  }
-  
-  if (argStarted.value && !hasKey('CHORD_PATTERN') &&
-      clickSequence.value.length === 3 &&
-      clickSequence.value[0] === 0 &&
-      clickSequence.value[1] === 1 &&
-      clickSequence.value[2] === 2) {
-    
-    isShakeActive.value = true;
-    addKey('CHORD_PATTERN');
-    window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'CHORD_PATTERN' } }));
-    setTimeout(() => {
-      isShakeActive.value = false;
-    }, 3000);
+  if (argStarted.value && !hasKey('CHORD_PATTERN')) {
+    if (projectSymbols[index] !== undefined) {
+      clickSequence.value.push(index);
+      playSynthTone(200 + index * 100, 0.15);
+      
+      if (clickSequence.value.length === 3) {
+        if (clickSequence.value[0] === 0 &&
+            clickSequence.value[1] === 1 &&
+            clickSequence.value[2] === 2) {
+          
+          isShakeActive.value = true;
+          addKey('CHORD_PATTERN');
+          window.dispatchEvent(new CustomEvent('arg-fragment-found', { detail: { key: 'CHORD_PATTERN' } }));
+          playSynthTone(523.25, 0.4); // C5 major resonance success beep
+          setTimeout(() => {
+            isShakeActive.value = false;
+          }, 3000);
+        } else {
+          clickSequence.value = [];
+          playSynthTone(120, 0.4, 'sawtooth'); // Error buzz
+        }
+      }
+    } else {
+      clickSequence.value = [];
+      playSynthTone(120, 0.4, 'sawtooth');
+    }
   }
 };
 </script>
@@ -122,9 +163,29 @@ const handleProjectClick = (index: number) => {
           v-for="(project, index) in projects"
           :key="index"
           @click="handleProjectClick(index)"
+          @mouseenter="hoveredIndex = index"
+          @mouseleave="hoveredIndex = null"
           class="cyber-glass group relative overflow-hidden flex flex-col h-full !p-0 reveal-scale transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_var(--color-brand)] hover:border-[var(--color-brand)] cursor-pointer"
           :style="{ transitionDelay: `${0.1 * (index % 4)}s` }"
         >
+          <!-- Particle Symbol Overlay (ARG active & chord card) -->
+          <div 
+            v-if="argStarted && !hasKey('CHORD_PATTERN') && projectSymbols[index]"
+            class="absolute top-4 left-4 w-16 h-16 pointer-events-none z-30 flex flex-col items-center"
+          >
+            <div class="w-12 h-12 relative">
+              <ParticleSymbol 
+                :path="symbols[projectSymbols[index].key]" 
+                :color="projectSymbols[index].color" 
+                :hovered="hoveredIndex === index" 
+                :active="argStarted" 
+              />
+            </div>
+            <div class="text-center font-mono text-[8px] text-[var(--color-text-dim)] tracking-tighter opacity-80 mt-1 whitespace-nowrap">
+              {{ projectSymbols[index].label }}
+            </div>
+          </div>
+
           <!-- Disk Shutter & Top Case -->
           <div class="aspect-video w-full overflow-hidden relative bg-[var(--color-bg)] flex items-center justify-center border-b border-[var(--color-border)]">
             
