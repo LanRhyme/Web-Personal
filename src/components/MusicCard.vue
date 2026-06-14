@@ -360,25 +360,20 @@ const handleSwipe = () => {
               <i class="fa-solid fa-backward-step"></i>
             </button>
             
-            <!-- Bouncing Dot Button -->
+            <!-- Circular Ring Button -->
             <div 
-              class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 border flex items-center justify-center relative cursor-pointer group active:scale-[0.98] transition-all duration-300 bg-[var(--color-bg)] overflow-hidden rounded-sm"
-              :class="isPlaying ? 'border-[var(--color-brand)] shadow-[0_0_8px_var(--color-brand)]' : 'border-[var(--color-border)] hover:border-[var(--color-text)]'"
+              class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-full border flex items-center justify-center relative cursor-pointer group active:scale-[0.98] transition-all duration-300 bg-[var(--color-bg)]"
+              :class="isPlaying ? 'border-[var(--color-brand)]' : 'border-[var(--color-border)] hover:border-[var(--color-text)]'"
+              :style="{ boxShadow: isPlaying ? `0 0 ${5 + Math.pow(dotRhythm, 2) * 50}px ${isGlitching ? 'rgba(255,255,255,0.4)' : 'rgba(var(--color-brand-rgb, 132,201,60), 0.4)'}` : 'none' }"
               @click="togglePlay"
             >
-              <!-- The Dot -->
-              <div class="w-2.5 h-2.5 rounded-full transition-all duration-75" 
-                   :class="isPlaying ? (isGlitching ? 'bg-white' : 'bg-[var(--color-brand)]') : 'bg-[var(--color-text)] opacity-40'"
-                   :style="{ 
-                     transform: isPlaying ? `scale(${1 + Math.pow(dotRhythm, 2) * 4})` : 'scale(1)',
-                     boxShadow: isPlaying ? `0 0 ${5 + Math.pow(dotRhythm, 2) * 50}px ${isGlitching ? 'white' : 'var(--color-brand)'}` : 'none'
-                   }">
-              </div>
+              <!-- Rotating dashed ring轨道 -->
+              <svg v-if="isPlaying" class="absolute inset-0 w-full h-full animate-spin-slow pointer-events-none" viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="22" fill="none" stroke="var(--color-brand)" stroke-width="1" stroke-dasharray="6 4" opacity="0.5" />
+              </svg>
               
-              <!-- Icon overlay -->
-              <div class="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/80 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity z-20" :class="{ 'opacity-100': !isPlaying }">
-                <i class="fa-solid" :class="isPlaying ? 'fa-pause text-[var(--color-brand)]' : 'fa-play text-[var(--color-text)]'"></i>
-              </div>
+              <!-- Icon -->
+              <i class="fa-solid text-xs sm:text-sm transition-colors duration-300" :class="isPlaying ? (isGlitching ? 'fa-pause text-white' : 'fa-pause text-[var(--color-brand)]') : 'fa-play text-[var(--color-text)] opacity-40 group-hover:opacity-100'"></i>
             </div>
 
             <button class="text-[10px] opacity-40 hover:opacity-100 hover:text-[var(--color-brand)] transition-colors" @click="nextTrack" title="Next Track">

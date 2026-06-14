@@ -478,7 +478,7 @@ onUnmounted(() => {
         <!-- Right: Holographic Log -->
         <div class="hidden md:flex flex-col items-end w-full max-w-[400px] relative">
           <div 
-            class="w-full relative z-10 anime-fade-up cyber-glass p-6 text-left opacity-80 backdrop-blur-md cursor-pointer hover:bg-[rgba(16,185,129,0.02)] transition-all duration-500 ease-out"
+            class="w-full relative z-10 anime-fade-up cyber-glass p-6 text-left opacity-80 cursor-pointer hover:bg-[rgba(16,185,129,0.02)] transition-all duration-500 ease-out"
             @click="fetchHitokoto"
           >
             <div class="text-[10px] font-mono tracking-widest text-[var(--color-text-dim)] mb-2 flex justify-between">

@@ -68,6 +68,11 @@ const isHovering = ref(false);
 const isClicking = ref(false);
 let hoveredElement: HTMLElement | null = null;
 
+// --- Brutalist AI Companion (LanPet Refactor) ---
+const petState = ref<'idle' | 'happy' | 'working' | 'active'>('idle');
+const petHappiness = ref(85);
+const bubbleText = ref('');
+
 // --- Simulated HUD Metrics ---
 const cpuLoad = ref(12);
 const memLoad = ref(45.2);
@@ -450,6 +455,7 @@ onMounted(() => {
     } else {
       lenis.start();
     }
+    lenis.scrollTo(0, { immediate: true });
   }, { immediate: true });
   
   lenis.on('scroll', (e: any) => {
