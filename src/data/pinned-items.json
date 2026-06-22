@@ -1,5 +1,10 @@
 [
   {
+    "title": "DeskZero",
+    "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
+    "link": "github.com/LanRhyme/DeskZero"
+  },
+  {
     "title": "MicYou",
     "description": "多平台麦克风串流工具",
     "link": "micyou.top"
@@ -8,11 +13,6 @@
     "title": "ShardLauncher",
     "description": "一款安卓Minecraft Java版启动器|已弃坑",
     "link": "shardlauncher.cn"
-  },
-  {
-    "title": "DeskZero",
-    "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
-    "link": "github.com/LanRhyme/DeskZero"
   },
   {
     "title": "Age of Shattered Light",
