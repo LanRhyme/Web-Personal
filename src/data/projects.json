@@ -1,5 +1,19 @@
 [
   {
+    "image": "/img-projects/1782147274305-screenshot.png",
+    "title": "DeskZero",
+    "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
+    "tags": [
+      "Rust",
+      "Tauri v2",
+      "React",
+      "TypeScript",
+      "SQLite"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/DeskZero"
+  },
+  {
     "image": "/img-projects/1780042801920-e0f1c209-3555-4450-bb8a-4da6d29a6bac.png",
     "title": "MicYou",
     "description": "一款多平台的麦克风串流软件",
