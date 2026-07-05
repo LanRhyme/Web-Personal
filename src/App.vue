@@ -572,7 +572,7 @@ onUnmounted(() => {
 
     <!-- AI Companion (LanPet Refactor) -->
     <div 
-      v-if="!isAdmin" 
+      v-if="!isAdmin && !isWorldview" 
       class="fixed z-50 pointer-events-auto flex items-end gap-6"
       :style="{ bottom: '30px', right: '30px' }"
     >
@@ -689,9 +689,9 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Main Content Wrapper (shake target - fixed elements stay outside) -->
-    <div class="shake-container relative z-10 min-h-screen flex flex-col w-full font-mono text-[var(--color-text)]">
-      <NavBar v-if="!isAdmin" />
+      <!-- Main Content Wrapper (shake target - fixed elements stay outside) -->
+      <div class="shake-container relative z-10 min-h-screen flex flex-col w-full font-mono text-[var(--color-text)]">
+        <NavBar v-if="!isAdmin && !isWorldview" />
       
       <!-- Theme Toggle (ARG Reward) -->
       <button 

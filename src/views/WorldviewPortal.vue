@@ -6,6 +6,16 @@ const garbledProject = ref('WORLDVIEW');
 const garbledTitle = ref('ARCHIVE NEXUS');
 const garbledSubtitle = ref('SELECT DESTINATION');
 
+// Option 1 refs
+const garbledSectorCore = ref('SECTOR 0x00');
+const garbledTitleCore = ref('> Core.');
+const garbledSubCore = ref('3D Observation');
+
+// Option 2 refs
+const garbledSectorCloud = ref('SECTOR 0x2D');
+const garbledTitleCloud = ref('> Cloud.');
+const garbledSubCloud = ref('2D Simulation');
+
 let scrambleInterval: ReturnType<typeof setInterval> | null = null;
 const chars = '█▓░░▒▓█▄▀■▲▼Æ§Ø°±¶µ¼½¾×÷κλμνξοπρστυφχψω§ΔΨΩαβγδεζηθικ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_@#%*';
 
@@ -22,6 +32,15 @@ onMounted(() => {
     garbledProject.value = scramble('WORLDVIEW', intensityFactor);
     garbledTitle.value = scramble('ARCHIVE NEXUS', intensityFactor);
     garbledSubtitle.value = scramble('SELECT DESTINATION', intensityFactor * 0.5);
+    
+    // Scramble option texts (higher intensity for a cooler effect)
+    garbledSectorCore.value = scramble('SECTOR 0x00', intensityFactor * 1.5);
+    garbledTitleCore.value = scramble('> Core.', intensityFactor * 0.8);
+    garbledSubCore.value = scramble('3D Observation', intensityFactor * 0.5);
+    
+    garbledSectorCloud.value = scramble('SECTOR 0x2D', intensityFactor * 1.5);
+    garbledTitleCloud.value = scramble('> Cloud.', intensityFactor * 0.8);
+    garbledSubCloud.value = scramble('2D Simulation', intensityFactor * 0.5);
   }, 120);
 });
 
@@ -57,16 +76,16 @@ onUnmounted(() => {
         
         <!-- Option 1: Core -->
         <router-link to="/worldview/core" class="flex-1 cyber-glass p-8 md:p-12 cursor-pointer group flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_rgba(0,255,255,0.15)] bg-white/5 border border-white/10 rounded-sm">
-          <div class="text-[10px] opacity-40 font-mono tracking-widest mb-4 group-hover:text-[var(--color-brand)] transition-colors">SECTOR 0x00</div>
-          <div class="font-art text-2xl md:text-4xl mb-3 group-hover:text-[var(--color-brand)] transition-colors">> Core.</div>
-          <div class="text-[10px] opacity-60 font-sans tracking-widest uppercase">3D Observation</div>
+          <div class="text-[10px] opacity-40 font-mono tracking-widest mb-4 group-hover:text-[var(--color-brand)] transition-colors">{{ garbledSectorCore }}</div>
+          <div class="font-art text-2xl md:text-4xl mb-3 group-hover:text-[var(--color-brand)] transition-colors">{{ garbledTitleCore }}</div>
+          <div class="text-[10px] opacity-60 font-sans tracking-widest uppercase">{{ garbledSubCore }}</div>
         </router-link>
 
         <!-- Option 2: Train -->
         <router-link to="/worldview/cloud" class="flex-1 cyber-glass p-8 md:p-12 cursor-pointer group flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_rgba(0,255,255,0.15)] bg-white/5 border border-white/10 rounded-sm">
-          <div class="text-[10px] opacity-40 font-mono tracking-widest mb-4 group-hover:text-[var(--color-brand)] transition-colors">SECTOR 0x2D</div>
-          <div class="font-art text-2xl md:text-4xl mb-3 group-hover:text-[var(--color-brand)] transition-colors">> Cloud.</div>
-          <div class="text-[10px] opacity-60 font-sans tracking-widest uppercase">2D Simulation</div>
+          <div class="text-[10px] opacity-40 font-mono tracking-widest mb-4 group-hover:text-[var(--color-brand)] transition-colors">{{ garbledSectorCloud }}</div>
+          <div class="font-art text-2xl md:text-4xl mb-3 group-hover:text-[var(--color-brand)] transition-colors">{{ garbledTitleCloud }}</div>
+          <div class="text-[10px] opacity-60 font-sans tracking-widest uppercase">{{ garbledSubCloud }}</div>
         </router-link>
 
       </div>

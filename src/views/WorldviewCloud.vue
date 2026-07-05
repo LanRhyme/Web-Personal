@@ -268,42 +268,73 @@ vec4 background(vec2 uv, float t){
 void main() {
     // Preserve aspect ratio mapping typical of Shadertoy (fragCoord / iResolution.y)
     vec2 fragCoord = vUv * iResolution;
+    
+    // --- PIXEL ART FILTER ---
+    // High-resolution pixel art style (detailed 3.0 pixel size matches Rain World)
+    float pixelSize = 3.0; 
+    fragCoord = floor(fragCoord / pixelSize) * pixelSize;
+    // ------------------------
+    
     vec2 uv = fragCoord / iResolution.y;
     // Offset X to center the view
     uv.x -= (iResolution.x / iResolution.y - 1.0) * 0.5;
 
     float t = iTime * 4.0;
+    
+    // --- Pre-calculate Tyndall Light Mask for Shadows ---
+    // Use parallel diagonal beams instead of a radial sunburst for distant sunlight
+    float beamAngle = -0.7; // Negative angle rotates the beams to slant from Top-Right to Bottom-Left
+    vec2 aspectUv = vUv;
+    aspectUv.x *= iResolution.x / iResolution.y; // Aspect correction so beams don't stretch
+    
+    // Rotate coordinates to align with beams
+    float sa = sin(beamAngle), ca = cos(beamAngle);
+    vec2 rayUv = mat2(ca, -sa, sa, ca) * aspectUv;
+    
+    // Generate noise: X creates the distinct beams, Y adds subtle breakup along their length
+    float rayNoise = fbm(vec2(rayUv.x * 5.0, rayUv.y * 0.4), 4);
+    float rayIntensity = smoothstep(0.45, 0.80, rayNoise);
+    
+    // Fade out beams smoothly towards the bottom-left of the screen
+    rayIntensity *= smoothstep(-0.2, 1.6, vUv.x + vUv.y);
     vec4 bg = background(uv, t);
     
     vec4 fgRaw = vec4(0.);
     int n = 5;
-    if (uv.y < 0.5) {
+    // Allow clouds to render much higher up to prevent large cloud puffs from clipping
+    if (uv.y < 0.8) {
         for (int i = 0; i < n; i++) {
             fgRaw += foreground(uv, t + 4.0 * float(i) / float(n) / 60.0) / float(n);
         }
     }
     
-    // ----- Grade Sky & Clouds (Cinematic Rain World) -----
-    // We convert the clouds to grayscale, then colorize them with a vertical 
-    // Rain World gradient (Toxic pollution at bottom -> Deep storm at top)
+    // ----- Grade Sky & Clouds (Stunning Volumetric Rain World) -----
+    // We isolate clouds from the empty sky by checking their red/blue warmth.
+    // Original sky is blue (cool), original clouds are orange/red (warm).
     
+    // Background Layer
     float bgLum = dot(bg.rgb, vec3(0.299, 0.587, 0.114));
+    float bgWarmth = smoothstep(0.0, 0.5, bg.r - bg.b + 0.2); // 0 = Sky, 1 = Cloud
     
-    vec3 toxicGlow = vec3(0.35, 0.45, 0.32); // Sickly green/yellow pollution
-    vec3 stormSky = vec3(0.03, 0.04, 0.06);  // Deep abyss storm
-    vec3 globalGradient = mix(toxicGlow, stormSky, smoothstep(0.0, 0.8, vUv.y));
+    // Directional Lighting (Sun from Top Right) + Tyndall Rays Mask
+    float baseSun = smoothstep(0.0, 1.5, vUv.x + vUv.y); 
+    // Reduce ray impact on clouds so it's a subtle highlight rather than a harsh glare
+    float cloudLightMask = baseSun * 0.7 + rayIntensity * 0.5;
     
-    // Map luminance to the gradient, boosting contrast so clouds pop
-    vec3 bgCol = globalGradient * pow(bgLum, 1.5) * 3.0;
+    vec3 skyColor = mix(vec3(0.08, 0.14, 0.20), vec3(0.15, 0.25, 0.30), bgLum); // Brightened stormy teal sky
+    vec3 cloudShadow = vec3(0.05, 0.18, 0.15); // Deep toxic green/teal shadows
+    vec3 cloudHighlight = vec3(0.90, 0.85, 0.40); // Stunning radioactive yellow/orange rim light
     
-    // Fade the very top to the website's pure dark background
-    float topFade = smoothstep(0.55, 1.0, vUv.y);
-    bgCol = mix(bgCol, vec3(0.01, 0.01, 0.015), topFade * 0.95);
+    // Apply local shadow: Clouds catch highlight mostly where Tyndall rays hit them
+    vec3 cloudColor = mix(cloudShadow, cloudHighlight, pow(bgLum, 1.3) * cloudLightMask);
     
-    // Do the exact same for foreground clouds
+    vec3 bgCol = mix(skyColor, cloudColor, bgWarmth);
+    
+    // Foreground Layer
     float fgLum = dot(fgRaw.rgb, vec3(0.299, 0.587, 0.114));
-    vec3 fgCol = globalGradient * pow(fgLum, 1.5) * 3.0;
-    fgCol = mix(fgCol, vec3(0.01, 0.01, 0.015), topFade * 0.95);
+    float fgWarmth = smoothstep(0.0, 0.5, fgRaw.r - fgRaw.b + 0.2);
+    vec3 fgCloudColor = mix(cloudShadow, cloudHighlight, pow(fgLum, 1.3) * cloudLightMask);
+    vec3 fgCol = mix(skyColor, fgCloudColor, fgWarmth);
     
     vec3 col = bgCol;
     // train /////////////////////////////////////////////////////////////////////
@@ -411,7 +442,12 @@ void main() {
     // Blend foreground clouds
     col = mix(col, fgCol, fgRaw.a);
 
-    // Apply intense procedural grain (Rain World grimy style)
+    // --- Tyndall Effect (God Rays Overlay) ---
+    vec3 godRayColor = vec3(0.85, 0.90, 0.45); // Toxic glowing yellow rays
+    // Lower opacity drastically for a subtle, natural atmospheric scattering
+    col += godRayColor * rayIntensity * 0.15;
+
+    // Procedural dithering/grain (Rain World grimy style) - quantized by pixel grid
     float grain = hash(uv + t) * 0.06;
     col -= grain;
     
@@ -420,7 +456,7 @@ void main() {
     float finalLum = dot(col, vec3(0.299, 0.587, 0.114));
     
     // Environment lighting blend: tint the whole scene slightly towards the toxic glow
-    vec3 envTint = mix(toxicGlow, stormSky, smoothstep(0.0, 0.6, uv.y));
+    vec3 envTint = mix(vec3(0.35, 0.45, 0.32), vec3(0.08, 0.14, 0.20), smoothstep(0.0, 0.6, uv.y));
     col = mix(col, col * envTint * 3.0, 0.2);
     
     col = mix(vec3(finalLum), col, 0.75); // 75% saturation
@@ -551,9 +587,6 @@ onUnmounted(() => {
       </div>
 
     </div>
-
-    <!-- Grain/Noise Overlay -->
-    <div class="absolute inset-0 z-30 pointer-events-none opacity-[0.15]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
   </div>
 </template>
 
