@@ -25,12 +25,14 @@ const shardConfigs = [
   { id: 9, path: 'polygon(45% 60%, 60% 50%, 70% 80%, 50% 90%)', z: 2, speed: 0.05, bx: 0.5, by: 1 },
 ];
 
-const shards = ref(shardConfigs.map(c => ({
+const shards = shardConfigs.map(c => ({
   ...c,
   tx: 0, ty: 0, rx: 0, ry: 0, scale: 1,
   px: 0, py: 0, pz: 0, prx: 0, pry: 0,
   vx: 0, vy: 0, vz: 0, vrx: 0, vry: 0
-})));
+}));
+
+const shardRefs = ref<HTMLElement[]>([]);
 
 let mouseX = 0;
 let mouseY = 0;
@@ -199,7 +201,7 @@ const animate = () => {
 
   const time = Date.now() * 0.001;
 
-  shards.value.forEach((shard) => {
+  shards.forEach((shard, index) => {
     // Parallax max offset - Compress layers together when clicked
     const baseMaxOffset = shard.z === 1 ? 15 : 40; 
     const maxOffset = baseMaxOffset * (1 - clickForce * 0.8);
@@ -246,6 +248,10 @@ const animate = () => {
     // Hover makes overlay pop out, Click presses everything inward
     const targetScale = (isHovering && shard.z === 2 ? 1.05 : 1) - (clickForce * 0.05);
     shard.scale += (targetScale - shard.scale) * 0.15;
+
+    if (shardRefs.value[index]) {
+      shardRefs.value[index].style.transform = `translate3d(${shard.tx}px, ${shard.ty}px, ${shard.z * 10 + shard.pz}px) rotateX(${shard.rx}deg) rotateY(${shard.ry}deg) scale(${shard.scale})`;
+    }
   });
 
   rafId = requestAnimationFrame(animate);
@@ -289,13 +295,13 @@ onUnmounted(() => {
     <!-- Shattered Glass Fragments -->
     <div class="shards-container absolute inset-0 z-10 w-full h-full perspective-[1000px]">
       <div 
-        v-for="shard in shards" 
+        v-for="(shard, index) in shards" 
         :key="shard.id"
+        :ref="el => { if (el) shardRefs[index] = el as HTMLElement }"
         class="shard absolute inset-0 w-full h-full transition-shadow duration-300"
         :class="{ 'is-overlay': shard.z > 1 }"
         :style="{
           clipPath: shard.path,
-          transform: `translate3d(${shard.tx}px, ${shard.ty}px, ${shard.z * 10 + shard.pz}px) rotateX(${shard.rx}deg) rotateY(${shard.ry}deg) scale(${shard.scale})`,
           zIndex: shard.z
         }"
       >

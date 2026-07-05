@@ -11,11 +11,11 @@ let animationId: number;
 const clock = new THREE.Clock();
 let lastTime = 0;
 
-const mouseX = ref(0);
-const mouseY = ref(0);
-const targetX = ref(0);
-const targetY = ref(0);
-const isGlitching = ref(false);
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+let isGlitching = false;
 let shockwaveStartTime = -100.0;
 let shockwaveX = 0.5;
 let shockwaveY = 0.5;
@@ -24,7 +24,7 @@ let warpVelocity = 0.0;
 
 const handleGlitch = (e: Event) => {
   const customEvent = e as CustomEvent;
-  isGlitching.value = customEvent.detail.active;
+  isGlitching = customEvent.detail.active;
 };
 
 const handleShockwave = (e: Event) => {
@@ -288,8 +288,8 @@ const animate = () => {
   
   // Frame-rate independent easing for incredibly smooth parallax on all devices
   const ease = 1.0 - Math.exp(-5.0 * delta);
-  targetX.value += (mouseX.value - targetX.value) * ease;
-  targetY.value += (mouseY.value - targetY.value) * ease;
+  targetX += (mouseX - targetX) * ease;
+  targetY += (mouseY - targetY) * ease;
   
   // Update warp physics (Critically damped spring targeting 0)
   const springStiffness = 4.0;
@@ -302,8 +302,8 @@ const animate = () => {
   if (planeMesh) {
     const mat = planeMesh.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = time;
-    mat.uniforms.uMouse.value.set(targetX.value, targetY.value);
-    mat.uniforms.uGlitch.value = isGlitching.value ? 1.0 : 0.0;
+    mat.uniforms.uMouse.value.set(targetX, targetY);
+    mat.uniforms.uGlitch.value = isGlitching ? 1.0 : 0.0;
     mat.uniforms.uShockwaveTime.value = time - shockwaveStartTime;
     mat.uniforms.uShockwavePos.value.set(shockwaveX, shockwaveY);
     mat.uniforms.uWarpPhase.value = warpPhase;
@@ -320,8 +320,8 @@ const onWindowResize = () => {
 };
 
 const onMouseMove = (event: MouseEvent) => {
-  mouseX.value = (event.clientX / window.innerWidth) * 2 - 1;
-  mouseY.value = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 };
 
 onMounted(() => {

@@ -62,7 +62,9 @@ let targetH = 24;
 let frameW = 24;
 let frameH = 24;
 
-const scrollProgress = ref(0);
+let scrollProgress = 0;
+const scrollBarRef = ref<HTMLElement | null>(null);
+const scrollTextRef = ref<HTMLElement | null>(null);
 
 const isHovering = ref(false);
 const isClicking = ref(false);
@@ -133,7 +135,8 @@ const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor;
 };
 
-const eyeRotation = ref(0);
+let eyeRotation = 0;
+const petEyeRef = ref<HTMLElement | null>(null);
 let lastHoveredElement: HTMLElement | null = null;
 let lastHoveredRect: DOMRect | null = null;
 
@@ -206,7 +209,15 @@ const renderCursor = () => {
   const petScreenY = window.innerHeight - 60;
   const dx = mouseX - petScreenX;
   const dy = mouseY - petScreenY;
-  eyeRotation.value = Math.atan2(dy, dx) * (180 / Math.PI);
+  eyeRotation = Math.atan2(dy, dx) * (180 / Math.PI);
+  
+  if (petEyeRef.value) {
+    petEyeRef.value.style.transform = `translateY(${Math.sin(eyeRotation) * 4}px)`;
+  }
+
+  // 7. Update glowing spotlight backdrop CSS variables throttled to rAF
+  document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
+  document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
 
   animationFrameId = requestAnimationFrame(renderCursor);
 };
@@ -215,10 +226,6 @@ const updateMouse = (e: MouseEvent) => {
   rawMouseX = e.clientX;
   rawMouseY = e.clientY;
   latestEventTarget = e.target as HTMLElement;
-
-  // Set CSS variables for high-end glowing spotlight backdrop in CSS (throttled to mousemove rate is fine, or inside rAF)
-  document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-  document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
 };
 
 const idleDialogues = [
@@ -464,7 +471,13 @@ onMounted(() => {
   }, { immediate: true });
   
   lenis.on('scroll', (e: any) => {
-    scrollProgress.value = e.progress;
+    scrollProgress = e.progress;
+    if (scrollBarRef.value) {
+      scrollBarRef.value.style.height = `${scrollProgress * 100}%`;
+    }
+    if (scrollTextRef.value) {
+      scrollTextRef.value.textContent = `${Math.round(scrollProgress * 100)}%`;
+    }
     lastHoveredRect = null;
   });
   
@@ -491,8 +504,11 @@ onMounted(() => {
   const petScreenY = window.innerHeight - 60;
   const dx = mouseX - petScreenX;
   const dy = mouseY - petScreenY;
-  eyeRotation.value = Math.atan2(dy, dx) * (180 / Math.PI);
-
+  eyeRotation = Math.atan2(dy, dx) * (180 / Math.PI);
+  
+  if (petEyeRef.value) {
+    petEyeRef.value.style.transform = `translateY(${Math.sin(eyeRotation) * 4}px)`;
+  }
   renderCursor();
   
   setTimeout(() => {
@@ -589,10 +605,10 @@ onUnmounted(() => {
           <div class="relative w-8 h-8 border border-[var(--color-text-dim)] group-hover:border-[var(--color-brand)] flex items-center justify-center transition-all duration-300 overflow-hidden bg-black -rotate-45">
             <!-- The Eye/Sensor -->
             <div 
+              ref="petEyeRef"
               class="w-full h-1 transition-all duration-300 shadow-[0_0_10px_currentColor]"
               :class="petDark ? 'bg-red-800 group-hover:bg-red-600' : 'bg-[var(--color-text-dim)] group-hover:bg-[var(--color-brand)]'"
               :style="{ 
-                transform: `translateY(${Math.sin(eyeRotation) * 4}px)`,
                 height: petState === 'happy' ? '4px' : '2px'
               }"
             ></div>
@@ -653,8 +669,8 @@ onUnmounted(() => {
       
       <!-- Scroll Progress Tracker -->
       <div class="absolute top-[30%] right-[3%] w-[1px] h-[40%] bg-[var(--color-border)] opacity-40">
-        <div class="w-[3px] bg-white -ml-[1px] transition-all duration-75 shadow-[0_0_8px_rgba(255,255,255,0.8)]" :style="{ height: `${scrollProgress * 100}%` }"></div>
-        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white tracking-widest">{{ Math.round(scrollProgress * 100) }}%</div>
+        <div ref="scrollBarRef" class="w-[3px] bg-white -ml-[1px] transition-all duration-75 shadow-[0_0_8px_rgba(255,255,255,0.8)]" style="height: 0%"></div>
+        <div ref="scrollTextRef" class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white tracking-widest">0%</div>
       </div>
 
       <!-- Top Left Data -->
