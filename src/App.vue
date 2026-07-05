@@ -39,7 +39,7 @@ const handlePreloaderComplete = () => {
 };
 
 const isAdmin = computed(() => route.path.startsWith('/admin'));
-const isWorldview = computed(() => route.path === '/worldview');
+const isWorldview = computed(() => route.path === '/worldview/core' || route.path === '/worldview/cloud');
 
 // --- Custom Physics Cursor (Square Framing style) ---
 const cursorDotRef = ref<HTMLElement | null>(null);
