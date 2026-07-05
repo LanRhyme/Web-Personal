@@ -25,7 +25,7 @@ const router = useRouter();
 const scrollY = ref(0);
 const handleScroll = () => { scrollY.value = window.scrollY; };
 
-useScrollReveal();
+const { setup: initScrollReveal } = useScrollReveal();
 
 const groupedArticles = computed(() => {
   const sorted = [...articles.value].sort((a, b) => {
@@ -82,6 +82,11 @@ onMounted(async () => {
     console.error(e);
   } finally {
     loading.value = false;
+    nextTick(() => {
+      setTimeout(() => {
+        initScrollReveal();
+      }, 100);
+    });
   }
   
   window.addEventListener('scroll', handleScroll, { passive: true });
