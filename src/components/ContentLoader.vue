@@ -88,6 +88,7 @@ onMounted(() => {
   }
 
   const finishLoading = () => {
+    anime.remove(progress); // Interrupt any running progress animation
     anime({
       targets: progress,
       value: [progress.value, 100],
@@ -98,30 +99,27 @@ onMounted(() => {
         isFadingOut.value = true;
         setTimeout(() => {
           emit('complete');
-        }, 500); // 500ms fade out before showing real content
+        }, 400); // slightly faster fade out
       }
     });
   };
 
+  // Start progress animation
   anime({
     targets: progress,
     value: [0, 99],
     round: 1,
-    duration: 1500,
-    easing: 'easeOutQuint',
-    complete: () => {
-      if (isAllLoaded && props.ready) {
-        finishLoading();
-      } else {
-        checkInterval = window.setInterval(() => {
-          if (isAllLoaded && props.ready) {
-            if (checkInterval) clearInterval(checkInterval);
-            finishLoading();
-          }
-        }, 100);
-      }
-    }
+    duration: 10000, // Slow crawl up to 99% if loading takes long
+    easing: 'easeOutQuart'
   });
+
+  // Frequently check if we are ready
+  checkInterval = window.setInterval(() => {
+    if (isAllLoaded && props.ready) {
+      if (checkInterval) clearInterval(checkInterval);
+      finishLoading();
+    }
+  }, 50);
 });
 
 onUnmounted(() => {
