@@ -5,7 +5,6 @@ import Home from '../views/Home.vue';
 const Projects = () => import('../views/Projects.vue');
 const Works = () => import('../views/Works.vue');
 const Commissions = () => import('../views/Commissions.vue');
-const Github = () => import('../views/Github.vue');
 const Admin = () => import('../views/Admin.vue');
 const Games = () => import('../views/Games.vue');
 const Articles = () => import('../views/Articles.vue');
@@ -38,7 +37,7 @@ export const preloadOtherPages = () => {
 
   if (shouldPreload) {
     const componentsToPreload = [
-      Projects, Works, Commissions, Github, Admin, Games, Articles, ArticleDetail, TerminalView, PhysicalView, WorldviewPortal, Worldview, WorldviewCloud
+      Projects, Works, Commissions, Admin, Games, Articles, ArticleDetail, TerminalView, PhysicalView, WorldviewPortal, Worldview, WorldviewCloud
     ];
 
     const load = () => {
@@ -61,7 +60,6 @@ const routes = [
   { path: '/projects', component: Projects },
   { path: '/works', component: Works },
   { path: '/commissions', component: Commissions },
-  { path: '/github', component: Github },
   { path: '/games', component: Games },
   { path: '/admin', component: Admin },
   { path: '/articles', component: Articles },

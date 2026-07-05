@@ -2,7 +2,10 @@
 import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
+import ContentLoader from '../components/ContentLoader.vue';
 import Prism from 'prismjs';
+
+const isLoaded = ref(false);
 
 interface ArticleConfig {
   title?: string;
@@ -195,25 +198,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen w-full bg-[var(--color-bg)] transition-colors duration-500 font-sans">
-    <div v-if="loading" class="flex items-center justify-center min-h-screen">
-      <div class="cursor-blink"></div>
-    </div>
+  <div class="min-h-screen w-full bg-transparent transition-colors duration-500 font-sans">
+    
+    <ContentLoader v-if="!isLoaded" :ready="!loading" @complete="isLoaded = true" />
 
-    <div v-else-if="error" class="flex flex-col items-center justify-center min-h-screen">
-      <div class="w-16 h-16 border border-red-500 text-red-500 flex items-center justify-center mb-4 cyber-glass">
-        <i class="fas fa-exclamation-triangle text-xl"></i>
+    <div v-show="isLoaded" class="transition-opacity duration-700 w-full min-h-screen" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }">
+      <div v-if="error" class="flex flex-col items-center justify-center min-h-screen">
+        <div class="w-16 h-16 border border-red-500 text-red-500 flex items-center justify-center mb-4 cyber-glass">
+          <i class="fas fa-exclamation-triangle text-xl"></i>
+        </div>
+        <p class="text-xs text-[var(--color-secondary)] mb-6 font-mono tracking-widest">> ERROR: {{ error }}</p>
+        <button @click="goBack" class="btn-terminal">
+          [ BACK.SYS ]
+        </button>
       </div>
-      <p class="text-xs text-[var(--color-secondary)] mb-6 font-mono tracking-widest">> ERROR: {{ error }}</p>
-      <button @click="goBack" class="btn-terminal">
-        [ BACK.SYS ]
-      </button>
-    </div>
 
-    <article v-else-if="article" class="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
-      <button @click="goBack" class="btn-terminal mb-8">
-        [ SYS.RETURN ]
-      </button>
+      <article v-else-if="article" class="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+        <button @click="goBack" class="btn-terminal mb-8">
+          [ SYS.RETURN ]
+        </button>
 
       <div class="cyber-glass p-6 md:p-8 mb-8 relative">
         <div class="absolute -top-3 -left-3 font-art text-[60px] leading-none opacity-5 text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap overflow-hidden">HEADER</div>
@@ -245,6 +248,7 @@ onMounted(async () => {
         [回声木数据节点·备份] 此处保存了烬的研究数据碎片。解码路径：L3ZvaWQtZWNoby10ZXJtaW5hbA==
       </div>
     </article>
+    </div>
   </div>
 </template>
 

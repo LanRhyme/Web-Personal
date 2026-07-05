@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import ContentLoader from '../components/ContentLoader.vue';
 import * as THREE from 'three';
+
+const isLoaded = ref(false);
+const threeReady = ref(false);
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -370,6 +374,11 @@ const onWindowResize = () => {
 
 const animate = () => {
   animationId = requestAnimationFrame(animate);
+
+  if (!threeReady.value) {
+    threeReady.value = true;
+  }
+
   const time = clock.getElapsedTime();
   const delta = clock.getDelta();
 
@@ -513,8 +522,13 @@ onUnmounted(() => {
 
 <template>
   <div class="worldview-container relative w-full h-screen overflow-hidden bg-[#030305] text-white selection:bg-white selection:text-black">
+    
+    <div v-if="!isLoaded" class="absolute inset-0 z-[100] flex flex-col justify-center items-center bg-[#030305]">
+      <ContentLoader :ready="threeReady" @complete="isLoaded = true" />
+    </div>
+
     <!-- Three.js Canvas -->
-    <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-crosshair"></div>
+    <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-crosshair transition-opacity duration-1000" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }"></div>
 
     <!-- HUD Overlay -->
     <div class="absolute inset-0 pointer-events-none z-10 p-6 md:p-12 lg:p-16 mix-blend-difference flex flex-col justify-end items-start gap-8">

@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, onUnmounted } from 'vue';
 import anime from 'animejs';
 
+const props = withDefaults(defineProps<{
+  images?: string[],
+  ready?: boolean
+}>(), {
+  images: () => [],
+  ready: true
+});
+
 const emit = defineEmits(['complete']);
-const isClosing = ref(false);
-const isDone = ref(false);
 
 const outerGroup = ref<SVGGElement | null>(null);
 const innerGroup = ref<SVGGElement | null>(null);
-
 const outerPath = ref<SVGPathElement | null>(null);
 const middlePath = ref<SVGPathElement | null>(null);
 const innerPath = ref<SVGPathElement | null>(null);
@@ -18,7 +23,7 @@ const progressText = computed(() => {
   return `${Math.floor(progress.value).toString().padStart(3, '0')}%`;
 });
 
-// SVG Path Morphing Coordinate Definitions (Highly asymmetrical, high-amplitude shapes for dramatic, organic morphing)
+// Shapes
 const outerShapes = {
   A: "M 100,20 C 145,20 180,55 180,100 C 180,145 145,180 100,180 C 55,180 20,145 20,100 C 20,55 55,20 100,20 Z",
   B: "M 100,45 C 160,10 195,65 190,110 C 185,155 120,195 100,165 C 80,135 10,135 15,90 C 20,45 40,80 100,45 Z",
@@ -37,10 +42,12 @@ const innerShapes = {
   C: "M 100,65 C 110,80 138,75 130,97 C 122,119 135,138 103,135 C 71,132 75,110 72,103 C 69,96 90,65 100,65 Z"
 };
 
+let checkInterval: number | null = null;
+const isFadingOut = ref(false);
+
 onMounted(() => {
   const morphDuration = 1200;
   
-  // 1. Setup path morph loops
   const setupMorph = (pathRef: SVGPathElement | null, shapes: { A: string, B: string, C: string }, delay = 0) => {
     if (!pathRef) return;
     anime({
@@ -60,50 +67,38 @@ onMounted(() => {
   setupMorph(middlePath.value, middleShapes, 100);
   setupMorph(innerPath.value, innerShapes, 200);
 
-  // 2. Setup rotation parallax
   if (outerGroup.value) {
-    anime({
-      targets: outerGroup.value,
-      rotate: 360,
-      duration: 15000,
-      easing: 'linear',
-      loop: true
-    });
+    anime({ targets: outerGroup.value, rotate: 360, duration: 15000, easing: 'linear', loop: true });
   }
   if (innerGroup.value) {
-    anime({
-      targets: innerGroup.value,
-      rotate: -360,
-      duration: 10000,
-      easing: 'linear',
-      loop: true
-    });
+    anime({ targets: innerGroup.value, rotate: -360, duration: 10000, easing: 'linear', loop: true });
   }
 
-  // 3. Image preloading & Numerical progress animation
-  let isImageLoaded = false;
-  const bgImg = new Image();
-  bgImg.src = '/bg-image.png';
-  bgImg.onload = () => {
-    isImageLoaded = true;
-  };
-  bgImg.onerror = () => {
-    isImageLoaded = true;
-  };
+  let loadedCount = 0;
+  let targetCount = props.images.length;
+  let isAllLoaded = targetCount === 0;
+
+  if (targetCount > 0) {
+    props.images.forEach(src => {
+      const img = new Image();
+      img.onload = () => { loadedCount++; if (loadedCount >= targetCount) isAllLoaded = true; };
+      img.onerror = () => { loadedCount++; if (loadedCount >= targetCount) isAllLoaded = true; };
+      img.src = src;
+    });
+  }
 
   const finishLoading = () => {
     anime({
       targets: progress,
       value: [progress.value, 100],
       round: 1,
-      duration: 400,
+      duration: 300,
       easing: 'easeOutQuad',
       complete: () => {
-        emit('complete');
-        isClosing.value = true;
+        isFadingOut.value = true;
         setTimeout(() => {
-          isDone.value = true;
-        }, 1500);
+          emit('complete');
+        }, 500); // 500ms fade out before showing real content
       }
     });
   };
@@ -112,15 +107,15 @@ onMounted(() => {
     targets: progress,
     value: [0, 99],
     round: 1,
-    duration: 1800,
+    duration: 1500,
     easing: 'easeOutQuint',
     complete: () => {
-      if (isImageLoaded) {
+      if (isAllLoaded && props.ready) {
         finishLoading();
       } else {
-        const checkInterval = setInterval(() => {
-          if (isImageLoaded) {
-            clearInterval(checkInterval);
+        checkInterval = window.setInterval(() => {
+          if (isAllLoaded && props.ready) {
+            if (checkInterval) clearInterval(checkInterval);
             finishLoading();
           }
         }, 100);
@@ -128,78 +123,37 @@ onMounted(() => {
     }
   });
 });
+
+onUnmounted(() => {
+  if (checkInterval) clearInterval(checkInterval);
+});
 </script>
 
 <template>
   <div 
-    v-if="!isDone"
-    class="fixed inset-0 z-[99999] bg-[var(--color-bg)] flex flex-col justify-center items-center overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
-    :class="{ 'opacity-0 scale-[1.05] pointer-events-none blur-[10px]': isClosing }"
+    class="flex flex-col justify-center items-center w-full min-h-[75vh] transition-opacity duration-500"
+    :class="{ 'opacity-0': isFadingOut }"
   >
-    <!-- Background Watermark: Photosensitive Epilepsy Warning -->
-    <div class="absolute inset-0 z-0 flex flex-col justify-center items-center pointer-events-none opacity-[0.03] select-none font-mono">
-      <div class="text-[6vw] font-black tracking-[0.2em] text-white uppercase text-center leading-none animate-pulse">
-        [ 警告 // WARNING ]
-      </div>
-      <div class="text-[2.6vw] font-bold tracking-[0.2em] text-white text-center mt-8 max-w-[85%] leading-relaxed">
-        光敏性癫痫警告：本网站包含高频闪烁及强烈的屏幕抖动特效，光敏性癫痫患者请谨慎浏览
-      </div>
-      <div class="text-[1.2vw] font-bold tracking-[0.3em] text-white text-center mt-6 max-w-[85%] uppercase leading-relaxed opacity-70">
-        PHOTOSENSITIVE EPILEPSY WARNING: THIS SITE CONTAINS FLASHING LIGHTS AND INTENSE MOTION/SHAKING EFFECTS. VIEW WITH CAUTION.
-      </div>
-    </div>
-
-    <div 
-      class="relative z-10 flex flex-col items-center select-none transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
-      :class="{ 'translate-y-[-40px] opacity-0': isClosing }"
-    >
-      <!-- Premium SVG Topography Loader -->
+    <div class="relative z-10 flex flex-col items-center select-none">
       <svg width="240" height="240" viewBox="0 0 200 200" class="preloader-svg">
         <defs>
-          <filter id="loader-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id="loader-glow-content" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
         
-        <!-- Outer Topography Ring -->
         <g ref="outerGroup" style="transform-origin: 100px 100px;">
-          <path 
-            ref="outerPath" 
-            :d="outerShapes.A" 
-            fill="none" 
-            stroke="var(--color-brand)" 
-            stroke-opacity="0.18" 
-            stroke-width="1"
-            stroke-dasharray="3 3"
-          />
+          <path ref="outerPath" :d="outerShapes.A" fill="none" stroke="var(--color-brand)" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="3 3" />
         </g>
         
-        <!-- Middle Topography Ring -->
-        <path 
-          ref="middlePath" 
-          :d="middleShapes.A" 
-          fill="none" 
-          stroke="var(--color-brand)" 
-          stroke-opacity="0.45" 
-          stroke-width="1.2"
-        />
+        <path ref="middlePath" :d="middleShapes.A" fill="none" stroke="var(--color-brand)" stroke-opacity="0.45" stroke-width="1.2" />
         
-        <!-- Inner Topography Ring -->
         <g ref="innerGroup" style="transform-origin: 100px 100px;">
-          <path 
-            ref="innerPath" 
-            :d="innerShapes.A" 
-            fill="none" 
-            stroke="var(--color-brand)" 
-            stroke-opacity="0.75" 
-            stroke-width="1.5"
-            filter="url(#loader-glow)"
-          />
+          <path ref="innerPath" :d="innerShapes.A" fill="none" stroke="var(--color-brand)" stroke-opacity="0.75" stroke-width="1.5" filter="url(#loader-glow-content)" />
         </g>
       </svg>
       
-      <!-- Minimalist Mono Percent Loader -->
       <div class="loader-counter mt-6 font-mono text-[11px] text-[var(--color-brand)] opacity-70 tracking-[0.3em]">
         [ {{ progressText }} ]
       </div>

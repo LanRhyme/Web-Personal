@@ -2,6 +2,9 @@
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useScrollReveal } from '../composables/useScrollReveal';
+import ContentLoader from '../components/ContentLoader.vue';
+
+const isLoaded = ref(false);
 
 interface Article {
   slug: string;
@@ -126,24 +129,22 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
-        <div class="w-12 h-12 border-2 border-t-[var(--color-brand)] border-r-[var(--color-brand)] border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-        <div class="text-[var(--color-brand)] font-mono text-sm tracking-widest animate-pulse">LOADING_DATA...</div>
-      </div>
+      <ContentLoader v-if="!isLoaded" :ready="!loading" @complete="isLoaded = true" />
 
-      <div v-else-if="error" class="cyber-glass text-center py-20 text-red-400 font-mono flex flex-col items-center gap-4">
-        <i class="fas fa-exclamation-triangle text-3xl"></i>
-        <span>{{ error }}</span>
-      </div>
-
-      <div v-else-if="articles.length === 0" class="cyber-glass text-center py-32 flex flex-col items-center gap-4">
-        <div class="w-20 h-20 border border-dashed border-[var(--color-text)] flex items-center justify-center rounded bg-[var(--color-text)]/5">
-          <i class="fas fa-feather text-[var(--color-text-dim)] text-2xl opacity-60"></i>
+      <div v-show="isLoaded" class="transition-opacity duration-700" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }">
+        <div v-if="error" class="cyber-glass text-center py-20 text-red-400 font-mono flex flex-col items-center gap-4">
+          <i class="fas fa-exclamation-triangle text-3xl"></i>
+          <span>{{ error }}</span>
         </div>
-        <p class="text-sm font-mono text-[var(--color-text-dim)] tracking-widest">暂无文章 // NO_RECORDS</p>
-      </div>
 
-      <div v-else class="space-y-16">
+        <div v-else-if="articles.length === 0" class="cyber-glass text-center py-32 flex flex-col items-center gap-4">
+          <div class="w-20 h-20 border border-dashed border-[var(--color-text)] flex items-center justify-center rounded bg-[var(--color-text)]/5">
+            <i class="fas fa-feather text-[var(--color-text-dim)] text-2xl opacity-60"></i>
+          </div>
+          <p class="text-sm font-mono text-[var(--color-text-dim)] tracking-widest">暂无文章 // NO_RECORDS</p>
+        </div>
+
+        <div v-else class="space-y-16">
         <div v-for="year in groupedArticles.years" :key="year" class="font-mono">
           <div class="reveal flex items-center gap-4 border-b border-[var(--color-border)] pb-3 mb-6 opacity-80 text-[13px] uppercase tracking-widest text-[var(--color-brand)]">
             <span class="font-bold">> ARCHIVE_YEAR: {{ year }}</span>
@@ -199,6 +200,7 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>

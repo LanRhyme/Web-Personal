@@ -5,7 +5,9 @@
     <div class="hud-corner hud-tr hidden md:block"></div>
     <div class="scanlines"></div>
 
-    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 w-full relative z-10">
+    <ContentLoader v-if="!isLoaded" :images="worksImages" @complete="isLoaded = true" />
+
+    <div v-show="isLoaded" class="max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 w-full relative z-10 transition-opacity duration-700" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }">
       
       <!-- Enhanced Hero Section -->
       <section class="w-full relative mb-16 md:mb-24 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 pt-12 md:pt-0" id="works-intro" v-show="currentView === 'all'">
@@ -239,6 +241,7 @@ import { ref, computed, onMounted, onUnmounted, reactive } from 'vue';
 import worksData from '../data/works.json';
 import sectionsData from '../data/works_section.json';
 import { useScrollReveal } from '../composables/useScrollReveal';
+import ContentLoader from '../components/ContentLoader.vue';
 
 const scrollY = ref(0);
 const handleScroll = () => { scrollY.value = window.scrollY; };
@@ -269,6 +272,15 @@ allIndividualWorks.value.forEach(work => worksMap.set(work.id, work));
 const currentView = ref<'all' | 'portfolio'>('all');
 const currentPortfolioId = ref<string | null>(null);
 const isTransitioning = ref(false);
+const isLoaded = ref(false);
+
+const worksImages = computed(() => {
+  if (currentView.value === 'all') {
+    return allPortfolios.value.map(p => getImageUrl(p.thumbnail)).filter(Boolean);
+  } else {
+    return displayedWorks.value.map(w => getImageUrl(w.image)).filter(Boolean);
+  }
+});
 
 const currentPortfolioTitle = computed(() => {
   if (currentPortfolioId.value) {
@@ -301,6 +313,7 @@ const switchToPortfolio = (portfolio: Portfolio) => {
     currentView.value = 'portfolio';
     currentPortfolioId.value = portfolio.id;
     isTransitioning.value = false;
+    isLoaded.value = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, 300);
 };
@@ -311,6 +324,7 @@ const switchToAllWorks = () => {
     currentView.value = 'all';
     currentPortfolioId.value = null;
     isTransitioning.value = false;
+    isLoaded.value = false;
   }, 300);
 };
 

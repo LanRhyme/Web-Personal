@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import projectsData from '../data/projects.json';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useARGState } from '../composables/useARGState';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import ParticleSymbol from '../components/ParticleSymbol.vue';
+import ContentLoader from '../components/ContentLoader.vue';
 
 interface Project {
   image: string;
@@ -25,6 +26,11 @@ const { addKey, hasKey, argStarted } = useARGState();
 const clickSequence = ref<number[]>([]);
 const isShakeActive = ref(false);
 const hoveredIndex = ref<number | null>(null);
+
+const isLoaded = ref(false);
+const projectImages = computed(() => {
+  return projects.map(p => getImageUrl(p.image)).filter(Boolean);
+});
 
 const symbols = {
   form: 'M50 25 C30 25 20 40 20 50 C20 65 35 75 50 75 C65 75 80 65 80 50 C80 40 70 25 50 25 M35 45 L45 55 L65 35',
@@ -113,7 +119,9 @@ const handleProjectClick = (index: number) => {
       SYS.DEPLOYMENT_NODES // 0x{{ Math.random().toString(16).substring(2, 6).toUpperCase() }}
     </div>
 
-    <div class="max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 relative z-10">
+    <ContentLoader v-if="!isLoaded" :images="projectImages" @complete="isLoaded = true" />
+
+    <div v-show="isLoaded" class="max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 relative z-10 transition-opacity duration-700" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }">
       
       <!-- Enhanced Hero Section -->
       <div class="relative mb-16 md:mb-24 flex flex-col md:flex-row md:justify-between md:items-end gap-6 pt-12 md:pt-0">

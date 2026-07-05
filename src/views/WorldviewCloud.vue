@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import ContentLoader from '../components/ContentLoader.vue';
 import * as THREE from 'three';
+
+const isLoaded = ref(false);
+const threeReady = ref(false);
 
 const canvasContainer = ref<HTMLElement | null>(null);
 
@@ -519,6 +523,11 @@ const onWindowResize = () => {
 
 const animate = () => {
   animationId = requestAnimationFrame(animate);
+  
+  if (!threeReady.value) {
+    threeReady.value = true;
+  }
+  
   const time = clock.getElapsedTime();
 
   if (material) {
@@ -559,8 +568,13 @@ onUnmounted(() => {
 
 <template>
   <div class="worldview-container relative w-full h-screen overflow-hidden bg-[#010102] text-white selection:bg-cyan-500 selection:text-black">
+    
+    <div v-if="!isLoaded" class="absolute inset-0 z-[100] flex flex-col justify-center items-center bg-[#010102]">
+      <ContentLoader :ready="threeReady" @complete="isLoaded = true" />
+    </div>
+
     <!-- Three.js Canvas -->
-    <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-crosshair"></div>
+    <div ref="canvasContainer" class="absolute inset-0 z-0 cursor-crosshair transition-opacity duration-1000" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }"></div>
 
     <!-- HUD Overlay -->
     <div class="absolute inset-0 pointer-events-none z-10 p-6 md:p-12 lg:p-16 mix-blend-screen flex flex-col justify-end items-start gap-8">

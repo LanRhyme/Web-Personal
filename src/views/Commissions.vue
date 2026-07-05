@@ -5,7 +5,9 @@
     <div class="hud-corner hud-tr hidden md:block"></div>
     <div class="scanlines"></div>
 
-    <div class="w-full flex flex-col items-center gap-12 md:gap-16 max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 relative z-10">
+    <ContentLoader v-if="!isLoaded" :images="commissionImages" @complete="isLoaded = true" />
+
+    <div v-show="isLoaded" class="w-full flex flex-col items-center gap-12 md:gap-16 max-w-[1400px] mx-auto px-4 md:px-12 py-12 md:py-20 relative z-10 transition-opacity duration-700" :class="{ 'opacity-0': !isLoaded, 'opacity-100': isLoaded }">
 
       <!-- Enhanced Hero Section -->
       <div class="w-full relative mb-12 md:mb-16 flex flex-col pt-8 md:pt-0 border-b border-[var(--color-border)] pb-4 md:pb-6">
@@ -253,9 +255,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import commissionsData from '../data/commissions.json';
+import ContentLoader from '../components/ContentLoader.vue';
+
+const isLoaded = ref(false);
 
 interface CommissionItem {
   title: string;
@@ -275,6 +280,12 @@ const priceList = reactive<CommissionItem[]>(commissionsData.priceList.map(item 
 const showPaymentModal = ref(false);
 const showImageModal = ref(false);
 const modalImageUrl = ref('');
+
+const commissionImages = computed(() => {
+  const imgs = priceList.flatMap(item => item.images);
+  imgs.push('/img/wx.jpg', '/img/zfb.jpg');
+  return imgs.map(img => getImageUrl(img)).filter(Boolean);
+});
 
 const getImageUrl = (path: string) => {
   if (path.startsWith('http')) return path;
