@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import * as THREE from 'three';
 
 const containerRef = ref<HTMLElement | null>(null);
+const bgImageRef = ref<HTMLElement | null>(null);
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -228,9 +229,9 @@ const initThree = () => {
         float glowWidth = isMajor ? 2.5 * df : 0.0;
         float glowAlpha = isMajor ? (1.0 - smoothstep(0.0, glowWidth, distToLine)) * 0.4 : 0.0;
 
-        // Base color: clean monochrome grey/silver shades
-        vec3 colDeep = vec3(0.35, 0.35, 0.35); 
-        vec3 colHigh = vec3(0.75, 0.75, 0.75); 
+        // Base color: mid-tones
+        vec3 colDeep = vec3(0.25, 0.25, 0.25); 
+        vec3 colHigh = vec3(0.55, 0.55, 0.55);
         
         // Color mix based on elevation
         vec3 baseColor = mix(colDeep, colHigh, noiseVal);
@@ -239,12 +240,12 @@ const initThree = () => {
         // Combine crisp line and glow
         float totalAlpha = lineAlpha + glowAlpha;
         
-        // 4-Tier Opacity System (Range updated to 40% - 60% opacity)
+        // 4-Tier Opacity System: middle ground for major, slightly raised for minor/micro
         float opacityMult = 0.0;
-        if (isMajor) opacityMult = 0.60;
-        else if (isInter) opacityMult = 0.53;
-        else if (isMinor) opacityMult = 0.47;
-        else opacityMult = 0.40; 
+        if (isMajor) opacityMult = 0.15;
+        else if (isInter) opacityMult = 0.10;
+        else if (isMinor) opacityMult = 0.04;
+        else opacityMult = 0.015;
 
         if (uGlitch > 0.5) {
             finalColor = vec3(1.0, 1.0, 1.0); // Pure white when glitching
@@ -299,6 +300,17 @@ const animate = () => {
   warpVelocity += force * delta;
   warpPhase += warpVelocity * delta;
 
+  if (bgImageRef.value) {
+    // Background image parallax & breathing animation
+    // Parallax moves opposite to the contour lines for a deep 3D effect
+    const shiftX = targetX * -15; 
+    const shiftY = targetY * 15; // Invert Y so it moves naturally
+    // Slow breathing scale: ranges from 1.0 to 1.05 over time
+    const scale = 1.025 + 0.025 * Math.sin(time * 0.15);
+    
+    bgImageRef.value.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0) scale(${scale})`;
+  }
+
   if (planeMesh) {
     const mat = planeMesh.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = time;
@@ -350,9 +362,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed inset-0 pointer-events-none z-[-1]">
-    <div ref="containerRef" class="absolute inset-0"></div>
-    <!-- Gray-green / Original background color mask with 90% opacity -->
-    <div class="absolute inset-0 bg-[var(--color-bg)] opacity-90"></div>
+  <div class="fixed inset-0 pointer-events-none z-[-1] bg-[var(--color-bg)] overflow-hidden">
+    <!-- 底层背景图：放大并偏移边界，配合 JS 实现呼吸与视差动画 -->
+    <div 
+      ref="bgImageRef" 
+      class="absolute inset-[-40px] bg-[url('/bg-image.png')] bg-cover bg-center opacity-15 will-change-transform"
+    ></div>
+    
+    <!-- 等高线层：移除外部强行降透，让 GLSL 的适中参数自然发光 -->
+    <div ref="containerRef" class="absolute inset-0 mix-blend-screen"></div>
   </div>
 </template>

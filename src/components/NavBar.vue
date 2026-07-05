@@ -3,7 +3,9 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const currentTime = ref('');
+let currentTime = '';
+const timeRefDesktop = ref<HTMLElement | null>(null);
+const timeRefMobile = ref<HTMLElement | null>(null);
 const mouseCoords = ref({ x: 0, y: 0 });
 const isMenuOpen = ref(false);
 
@@ -11,7 +13,9 @@ let timeInterval: number;
 
 const updateTime = () => {
   const now = new Date();
-  currentTime.value = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + Math.floor(now.getMilliseconds() / 100).toString();
+  currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + Math.floor(now.getMilliseconds() / 100).toString();
+  if (timeRefDesktop.value) timeRefDesktop.value.textContent = 'T: ' + currentTime;
+  if (timeRefMobile.value) timeRefMobile.value.textContent = 'T: ' + currentTime;
 };
 
 const handleMouseMove = (e: MouseEvent) => {
@@ -78,14 +82,20 @@ onMounted(() => {
   
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
   garbleInterval = window.setInterval(() => {
-    const worldviewItem = navItems.value.find(item => item.path === '/worldview');
-    if (worldviewItem) {
-      let garbled = "";
-      for (let i = 0; i < 10; i++) {
-        garbled += letters[Math.floor(Math.random() * letters.length)];
-      }
-      worldviewItem.name = garbled;
+    let garbled = "";
+    for (let i = 0; i < 10; i++) {
+      garbled += letters[Math.floor(Math.random() * letters.length)];
     }
+    
+    // Update Desktop Nav
+    document.querySelectorAll('.group\\/link[data-value="0xERR_&$#@"] .scramble-target').forEach(el => {
+      if (el) el.textContent = garbled;
+    });
+    
+    // Update Mobile Nav
+    document.querySelectorAll('nav.relative.z-10 a[href$="/worldview"] span.relative.z-10').forEach(el => {
+      if (el) el.textContent = garbled;
+    });
   }, 80);
 });
 
@@ -115,7 +125,7 @@ onUnmounted(() => {
         </div>
         
         <div class="flex items-center gap-3">
-          <span class="font-mono text-[var(--color-brand)] tracking-widest">T: {{ currentTime }}</span>
+          <span ref="timeRefDesktop" class="font-mono text-[var(--color-brand)] tracking-widest">T: {{ currentTime }}</span>
         </div>
       </div>
 
@@ -171,7 +181,7 @@ onUnmounted(() => {
       <div class="absolute top-6 left-6 text-[10px] font-mono opacity-50 tracking-[0.2em] flex flex-col gap-1 pointer-events-none">
         <span class="text-[var(--color-brand)]">> SYS.OVERRIDE</span>
         <span>UI.STATE: MOBILE_NAV</span>
-        <span>T: {{ currentTime }}</span>
+        <span ref="timeRefMobile">T: {{ currentTime }}</span>
       </div>
 
       <nav class="flex flex-col items-start gap-8 w-[240px] relative z-10 font-mono text-xl tracking-[0.2em] uppercase mt-10">

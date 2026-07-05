@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRainCycle } from '../composables/useRainCycle';
 
 const rainCanvasRef = ref<HTMLCanvasElement | null>(null);
+const containerRef = ref<HTMLElement | null>(null);
+const mistRef = ref<HTMLElement | null>(null);
 let animId: number;
 
 const { intensity } = useRainCycle();
@@ -113,6 +115,19 @@ onMounted(() => {
       ctx.fillRect(0, 0, logicalW, logicalH);
     }
 
+    // Update DOM styles without triggering Vue reactivity patch
+    if (containerRef.value) {
+      containerRef.value.style.opacity = String(Math.max(0.15, 0.6 + intensity.value * 0.4));
+    }
+    if (mistRef.value) {
+      mistRef.value.style.backgroundColor = `rgba(255,255,255, ${intensity.value * 0.05})`;
+    }
+    if (intensity.value < 0.2) {
+      if (!canvas.classList.contains('opacity-50')) canvas.classList.add('opacity-50');
+    } else {
+      if (canvas.classList.contains('opacity-50')) canvas.classList.remove('opacity-50');
+    }
+
     animId = requestAnimationFrame(animate);
   };
   animate();
@@ -125,14 +140,14 @@ onUnmounted(() => {
 
 <template>
   <div 
+    ref="containerRef"
     class="fixed inset-0 z-[99998] pointer-events-none overflow-hidden"
-    :style="{ opacity: Math.max(0.15, 0.6 + intensity * 0.4) }"
   >
     <!-- Mist overlay gets thicker as intensity increases -->
     <div 
+      ref="mistRef"
       class="absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(255,255,255,0.02)] pointer-events-none"
-      :style="{ backgroundColor: `rgba(255,255,255, ${intensity * 0.05})` }"
     ></div>
-    <canvas ref="rainCanvasRef" class="pointer-events-none" :class="{ 'opacity-50': intensity < 0.2 }"></canvas>
+    <canvas ref="rainCanvasRef" class="pointer-events-none"></canvas>
   </div>
 </template>
