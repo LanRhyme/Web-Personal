@@ -2,6 +2,7 @@
 import projectsData from '../data/projects.json';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useARGState } from '../composables/useARGState';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import ParticleSymbol from '../components/ParticleSymbol.vue';
 
 interface Project {
@@ -58,26 +59,11 @@ const playSynthTone = (freq: number, duration: number, type: OscillatorType = 's
 const scrollY = ref(0);
 const handleScroll = () => { scrollY.value = window.scrollY; };
 
-const setupScrollReveal = () => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-      } else {
-        const rect = entry.target.getBoundingClientRect();
-        if (rect.top > window.innerHeight * 0.8) {
-          entry.target.classList.remove('is-visible');
-        }
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
-};
+useScrollReveal();
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
   handleScroll();
-  setTimeout(setupScrollReveal, 100);
 });
 
 onUnmounted(() => {

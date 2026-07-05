@@ -7,10 +7,11 @@ import MeCard from '../components/MeCard.vue';
 import anime from 'animejs';
 import ParticleText from '../components/ParticleText.vue';
 import MusicCard from '../components/MusicCard.vue';
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick, onActivated } from 'vue';
 import { useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
 import { useRainCycle } from '../composables/useRainCycle';
+import { useScrollReveal } from '../composables/useScrollReveal';
 import { preloadOtherPages } from '../router/index';
 
 // Load generated ASCII avatar if available
@@ -339,24 +340,46 @@ const handleHitokotoClick = (e: MouseEvent) => {
   }
 };
 
-// Scroll Reveal Logic (Optimized for repeated interactions)
-const setupScrollReveal = () => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-      } else {
-        // Remove class when element goes below the viewport to allow re-triggering animation when scrolling down again
-        const rect = entry.target.getBoundingClientRect();
-        if (rect.top > window.innerHeight * 0.8) {
-          entry.target.classList.remove('is-visible');
-        }
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+// Scroll Reveal Logic is now handled by composable
+useScrollReveal();
 
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+// Entry animations
+const triggerEntryAnimations = () => {
+  // Reset targets first
+  document.querySelectorAll('.anime-fade-up').forEach((el: any) => { el.style.opacity = '0'; el.style.transform = 'translateY(50px)'; });
+  document.querySelectorAll('.anime-glitch').forEach((el: any) => { el.style.opacity = '0'; });
+  document.querySelectorAll('.cyber-glass').forEach((el: any) => { el.style.opacity = '0'; el.style.transform = 'scale(0.95)'; });
+
+  const tl = anime.timeline({
+    easing: 'easeOutElastic(1, .8)',
+    duration: 1500
+  });
+  tl.add({
+    targets: '.anime-fade-up',
+    translateY: [50, 0],
+    opacity: [0, 1],
+    delay: anime.stagger(150, {start: 300})
+  })
+  .add({
+    targets: '.anime-glitch',
+    opacity: [0, 1, 0.5, 1, 0.8, 1],
+    duration: 800,
+    easing: 'linear',
+    delay: anime.stagger(100)
+  }, '-=1000')
+  .add({
+    targets: '.cyber-glass',
+    scale: [0.95, 1],
+    opacity: [0, 1],
+    delay: anime.stagger(100)
+  }, '-=800');
 };
+
+onActivated(() => {
+  nextTick(() => {
+    triggerEntryAnimations();
+  });
+});
 
 onMounted(async () => {
   await loadArticles();
@@ -383,32 +406,8 @@ onMounted(async () => {
   handleScroll();
 
   nextTick(() => {
-    setupScrollReveal();
+    triggerEntryAnimations();
     
-    // Anime.js Entry Animations
-    const tl = anime.timeline({
-      easing: 'easeOutElastic(1, .8)',
-      duration: 1500
-    });
-    tl.add({
-      targets: '.anime-fade-up',
-      translateY: [50, 0],
-      opacity: [0, 1],
-      delay: anime.stagger(150, {start: 300})
-    })
-    .add({
-      targets: '.anime-glitch',
-      opacity: [0, 1, 0.5, 1, 0.8, 1],
-      duration: 800,
-      easing: 'linear',
-      delay: anime.stagger(100)
-    }, '-=1000')
-    .add({
-      targets: '.cyber-glass',
-      scale: [0.95, 1],
-      opacity: [0, 1],
-      delay: anime.stagger(100)
-    }, '-=800');
     // Repel Effect
     const glassElements = document.querySelectorAll('.cyber-glass');
     const handleRepel = (e: MouseEvent) => {
