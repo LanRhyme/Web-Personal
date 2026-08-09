@@ -1,5 +1,18 @@
 [
   {
+    "image": "/img-projects/1780042801920-e0f1c209-3555-4450-bb8a-4da6d29a6bac.png",
+    "title": "MicYou",
+    "description": "一款多平台的麦克风串流软件",
+    "tags": [
+      "KMP",
+      "Kotlin",
+      "Compose",
+      "工具"
+    ],
+    "live_url": "https://micyou.top",
+    "source_url": "https://github.com/LanRhyme/MicYou"
+  },
+  {
     "image": "/img-projects/1782147274305-screenshot.png",
     "title": "DeskZero",
     "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
@@ -14,20 +27,32 @@
     "source_url": "https://github.com/LanRhyme/DeskZero"
   },
   {
-    "image": "/img-projects/1780042801920-e0f1c209-3555-4450-bb8a-4da6d29a6bac.png",
-    "title": "MicYou",
-    "description": "一款多平台的麦克风串流软件",
+    "image": "/img-projects/dotfiles.png",
+    "title": "dotfiles",
+    "description": "基于 chezmoi 的 CachyOS 个人配置集：莫兰迪动态主题引擎、2 小时自动同步、一键恢复工作流",
     "tags": [
-      "KMP",
-      "Kotlin",
-      "Compose",
-      "工具"
+      "chezmoi",
+      "CachyOS",
+      "配置"
     ],
-    "live_url": "https://micyou.top",
-    "source_url": "https://github.com/LanRhyme/MicYou"
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/dotfiles"
   },
   {
-    "image": "img-projects/minecraftlog.png",
+    "image": "/img-projects/krita-plugins.png",
+    "title": "Krita 插件系列",
+    "description": "6 款 Krita 插件合集：莫兰迪主题 UI 重设计、SAI 风格取色器、HSV 滑条、Folio 图层管理、无限画布、TVP 时间轴（Krita 5.x/6.x）",
+    "tags": [
+      "Krita",
+      "Python",
+      "PyQt",
+      "插件"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/search?q=user%3ALanRhyme+Krita&type=repositories"
+  },
+  {
+    "image": "/img-projects/minecraftlog.png",
     "title": "Minecraft-iOS日志分析器",
     "description": "基于Web的Minecraft日志分析工具，提供日志上传、基础信息提取、错误统计和AI智能分析功能",
     "tags": [
@@ -40,7 +65,7 @@
     "source_url": "https://github.com/LanRhyme/Web-MinecraftLogAnalyzer"
   },
   {
-    "image": "img-projects/geminichat.png",
+    "image": "/img-projects/geminichat.png",
     "title": "GeminiChatPlugin",
     "description": "GeminiChatPlugin 是一个基于 Paper 1.21 的 Minecraft 服务器插件，允许玩家通过聊天与 Gemini AI 进行交互。插件支持预设配置，玩家可以切换不同的预设以改变 AI 的行为",
     "tags": [
@@ -53,7 +78,45 @@
     "source_url": "https://github.com/LanRhyme/GeminiChatPlugin"
   },
   {
-    "image": "img-projects/viod.png",
+    "image": "/img-projects/shardxl.png",
+    "title": "ShardXL",
+    "description": "桌面与安卓双端的 Minecraft Java 版启动器，基于 Flutter 构建",
+    "tags": [
+      "Flutter",
+      "Dart",
+      "Minecraft",
+      "启动器"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/ShardXL"
+  },
+  {
+    "image": "/img-projects/rainworld-keyoverlay.png",
+    "title": "RainWorld-KeyOverlay",
+    "description": "雨世界按键显示 Mod：像素风格按键覆盖层，支持键盘与手柄输入显示",
+    "tags": [
+      "C#",
+      "RainWorld",
+      "Mod"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/RainWorld-KeyOverlay"
+  },
+  {
+    "image": "/img-projects/bilibili-danmaku.png",
+    "title": "bilibili-pixel-danmaku",
+    "description": "莫兰迪像素风 B 站直播弹幕助手：实时弹幕、礼物、醒目留言监听，Cookie 鉴权，主题随壁纸动态同步",
+    "tags": [
+      "Python",
+      "PySide6",
+      "B站",
+      "弹幕"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/bilibili-pixel-danmaku"
+  },
+  {
+    "image": "/img-projects/viod.png",
     "title": "VoidFallProtectionPlugin",
     "description": "VoidFallProtection 是一个用于 Minecraft 服务器的插件，旨在保护玩家免受虚空掉落造成的伤害",
     "tags": [
