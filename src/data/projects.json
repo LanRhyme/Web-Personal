@@ -77,6 +77,19 @@
     "source_url": "https://github.com/LanRhyme/RainWorld-KeyOverlay"
   },
   {
+    "image": "/img-projects/pi-neostudio.png",
+    "title": "pi-neostudio",
+    "description": "pi coding agent 的 Web UI：流式对话、会话浏览、技能管理、插件对话框全链路、Electron 桌面版跨平台打包",
+    "tags": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Electron"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/pi-neostudio"
+  },
+  {
     "image": "/img-projects/bilibili-danmaku.png",
     "title": "bilibili-pixel-danmaku",
     "description": "莫兰迪像素风 B 站直播弹幕助手：实时弹幕、礼物、醒目留言监听，Cookie 鉴权，主题随壁纸动态同步",
