@@ -1008,7 +1008,6 @@ onUnmounted(() => {
     <!-- HUD Corners -->
     <div class="hud-corner hud-tl hidden md:block"></div>
     <div class="hud-corner hud-tr hidden md:block"></div>
-    <div class="scanlines"></div>
 
     <div class="max-w-5xl mx-auto w-full relative z-10">
       <div class="mb-6 flex items-center justify-between border-b border-[var(--color-border)] pb-2 opacity-60">

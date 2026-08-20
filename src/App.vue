@@ -139,6 +139,8 @@ let eyeRotation = 0;
 const petEyeRef = ref<HTMLElement | null>(null);
 let lastHoveredElement: HTMLElement | null = null;
 let lastHoveredRect: DOMRect | null = null;
+let lastMouseX = -1;
+let lastMouseY = -1;
 
 let animationFrameId: number;
 const renderCursor = () => {
@@ -152,14 +154,12 @@ const renderCursor = () => {
   }
 
   // 3. Process hover and snap logic once per frame
-  if (latestEventTarget) {
+  if (latestEventTarget && latestEventTarget.isConnected) {
     const isExcluded = latestEventTarget.closest('.no-cursor-snap');
     const clickable = !isExcluded && (latestEventTarget.closest('a') || latestEventTarget.closest('button') || latestEventTarget.closest('.cursor-pointer') || latestEventTarget.closest('.nav-link'));
     
     if (clickable) {
-      isHovering.value = true;
       const hoverEl = clickable as HTMLElement;
-      hoveredElement = hoverEl;
       
       // Cache getBoundingClientRect to avoid layout thrashing
       if (hoverEl !== lastHoveredElement || !lastHoveredRect) {
@@ -168,17 +168,33 @@ const renderCursor = () => {
       }
       
       const rect = lastHoveredRect;
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      // Magnetic Pull (Parallax effect)
-      const pullX = (mouseX - centerX) * 0.2;
-      const pullY = (mouseY - centerY) * 0.2;
-      
-      targetX = centerX + pullX;
-      targetY = centerY + pullY;
-      targetW = rect.width + 16;
-      targetH = rect.height + 16;
+      // Check if mouse is still in reasonable vicinity of the hovered bounding box
+      const isInside = mouseX >= rect.left - 20 && mouseX <= rect.right + 20 && mouseY >= rect.top - 20 && mouseY <= rect.bottom + 20;
+
+      if (isInside) {
+        isHovering.value = true;
+        hoveredElement = hoverEl;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Magnetic Pull (Parallax effect)
+        const pullX = (mouseX - centerX) * 0.2;
+        const pullY = (mouseY - centerY) * 0.2;
+        
+        targetX = centerX + pullX;
+        targetY = centerY + pullY;
+        targetW = rect.width + 16;
+        targetH = rect.height + 16;
+      } else {
+        isHovering.value = false;
+        hoveredElement = null;
+        lastHoveredElement = null;
+        lastHoveredRect = null;
+        targetX = mouseX;
+        targetY = mouseY;
+        targetW = 24;
+        targetH = 24;
+      }
     } else {
       isHovering.value = false;
       hoveredElement = null;
@@ -189,13 +205,22 @@ const renderCursor = () => {
       targetW = 24;
       targetH = 24;
     }
+  } else {
+    isHovering.value = false;
+    hoveredElement = null;
+    lastHoveredElement = null;
+    lastHoveredRect = null;
+    targetX = mouseX;
+    targetY = mouseY;
+    targetW = 24;
+    targetH = 24;
   }
 
-  // 4. Lerp custom physics cursor
-  frameX = lerp(frameX, targetX, 0.25);
-  frameY = lerp(frameY, targetY, 0.25);
-  frameW = lerp(frameW, targetW, 0.25);
-  frameH = lerp(frameH, targetH, 0.25);
+  // 4. Lerp custom physics cursor (snappier factor 0.35)
+  frameX = lerp(frameX, targetX, 0.35);
+  frameY = lerp(frameY, targetY, 0.35);
+  frameW = lerp(frameW, targetW, 0.35);
+  frameH = lerp(frameH, targetH, 0.35);
 
   // 5. Direct DOM update for cursor-frame (using hardware accelerated translate3d)
   if (cursorFrameRef.value) {
@@ -215,9 +240,13 @@ const renderCursor = () => {
     petEyeRef.value.style.transform = `translateY(${Math.sin(eyeRotation) * 4}px)`;
   }
 
-  // 7. Update glowing spotlight backdrop CSS variables throttled to rAF
-  document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
-  document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
+  // 7. Update glowing spotlight backdrop CSS variables only when coordinates shift
+  if (Math.abs(mouseX - lastMouseX) > 1 || Math.abs(mouseY - lastMouseY) > 1) {
+    document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
+    document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+  }
 
   animationFrameId = requestAnimationFrame(renderCursor);
 };
@@ -421,10 +450,23 @@ watch(() => route.path, (newPath) => {
   }
 });
 
+const handleMouseLeave = () => {
+  isHovering.value = false;
+  hoveredElement = null;
+  lastHoveredElement = null;
+  lastHoveredRect = null;
+  latestEventTarget = null;
+};
+
 let idleTimer: number | null = null;
 
 onMounted(() => {
   initTheme();
+  // Guaranteed render fallback
+  setTimeout(() => {
+    isLoaded.value = true;
+  }, 2500);
+
   document.addEventListener('contextmenu', (e: MouseEvent) => {
     if (!import.meta.env.DEV) {
       e.preventDefault();
@@ -432,6 +474,7 @@ onMounted(() => {
   });
 
   document.addEventListener('mousemove', updateMouse);
+  document.addEventListener('mouseleave', handleMouseLeave);
   document.addEventListener('mousedown', (e: MouseEvent) => {
     isClicking.value = true;
     addClickRipple(e.clientX, e.clientY);
@@ -527,6 +570,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', updateMouse);
+  document.removeEventListener('mouseleave', handleMouseLeave);
   document.removeEventListener('keydown', handleKeyDown);
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   if (idleTimer) clearInterval(idleTimer);
@@ -736,12 +780,9 @@ onUnmounted(() => {
 }
 
 .app-root {
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.app-root.is-loaded {
   opacity: 1;
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* Screen shaking animations for rain cycle - applied to .shake-container to avoid breaking fixed positioning */

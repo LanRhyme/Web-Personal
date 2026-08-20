@@ -345,34 +345,23 @@ useScrollReveal();
 
 // Entry animations
 const triggerEntryAnimations = () => {
-  // Reset targets first
-  document.querySelectorAll('.anime-fade-up').forEach((el: any) => { el.style.opacity = '0'; el.style.transform = 'translateY(50px)'; });
-  document.querySelectorAll('.anime-glitch').forEach((el: any) => { el.style.opacity = '0'; });
-  document.querySelectorAll('.cyber-glass').forEach((el: any) => { el.style.opacity = '0'; el.style.transform = 'scale(0.95)'; });
-
   const tl = anime.timeline({
-    easing: 'easeOutElastic(1, .8)',
-    duration: 1500
+    easing: 'easeOutQuad',
+    duration: 800
   });
   tl.add({
     targets: '.anime-fade-up',
-    translateY: [50, 0],
+    translateY: [30, 0],
     opacity: [0, 1],
-    delay: anime.stagger(150, {start: 300})
+    delay: anime.stagger(100, {start: 50})
   })
   .add({
     targets: '.anime-glitch',
-    opacity: [0, 1, 0.5, 1, 0.8, 1],
-    duration: 800,
-    easing: 'linear',
-    delay: anime.stagger(100)
-  }, '-=1000')
-  .add({
-    targets: '.cyber-glass',
-    scale: [0.95, 1],
     opacity: [0, 1],
-    delay: anime.stagger(100)
-  }, '-=800');
+    duration: 500,
+    easing: 'linear',
+    delay: anime.stagger(80)
+  }, '-=500');
 };
 
 onActivated(() => {

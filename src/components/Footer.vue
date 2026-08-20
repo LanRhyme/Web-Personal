@@ -34,28 +34,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <footer ref="footerRef" class="footer-reveal w-full text-center py-3 md:py-4 mt-auto border-t-4 border-[var(--color-text)] bg-[var(--color-bg)] font-sans text-[9px] md:text-[10px] uppercase">
-    <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center gap-2 md:gap-4">
-      <span class="footer-left">(C) 2024-2026 LANRHYME // ALL RIGHTS RESERVED</span>
+  <footer ref="footerRef" class="footer-reveal w-full py-3 md:py-4 mt-auto border-t-4 border-[var(--color-text)] bg-[var(--color-bg)] font-sans text-[9px] md:text-[10px] uppercase">
+    <div class="max-w-[1400px] mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-3 items-center gap-2 md:gap-4">
+      <div class="footer-left text-center sm:text-left">
+        <span>(C) 2024-2026 LANRHYME // ALL RIGHTS RESERVED</span>
+      </div>
       
-      <div class="footer-center flex items-center gap-2">
+      <div class="footer-center flex justify-center items-center">
         <a 
           href="https://ebrao.com/csr/" 
           target="_blank" 
           rel="noopener noreferrer"
-          class="csr-badge inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--color-border)] hover:border-[var(--color-brand)] bg-[var(--color-hud)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-all duration-300 group shadow-sm hover:shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+          class="inline-flex items-center justify-center transition-transform duration-300 hover:scale-105"
           title="Cool Site Revival (CSR)"
         >
           <img 
             src="/img/csr-logo.svg" 
-            alt="CSR Logo" 
-            class="w-3.5 h-3.5 object-contain invert opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
+            alt="Cool Site Revival" 
+            class="h-7 md:h-8 w-auto invert opacity-75 hover:opacity-100 transition-opacity duration-300 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
           />
-          <span class="font-mono tracking-widest text-[8px] md:text-[9px]">CSR MEMBER</span>
         </a>
       </div>
 
-      <span class="footer-right">SYS.STATUS: RUNNING // EOF_REACHED</span>
+      <div class="footer-right text-center sm:text-right">
+        <span>SYS.STATUS: RUNNING // EOF_REACHED</span>
+      </div>
     </div>
   </footer>
 </template>

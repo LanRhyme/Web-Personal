@@ -62,10 +62,12 @@ html {
   /* Default to dark mode strictly for that high-end vibe */
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   scroll-behavior: smooth;
   width: 100%;
@@ -179,7 +181,7 @@ a {
 }
 
 .cyber-glass:hover {
-  text-shadow: 2px 0 0 rgba(255, 0, 0, 0.5), -2px 0 0 rgba(0, 255, 255, 0.5);
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.12));
 }
 
 /* Subtle broken corner line */
@@ -312,15 +314,10 @@ a {
   opacity: 0.5;
 }
 
-/* scanlines & noise */
-/* scanlines & CRT noise */
+/* scanlines & CRT texture */
 @keyframes crt-flicker {
-  0% { opacity: 0.15; }
-  5% { opacity: 0.2; }
-  10% { opacity: 0.1; }
-  15% { opacity: 0.3; }
-  20% { opacity: 0.15; }
-  100% { opacity: 0.15; }
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.12; }
 }
 
 .scanlines {
@@ -329,15 +326,13 @@ a {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: 
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  background-size: 100% 2px, 3px 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.18) 50%);
+  background-size: 100% 3px;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.15;
-  animation: crt-flicker 5s infinite;
-  box-shadow: inset 0 0 150px rgba(0,0,0,0.9); /* Heavy Vignette */
+  opacity: 0.08;
+  animation: crt-flicker 8s infinite;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.6);
 }
 
 
@@ -491,8 +486,8 @@ a {
   width: 4px;
   height: 4px;
   background-color: var(--color-brand);
-  border-radius: 50%; /* Circle dot */
-  transition: opacity 0.2s, background-color 0.2s, transform 0.1s;
+  border-radius: 50%;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
   will-change: transform;
 }
 
@@ -502,15 +497,14 @@ a {
   left: 0;
   border: 1px solid rgba(255, 255, 255, 0.4);
   background-color: rgba(255, 255, 255, 0.02);
-  border-radius: 0; /* Pure square rotated to diamond */
-  transition: background-color 0.2s, border-color 0.2s;
+  border-radius: 0;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
   will-change: transform, width, height;
 }
 
 .cursor-dot.hovering {
   opacity: 1;
   background-color: #ffffff;
-  transform: scale(1.5);
 }
 
 .cursor-frame.hovering {

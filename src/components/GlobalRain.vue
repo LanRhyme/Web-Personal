@@ -36,14 +36,14 @@ onMounted(() => {
   const splashes: {x: number, y: number, vx: number, vy: number, life: number}[] = [];
 
   const isMobile = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  const MAX_DROPS = isMobile ? 300 : 1200;
+  const MAX_DROPS = isMobile ? 120 : 450;
   for(let i = 0; i < MAX_DROPS; i++) {
     drops.push({
       x: Math.random() * logicalW,
       y: Math.random() * logicalH,
-      speed: Math.random() * 30 + 25,
-      length: Math.random() * 80 + 40,
-      thickness: Math.random() > 0.8 ? 1 : 0.5
+      speed: Math.random() * 25 + 20,
+      length: Math.random() * 70 + 35,
+      thickness: Math.random() > 0.85 ? 1 : 0.6
     });
   }
 
@@ -76,19 +76,19 @@ onMounted(() => {
       ctx.fillRect(drop.x, drop.y, drop.thickness, drop.length * (0.5 + Math.max(0.1, intensity.value) * 0.5));
       drop.y += currentSpeed;
 
-      // Splashing - more aggressive at higher intensity
-      const baseSplashChance = isMobile ? 0.98 : 0.95;
-      const splashChance = intensity.value > 0.8 ? baseSplashChance : 0.99;
+      // Splashing - capped to avoid memory churn
+      const baseSplashChance = isMobile ? 0.99 : 0.96;
+      const splashChance = intensity.value > 0.8 ? baseSplashChance : 0.995;
       if (drop.y > logicalH - 10 || Math.random() > splashChance) {
-        const maxSplashChance = isMobile ? 0.2 : 0.6;
-        if (Math.random() < intensity.value * maxSplashChance) {
-          const splashCount = intensity.value > 0.8 ? 4 : 2;
+        const maxSplashChance = isMobile ? 0.15 : 0.4;
+        if (splashes.length < 50 && Math.random() < intensity.value * maxSplashChance) {
+          const splashCount = intensity.value > 0.8 ? 3 : 1;
           for(let k = 0; k < splashCount; k++) {
             splashes.push({
               x: drop.x,
               y: drop.y > logicalH - 10 ? logicalH : drop.y,
-              vx: (Math.random() - 0.5) * 6 * intensity.value,
-              vy: -Math.random() * 5 * intensity.value - 2,
+              vx: (Math.random() - 0.5) * 5 * intensity.value,
+              vy: -Math.random() * 4 * intensity.value - 1.5,
               life: 1
             });
           }
@@ -101,11 +101,11 @@ onMounted(() => {
     for (let i = splashes.length - 1; i >= 0; i--) {
       let s = splashes[i];
       ctx.fillStyle = `rgba(255, 255, 255, ${s.life * intensity.value})`;
-      ctx.fillRect(s.x, s.y, Math.random() * 3, Math.random() * 3);
+      ctx.fillRect(s.x, s.y, Math.random() * 2.5 + 0.5, Math.random() * 2.5 + 0.5);
       s.x += s.vx;
       s.y += s.vy;
       s.vy += 0.4; // gravity
-      s.life -= 0.05;
+      s.life -= 0.06;
       if (s.life <= 0) splashes.splice(i, 1);
     }
 

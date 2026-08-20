@@ -103,7 +103,6 @@ onUnmounted(() => {
     <!-- HUD Corners -->
     <div class="hud-corner hud-tl hidden md:block"></div>
     <div class="hud-corner hud-tr hidden md:block"></div>
-    <div class="scanlines"></div>
 
     <div class="page-container py-12 md:py-20 px-4 md:px-8 lg:px-12 max-w-[1200px] mx-auto relative z-10 pb-24">
       

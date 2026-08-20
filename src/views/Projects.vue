@@ -112,7 +112,6 @@ const handleProjectClick = (index: number) => {
     <!-- HUD Corners -->
     <div class="hud-corner hud-tl hidden md:block"></div>
     <div class="hud-corner hud-tr hidden md:block"></div>
-    <div class="scanlines"></div>
 
     <!-- Right Side HUD Text -->
     <div class="hidden xl:block fixed right-6 top-1/2 -translate-y-1/2 hud-text-vertical tracking-[0.3em]">

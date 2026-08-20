@@ -3,7 +3,6 @@
     <!-- HUD Corners -->
     <div class="hud-corner hud-tl hidden md:block"></div>
     <div class="hud-corner hud-tr hidden md:block"></div>
-    <div class="scanlines"></div>
 
     <ContentLoader v-if="!isLoaded" :images="commissionImages" @complete="isLoaded = true" />
 

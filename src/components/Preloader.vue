@@ -82,38 +82,60 @@ onMounted(() => {
 
   // 3. Image preloading & Numerical progress animation
   let isImageLoaded = false;
+  let isFinished = false;
+
+  const finishLoading = () => {
+    if (isFinished) return;
+    isFinished = true;
+
+    const endObj = { val: progress.value };
+    anime({
+      targets: endObj,
+      val: 100,
+      round: 1,
+      duration: 300,
+      easing: 'easeOutQuad',
+      update: () => {
+        progress.value = Math.round(endObj.val);
+      },
+      complete: () => {
+        emit('complete');
+        isClosing.value = true;
+        setTimeout(() => {
+          isDone.value = true;
+        }, 1200);
+      }
+    });
+  };
+
   const bgImg = new Image();
-  bgImg.src = '/bg-image.png';
   bgImg.onload = () => {
     isImageLoaded = true;
   };
   bgImg.onerror = () => {
     isImageLoaded = true;
   };
+  bgImg.src = '/bg-image.png';
+  if (bgImg.complete) {
+    isImageLoaded = true;
+  }
 
-  const finishLoading = () => {
-    anime({
-      targets: progress,
-      value: [progress.value, 100],
-      round: 1,
-      duration: 400,
-      easing: 'easeOutQuad',
-      complete: () => {
-        emit('complete');
-        isClosing.value = true;
-        setTimeout(() => {
-          isDone.value = true;
-        }, 1500);
-      }
-    });
-  };
+  // Safety fallback: force completion after 2.2s no matter what
+  setTimeout(() => {
+    isImageLoaded = true;
+    finishLoading();
+  }, 2200);
 
+  const progObj = { val: 0 };
   anime({
-    targets: progress,
-    value: [0, 99],
+    targets: progObj,
+    val: 99,
     round: 1,
-    duration: 1800,
+    duration: 1600,
     easing: 'easeOutQuint',
+    update: () => {
+      progress.value = Math.round(progObj.val);
+    },
     complete: () => {
       if (isImageLoaded) {
         finishLoading();
