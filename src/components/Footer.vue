@@ -35,8 +35,26 @@ onMounted(() => {
 
 <template>
   <footer ref="footerRef" class="footer-reveal w-full text-center py-3 md:py-4 mt-auto border-t-4 border-[var(--color-text)] bg-[var(--color-bg)] font-sans text-[9px] md:text-[10px] uppercase">
-    <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center gap-1 md:gap-2">
+    <div class="max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center gap-2 md:gap-4">
       <span class="footer-left">(C) 2024-2026 LANRHYME // ALL RIGHTS RESERVED</span>
+      
+      <div class="footer-center flex items-center gap-2">
+        <a 
+          href="https://ebrao.com/csr/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="csr-badge inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--color-border)] hover:border-[var(--color-brand)] bg-[var(--color-hud)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-all duration-300 group shadow-sm hover:shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+          title="Cool Site Revival (CSR)"
+        >
+          <img 
+            src="/img/csr-logo.svg" 
+            alt="CSR Logo" 
+            class="w-3.5 h-3.5 object-contain invert opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
+          />
+          <span class="font-mono tracking-widest text-[8px] md:text-[9px]">CSR MEMBER</span>
+        </a>
+      </div>
+
       <span class="footer-right">SYS.STATUS: RUNNING // EOF_REACHED</span>
     </div>
   </footer>
@@ -61,6 +79,16 @@ onMounted(() => {
 .footer-reveal.is-visible .footer-left {
   opacity: 1;
   transform: translateX(0);
+}
+
+.footer-center {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+}
+.footer-reveal.is-visible .footer-center {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .footer-right {
