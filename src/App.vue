@@ -610,21 +610,20 @@ onUnmounted(() => {
     </div>
 
     <!-- Rain World Cycle Indicator (Left Side on Desktop, Bottom on Mobile) -->
-    <div class="fixed z-50 pointer-events-auto bottom-4 left-1/2 -translate-x-1/2 translate-y-0 top-auto md:bottom-auto md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
+    <div class="fixed z-50 pointer-events-auto bottom-3 left-1/2 -translate-x-1/2 translate-y-0 top-auto scale-90 md:scale-100 md:bottom-auto md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
       <CycleIndicator v-if="!isAdmin" />
     </div>
 
     <!-- AI Companion (LanPet Refactor) -->
     <div 
       v-if="!isAdmin && !isWorldview" 
-      class="fixed z-50 pointer-events-auto flex items-end gap-6"
-      :style="{ bottom: '30px', right: '30px' }"
+      class="fixed z-50 pointer-events-auto flex items-end gap-3 md:gap-6 bottom-4 right-4 md:bottom-[30px] md:right-[30px]"
     >
-      <div class="lanpet-container flex flex-col select-none font-mono">
+      <div class="lanpet-container flex flex-col select-none font-mono items-end">
         <transition name="page">
           <div 
             v-if="bubbleText" 
-            class="bubble-text cyber-glass !px-3 !py-1 mb-3 text-xs bg-black/60 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase"
+            class="bubble-text cyber-glass !px-2.5 !py-1 mb-2 text-[10px] sm:text-xs bg-black/80 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase max-w-[200px] sm:max-w-[260px] text-right"
           >
             > {{ bubbleText }} <span class="animate-pulse">_</span>
           </div>
@@ -632,7 +631,7 @@ onUnmounted(() => {
 
         <!-- AI Core Widget (Iterator / Ruin Style) -->
         <div 
-          class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-14 h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] rotate-45"
+          class="cyber-glass p-2 flex flex-col items-center justify-center bg-[#0a0a0c] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-all duration-500 cursor-pointer group w-12 h-12 md:w-14 md:h-14 animate-float-slow hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] rotate-45"
           :class="{ 'scale-90': petState === 'happy', 'pet-dark': petDark }"
           @click="triggerHappyPet"
           @mousedown="startLongPress"
@@ -749,7 +748,7 @@ onUnmounted(() => {
       </button>
 
       <!-- Main Router View -->
-      <div :class="isWorldview ? 'fixed inset-0 z-0 bg-black w-full h-screen overflow-hidden' : 'flex-grow w-full mx-auto pt-20 md:pt-28 pb-12'">
+      <div :class="isWorldview ? 'fixed inset-0 z-0 bg-black w-full h-screen overflow-hidden' : 'flex-grow w-full mx-auto pt-20 md:pt-28 pb-24 md:pb-12'">
         <router-view v-slot="{ Component, route }">
           <transition name="page" mode="out-in">
             <keep-alive :max="5">

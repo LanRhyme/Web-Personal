@@ -50,10 +50,10 @@ onUnmounted(() => {
         </div>
     </div>
     
-    <div class="text-xl sm:text-2xl font-bold tracking-widest relative z-10 h-8 flex items-center whitespace-nowrap">
-        <span class="opacity-50 mr-2">{{ isHovering ? '*' : '>' }}</span> 
+    <div class="text-base sm:text-xl md:text-2xl font-bold tracking-wider sm:tracking-widest relative z-10 h-8 flex items-center whitespace-nowrap">
+        <span class="opacity-50 mr-1.5 sm:mr-2">{{ isHovering ? '*' : '>' }}</span> 
         {{ displayTime }}
-        <span v-if="isHovering" class="animate-pulse ml-1 text-lg">_</span>
+        <span v-if="isHovering" class="animate-pulse ml-1 text-base sm:text-lg">_</span>
     </div>
 
     <!-- Minute Progress Bar -->

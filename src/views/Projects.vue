@@ -5,6 +5,7 @@ import { useARGState } from '../composables/useARGState';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import ParticleSymbol from '../components/ParticleSymbol.vue';
 import ContentLoader from '../components/ContentLoader.vue';
+import CyberImage from '../components/CyberImage.vue';
 
 interface Project {
   image: string;
@@ -29,7 +30,7 @@ const hoveredIndex = ref<number | null>(null);
 
 const isLoaded = ref(false);
 const projectImages = computed(() => {
-  return projects.map(p => getImageUrl(p.image)).filter(Boolean);
+  return projects.map(p => getImageUrl(p.image)).filter(Boolean).slice(0, 4);
 });
 
 const symbols = {
@@ -182,14 +183,13 @@ const handleProjectClick = (index: number) => {
           <!-- Disk Shutter & Top Case -->
           <div class="aspect-video w-full overflow-hidden relative bg-[var(--color-bg)] flex items-center justify-center border-b border-[var(--color-border)]">
             
-            <img
+            <CyberImage
               v-if="project.image"
               :src="getImageUrl(project.image)"
               :alt="project.title"
-              loading="lazy"
-              decoding="async"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
-            >
+              className="w-full h-full"
+              imgClass="transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
+            />
             
             <!-- Overlay Actions -->
             <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2 z-20">

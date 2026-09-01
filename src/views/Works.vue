@@ -50,70 +50,119 @@
 
     <div class="gallery-transition-container w-full max-w-[1400px]" :class="{ 'fade-out-content': isTransitioning }">
       
-      <div v-if="currentView === 'all' && allPortfolios.length > 0" class="mb-12">
-        <div class="flex items-center gap-4 mb-6">
-          <span class="text-sm font-mono tracking-widest opacity-60">> PORTFOLIO_INDEX</span>
-          <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+      <!-- Portfolio Sections -->
+      <div v-if="currentView === 'all' && allPortfolios.length > 0" class="mb-14">
+        <div class="flex items-center justify-between gap-4 mb-8 border-b border-[var(--color-border)] pb-3">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 bg-[var(--color-accent)] animate-pulse inline-block shadow-[0_0_8px_var(--color-accent)]"></span>
+            <span class="text-xs md:text-sm font-mono tracking-[0.25em] text-[var(--color-brand)] font-bold">> PORTFOLIO_INDEX</span>
+          </div>
+          <span class="text-[10px] font-mono border border-[var(--color-border)] px-2 py-0.5 text-[var(--color-text-dim)] uppercase">
+            VOL: {{ allPortfolios.length }}
+          </span>
         </div>
+        
         <div class="gallery-grid stagger-children">
           <div
             v-for="(portfolio, index) in allPortfolios"
             :key="portfolio.id"
-            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_5px_20px_-10px_var(--color-brand)] border border-[var(--color-border)] hover:border-[var(--color-brand)]"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_-10px_rgba(255,255,255,0.12)] border border-[var(--color-border)] hover:border-[var(--color-brand)] bg-[var(--color-card)] rounded-none"
             @click="switchToPortfolio(portfolio)"
-            :style="{ transitionDelay: `${0.1 * (index % 4)}s` }"
+            :style="{ transitionDelay: `${0.08 * (index % 4)}s` }"
           >
-            <img :src="getImageUrl(portfolio.thumbnail)" :alt="portfolio.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <!-- Corner Cyber Crosshairs on Hover -->
+            <div class="absolute top-2 left-2 w-2 h-2 border-t border-l border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute top-2 right-2 w-2 h-2 border-t border-r border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+
+            <!-- Shimmer Light Sweep -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-10"></div>
+
+            <CyberImage 
+              :src="getImageUrl(portfolio.thumbnail)" 
+              :alt="portfolio.title" 
+              className="w-full h-auto min-h-[160px] relative z-0"
+              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            />
             
-            <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)] relative z-10 group-hover:bg-black/80 backdrop-blur-md transition-colors duration-300">
-              <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide flex items-center gap-2">
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--color-brand)] animate-pulse">></span>
-                {{ portfolio.title }}
+            <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)]/95 relative z-10 group-hover:bg-black/90 backdrop-blur-md transition-colors duration-300">
+              <div class="font-art font-bold text-lg mb-1 group-hover:text-[var(--color-brand)] transition-colors text-[var(--color-text)] tracking-wide flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-[var(--color-brand)] text-xs opacity-0 group-hover:opacity-100 transition-opacity animate-pulse">></span>
+                  <span>{{ portfolio.title }}</span>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] opacity-0 group-hover:opacity-80 transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
               </div>
               <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed group-hover:text-[var(--color-text)] transition-colors">{{ portfolio.description }}</div>
             </div>
+            
             <!-- Decorative Barcode -->
-            <div class="absolute top-4 right-4 flex gap-[2px] opacity-30 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)] mix-blend-difference z-20">
+            <div class="absolute top-4 right-4 flex gap-[2px] opacity-20 group-hover:opacity-80 transition-opacity group-hover:text-[var(--color-brand)] mix-blend-difference z-20">
               <div class="w-[1px] h-4 bg-current"></div><div class="w-[3px] h-4 bg-current"></div><div class="w-[2px] h-4 bg-current"></div><div class="w-[1px] h-4 bg-current"></div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Individual Illustration Logs -->
       <div v-if="displayedWorks.length > 0">
-        <div v-if="currentView === 'all'" class="flex items-center gap-4 mb-6">
-          <span class="text-sm font-mono tracking-widest opacity-60">> ILLUSTRATION_LOGS</span>
-          <div class="flex-grow h-[1px] bg-gradient-to-r from-[var(--color-border)] to-transparent"></div>
+        <div v-if="currentView === 'all'" class="flex items-center justify-between gap-4 mb-8 border-b border-[var(--color-border)] pb-3">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 bg-[var(--color-brand)] animate-pulse inline-block shadow-[0_0_8px_var(--color-brand)]"></span>
+            <span class="text-xs md:text-sm font-mono tracking-[0.25em] text-[var(--color-brand)] font-bold">> ILLUSTRATION_LOGS</span>
+          </div>
+          <span class="text-[10px] font-mono border border-[var(--color-border)] px-2 py-0.5 text-[var(--color-text-dim)] uppercase">
+            ITEMS: {{ displayedWorks.length }}
+          </span>
         </div>
+        
         <div class="gallery-grid stagger-children">
           <div
             v-for="(work, index) in displayedWorks"
             :key="work.id"
-            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_5px_20px_-10px_var(--color-brand)] border border-[var(--color-border)] hover:border-[var(--color-brand)]"
+            class="cyber-glass !p-0 mb-6 break-inside-avoid relative overflow-hidden cursor-pointer group reveal-scale is-visible transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_-10px_rgba(255,255,255,0.12)] border border-[var(--color-border)] hover:border-[var(--color-brand)] bg-[var(--color-card)] rounded-none"
             @click="openLightbox(index)"
-            :style="{ transitionDelay: `${0.1 * (index % 4)}s` }"
+            :style="{ transitionDelay: `${0.06 * (index % 6)}s` }"
           >
-            <img :src="getImageUrl(work.image)" :alt="work.title" loading="lazy" decoding="async" class="w-full h-auto block relative z-0 transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0">
+            <!-- Corner Cyber Crosshairs on Hover -->
+            <div class="absolute top-2 left-2 w-2 h-2 border-t border-l border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute top-2 right-2 w-2 h-2 border-t border-r border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+            <div class="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none"></div>
+
+            <!-- Shimmer Light Sweep -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-10"></div>
+
+            <CyberImage 
+              :src="getImageUrl(work.image)" 
+              :alt="work.title" 
+              className="w-full h-auto min-h-[160px] relative z-0"
+              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            />
             
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px]">
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/85 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-all duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px] transform translate-y-2 group-hover:translate-y-0">
               <!-- Decode Glitch Effect Container -->
               <div class="relative overflow-hidden">
                 <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider flex items-center gap-2 group-hover:animate-[glitch-decode_0.5s_ease-out]">
                   <span class="animate-pulse">></span> {{ work.title || 'UNNAMED_WORK' }}
                 </div>
-                <div class="text-[10px] opacity-70 font-mono tracking-widest uppercase group-hover:animate-[glitch-decode_0.6s_ease-out]">{{ work.description || 'Illustration Log' }}</div>
+                <div class="text-[10px] opacity-70 font-mono tracking-widest uppercase group-hover:animate-[glitch-decode_0.6s_ease-out] flex justify-between items-center">
+                  <span>{{ work.description || 'Illustration Log' }}</span>
+                  <span class="text-[8px] text-[var(--color-brand)] opacity-60">[ ZOOM ]</span>
+                </div>
               </div>
               
               <!-- Decorative Barcode -->
-              <div class="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-[2px] opacity-30 text-[var(--color-brand)]">
+              <div class="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-[2px] opacity-30 text-[var(--color-brand)] pointer-events-none">
                 <div class="h-[1px] w-4 bg-current"></div><div class="h-[3px] w-4 bg-current"></div><div class="h-[2px] w-4 bg-current"></div><div class="h-[1px] w-4 bg-current"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div v-else-if="currentView === 'portfolio' && displayedWorks.length === 0" class="text-center py-12">
-        <p class="text-lg text-[var(--color-secondary)]">此作品集暂无作品。</p>
+      <div v-else-if="currentView === 'portfolio' && displayedWorks.length === 0" class="text-center py-16 cyber-glass">
+        <p class="text-sm font-mono text-[var(--color-text-dim)] tracking-widest">> NO_WORKS_FOUND_IN_THIS_PORTFOLIO</p>
       </div>
 
     </div>
@@ -199,33 +248,71 @@
     <Teleport to="body">
       <div
         id="lightbox"
-        class="fixed inset-0 z-[10000] flex justify-center items-center bg-black/90 backdrop-blur-md transition-opacity duration-300"
-        :class="{ 'opacity-100 visible': lightbox.visible, 'opacity-0 invisible': !lightbox.visible }"
+        class="fixed inset-0 z-[10000] flex justify-center items-center bg-black/95 backdrop-blur-xl transition-all duration-300"
+        :class="{ 'opacity-100 visible': lightbox.visible, 'opacity-0 invisible pointer-events-none': !lightbox.visible }"
         @click.self="closeLightbox"
       >
-        <button class="absolute top-6 right-8 text-white/50 hover:text-white hover:scale-110 text-4xl p-2 transition-all z-20" @click="closeLightbox">
-          <i class="fas fa-times"></i>
-        </button>
-        <button class="absolute top-1/2 left-8 -translate-y-1/2 text-white/40 hover:text-white hover:scale-110 text-4xl p-4 transition-all z-20" @click="prevImage">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="absolute top-1/2 right-8 -translate-y-1/2 text-white/40 hover:text-white hover:scale-110 text-4xl p-4 transition-all z-20" @click="nextImage">
-          <i class="fas fa-chevron-right"></i>
+        <!-- Top Status Bar & Close -->
+        <div class="absolute top-6 inset-x-6 md:inset-x-12 flex justify-between items-center z-30 pointer-events-none">
+          <div class="font-mono text-xs text-[var(--color-brand)] tracking-[0.25em] flex items-center gap-3">
+            <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse"></span>
+            <span>IMAGE_VIEWER // [ {{ lightbox.index + 1 }} / {{ lightbox.works.length }} ]</span>
+          </div>
+          
+          <button 
+            class="pointer-events-auto btn-terminal !px-3 !py-1.5 !text-xs !bg-black/80 hover:!border-red-500 hover:!text-red-400 transition-colors"
+            @click="closeLightbox"
+            title="Close (Esc)"
+          >
+            [ ESC // CLOSE ]
+          </button>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button 
+          class="absolute top-1/2 left-4 md:left-8 -translate-y-1/2 btn-terminal !p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
+          @click="prevImage"
+          title="Previous (Left Arrow)"
+        >
+          <i class="fa-solid fa-chevron-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
         </button>
         
-        <div class="relative max-w-[95vw] max-h-[95vh] flex flex-col items-center">
-          <img
-            :src="lightbox.image"
-            alt="Enlarged work"
-            loading="lazy"
-            decoding="async"
-            class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transition-transform duration-500 select-none"
-            :class="{ 'scale-100': lightbox.visible, 'scale-95': !lightbox.visible }"
-            @click.stop
-          >
-          <div class="mt-6 text-center text-[var(--color-text)] reveal is-visible active">
-             <h3 class="text-2xl font-art tracking-wider text-[var(--color-brand)]">> {{ lightbox.works[lightbox.index]?.title }}</h3>
-             <p class="text-[12px] font-mono opacity-60 tracking-widest mt-2 uppercase">{{ lightbox.works[lightbox.index]?.description }}</p>
+        <button 
+          class="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 btn-terminal !p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
+          @click="nextImage"
+          title="Next (Right Arrow)"
+        >
+          <i class="fa-solid fa-chevron-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
+        </button>
+        
+        <!-- Center Image Stage -->
+        <div class="relative max-w-[92vw] max-h-[90vh] flex flex-col items-center pt-8">
+          <div class="relative border border-[var(--color-border)] p-1 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.9)] max-h-[75vh] flex items-center justify-center overflow-hidden">
+            <!-- Corner Crosshairs -->
+            <div class="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[var(--color-brand)] pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[var(--color-brand)] pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[var(--color-brand)] pointer-events-none"></div>
+            <div class="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[var(--color-brand)] pointer-events-none"></div>
+
+            <img
+              :src="lightbox.image"
+              alt="Enlarged work"
+              loading="lazy"
+              decoding="async"
+              class="max-w-full max-h-[72vh] object-contain transition-all duration-300 select-none"
+              :class="{ 'scale-100 opacity-100': lightbox.visible, 'scale-95 opacity-0': !lightbox.visible }"
+              @click.stop
+            />
+          </div>
+
+          <!-- Bottom Caption -->
+          <div class="mt-4 text-center text-[var(--color-text)] select-none">
+            <h3 class="text-xl md:text-2xl font-art tracking-wider text-[var(--color-brand)]">
+              > {{ lightbox.works[lightbox.index]?.title || 'UNTITLED_WORK' }}
+            </h3>
+            <p class="text-[11px] font-mono opacity-60 tracking-[0.2em] mt-1.5 uppercase">
+              {{ lightbox.works[lightbox.index]?.description || 'Creative Illustration' }}
+            </p>
           </div>
         </div>
       </div>
@@ -241,6 +328,7 @@ import worksData from '../data/works.json';
 import sectionsData from '../data/works_section.json';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import ContentLoader from '../components/ContentLoader.vue';
+import CyberImage from '../components/CyberImage.vue';
 
 const scrollY = ref(0);
 const handleScroll = () => { scrollY.value = window.scrollY; };
@@ -275,9 +363,9 @@ const isLoaded = ref(false);
 
 const worksImages = computed(() => {
   if (currentView.value === 'all') {
-    return allPortfolios.value.map(p => getImageUrl(p.thumbnail)).filter(Boolean);
+    return allPortfolios.value.map(p => getImageUrl(p.thumbnail)).filter(Boolean).slice(0, 4);
   } else {
-    return displayedWorks.value.map(w => getImageUrl(w.image)).filter(Boolean);
+    return displayedWorks.value.map(w => getImageUrl(w.image)).filter(Boolean).slice(0, 4);
   }
 });
 

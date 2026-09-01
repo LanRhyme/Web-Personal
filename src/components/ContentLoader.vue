@@ -4,10 +4,12 @@ import anime from 'animejs';
 
 const props = withDefaults(defineProps<{
   images?: string[],
-  ready?: boolean
+  ready?: boolean,
+  timeout?: number
 }>(), {
   images: () => [],
-  ready: true
+  ready: true,
+  timeout: 10000 // 10 seconds timeout limit
 });
 
 const emit = defineEmits(['complete']);
@@ -43,6 +45,7 @@ const innerShapes = {
 };
 
 let checkInterval: number | null = null;
+let timeoutTimer: number | null = null;
 const isFadingOut = ref(false);
 
 onMounted(() => {
@@ -78,52 +81,89 @@ onMounted(() => {
   let targetCount = props.images.length;
   let isAllLoaded = targetCount === 0;
 
+  const onImgDone = () => {
+    loadedCount++;
+    const targetProg = targetCount > 0 ? Math.min(99, Math.round((loadedCount / targetCount) * 100)) : 99;
+    if (targetProg > progress.value) {
+      progress.value = targetProg;
+    }
+    if (loadedCount >= targetCount) {
+      isAllLoaded = true;
+    }
+  };
+
   if (targetCount > 0) {
     props.images.forEach(src => {
+      if (!src) {
+        onImgDone();
+        return;
+      }
       const img = new Image();
-      img.onload = () => { loadedCount++; if (loadedCount >= targetCount) isAllLoaded = true; };
-      img.onerror = () => { loadedCount++; if (loadedCount >= targetCount) isAllLoaded = true; };
+      img.onload = onImgDone;
+      img.onerror = onImgDone;
       img.src = src;
+      if (img.complete) {
+        onImgDone();
+      }
     });
   }
 
+  let isCompleted = false;
   const finishLoading = () => {
+    if (isCompleted) return;
+    isCompleted = true;
+
+    if (checkInterval) {
+      clearInterval(checkInterval);
+      checkInterval = null;
+    }
+    if (timeoutTimer) {
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+    }
+
     anime.remove(progress); // Interrupt any running progress animation
     anime({
       targets: progress,
       value: [progress.value, 100],
       round: 1,
-      duration: 300,
+      duration: 200,
       easing: 'easeOutQuad',
       complete: () => {
         isFadingOut.value = true;
         setTimeout(() => {
           emit('complete');
-        }, 400); // slightly faster fade out
+        }, 250); // fast & snappy fade out
       }
     });
   };
 
-  // Start progress animation
+  // 10s Timeout limit: force complete immediately if images take too long
+  timeoutTimer = window.setTimeout(() => {
+    isAllLoaded = true;
+    finishLoading();
+  }, props.timeout);
+
+  // Initial slow progress crawl if images are still pending
   anime({
     targets: progress,
-    value: [0, 99],
+    value: [0, 95],
     round: 1,
-    duration: 10000, // Slow crawl up to 99% if loading takes long
+    duration: props.timeout,
     easing: 'easeOutQuart'
   });
 
   // Frequently check if we are ready
   checkInterval = window.setInterval(() => {
     if (isAllLoaded && props.ready) {
-      if (checkInterval) clearInterval(checkInterval);
       finishLoading();
     }
-  }, 50);
+  }, 40);
 });
 
 onUnmounted(() => {
   if (checkInterval) clearInterval(checkInterval);
+  if (timeoutTimer) clearTimeout(timeoutTimer);
 });
 </script>
 

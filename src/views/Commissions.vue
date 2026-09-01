@@ -147,29 +147,30 @@
               [ACTIVE]
             </div>
 
-            <img
+            <CyberImage
               :src="getImageUrl(item.currentImage || item.images[0] || '')"
               @click="openImageModal(getImageUrl(item.currentImage || item.images[0] || ''))"
-              class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter brightness-75 group-hover:brightness-100 cursor-pointer z-10"
+              className="w-full h-full cursor-pointer z-10"
+              imgClass="transition-transform duration-1000 group-hover:scale-110 filter brightness-75 group-hover:brightness-100"
               alt="Commission Reference"
-              loading="lazy"
-              decoding="async"
-            >
+            />
             
             <div class="absolute bottom-3 right-3 z-20 flex gap-2" v-if="item.images && item.images.length > 1">
-              <img
+              <CyberImage
                 v-for="(img, imgIndex) in item.images"
                 :key="imgIndex"
                 :src="getImageUrl(img)"
                 @click="item.currentImage = img"
-                class="w-10 h-10 object-cover cursor-pointer border-2 filter grayscale hover:grayscale-0 transition-all duration-300"
+                :showLoadingText="false"
+                className="w-10 h-10 cursor-pointer border-2 transition-all duration-300"
+                imgClass="object-cover filter grayscale hover:grayscale-0"
                 :class="[
                   (item.currentImage === img || (!item.currentImage && imgIndex === 0))
                     ? 'border-[var(--color-brand)] grayscale-0 opacity-100 shadow-[0_0_10px_rgba(255,255,255,0.5)]'
                     : 'border-[var(--color-border)] opacity-60 hover:opacity-100'
                 ]"
                 alt="Thumbnail"
-              >
+              />
             </div>
           </div>
 
@@ -258,6 +259,7 @@ import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import commissionsData from '../data/commissions.json';
 import ContentLoader from '../components/ContentLoader.vue';
+import CyberImage from '../components/CyberImage.vue';
 
 const isLoaded = ref(false);
 
@@ -282,8 +284,7 @@ const modalImageUrl = ref('');
 
 const commissionImages = computed(() => {
   const imgs = priceList.flatMap(item => item.images);
-  imgs.push('/img/wx.jpg', '/img/zfb.jpg');
-  return imgs.map(img => getImageUrl(img)).filter(Boolean);
+  return imgs.map(img => getImageUrl(img)).filter(Boolean).slice(0, 4);
 });
 
 const getImageUrl = (path: string) => {

@@ -76,6 +76,11 @@ const loadArticles = async () => {
   }
 };
 
+const isMobile = ref(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 768;
+};
+
 const handleScroll = () => {
   scrollY.value = window.scrollY;
 };
@@ -390,8 +395,10 @@ onMounted(async () => {
     img.src = src;
   });
   
+  window.addEventListener('resize', handleResize);
   window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('keydown', handleKeyDown);
+  handleResize();
   handleScroll();
 
   nextTick(() => {
@@ -423,6 +430,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
   window.removeEventListener('scroll', handleScroll);
   if ((window as any)._cleanupRepel) (window as any)._cleanupRepel();
 });
@@ -527,12 +535,12 @@ onUnmounted(() => {
     </section>
 
     <!-- Staggered Main Content (Floating Debris Layout) -->
-    <section class="w-full max-w-[1400px] mx-auto px-4 md:px-12 relative mt-[15vh] md:mt-[25vh]">
+    <section class="w-full max-w-[1400px] mx-auto px-4 md:px-12 relative mt-[8vh] md:mt-[25vh]">
       
       <!-- Corrupted Topology Lines Background (Iterator Neuromatrix) -->
       <div 
         class="absolute inset-0 pointer-events-none z-0 opacity-20 transition-transform duration-75"
-        :style="{ transform: `translateY(${scrollY * 0.15}px)` }"
+        :style="{ transform: isMobile ? 'none' : `translateY(${scrollY * 0.15}px)` }"
       >
         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -566,8 +574,8 @@ onUnmounted(() => {
         
         <!-- Identity & Modules (Scattered on Desktop) -->
         <div 
-          class="w-full md:w-[30%] flex flex-col gap-8 md:mt-24 z-20 transition-transform duration-75"
-          :style="{ transform: `translateY(${Math.max(0, scrollY - 300) * 0.08}px)` }"
+          class="w-full md:w-[30%] flex flex-col gap-6 md:gap-8 md:mt-24 z-20 transition-transform duration-75"
+          :style="{ transform: isMobile ? 'none' : `translateY(${Math.max(0, scrollY - 300) * 0.08}px)` }"
         >
           <div class="reveal-left"><div class="cyber-glass p-1 transform md:-rotate-1 hover:rotate-0 transition-all duration-500"><MeCard /></div></div>
           <div class="reveal-left" style="transition-delay: 100ms;"><div class="cyber-glass p-1 transform md:rotate-2 hover:rotate-0 transition-all duration-500 md:ml-[-10%]"><ClockCard /></div></div>

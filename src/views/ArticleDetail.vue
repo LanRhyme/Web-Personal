@@ -3,6 +3,7 @@ import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useARGState } from '../composables/useARGState';
 import ContentLoader from '../components/ContentLoader.vue';
+import CyberImage from '../components/CyberImage.vue';
 import Prism from 'prismjs';
 
 const isLoaded = ref(false);
@@ -230,7 +231,12 @@ onMounted(async () => {
       </div>
 
       <div v-if="article.config.cover" class="mb-8 border border-[var(--color-border)] overflow-hidden">
-        <img :src="getImageUrl(article.config.cover)" loading="lazy" decoding="async" class="w-full filter grayscale hover:grayscale-0 transition-all duration-500" @error="($event.target as HTMLImageElement).style.display='none'" />
+        <CyberImage 
+          :src="getImageUrl(article.config.cover)" 
+          alt="Article Cover" 
+          className="w-full min-h-[200px]"
+          imgClass="w-full filter grayscale hover:grayscale-0 transition-all duration-500" 
+        />
       </div>
 
       <div v-if="article.config.summary" class="cyber-glass !p-6 text-center text-[12px] md:text-[14px] text-[var(--color-text-dim)] font-mono tracking-wide mb-8 border-l-2 border-l-[var(--color-brand)]">
