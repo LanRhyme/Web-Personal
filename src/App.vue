@@ -75,20 +75,6 @@ const petState = ref<'idle' | 'happy' | 'working' | 'active'>('idle');
 const petHappiness = ref(85);
 const bubbleText = ref('');
 
-// --- Simulated HUD Metrics ---
-const cpuLoad = ref(12);
-const memLoad = ref(45.2);
-
-let hudTimer: number | null = null;
-const updateHudMetrics = () => {
-  if (Math.random() > 0.85) {
-    cpuLoad.value = Math.floor(Math.random() * 60) + 30; // Spikes
-  } else {
-    cpuLoad.value = Math.floor(Math.random() * 15) + 2; // Idle
-  }
-  memLoad.value = Math.max(20, Math.min(85, memLoad.value + (Math.random() * 4 - 2)));
-};
-
 // --- Click Ripples ---
 const clickRipples = ref<{id: number, x: number, y: number}[]>([]);
 let rippleIdCounter = 0;
@@ -496,8 +482,6 @@ onMounted(() => {
     }
   });
 
-  hudTimer = window.setInterval(updateHudMetrics, 1200);
-
   const lenis = new Lenis({
     autoRaf: true,
     duration: 1.5,
@@ -575,7 +559,6 @@ onUnmounted(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   if (idleTimer) clearInterval(idleTimer);
   if (petTalkTimer) clearTimeout(petTalkTimer);
-  if (hudTimer) clearInterval(hudTimer);
   window.removeEventListener('arg-fragment-found', onFragmentFound);
   window.removeEventListener('arg-final-choice', onFinalChoice);
 });
@@ -698,38 +681,18 @@ onUnmounted(() => {
     <!-- 3D Fluid Geometry Background -->
     <Background3D />
 
-    <!-- Hardcore Brutalist HUD & Decorations -->
+    <!-- Minimalist HUD Corner Accents & Scroll Tracker -->
     <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">
-      
-      <!-- Blueprint Grid Lines -->
-      <div class="absolute top-0 left-[8%] w-[1px] h-full bg-[var(--color-border)] opacity-30"></div>
-      <div class="absolute top-0 right-[8%] w-[1px] h-full bg-[var(--color-border)] opacity-30"></div>
-      <div class="absolute top-[15%] left-0 w-full h-[1px] bg-[var(--color-border)] opacity-30"></div>
-      
-      <!-- Corner Crosshairs (+) -->
-      <div class="absolute top-[15%] left-[8%] -translate-x-1/2 -translate-y-1/2 text-[var(--color-brand)] opacity-50 text-[10px] font-mono leading-none">+</div>
-      <div class="absolute top-[15%] right-[8%] translate-x-1/2 -translate-y-1/2 text-[var(--color-brand)] opacity-50 text-[10px] font-mono leading-none">+</div>
-      
       <!-- Scroll Progress Tracker -->
-      <div class="absolute top-[30%] right-[3%] w-[1px] h-[40%] bg-[var(--color-border)] opacity-40">
-        <div ref="scrollBarRef" class="w-[3px] bg-white -ml-[1px] transition-all duration-75 shadow-[0_0_8px_rgba(255,255,255,0.8)]" style="height: 0%"></div>
-        <div ref="scrollTextRef" class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white tracking-widest">0%</div>
+      <div class="absolute top-[30%] right-[2%] w-[1px] h-[40%] bg-[var(--color-border)] opacity-30">
+        <div ref="scrollBarRef" class="w-[2px] bg-[var(--color-brand)] -ml-[0.5px] transition-all duration-75 shadow-[0_0_8px_var(--color-brand)]" style="height: 0%"></div>
+        <div ref="scrollTextRef" class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-mono text-[var(--color-text-dim)] tracking-widest">0%</div>
       </div>
 
-      <!-- Top Left Data -->
-      <div class="fixed top-[45px] left-[45px] hidden md:flex flex-col gap-1 tracking-widest text-[8px] sm:text-[10px] pointer-events-none z-50">
-        <span class="text-[var(--color-brand)] font-bold">SYS.ON</span>
-        <span class="opacity-50">CPU: {{ cpuLoad.toString().padStart(2, '0') }}%</span>
-        <span class="opacity-50">MEM: {{ memLoad.toFixed(1) }}%</span>
-      </div>
       <div class="hud-corner hud-tl"></div>
       <div class="hud-corner hud-tr"></div>
       <div class="hud-corner hud-bl"></div>
       <div class="hud-corner hud-br"></div>
-      
-      <div class="absolute top-1/4 right-[2%] hud-text-vertical hidden lg:block text-xs">
-        <span class="opacity-50 tracking-[0.5em]">SYSTEM.UI</span> // <span class="text-brand">ONLINE</span>
-      </div>
     </div>
 
       <!-- Main Content Wrapper (shake target - fixed elements stay outside) -->
