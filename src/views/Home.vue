@@ -403,12 +403,37 @@ onMounted(async () => {
 
   nextTick(() => {
     triggerEntryAnimations();
+
+    // Repel Effect (Active on Desktop)
+    const glassElements = document.querySelectorAll('.cyber-glass');
+    const handleRepel = (e: MouseEvent) => {
+      if (isMobile.value) return;
+      glassElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distX = e.clientX - centerX;
+        const distY = e.clientY - centerY;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        if (distance < 250) {
+          const force = (250 - distance) / 250;
+          const moveX = -(distX / distance) * force * 15;
+          const moveY = -(distY / distance) * force * 15;
+          anime({ targets: el, translateX: moveX, translateY: moveY, duration: 100, easing: 'easeOutQuad' });
+        } else {
+          anime({ targets: el, translateX: 0, translateY: 0, duration: 300, easing: 'easeOutElastic(1, .5)' });
+        }
+      });
+    };
+    window.addEventListener('mousemove', handleRepel);
+    (window as any)._cleanupRepel = () => window.removeEventListener('mousemove', handleRepel);
   });
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
   window.removeEventListener('scroll', handleScroll);
+  if ((window as any)._cleanupRepel) (window as any)._cleanupRepel();
 });
 </script>
 
