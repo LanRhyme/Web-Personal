@@ -142,8 +142,12 @@ const animState = {
   glitch: 0.0
 };
 
-// Physics Inertia, Gyroscopic Tilt & Ambient Celestial Drift
-const mouseInertia = { x: 0, y: 0, vx: 0, vy: 0 };
+// Physics Inertia: Two-Tier Delayed Gravitational Glide
+// Tier 1: Camera translation (1.6s power3.out)
+const cameraInertia = { x: 0, y: 0 };
+// Tier 2: Accretion disk orientation lag (2.6s power4.out)
+const diskInertia = { x: 0, y: 0 };
+// Fluid drag & ambient breathing
 const gyroscopicTilt = { x: 0, y: 0 };
 const scrollInertia = { value: 0 };
 const celestialDrift = { x: 0, y: 0, rot: 0 };
@@ -152,21 +156,21 @@ let lastMouseX = 0;
 let lastMouseY = 0;
 let lastMouseTime = performance.now();
 
-// Smooth GSAP QuickTo Setters for ultra-responsive 120fps tracking
-let quickMouseX: ((value: number) => void) | null = null;
-let quickMouseY: ((value: number) => void) | null = null;
+// Smooth GSAP QuickTo Setters with extended delay & heavy cubic easing
+let quickCamX: ((value: number) => void) | null = null;
+let quickCamY: ((value: number) => void) | null = null;
+let quickDiskX: ((value: number) => void) | null = null;
+let quickDiskY: ((value: number) => void) | null = null;
 let quickScroll: ((value: number) => void) | null = null;
 
 // Route Warp Acceleration & Camera Morphing
 const transitionToRoute = (target: BlackHolePreset, duration = 2.0) => {
-  // 1. Spacetime Warp: brief velocity acceleration during page jump
   gsap.fromTo(
     animState,
     { speed: target.speed * 2.2 },
     { speed: target.speed, duration: 2.2, ease: 'power2.out' }
   );
 
-  // 2. Camera & Orientation smooth transition with cubic ease
   gsap.to(animState, {
     camX: target.camX,
     camY: target.camY,
@@ -191,7 +195,7 @@ watch(
   }
 );
 
-// Mouse & Gyroscopic Physics Drag
+// Mouse Movement: Multi-Tier Delayed Inertial Physics
 const onMouseMove = (e: MouseEvent) => {
   const nx = (e.clientX / window.innerWidth) * 2 - 1;
   const ny = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -205,33 +209,43 @@ const onMouseMove = (e: MouseEvent) => {
   lastMouseY = ny;
   lastMouseTime = now;
 
-  if (quickMouseX) quickMouseX(nx);
-  if (quickMouseY) quickMouseY(ny);
+  // Tier 1: Camera position follows with silky 1.6s power3 glide
+  if (quickCamX) quickCamX(nx);
+  if (quickCamY) quickCamY(ny);
 
-  // Spacetime fluid drag: fast cursor movements tilt the accretion disk
-  gsap.to(gyroscopicTilt, {
-    x: Math.max(-0.18, Math.min(0.18, vy * 0.035)),
-    y: Math.max(-0.25, Math.min(0.25, vx * 0.045)),
-    duration: 0.45,
-    ease: 'power2.out',
-    overwrite: 'auto',
-    onComplete: () => {
-      gsap.to(gyroscopicTilt, {
-        x: 0,
-        y: 0,
-        duration: 1.2,
-        ease: 'elastic.out(1, 0.45)'
-      });
-    }
-  });
+  // Tier 2: Accretion disk orientation lags behind with heavy 2.6s power4 inertia
+  if (quickDiskX) quickDiskX(nx);
+  if (quickDiskY) quickDiskY(ny);
+
+  // Spacetime fluid torque on quick cursor gestures with smooth decaying tail
+  const speed = Math.sqrt(vx * vx + vy * vy);
+  if (speed > 0.08) {
+    gsap.to(gyroscopicTilt, {
+      x: Math.max(-0.2, Math.min(0.2, vy * 0.04)),
+      y: Math.max(-0.28, Math.min(0.28, vx * 0.05)),
+      duration: 0.55,
+      ease: 'power2.out',
+      overwrite: 'auto',
+      onComplete: () => {
+        gsap.to(gyroscopicTilt, {
+          x: 0,
+          y: 0,
+          duration: 1.8,
+          ease: 'power3.out'
+        });
+      }
+    });
+  }
 };
 
 const onTouchMove = (e: TouchEvent) => {
   if (e.touches.length > 0) {
     const nx = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
     const ny = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-    if (quickMouseX) quickMouseX(nx);
-    if (quickMouseY) quickMouseY(ny);
+    if (quickCamX) quickCamX(nx);
+    if (quickCamY) quickCamY(ny);
+    if (quickDiskX) quickDiskX(nx);
+    if (quickDiskY) quickDiskY(ny);
   }
 };
 
@@ -247,14 +261,14 @@ const onMouseOver = (e: MouseEvent) => {
   if (target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea')) {
     gsap.to(animState, {
       exposure: (ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95) * 1.08,
-      duration: 0.35,
+      duration: 0.45,
       ease: 'power2.out',
       overwrite: 'auto'
     });
   } else {
     gsap.to(animState, {
       exposure: ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95,
-      duration: 0.6,
+      duration: 0.75,
       ease: 'power2.out',
       overwrite: 'auto'
     });
@@ -297,7 +311,8 @@ const initThree = () => {
     uniforms: {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      uMouse: { value: new THREE.Vector2(0, 0) },
+      uCamDrift: { value: new THREE.Vector2(0, 0) },
+      uDiskLag: { value: new THREE.Vector2(0, 0) },
       uGyro: { value: new THREE.Vector2(0, 0) },
       uDrift: { value: new THREE.Vector3(0, 0, 0) },
       uCamPos: { value: new THREE.Vector3(animState.camX, animState.camY, animState.camZ) },
@@ -321,7 +336,8 @@ const initThree = () => {
 
       uniform float uTime;
       uniform vec2 uResolution;
-      uniform vec2 uMouse;
+      uniform vec2 uCamDrift;
+      uniform vec2 uDiskLag;
       uniform vec2 uGyro;
       uniform vec3 uDrift;
       uniform vec3 uCamPos;
@@ -367,11 +383,11 @@ const initThree = () => {
           uv.x += sin(uTime * 45.0 + uv.y * 30.0) * 0.012;
         }
 
-        // Camera setup with mouse, gyroscopic drag, celestial drift & scroll parallax
-        vec2 mouseDrift = uMouse * 0.12;
+        // Camera setup with Tier-1 delayed mouse glide (1.6s power3), celestial drift & scroll parallax
+        vec2 camOffset = uCamDrift * 0.22;
         vec3 ro = vec3(
-          uCamPos.x + mouseDrift.x + uDrift.x,
-          uCamPos.y + mouseDrift.y * 0.5 + uDrift.y + uScroll * 0.32,
+          uCamPos.x + camOffset.x + uDrift.x,
+          uCamPos.y + camOffset.y * 0.55 + uDrift.y + uScroll * 0.32,
           uCamPos.z
         );
         vec3 target = vec3(0.0, 0.0, 0.0);
@@ -381,9 +397,9 @@ const initThree = () => {
         vec3 up = cross(right, fwd);
         vec3 rd = normalize(uv.x * right + uv.y * up + 1.75 * fwd);
 
-        // Rotation matrix for accretion disk orientation + gyroscopic fluid torque
-        float effIncl = uIncl + uGyro.x + uScroll * 0.16;
-        float effRoll = uRoll + uGyro.y + uDrift.z;
+        // Rotation matrix: Base orientation + Tier-2 delayed disk tilt (2.6s power4) + gyroscopic fluid torque
+        float effIncl = uIncl + uDiskLag.y * 0.22 + uGyro.x + uScroll * 0.16;
+        float effRoll = uRoll + uDiskLag.x * 0.25 + uGyro.y + uDrift.z;
 
         float ci = cos(effIncl), si = sin(effIncl);
         mat3 rotX = mat3(
@@ -514,10 +530,16 @@ const initThree = () => {
   planeMesh = new THREE.Mesh(geometry, shaderMaterial);
   scene.add(planeMesh);
 
-  // Initialize GSAP QuickTo interpolators for fluid 120fps response
-  quickMouseX = gsap.quickTo(mouseInertia, 'x', { duration: 0.9, ease: 'power2.out' });
-  quickMouseY = gsap.quickTo(mouseInertia, 'y', { duration: 0.9, ease: 'power2.out' });
-  quickScroll = gsap.quickTo(scrollInertia, 'value', { duration: 0.8, ease: 'power1.out' });
+  // Two-Tier Delayed Gravitational QuickTo Setters:
+  // Camera translation: 1.6s duration with soft cubic deceleration
+  quickCamX = gsap.quickTo(cameraInertia, 'x', { duration: 1.6, ease: 'power3.out' });
+  quickCamY = gsap.quickTo(cameraInertia, 'y', { duration: 1.6, ease: 'power3.out' });
+
+  // Accretion disk angular tilt: 2.6s duration with heavy quartic deceleration for deep spatial mass
+  quickDiskX = gsap.quickTo(diskInertia, 'x', { duration: 2.6, ease: 'power4.out' });
+  quickDiskY = gsap.quickTo(diskInertia, 'y', { duration: 2.6, ease: 'power4.out' });
+
+  quickScroll = gsap.quickTo(scrollInertia, 'value', { duration: 1.0, ease: 'power2.out' });
 
   // Continuous Ambient Celestial Breathing (Smooth Lissajous float)
   gsap.to(celestialDrift, {
@@ -553,7 +575,8 @@ const animate = () => {
   if (planeMesh) {
     const mat = planeMesh.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = time;
-    mat.uniforms.uMouse.value.set(mouseInertia.x, mouseInertia.y);
+    mat.uniforms.uCamDrift.value.set(cameraInertia.x, cameraInertia.y);
+    mat.uniforms.uDiskLag.value.set(diskInertia.x, diskInertia.y);
     mat.uniforms.uGyro.value.set(gyroscopicTilt.x, gyroscopicTilt.y);
     mat.uniforms.uDrift.value.set(celestialDrift.x, celestialDrift.y, celestialDrift.rot);
     mat.uniforms.uCamPos.value.set(animState.camX, animState.camY, animState.camZ);
@@ -610,7 +633,7 @@ onUnmounted(() => {
 
 <template>
   <div class="fixed inset-0 pointer-events-none z-[-1] bg-[#050608] overflow-hidden">
-    <!-- Cinematic Gargantua Black Hole with GSAP Fluid Dynamics -->
+    <!-- Cinematic Gargantua Black Hole with Multi-Tier Delayed Inertia -->
     <div ref="containerRef" class="absolute inset-0"></div>
   </div>
 </template>
