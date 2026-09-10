@@ -38,34 +38,34 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
   // Home: Right-side hero anchor, classic cinematic angle
   home: {
     camX: isMobile ? 0.0 : 0.45,
-    camY: isMobile ? 0.95 : 1.15,
-    camZ: isMobile ? 5.2 : 4.8,
-    incl: 0.32,
+    camY: isMobile ? 0.65 : 1.15,
+    camZ: isMobile ? 4.3 : 4.8,
+    incl: isMobile ? 0.38 : 0.32,
     roll: -0.15,
     speed: 0.38,
-    exposure: 0.95,
+    exposure: isMobile ? 1.05 : 0.95,
     colorR: 0.92,
     colorG: 0.62,
     colorB: 0.32
   },
   // Projects: Bold lateral shift to far right (1.15), clearing left 60% for cards
   projects: {
-    camX: isMobile ? 0.2 : 1.15,
-    camY: 0.82,
-    camZ: 5.1,
+    camX: isMobile ? 0.0 : 1.15,
+    camY: isMobile ? 0.60 : 0.82,
+    camZ: isMobile ? 4.4 : 5.1,
     incl: 0.44,
     roll: 0.16,
     speed: 0.42,
-    exposure: 0.9,
+    exposure: isMobile ? 1.0 : 0.9,
     colorR: 0.88,
     colorG: 0.65,
     colorB: 0.38
   },
   // Works: Swept over to the LEFT-HIGH quadrant (-0.55, 1.45) for dynamic asymmetric variety
   works: {
-    camX: isMobile ? -0.15 : -0.55,
-    camY: 1.45,
-    camZ: 5.3,
+    camX: isMobile ? 0.0 : -0.55,
+    camY: isMobile ? 0.68 : 1.45,
+    camZ: isMobile ? 4.4 : 5.3,
     incl: 0.65,
     roll: -0.32,
     speed: 0.3,
@@ -76,22 +76,22 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
   },
   // Articles: High-right calm background halo, unobstructed reading column
   articles: {
-    camX: isMobile ? 0.0 : 0.85,
-    camY: 1.25,
-    camZ: 5.7,
+    camX: 0.0,
+    camY: isMobile ? 0.70 : 1.25,
+    camZ: isMobile ? 4.5 : 5.7,
     incl: 0.24,
     roll: -0.05,
     speed: 0.24,
-    exposure: 0.72,
+    exposure: isMobile ? 0.85 : 0.72,
     colorR: 0.8,
     colorG: 0.55,
     colorB: 0.35
   },
   // Worldview: Mystical left-forward singularity (-0.35, 0.95), dramatic presence
   worldview: {
-    camX: isMobile ? 0.0 : -0.35,
-    camY: 1.1,
-    camZ: 4.5,
+    camX: 0.0,
+    camY: isMobile ? 0.65 : 1.1,
+    camZ: isMobile ? 4.2 : 4.5,
     incl: 0.38,
     roll: 0.25,
     speed: 0.52,
@@ -104,7 +104,7 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
   terminal: {
     camX: 0.0,
     camY: 0.7,
-    camZ: 4.6,
+    camZ: isMobile ? 4.2 : 4.6,
     incl: 0.18,
     roll: 0.0,
     speed: 0.48,
@@ -213,8 +213,9 @@ const onMouseMove = (e: MouseEvent) => {
 
 const onTouchMove = (e: TouchEvent) => {
   if (e.touches.length > 0) {
-    const nx = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-    const ny = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+    // Gentle micro-tilt on mobile touch to avoid jarring camera whips during scrolling
+    const nx = ((e.touches[0].clientX / window.innerWidth) * 2 - 1) * 0.3;
+    const ny = (-(e.touches[0].clientY / window.innerHeight) * 2 + 1) * 0.3;
     if (quickCamX) quickCamX(nx);
     if (quickCamY) quickCamY(ny);
     if (quickDiskX) quickDiskX(nx);
@@ -238,10 +239,11 @@ const onScroll = () => {
   scrollDynamics.progress = progress;
 
   // Orbital curved trajectory: Sweeps horizontally & ascends/descends in space
-  // Instead of a flat zoom, the black hole travels along a graceful orbital arc!
-  const orbitX = Math.sin(progress * Math.PI) * 0.58 + progress * 0.28;
-  const orbitY = Math.sin(progress * Math.PI * 0.85) * 0.72;
-  const orbitZ = progress * 0.48;
+  // Scaled moderately on mobile portrait screens to keep the black hole elegantly in frame
+  const orbitMult = isMobile ? 0.35 : 1.0;
+  const orbitX = (Math.sin(progress * Math.PI) * 0.58 + progress * 0.28) * orbitMult;
+  const orbitY = (Math.sin(progress * Math.PI * 0.85) * 0.72) * orbitMult;
+  const orbitZ = (progress * 0.48) * orbitMult;
 
   gsap.to(scrollDynamics, {
     shiftX: orbitX,                 // Sweeping lateral travel across the screen
@@ -322,8 +324,8 @@ const initThree = () => {
 
   const geometry = new THREE.PlaneGeometry(2, 2);
 
-  const nSteps = isMobile ? 30 : 40;
-  const dtStep = isMobile ? '0.155' : '0.135';
+  const nSteps = isMobile ? 45 : 40;
+  const dtStep = isMobile ? '0.140' : '0.135';
 
   const shaderMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -541,8 +543,9 @@ const initThree = () => {
         color *= effExposure;
         color = color * (2.51 * color + 0.03) / (color * (2.43 * color + 0.59) + 0.14);
 
-        // Edge vignette: clean contrast and pristine legibility
-        float vig = 1.0 - smoothstep(0.42, 1.35, length(uv));
+        // Edge vignette: aspect-ratio normalized for pristine mobile & desktop contrast
+        vec2 vigCoord = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.xy;
+        float vig = 1.0 - smoothstep(0.35, 0.72, length(vigCoord));
         color *= vig;
         alpha = clamp(alpha * vig, 0.0, 0.82);
 
