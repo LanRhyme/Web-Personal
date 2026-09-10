@@ -35,9 +35,9 @@ interface BlackHolePreset {
 }
 
 const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
-  // Home: Classic Gargantua, dramatic elevation, deep warm Morandi amber/copper
+  // Home: Right-side hero anchor, classic cinematic angle
   home: {
-    camX: isMobile ? 0.0 : 0.42,
+    camX: isMobile ? 0.0 : 0.45,
     camY: isMobile ? 0.95 : 1.15,
     camZ: isMobile ? 5.2 : 4.8,
     incl: 0.32,
@@ -48,37 +48,37 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
     colorG: 0.62,
     colorB: 0.32
   },
-  // Projects: Panned right, leaving clean dark space on left for project cards
+  // Projects: Bold lateral shift to far right (1.15), clearing left 60% for cards
   projects: {
-    camX: isMobile ? 0.15 : 0.9,
-    camY: 0.85,
-    camZ: 5.0,
-    incl: 0.42,
-    roll: 0.12,
+    camX: isMobile ? 0.2 : 1.15,
+    camY: 0.82,
+    camZ: 5.1,
+    incl: 0.44,
+    roll: 0.16,
     speed: 0.42,
     exposure: 0.9,
     colorR: 0.88,
     colorG: 0.65,
     colorB: 0.38
   },
-  // Works: Wider top-down angle, slower rotation
+  // Works: Swept over to the LEFT-HIGH quadrant (-0.55, 1.45) for dynamic asymmetric variety
   works: {
-    camX: 0.0,
-    camY: 1.55,
-    camZ: 5.2,
-    incl: 0.62,
-    roll: -0.28,
+    camX: isMobile ? -0.15 : -0.55,
+    camY: 1.45,
+    camZ: 5.3,
+    incl: 0.65,
+    roll: -0.32,
     speed: 0.3,
     exposure: 1.0,
     colorR: 0.94,
     colorG: 0.58,
     colorB: 0.28
   },
-  // Articles: Subdued, further back, dark bronze void for reading
+  // Articles: High-right calm background halo, unobstructed reading column
   articles: {
-    camX: isMobile ? 0.0 : 0.65,
-    camY: 0.9,
-    camZ: 5.6,
+    camX: isMobile ? 0.0 : 0.85,
+    camY: 1.25,
+    camZ: 5.7,
     incl: 0.24,
     roll: -0.05,
     speed: 0.24,
@@ -87,11 +87,11 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
     colorG: 0.55,
     colorB: 0.35
   },
-  // Worldview: Elevated singularity energy, ethereal platinum-copper tone
+  // Worldview: Mystical left-forward singularity (-0.35, 0.95), dramatic presence
   worldview: {
-    camX: 0.1,
-    camY: 1.25,
-    camZ: 4.6,
+    camX: isMobile ? 0.0 : -0.35,
+    camY: 1.1,
+    camZ: 4.5,
     incl: 0.38,
     roll: 0.25,
     speed: 0.52,
@@ -100,11 +100,11 @@ const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
     colorG: 0.7,
     colorB: 0.42
   },
-  // Terminal: Compact, fast rotation
+  // Terminal: Dead-center technical core
   terminal: {
     camX: 0.0,
-    camY: 0.75,
-    camZ: 4.7,
+    camY: 0.7,
+    camZ: 4.6,
     incl: 0.18,
     roll: 0.0,
     speed: 0.48,
@@ -143,17 +143,18 @@ const animState = {
 };
 
 // Physics Inertia: Calm Multi-Tier Delayed Gravitational Glide
-// Tier 1: Camera translation (1.6s power3.out)
 const cameraInertia = { x: 0, y: 0 };
-// Tier 2: Accretion disk orientation lag (2.6s power4.out)
 const diskInertia = { x: 0, y: 0 };
 
-// Deep Scroll Dynamics (Progress, Velocity Kinetic Surge, 3D Pitch & Elevation)
+// Deep Scroll Dynamics: Orbital Path (Curved Trajectory & Position Shifts)
 const scrollDynamics = {
-  progress: 0,
-  velocity: 0,
+  shiftX: 0,
+  shiftY: 0,
+  shiftZ: 0,
   pitch: 0,
-  elevation: 0
+  roll: 0,
+  velocity: 0,
+  progress: 0
 };
 
 const celestialDrift = { x: 0, y: 0, rot: 0 };
@@ -166,10 +167,9 @@ let quickCamX: ((value: number) => void) | null = null;
 let quickCamY: ((value: number) => void) | null = null;
 let quickDiskX: ((value: number) => void) | null = null;
 let quickDiskY: ((value: number) => void) | null = null;
-let quickScrollProgress: ((value: number) => void) | null = null;
 
-// Route Warp Acceleration & Camera Morphing
-const transitionToRoute = (target: BlackHolePreset, duration = 2.0) => {
+// Route Warp Acceleration & Dramatic Camera Morphing
+const transitionToRoute = (target: BlackHolePreset, duration = 2.2) => {
   gsap.fromTo(
     animState,
     { speed: target.speed * 2.2 },
@@ -200,7 +200,7 @@ watch(
   }
 );
 
-// Mouse Movement: Calm, silky delayed glide (No abrupt velocity twisting)
+// Mouse Movement: Calm, silky delayed glide
 const onMouseMove = (e: MouseEvent) => {
   const nx = (e.clientX / window.innerWidth) * 2 - 1;
   const ny = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -222,7 +222,7 @@ const onTouchMove = (e: TouchEvent) => {
   }
 };
 
-// Deepened GSAP Page Scroll Dynamics
+// Deep GSAP Scroll Dynamics: Multi-Axis Orbital Flight & Sweeping Trajectory
 const onScroll = () => {
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
   const curY = window.scrollY;
@@ -230,25 +230,31 @@ const onScroll = () => {
 
   const now = performance.now();
   const dt = Math.max((now - lastScrollTime) * 0.001, 0.008);
-  const v = (curY - lastScrollY) / dt; // pixels per second
+  const v = (curY - lastScrollY) / dt;
 
   lastScrollY = curY;
   lastScrollTime = now;
 
-  // 1. Smooth scroll progress interpolation
-  if (quickScrollProgress) quickScrollProgress(progress);
+  scrollDynamics.progress = progress;
 
-  // 2. Dynamic 3D elevation and inclination unfolding with GSAP power2.out
+  // Orbital curved trajectory: Sweeps horizontally & ascends/descends in space
+  // Instead of a flat zoom, the black hole travels along a graceful orbital arc!
+  const orbitX = Math.sin(progress * Math.PI) * 0.58 + progress * 0.28;
+  const orbitY = Math.sin(progress * Math.PI * 0.85) * 0.72;
+  const orbitZ = progress * 0.48;
+
   gsap.to(scrollDynamics, {
-    pitch: progress * 0.52,         // Rotates disk up to +0.52 rad (unfolds spiral arms)
-    elevation: progress * 0.95,     // Elevates camera vantage by +0.95
+    shiftX: orbitX,                 // Sweeping lateral travel across the screen
+    shiftY: orbitY,                 // Vertical swooping flight
+    shiftZ: orbitZ,                 // Depth translation
+    pitch: progress * 0.56,         // Unfolding disk tilt
+    roll: -progress * 0.28,         // Banking roll angle
     duration: 1.4,
     ease: 'power2.out',
     overwrite: 'auto'
   });
 
-  // 3. Scroll Velocity Kinetic Energy Surge:
-  // Scrolling temporarily accelerates the accretion disk swirl, smoothly decaying back
+  // Scroll Velocity Surge:
   const normVelocity = Math.min(Math.abs(v) / 1600.0, 1.6);
   if (normVelocity > 0.05) {
     gsap.to(scrollDynamics, {
@@ -267,7 +273,7 @@ const onScroll = () => {
   }
 };
 
-// Micro-interaction: Gravitational lens micro-tension on UI element hover
+// Micro-interaction: Gravitational lens micro-tension on UI hover
 const onMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement | null;
   if (target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea')) {
@@ -327,16 +333,16 @@ const initThree = () => {
       uDiskLag: { value: new THREE.Vector2(0, 0) },
       uDrift: { value: new THREE.Vector3(0, 0, 0) },
       uCamPos: { value: new THREE.Vector3(animState.camX, animState.camY, animState.camZ) },
+      uScrollShift: { value: new THREE.Vector3(0, 0, 0) },
+      uScrollRot: { value: new THREE.Vector2(0, 0) },
+      uScrollVelocity: { value: 0.0 },
+      uScrollProgress: { value: 0.0 },
       uIncl: { value: animState.incl },
       uRoll: { value: animState.roll },
       uSpeed: { value: animState.speed },
       uExposure: { value: animState.exposure },
       uBaseColor: { value: new THREE.Vector3(animState.colorR, animState.colorG, animState.colorB) },
-      uGlitch: { value: 0.0 },
-      uScrollProgress: { value: 0.0 },
-      uScrollVelocity: { value: 0.0 },
-      uScrollPitch: { value: 0.0 },
-      uScrollElevation: { value: 0.0 }
+      uGlitch: { value: 0.0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -354,16 +360,16 @@ const initThree = () => {
       uniform vec2 uDiskLag;
       uniform vec3 uDrift;
       uniform vec3 uCamPos;
+      uniform vec3 uScrollShift;
+      uniform vec2 uScrollRot;
+      uniform float uScrollVelocity;
+      uniform float uScrollProgress;
       uniform float uIncl;
       uniform float uRoll;
       uniform float uSpeed;
       uniform float uExposure;
       uniform vec3 uBaseColor;
       uniform float uGlitch;
-      uniform float uScrollProgress;
-      uniform float uScrollVelocity;
-      uniform float uScrollPitch;
-      uniform float uScrollElevation;
 
       varying vec2 vUv;
 
@@ -399,23 +405,25 @@ const initThree = () => {
           uv.x += sin(uTime * 45.0 + uv.y * 30.0) * 0.012;
         }
 
-        // Camera setup with Tier-1 delayed mouse glide (1.6s power3), celestial drift & GSAP scroll elevation
+        // Camera setup with Tier-1 delayed mouse glide, celestial drift & GSAP scroll trajectory
         vec2 camOffset = uCamDrift * 0.22;
         vec3 ro = vec3(
-          uCamPos.x + camOffset.x + uDrift.x,
-          uCamPos.y + camOffset.y * 0.55 + uDrift.y + uScrollElevation,
-          uCamPos.z + uScrollProgress * 0.55
+          uCamPos.x + camOffset.x + uDrift.x + uScrollShift.x,
+          uCamPos.y + camOffset.y * 0.55 + uDrift.y + uScrollShift.y,
+          uCamPos.z + uScrollShift.z
         );
-        vec3 target = vec3(0.0, 0.0, 0.0);
+
+        // Director Camera Look-At: smoothly tracks the orbital position
+        vec3 target = vec3(uScrollShift.x * 0.35, uScrollShift.y * 0.25, 0.0);
 
         vec3 fwd = normalize(target - ro);
         vec3 right = normalize(cross(fwd, vec3(0.0, 1.0, 0.0)));
         vec3 up = cross(right, fwd);
         vec3 rd = normalize(uv.x * right + uv.y * up + 1.75 * fwd);
 
-        // Rotation matrix: Base orientation + Tier-2 delayed disk tilt + GSAP scroll pitch unfolding
-        float effIncl = uIncl + uDiskLag.y * 0.18 + uScrollPitch;
-        float effRoll = uRoll + uDiskLag.x * 0.22 + uDrift.z - uScrollProgress * 0.16;
+        // Rotation matrix: Base orientation + Tier-2 delayed disk tilt + GSAP scroll orbital trajectory
+        float effIncl = uIncl + uDiskLag.y * 0.18 + uScrollRot.x;
+        float effRoll = uRoll + uDiskLag.x * 0.22 + uDrift.z + uScrollRot.y;
 
         float ci = cos(effIncl), si = sin(effIncl);
         mat3 rotX = mat3(
@@ -434,7 +442,7 @@ const initThree = () => {
         vec3 rayPos = rotLocal * ro;
         vec3 rayDir = rotLocal * rd;
 
-        // Controlled geometric bounds: Compact, elegant, never overflowing
+        // Controlled geometric bounds
         float ssRadius = 0.54;       // Event horizon radius
         float discInner = 0.92;      // Inner accretion disk
         float discOuter = 2.65;      // Outer boundary of dust cloud
@@ -462,18 +470,16 @@ const initThree = () => {
           rayDir = normalize(rayDir + bend);
           rayPos += rayDir * DT;
 
-          // Volumetric Accretion Dust Cloud (Strictly Normalized)
+          // Volumetric Accretion Dust Cloud
           float h = abs(rayPos.y);
           float distXZ = length(rayPos.xz);
 
           if (h < 0.32 && distXZ >= discInner && distXZ <= discOuter) {
-            // Smooth radial density envelope
             float radial = smoothstep(discInner, discInner + 0.22, distXZ) *
                            (1.0 - smoothstep(discOuter - 0.5, discOuter, distXZ));
-            // Soft vertical exponential falloff
             float vertical = exp(-h * 12.0);
 
-            // Keplerian differential swirl: omega ~ r^-1.25 with scroll kinetic surge
+            // Keplerian differential swirl with scroll kinetic surge
             float phi = atan(rayPos.z, rayPos.x);
             float omega = 1.45 / pow(distXZ, 1.25);
             float angle = phi - uTime * omega * effSpeed;
@@ -557,8 +563,6 @@ const initThree = () => {
   quickDiskX = gsap.quickTo(diskInertia, 'x', { duration: 2.6, ease: 'power4.out' });
   quickDiskY = gsap.quickTo(diskInertia, 'y', { duration: 2.6, ease: 'power4.out' });
 
-  quickScrollProgress = gsap.quickTo(scrollDynamics, 'progress', { duration: 1.2, ease: 'power2.out' });
-
   // Continuous Ambient Celestial Breathing (Smooth Lissajous float)
   gsap.to(celestialDrift, {
     x: 0.06,
@@ -597,16 +601,16 @@ const animate = () => {
     mat.uniforms.uDiskLag.value.set(diskInertia.x, diskInertia.y);
     mat.uniforms.uDrift.value.set(celestialDrift.x, celestialDrift.y, celestialDrift.rot);
     mat.uniforms.uCamPos.value.set(animState.camX, animState.camY, animState.camZ);
+    mat.uniforms.uScrollShift.value.set(scrollDynamics.shiftX, scrollDynamics.shiftY, scrollDynamics.shiftZ);
+    mat.uniforms.uScrollRot.value.set(scrollDynamics.pitch, scrollDynamics.roll);
+    mat.uniforms.uScrollVelocity.value = scrollDynamics.velocity;
+    mat.uniforms.uScrollProgress.value = scrollDynamics.progress;
     mat.uniforms.uIncl.value = animState.incl;
     mat.uniforms.uRoll.value = animState.roll;
     mat.uniforms.uSpeed.value = animState.speed;
     mat.uniforms.uExposure.value = animState.exposure;
     mat.uniforms.uBaseColor.value.set(animState.colorR, animState.colorG, animState.colorB);
     mat.uniforms.uGlitch.value = animState.glitch;
-    mat.uniforms.uScrollProgress.value = scrollDynamics.progress;
-    mat.uniforms.uScrollVelocity.value = scrollDynamics.velocity;
-    mat.uniforms.uScrollPitch.value = scrollDynamics.pitch;
-    mat.uniforms.uScrollElevation.value = scrollDynamics.elevation;
   }
 
   renderer.render(scene, camera);
@@ -653,7 +657,7 @@ onUnmounted(() => {
 
 <template>
   <div class="fixed inset-0 pointer-events-none z-[-1] bg-[#050608] overflow-hidden">
-    <!-- Cinematic Gargantua Black Hole with Deep GSAP Scroll Dynamics -->
+    <!-- Cinematic Gargantua Black Hole with 3D Orbital Flight Path -->
     <div ref="containerRef" class="absolute inset-0"></div>
   </div>
 </template>
