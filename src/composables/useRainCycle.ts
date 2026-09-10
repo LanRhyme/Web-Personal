@@ -3,13 +3,32 @@ import { triggerShatterEffect } from '../utils/shatterEffect';
 
 type CycleStage = 'DRY' | 'PRE_RAIN' | 'HEAVY' | 'DEATH_RAIN' | 'COLLAPSE';
 
-const cycleStage = ref<CycleStage>('DRY');
-const intensity = ref(0.02); // Minimum 0.02
+const STORAGE_KEY_LOCKED = 'rain_cycle_locked';
+const STORAGE_KEY_STAGE = 'rain_cycle_stage';
+const STORAGE_KEY_INTENSITY = 'rain_cycle_intensity';
+
+// Read persistent lock state from localStorage
+const initFromStorage = () => {
+  if (typeof localStorage === 'undefined') return { locked: false, stage: 'DRY' as CycleStage, intensity: 0.02 };
+  try {
+    const locked = localStorage.getItem(STORAGE_KEY_LOCKED) === 'true';
+    const stage = (localStorage.getItem(STORAGE_KEY_STAGE) as CycleStage) || 'DRY';
+    const savedIntensity = parseFloat(localStorage.getItem(STORAGE_KEY_INTENSITY) || '0.02');
+    return { locked, stage, intensity: isNaN(savedIntensity) ? 0.02 : savedIntensity };
+  } catch {
+    return { locked: false, stage: 'DRY' as CycleStage, intensity: 0.02 };
+  }
+};
+
+const initialData = initFromStorage();
+
+const cycleStage = ref<CycleStage>(initialData.stage);
+const intensity = ref(initialData.intensity);
 const dryTimeLeft = ref(120);
 const dryTotalTime = 120;
-const isShaking = ref(false);
+const isShaking = ref(initialData.stage === 'HEAVY' || initialData.stage === 'DEATH_RAIN');
 const isCollapsed = ref(false);
-const isLocked = ref(false);
+const isLocked = ref(initialData.locked);
 let shatterCleanup: (() => void) | null = null;
 
 let cycleInterval: ReturnType<typeof setInterval> | null = null;
@@ -18,6 +37,8 @@ let lastTickTime = 0;
 let audioCtx: AudioContext | null = null;
 let gainNode: GainNode | null = null;
 let filter: BiquadFilterNode | null = null;
+let subOsc: OscillatorNode | null = null;
+let subGain: GainNode | null = null;
 let audioInitialized = false;
 
 const initAudio = () => {
@@ -29,16 +50,17 @@ const initAudio = () => {
   }
   const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
   if (!AudioContextClass) return;
-  
+
   audioCtx = new AudioContextClass();
+
+  // 1. Resonant Pink Noise for Roaring Torrential Rain
   const bufferSize = audioCtx.sampleRate * 2;
   const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
   const data = buffer.getChannelData(0);
-  
-  // Pink noise approximation
+
   let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0;
   for (let i = 0; i < bufferSize; i++) {
-    let white = Math.random() * 2 - 1;
+    const white = Math.random() * 2 - 1;
     b0 = 0.99886 * b0 + white * 0.0555179;
     b1 = 0.99332 * b1 + white * 0.0750759;
     b2 = 0.96900 * b2 + white * 0.1538520;
@@ -46,27 +68,81 @@ const initAudio = () => {
     b4 = 0.55000 * b4 + white * 0.5329522;
     data[i] = (b0 + b1 + b2 + b3 + b4 + white * 0.5362) * 0.11;
   }
-  
+
   const noiseSource = audioCtx.createBufferSource();
   noiseSource.buffer = buffer;
   noiseSource.loop = true;
-  
+
   filter = audioCtx.createBiquadFilter();
   filter.type = 'lowpass';
   filter.frequency.value = 800;
-  
+  filter.Q.value = 2.5; // Resonant frequency sweep
+
   gainNode = audioCtx.createGain();
   gainNode.gain.value = 0;
-  
+
   noiseSource.connect(filter);
   filter.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   noiseSource.start();
+
+  // 2. Sub-Bass Seismic Oscillator (Rain World Infrasound Rumble)
+  try {
+    subOsc = audioCtx.createOscillator();
+    subOsc.type = 'sine';
+    subOsc.frequency.value = 45; // 45Hz ground-shaking sub-bass rumble
+
+    subGain = audioCtx.createGain();
+    subGain.gain.value = 0;
+
+    subOsc.connect(subGain);
+    subGain.connect(audioCtx.destination);
+    subOsc.start();
+  } catch (e) {
+    console.error('Sub-bass audio init failed:', e);
+  }
+
   audioInitialized = true;
+};
+
+const saveLockState = () => {
+  try {
+    localStorage.setItem(STORAGE_KEY_LOCKED, String(isLocked.value));
+    localStorage.setItem(STORAGE_KEY_STAGE, cycleStage.value);
+    localStorage.setItem(STORAGE_KEY_INTENSITY, String(intensity.value));
+  } catch {
+    // Ignore storage quota or access errors
+  }
+};
+
+const syncShakeClasses = () => {
+  const container = document.querySelector('.shake-container');
+  if (!container) return;
+  if (cycleStage.value === 'DEATH_RAIN') {
+    if (!container.classList.contains('screen-shaking-violent')) {
+      container.classList.remove('screen-shaking-light');
+      container.classList.add('screen-shaking-violent');
+    }
+  } else if (cycleStage.value === 'HEAVY') {
+    if (!container.classList.contains('screen-shaking-light')) {
+      container.classList.remove('screen-shaking-violent');
+      container.classList.add('screen-shaking-light');
+    }
+  } else if (cycleStage.value !== 'COLLAPSE') {
+    container.classList.remove('screen-shaking-light');
+    container.classList.remove('screen-shaking-violent');
+  }
 };
 
 const toggleLock = () => {
   isLocked.value = !isLocked.value;
+  if (isLocked.value) {
+    if (cycleStage.value === 'HEAVY' || cycleStage.value === 'DEATH_RAIN') {
+      isShaking.value = true;
+    }
+    syncShakeClasses();
+  }
+  saveLockState();
 };
 
 const accelerateCycle = () => {
@@ -81,23 +157,26 @@ const accelerateCycle = () => {
 
 const startCycle = () => {
   if (cycleInterval) return;
-  
+
   window.addEventListener('click', initAudio);
   window.addEventListener('keydown', initAudio);
   window.addEventListener('touchstart', initAudio);
-  
-  cycleStage.value = 'DRY';
-  intensity.value = 0.02;
-  dryTimeLeft.value = dryTotalTime;
-  isShaking.value = false;
-  isCollapsed.value = false;
+
+  if (!isLocked.value) {
+    cycleStage.value = 'DRY';
+    intensity.value = 0.02;
+    dryTimeLeft.value = dryTotalTime;
+    isShaking.value = false;
+    isCollapsed.value = false;
+  }
+
   lastTickTime = Date.now();
-  
+
   cycleInterval = setInterval(() => {
     const now = Date.now();
     const dt = (now - lastTickTime) / 1000;
     lastTickTime = now;
-    
+
     if (!isLocked.value) {
       if (cycleStage.value === 'DRY') {
         dryTimeLeft.value -= dt;
@@ -107,7 +186,7 @@ const startCycle = () => {
         }
       } else if (cycleStage.value === 'PRE_RAIN') {
         // Pre-rain lasts 15 seconds, intensity 0.02 -> 0.4
-        intensity.value += dt / 15 * 0.38;
+        intensity.value += (dt / 15) * 0.38;
         if (intensity.value >= 0.4) {
           intensity.value = 0.4;
           cycleStage.value = 'HEAVY';
@@ -115,7 +194,7 @@ const startCycle = () => {
         }
       } else if (cycleStage.value === 'HEAVY') {
         // Heavy rain lasts 10 seconds, intensity 0.4 -> 1
-        intensity.value += dt / 10 * 0.6;
+        intensity.value += (dt / 10) * 0.6;
         if (intensity.value >= 1) {
           intensity.value = 1;
           cycleStage.value = 'DEATH_RAIN';
@@ -125,30 +204,25 @@ const startCycle = () => {
         }
       } else if (cycleStage.value === 'DEATH_RAIN') {
         // Death rain lasts 10 seconds, keeping intensity at 1
-        intensity.value += dt; // use intensity to track time > 1
-        if (intensity.value >= 11) { // 1 + 10s
+        intensity.value += dt;
+        if (intensity.value >= 11) {
           cycleStage.value = 'COLLAPSE';
           isCollapsed.value = true;
           document.querySelector('.shake-container')?.classList.add('page-collapse');
-          // Do NOT remove screen-shaking-violent here, so it shakes while collapsing
-          
-          // Trigger canvas shatter effect
+
           triggerShatterEffect().then(cleanup => {
             shatterCleanup = cleanup;
           });
         }
       } else if (cycleStage.value === 'COLLAPSE') {
-        // Complete system failure: 4s collapse + 3s total collapse
         intensity.value += dt;
-        
-        // At 4s into collapse, escalate to total collapse
+
         if (intensity.value >= 15 && !document.querySelector('.shake-container')?.classList.contains('total-collapse')) {
           document.querySelector('.shake-container')?.classList.remove('page-collapse');
           document.querySelector('.shake-container')?.classList.add('total-collapse');
         }
-        
-        if (intensity.value >= 18) { // 11 + 4s + 3s
-          // Snap reset
+
+        if (intensity.value >= 18) {
           intensity.value = 0.02;
           cycleStage.value = 'DRY';
           dryTimeLeft.value = dryTotalTime;
@@ -163,16 +237,34 @@ const startCycle = () => {
           }
         }
       }
+    } else {
+      // When locked, maintain state and ensure shake classes persist
+      if (cycleStage.value === 'HEAVY' || cycleStage.value === 'DEATH_RAIN') {
+        isShaking.value = true;
+      } else {
+        isShaking.value = false;
+      }
+      syncShakeClasses();
     }
-    
-    // Update Audio (using manual lerp instead of setTargetAtTime to prevent Web Audio timeline bloat)
-    if (audioCtx && gainNode && filter) {
-       const targetGain = cycleStage.value === 'COLLAPSE' ? 0 : (intensity.value * 0.5);
-       const targetFreq = 800 + (intensity.value > 1 ? 1 : intensity.value) * 2000;
-       
-       // Smooth lerp (10% per 50ms tick)
-       gainNode.gain.value += (targetGain - gainNode.gain.value) * 0.1;
-       filter.frequency.value += (targetFreq - filter.frequency.value) * 0.1;
+
+    // Update Web Audio Nodes (Pink Noise & Sub-Bass Rumble)
+    if (audioCtx) {
+      const isAudible = cycleStage.value !== 'COLLAPSE';
+      const normInt = Math.min(1.0, Math.max(0.0, intensity.value > 1 ? 1 : intensity.value));
+
+      if (gainNode && filter) {
+        const targetGain = isAudible ? normInt * 0.45 : 0;
+        const targetFreq = 700 + normInt * 2600;
+        gainNode.gain.value += (targetGain - gainNode.gain.value) * 0.1;
+        filter.frequency.value += (targetFreq - filter.frequency.value) * 0.1;
+      }
+
+      if (subGain) {
+        // Sub-bass ramps up powerfully in HEAVY and DEATH_RAIN
+        const isTorrential = cycleStage.value === 'HEAVY' || cycleStage.value === 'DEATH_RAIN';
+        const targetSubGain = isAudible && isTorrential ? normInt * 0.32 : (normInt * 0.04);
+        subGain.gain.value += (targetSubGain - subGain.gain.value) * 0.1;
+      }
     }
   }, 50);
 };
@@ -181,7 +273,7 @@ export function useRainCycle() {
   if (!cycleInterval) {
     startCycle();
   }
-  
+
   return {
     cycleStage,
     intensity: computed(() => {
