@@ -1,7 +1,11 @@
 /**
  * Rain World Signal Extinction & Dawn Reawakening Animation
- * Simulates violent horizontal slice tearing, chromatic RGB dislocation, and CRT power-down cutoff into darkness,
- * followed by gentle morning light reawakening.
+ * Simulates authentic old CRT television signal collapse:
+ * 1. Screen tearing jitter & chromatic RGB split directly on the page
+ * 2. CRT scanlines and rolling TV static interference
+ * 3. Vertical raster collapse into horizontal phosphor razor beam
+ * 4. Horizontal beam pinch into a central dying phosphor dot
+ * 5. Morning light reawakening
  */
 export async function triggerShatterEffect(): Promise<() => void> {
   // Target container to collapse
@@ -18,179 +22,167 @@ export async function triggerShatterEffect(): Promise<() => void> {
   overlay.style.overflow = 'hidden';
   document.body.appendChild(overlay);
 
+  // CRT fine scanlines
+  const scanlines = document.createElement('div');
+  scanlines.style.position = 'absolute';
+  scanlines.style.inset = '0';
+  scanlines.style.pointerEvents = 'none';
+  scanlines.style.background = 'repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.45) 0px, rgba(0, 0, 0, 0.45) 1px, transparent 1px, transparent 3px)';
+  scanlines.style.opacity = '0.75';
+  scanlines.style.mixBlendMode = 'multiply';
+  overlay.appendChild(scanlines);
+
+  // CRT tube curvature vignette
+  const vignette = document.createElement('div');
+  vignette.style.position = 'absolute';
+  vignette.style.inset = '0';
+  vignette.style.pointerEvents = 'none';
+  vignette.style.background = 'radial-gradient(circle at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.75) 100%)';
+  overlay.appendChild(vignette);
+
+  // CRT rolling TV static canvas
+  const noiseCanvas = document.createElement('canvas');
+  noiseCanvas.style.position = 'absolute';
+  noiseCanvas.style.inset = '0';
+  noiseCanvas.style.width = '100%';
+  noiseCanvas.style.height = '100%';
+  noiseCanvas.style.pointerEvents = 'none';
+  noiseCanvas.style.mixBlendMode = 'screen';
+  noiseCanvas.style.opacity = '0.35';
+  overlay.appendChild(noiseCanvas);
+
+  const nCtx = noiseCanvas.getContext('2d');
+  let noiseActive = true;
+  const nW = (noiseCanvas.width = Math.min(640, window.innerWidth));
+  const nH = (noiseCanvas.height = Math.min(360, window.innerHeight));
+
+  const renderNoise = () => {
+    if (!noiseActive || !nCtx) return;
+    const imgData = nCtx.createImageData(nW, nH);
+    const buf = new Uint32Array(imgData.data.buffer);
+    const len = buf.length;
+    for (let i = 0; i < len; i++) {
+      if (Math.random() < 0.2) {
+        const val = (Math.random() * 255) | 0;
+        buf[i] = (40 << 24) | (val << 16) | (val << 8) | val;
+      }
+    }
+    nCtx.putImageData(imgData, 0, 0);
+
+    // Occasional horizontal glitch static tear bar
+    if (Math.random() < 0.6) {
+      const barY = Math.random() * nH;
+      const barH = Math.random() * 22 + 4;
+      nCtx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+      nCtx.fillRect(0, barY, nW, barH);
+    }
+
+    requestAnimationFrame(renderNoise);
+  };
+  requestAnimationFrame(renderNoise);
+
   // Central CRT horizontal beam
   const beam = document.createElement('div');
   beam.style.position = 'absolute';
   beam.style.top = '50%';
   beam.style.left = '0';
   beam.style.width = '100%';
-  beam.style.height = '3px';
+  beam.style.height = '2px';
   beam.style.backgroundColor = '#ffffff';
-  beam.style.boxShadow = '0 0 28px 8px rgba(255, 255, 255, 0.95), 0 0 90px 20px rgba(0, 240, 255, 0.8)';
+  beam.style.boxShadow = '0 0 24px 6px rgba(255, 255, 255, 1), 0 0 70px 16px rgba(130, 210, 255, 0.85)';
   beam.style.transform = 'scaleX(0) scaleY(1)';
   beam.style.opacity = '0';
   beam.style.transformOrigin = 'center center';
   overlay.appendChild(beam);
 
-  // Signal tear white strobe
-  const strobe = document.createElement('div');
-  strobe.style.position = 'absolute';
-  strobe.style.inset = '0';
-  strobe.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
-  strobe.style.opacity = '0';
-  strobe.style.pointerEvents = 'none';
-  overlay.appendChild(strobe);
+  // Central phosphor dot (lingers right as beam pinches inward)
+  const dot = document.createElement('div');
+  dot.style.position = 'absolute';
+  dot.style.top = '50%';
+  dot.style.left = '50%';
+  dot.style.width = '6px';
+  dot.style.height = '6px';
+  dot.style.marginTop = '-3px';
+  dot.style.marginLeft = '-3px';
+  dot.style.borderRadius = '50%';
+  dot.style.backgroundColor = '#ffffff';
+  dot.style.boxShadow = '0 0 16px 6px rgba(255, 255, 255, 1), 0 0 45px 12px rgba(130, 210, 255, 0.9)';
+  dot.style.transform = 'scale(0)';
+  dot.style.opacity = '0';
+  overlay.appendChild(dot);
 
-  // Slice container for horizontal tearing
-  const sliceContainer = document.createElement('div');
-  sliceContainer.style.position = 'fixed';
-  sliceContainer.style.inset = '0';
-  sliceContainer.style.pointerEvents = 'none';
-  sliceContainer.style.overflow = 'hidden';
-  overlay.appendChild(sliceContainer);
+  // --- Step 1: Entire Page Screen Tearing & Chromatic Aberration (0 - 270ms) ---
+  if (target) {
+    target.style.transformOrigin = 'center center';
+    target.style.transition = 'none';
 
-  const sliceBands = [
-    { top: 0, bottom: 13 },
-    { top: 13, bottom: 25 },
-    { top: 25, bottom: 39 },
-    { top: 39, bottom: 53 },
-    { top: 53, bottom: 67 },
-    { top: 67, bottom: 81 },
-    { top: 81, bottom: 92 },
-    { top: 92, bottom: 100 }
-  ];
+    // Frame 1A (0 - 50ms): Initial jitter + chromatic red/cyan shift
+    target.style.transform = 'translateX(-16px) skewX(-2.5deg)';
+    target.style.filter = 'drop-shadow(-8px 0 0 rgba(255, 30, 90, 0.85)) drop-shadow(8px 0 0 rgba(0, 235, 255, 0.85)) contrast(1.5) brightness(1.25)';
+    await new Promise(r => setTimeout(r, 50));
 
-  const sliceWrappers: HTMLElement[] = [];
-  const seams: HTMLElement[] = [];
-  const scrollY = window.scrollY || window.pageYOffset || 0;
-  const viewportH = window.innerHeight;
+    // Frame 1B (50 - 105ms): Reverse jerk + stronger chromatic dislocation + inversion flash
+    target.style.transform = 'translateX(26px) skewX(3.5deg)';
+    target.style.filter = 'drop-shadow(14px 0 0 rgba(255, 30, 90, 0.9)) drop-shadow(-14px 0 0 rgba(0, 235, 255, 0.9)) contrast(2.2) brightness(1.6) invert(0.12)';
+    await new Promise(r => setTimeout(r, 55));
 
-  try {
-    if (target) {
-      for (let i = 0; i < sliceBands.length; i++) {
-        const band = sliceBands[i];
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'absolute';
-        wrapper.style.inset = '0';
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.clipPath = `polygon(0% ${band.top}%, 100% ${band.top}%, 100% ${band.bottom}%, 0% ${band.bottom}%)`;
-        wrapper.style.willChange = 'transform, filter, opacity';
+    // Frame 1C (105 - 165ms): Major H-sync tearing offset
+    target.style.transform = 'translateX(-38px) skewX(-4.5deg)';
+    target.style.filter = 'drop-shadow(-20px 0 0 rgba(255, 30, 90, 0.95)) drop-shadow(20px 0 0 rgba(0, 235, 255, 0.95)) contrast(2.8) brightness(2.0)';
+    await new Promise(r => setTimeout(r, 60));
 
-        const clone = target.cloneNode(true) as HTMLElement;
-        clone.style.position = 'absolute';
-        clone.style.top = `-${scrollY}px`;
-        clone.style.left = '0';
-        clone.style.width = `${target.offsetWidth}px`;
-        clone.style.margin = '0';
-        clone.style.pointerEvents = 'none';
-        clone.style.userSelect = 'none';
+    // Frame 1D (165 - 225ms): Peak chromatic splitting
+    target.style.transform = 'translateX(46px) skewX(5.5deg)';
+    target.style.filter = 'drop-shadow(28px 0 0 rgba(255, 30, 90, 1.0)) drop-shadow(-28px 0 0 rgba(0, 235, 255, 1.0)) contrast(3.4) brightness(2.6) invert(0.16)';
+    await new Promise(r => setTimeout(r, 60));
 
-        wrapper.appendChild(clone);
-        sliceContainer.appendChild(wrapper);
-        sliceWrappers.push(wrapper);
-
-        // Fracture seam line
-        if (i > 0) {
-          const seam = document.createElement('div');
-          seam.style.position = 'absolute';
-          seam.style.top = `${band.top}%`;
-          seam.style.left = '-10%';
-          seam.style.width = '120%';
-          seam.style.height = '2px';
-          seam.style.background = i % 2 === 0
-            ? 'linear-gradient(90deg, transparent, #00f0ff, #ffffff, #00f0ff, transparent)'
-            : 'linear-gradient(90deg, transparent, #ff0055, #ffffff, #ff0055, transparent)';
-          seam.style.boxShadow = i % 2 === 0 ? '0 0 10px 2px #00f0ff' : '0 0 10px 2px #ff0055';
-          seam.style.opacity = '0';
-          seam.style.willChange = 'opacity, transform';
-          sliceContainer.appendChild(seam);
-          seams.push(seam);
-        }
-      }
-
-      // Hide original target while slices represent the page
-      target.style.opacity = '0';
-    }
-  } catch (e) {
-    console.error('Failed to create tearing slices:', e);
+    // Frame 1E (225 - 270ms): Electrical pre-collapse shudder
+    target.style.transform = 'translateX(-10px) scaleY(0.92) skewX(-2deg)';
+    target.style.filter = 'drop-shadow(-32px 0 0 rgba(255, 30, 90, 1.0)) drop-shadow(32px 0 0 rgba(0, 235, 255, 1.0)) contrast(4.0) brightness(3.5)';
+    await new Promise(r => setTimeout(r, 45));
   }
 
-  // --- Step 1: Violent Fracture & Horizontal Slice Jitter (0 - 150ms) ---
-  // Frame 1A (0 - 45ms): Initial fracture rupture with chromatic split
-  strobe.style.opacity = '0.7';
-  seams.forEach(s => (s.style.opacity = '0.9'));
-
-  sliceWrappers.forEach((w, idx) => {
-    const dir = idx % 2 === 0 ? 1 : -1;
-    const dist = (35 + (idx * 11) % 45) * dir;
-    const skew = (3.5 + (idx % 3) * 2) * dir;
-    w.style.transform = `translateX(${dist}px) skewX(${skew}deg)`;
-    w.style.filter = dir > 0
-      ? 'drop-shadow(10px 0 0 rgba(0, 240, 255, 0.85)) brightness(1.5)'
-      : 'drop-shadow(-10px 0 0 rgba(255, 0, 85, 0.85)) brightness(1.5)';
-  });
-
-  await new Promise(r => setTimeout(r, 45));
-
-  // Frame 1B (45 - 95ms): Violent reversal and electrical glitch spike
-  strobe.style.opacity = '0.15';
-  sliceWrappers.forEach((w, idx) => {
-    const dir = idx % 2 === 0 ? -1 : 1;
-    const dist = (55 + (idx * 13) % 55) * dir;
-    const skew = (5.0 + (idx % 3) * 2.5) * dir;
-    w.style.transform = `translateX(${dist}px) skewX(${skew}deg)`;
-    w.style.filter = 'contrast(2.8) brightness(2.2) invert(0.6)';
-  });
-
-  await new Promise(r => setTimeout(r, 50));
-
-  // Frame 1C (95 - 150ms): Peak dislocation right before implosion
-  strobe.style.opacity = '0.4';
-  sliceWrappers.forEach((w, idx) => {
-    const dir = idx % 2 === 0 ? 1 : -1;
-    const dist = (80 + (idx * 15) % 65) * dir;
-    const skew = (6.0 + (idx % 4) * 2) * dir;
-    w.style.transform = `translateX(${dist}px) skewX(${skew}deg)`;
-    w.style.filter = dir > 0
-      ? 'drop-shadow(14px 0 0 rgba(0, 240, 255, 0.95)) brightness(2.0)'
-      : 'drop-shadow(-14px 0 0 rgba(255, 0, 85, 0.95)) brightness(2.0)';
-  });
-
-  await new Promise(r => setTimeout(r, 55));
-
-  // --- Step 2: CRT Collapse Implosion (150ms - 370ms) ---
-  strobe.style.opacity = '0';
+  // --- Step 2: CRT Raster Vertical Collapse into Razor Slit (270ms - 490ms) ---
+  noiseActive = false;
+  noiseCanvas.remove();
   overlay.style.backgroundColor = '#000000';
   beam.style.opacity = '1';
-  beam.style.transform = 'scaleX(1) scaleY(1.8)';
+  beam.style.transform = 'scaleX(1) scaleY(2.0)';
 
-  // Slices implode into horizontal center midline
-  sliceWrappers.forEach((w, idx) => {
-    const band = sliceBands[idx];
-    const midY = (band.top + band.bottom) / 2;
-    const dy = (50 - midY) * (viewportH / 100);
-    w.style.transition = 'transform 0.22s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.20s ease-out';
-    w.style.transform = `translateY(${dy}px) scaleY(0.005) scaleX(1.0)`;
-    w.style.opacity = '0.3';
-  });
-  seams.forEach(s => {
-    s.style.transition = 'opacity 0.15s ease-out';
-    s.style.opacity = '0';
-  });
+  if (target) {
+    target.style.transition = 'transform 0.22s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.20s ease-out, filter 0.20s ease-out';
+    target.style.transform = 'scaleY(0.002) scaleX(1.0)';
+    target.style.opacity = '0.5';
+    target.style.filter = 'brightness(5.0) contrast(4.0)';
+  }
 
   await new Promise(r => setTimeout(r, 220));
 
-  // Clean up slices after implosion
-  sliceContainer.remove();
+  // --- Step 3: Horizontal Pinch into Central Phosphor Dot (490ms - 630ms) ---
+  beam.style.transition = 'transform 0.14s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.14s ease-out';
+  beam.style.transform = 'scaleX(0.003) scaleY(3.0)';
 
-  // --- Step 3: Horizontal Snap into Central Pinpoint (370ms - 500ms) ---
-  beam.style.transition = 'transform 0.13s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.13s ease-out';
-  beam.style.transform = 'scaleX(0.002) scaleY(2.5)';
+  if (target) {
+    target.style.transform = 'scaleY(0.002) scaleX(0.001)';
+    target.style.opacity = '0';
+  }
 
-  await new Promise(r => setTimeout(r, 130));
+  await new Promise(r => setTimeout(r, 140));
 
-  // Full extinction into silent blackness
+  // --- Step 4: Dying Phosphor Dot Fade into Silent Darkness (630ms - 850ms) ---
   beam.style.opacity = '0';
+  dot.style.opacity = '1';
+  dot.style.transform = 'scale(1)';
+
+  await new Promise(r => setTimeout(r, 30));
+
+  dot.style.transition = 'opacity 0.22s ease-out, transform 0.22s ease-out';
+  dot.style.opacity = '0';
+  dot.style.transform = 'scale(0.15)';
+
+  await new Promise(r => setTimeout(r, 220));
+
+  // Total extinction blackout
   if (target) {
     target.style.transform = 'scale(0)';
     target.style.opacity = '0';
@@ -200,15 +192,15 @@ export async function triggerShatterEffect(): Promise<() => void> {
   return () => {
     return new Promise<void>(resolve => {
       // Dawn reawakening: central morning light slit expands
-      beam.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease-out';
-      beam.style.transform = 'scaleX(0.85) scaleY(1.0)';
+      beam.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease-out';
+      beam.style.transform = 'scaleX(0.92) scaleY(1.0)';
       beam.style.boxShadow = '0 0 35px 8px rgba(220, 240, 255, 0.85), 0 0 90px 25px rgba(180, 220, 255, 0.45)';
-      beam.style.opacity = '0.9';
+      beam.style.opacity = '0.92';
 
       setTimeout(() => {
         // Page gently expands from morning light with softening fade
         if (target) {
-          target.style.transition = 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.1s ease-out, filter 1.1s ease-out';
+          target.style.transition = 'transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s ease-out, filter 1.0s ease-out';
           target.style.transform = 'scale(1)';
           target.style.opacity = '1';
           target.style.filter = 'blur(0px) brightness(1.0) contrast(1.0)';

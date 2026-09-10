@@ -151,6 +151,90 @@ onMounted(() => {
     });
   }
 
+  // Pre-rendered sprite canvases for soft motion-blurred rain falling vertically
+  const createRainSprites = () => {
+    const sprites: HTMLCanvasElement[] = [];
+
+    // Layer 0: Distant misty rain (Soft, narrow, translucent gradient)
+    {
+      const c = document.createElement('canvas');
+      c.width = 6;
+      c.height = 70;
+      const sCtx = c.getContext('2d')!;
+      const grad = sCtx.createLinearGradient(3, 0, 3, 70);
+      grad.addColorStop(0, 'rgba(180, 215, 255, 0)');
+      grad.addColorStop(0.5, 'rgba(195, 225, 255, 0.2)');
+      grad.addColorStop(0.9, 'rgba(215, 235, 255, 0.55)');
+      grad.addColorStop(1, 'rgba(235, 245, 255, 0.75)');
+      sCtx.strokeStyle = grad;
+      sCtx.lineWidth = 1.2;
+      sCtx.lineCap = 'round';
+      sCtx.beginPath();
+      sCtx.moveTo(3, 0);
+      sCtx.lineTo(3, 68);
+      sCtx.stroke();
+      sprites.push(c);
+    }
+
+    // Layer 1: Midground driving rain (Clean, bright with soft head)
+    {
+      const c = document.createElement('canvas');
+      c.width = 8;
+      c.height = 110;
+      const sCtx = c.getContext('2d')!;
+      const grad = sCtx.createLinearGradient(4, 0, 4, 110);
+      grad.addColorStop(0, 'rgba(200, 225, 255, 0)');
+      grad.addColorStop(0.4, 'rgba(205, 230, 255, 0.15)');
+      grad.addColorStop(0.8, 'rgba(225, 242, 255, 0.5)');
+      grad.addColorStop(0.96, 'rgba(245, 250, 255, 0.85)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+      sCtx.strokeStyle = grad;
+      sCtx.lineWidth = 2.0;
+      sCtx.lineCap = 'round';
+      sCtx.beginPath();
+      sCtx.moveTo(4, 0);
+      sCtx.lineTo(4, 107);
+      sCtx.stroke();
+
+      sCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      sCtx.beginPath();
+      sCtx.arc(4, 106, 1.2, 0, Math.PI * 2);
+      sCtx.fill();
+      sprites.push(c);
+    }
+
+    // Layer 2: Foreground kinetic heavy rain rods (Crisp and brilliant)
+    {
+      const c = document.createElement('canvas');
+      c.width = 10;
+      c.height = 150;
+      const sCtx = c.getContext('2d')!;
+      const grad = sCtx.createLinearGradient(5, 0, 5, 150);
+      grad.addColorStop(0, 'rgba(190, 220, 255, 0)');
+      grad.addColorStop(0.35, 'rgba(205, 230, 255, 0.18)');
+      grad.addColorStop(0.75, 'rgba(225, 242, 255, 0.6)');
+      grad.addColorStop(0.95, 'rgba(245, 252, 255, 0.92)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 1.0)');
+      sCtx.strokeStyle = grad;
+      sCtx.lineWidth = 2.8;
+      sCtx.lineCap = 'round';
+      sCtx.beginPath();
+      sCtx.moveTo(5, 0);
+      sCtx.lineTo(5, 145);
+      sCtx.stroke();
+
+      sCtx.fillStyle = '#ffffff';
+      sCtx.beginPath();
+      sCtx.arc(5, 144, 1.6, 0, Math.PI * 2);
+      sCtx.fill();
+      sprites.push(c);
+    }
+
+    return sprites;
+  };
+
+  const sprites = createRainSprites();
+
   // 3. Multi-Tier Rain Pools (Partly misty far veil, partly razor-sharp foreground)
   const MAX_DROPS = isMobile ? 180 : 500;
   const drops: RainDrop[] = [];
@@ -293,10 +377,9 @@ onMounted(() => {
     }
 
     // ==============================================================
-    // PHASE C: Raindrops (Layer 0 = Misty, Layer 1 = Sharp, Layer 2 = Heavy Rods)
+    // PHASE C: Raindrops (Motion-Blurred Sprites with Soft Gradient Tails)
     // ==============================================================
-    // Calm weather (DRY) drops scale down near-zero; heavy rain floods screen
-    const activeDrops = Math.max(1, Math.floor(MAX_DROPS * Math.pow(Math.max(0.001, currentInt), 1.6)));
+    const activeDrops = Math.max(8, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
     for (let i = 0; i < activeDrops; i++) {
       const drop = drops[i];
       const speedMult = 0.75 + currentInt * 0.95;
@@ -305,74 +388,14 @@ onMounted(() => {
 
       drop.y += curSpeed;
 
-      if (drop.layer === 0) {
-        // --- LAYER 0: Misty Distant Rain (Soft, semi-translucent) ---
-        const alpha = drop.opacity * (currentInt < 0.2 ? currentInt * 0.9 : (0.15 + currentInt * 0.65));
-        ctx.strokeStyle = `rgba(200, 225, 250, ${alpha})`;
-        ctx.lineWidth = drop.thickness;
-        ctx.beginPath();
-        ctx.moveTo(drop.x, drop.y - curLength);
-        ctx.lineTo(drop.x, drop.y);
-        ctx.stroke();
-      } else if (drop.layer === 1) {
-        // --- LAYER 1: Midground Rain (Clean, crisp) ---
-        if (currentInt < 0.25) {
-          // In calm/light drizzle, render as very subtle line with NO distracting bead
-          const alpha = drop.opacity * currentInt * 1.2;
-          ctx.strokeStyle = `rgba(220, 235, 255, ${alpha})`;
-          ctx.lineWidth = Math.min(drop.thickness, 0.9);
-          ctx.beginPath();
-          ctx.moveTo(drop.x, drop.y - curLength);
-          ctx.lineTo(drop.x, drop.y);
-          ctx.stroke();
-        } else {
-          const alpha = Math.min(0.85, drop.opacity * (0.25 + currentInt * 0.6));
-          ctx.strokeStyle = `rgba(235, 245, 255, ${alpha})`;
-          ctx.lineWidth = drop.thickness;
-          ctx.beginPath();
-          ctx.moveTo(drop.x, drop.y - curLength);
-          ctx.lineTo(drop.x, drop.y);
-          ctx.stroke();
-
-          // Small sharp tip
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
-          ctx.beginPath();
-          ctx.arc(drop.x, drop.y, 1.0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else {
-        // --- LAYER 2: Foreground Crushing Rain ---
-        if (currentInt < 0.35) {
-          // Suppress heavy rods and brilliant beads during calm state
-          const alpha = drop.opacity * currentInt * 1.4;
-          ctx.strokeStyle = `rgba(225, 240, 255, ${alpha})`;
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(drop.x, drop.y - curLength);
-          ctx.lineTo(drop.x, drop.y);
-          ctx.stroke();
-        } else {
-          // Heavy crushing rod with intense specular impact bead
-          const alpha = Math.min(1.0, drop.opacity * (0.35 + currentInt * 0.65));
-          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-          ctx.lineWidth = drop.thickness;
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(drop.x, drop.y - curLength);
-          ctx.lineTo(drop.x, drop.y);
-          ctx.stroke();
-
-          // Intense specular droplet bead at the impact head
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(drop.x, drop.y, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+      const sprite = sprites[drop.layer];
+      const alpha = Math.min(0.95, drop.opacity * (0.32 + currentInt * 0.75));
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(sprite, drop.x - drop.thickness / 2, drop.y - curLength, drop.thickness, curLength);
 
       // Ground impact check
       if (drop.y >= logicalH - 8) {
-        if (currentInt > 0.28 && splashes.length < MAX_SPLASHES && Math.random() < currentInt * (drop.layer === 2 ? 0.85 : 0.4)) {
+        if (splashes.length < MAX_SPLASHES && Math.random() < currentInt * (drop.layer === 2 ? 0.85 : 0.4)) {
           const splashBurst = drop.layer === 2 ? (isMobile ? 2 : 4) : (isMobile ? 1 : 2);
           for (let k = 0; k < splashBurst; k++) {
             splashes.push({
@@ -391,6 +414,7 @@ onMounted(() => {
         drop.x = Math.random() * logicalW;
       }
     }
+    ctx.globalAlpha = 1.0;
 
     // ==============================================================
     // PHASE D: Explosive Ground Splashes (Sharp, bright droplets)
