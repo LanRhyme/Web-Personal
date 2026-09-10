@@ -9,7 +9,7 @@ let animId: number;
 
 const { intensity, cycleStage } = useRainCycle();
 
-// Rain World Atmospheric Color Grading: Gritty industrial desaturation, contrast wash & optical depth blur
+// Rain World Atmospheric Color Grading: Gritty industrial desaturation, contrast wash & slight background blur
 const atmosphereStyle = computed(() => {
   const int = intensity.value;
   if (int <= 0.03) {
@@ -24,14 +24,14 @@ const atmosphereStyle = computed(() => {
   // Desaturate progressively down to 0.40 (gritty slate/charcoal tone)
   const sat = Math.max(0.40, 1.0 - int * 0.60);
   // Enhance contrast to deepen heavy shadows
-  const contrast = 1.0 + Math.min(0.32, int * 0.32);
+  const contrast = 1.0 + Math.min(0.30, int * 0.30);
   // Pull down brightness for apocalyptic gloom
-  const brightness = Math.max(0.72, 1.0 - int * 0.28);
-  // Atmospheric depth blur during storm: smooth optical softening in HEAVY (1px -> 3.6px in DEATH_RAIN)
-  const blur = int > 0.2 ? Math.min(3.6, (int - 0.2) * 4.5) : 0;
+  const brightness = Math.max(0.74, 1.0 - int * 0.26);
+  // Slight background optical blur during heavy rain (0px -> 1.8px max, keeping text readable)
+  const blur = int > 0.25 ? Math.min(1.8, (int - 0.25) * 2.4) : 0;
 
   // Dark industrial murky tint
-  const overlayAlpha = Math.min(0.32, int * 0.32);
+  const overlayAlpha = Math.min(0.30, int * 0.30);
   const filterStr = `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})${blur > 0.05 ? ` blur(${blur.toFixed(2)}px)` : ''}`;
 
   return {
@@ -48,7 +48,7 @@ interface RainDrop {
   speed: number;
   length: number;
   thickness: number;
-  layer: number; // 0 = far, 1 = mid, 2 = near
+  layer: number; // 0 = misty far, 1 = clean mid, 2 = razor-sharp foreground
   opacity: number;
 }
 
@@ -113,91 +113,7 @@ onMounted(() => {
   resize();
   window.addEventListener('resize', resize);
 
-  // 1. Pre-rendered Raindrop Sprites with Optical Motion Blur & Droplet Beads
-  const createRainSprites = () => {
-    const sprites: HTMLCanvasElement[] = [];
-
-    // Layer 0: Far background drizzle veil
-    {
-      const c = document.createElement('canvas');
-      c.width = 6;
-      c.height = 80;
-      const sCtx = c.getContext('2d')!;
-      const grad = sCtx.createLinearGradient(3, 0, 3, 80);
-      grad.addColorStop(0, 'rgba(215, 230, 255, 0)');
-      grad.addColorStop(0.5, 'rgba(215, 230, 255, 0.08)');
-      grad.addColorStop(0.85, 'rgba(225, 240, 255, 0.28)');
-      grad.addColorStop(1, 'rgba(240, 248, 255, 0.5)');
-      sCtx.strokeStyle = grad;
-      sCtx.lineWidth = 1.4;
-      sCtx.lineCap = 'round';
-      sCtx.beginPath();
-      sCtx.moveTo(3, 0);
-      sCtx.lineTo(3, 78);
-      sCtx.stroke();
-      sprites.push(c);
-    }
-
-    // Layer 1: Midground driving rain
-    {
-      const c = document.createElement('canvas');
-      c.width = 8;
-      c.height = 110;
-      const sCtx = c.getContext('2d')!;
-      const grad = sCtx.createLinearGradient(4, 0, 4, 110);
-      grad.addColorStop(0, 'rgba(200, 225, 255, 0)');
-      grad.addColorStop(0.4, 'rgba(205, 230, 255, 0.12)');
-      grad.addColorStop(0.8, 'rgba(225, 242, 255, 0.45)');
-      grad.addColorStop(0.96, 'rgba(245, 250, 255, 0.85)');
-      grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
-      sCtx.strokeStyle = grad;
-      sCtx.lineWidth = 2.0;
-      sCtx.lineCap = 'round';
-      sCtx.beginPath();
-      sCtx.moveTo(4, 0);
-      sCtx.lineTo(4, 107);
-      sCtx.stroke();
-
-      sCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      sCtx.beginPath();
-      sCtx.arc(4, 106, 1.2, 0, Math.PI * 2);
-      sCtx.fill();
-      sprites.push(c);
-    }
-
-    // Layer 2: Foreground kinetic heavy rain rods
-    {
-      const c = document.createElement('canvas');
-      c.width = 10;
-      c.height = 150;
-      const sCtx = c.getContext('2d')!;
-      const grad = sCtx.createLinearGradient(5, 0, 5, 150);
-      grad.addColorStop(0, 'rgba(190, 220, 255, 0)');
-      grad.addColorStop(0.35, 'rgba(205, 230, 255, 0.15)');
-      grad.addColorStop(0.75, 'rgba(225, 242, 255, 0.55)');
-      grad.addColorStop(0.95, 'rgba(245, 252, 255, 0.9)');
-      grad.addColorStop(1, 'rgba(255, 255, 255, 1.0)');
-      sCtx.strokeStyle = grad;
-      sCtx.lineWidth = 2.8;
-      sCtx.lineCap = 'round';
-      sCtx.beginPath();
-      sCtx.moveTo(5, 0);
-      sCtx.lineTo(5, 145);
-      sCtx.stroke();
-
-      sCtx.fillStyle = 'rgba(255, 255, 255, 0.98)';
-      sCtx.beginPath();
-      sCtx.arc(5, 144, 1.8, 0, Math.PI * 2);
-      sCtx.fill();
-      sprites.push(c);
-    }
-
-    return sprites;
-  };
-
-  const sprites = createRainSprites();
-
-  // 2. Cascading Downpour Curtains (Rain World Torrential Waterfall Sheets)
+  // 1. Cascading Downpour Curtains (Rain World Distant Foggy Water Curtains)
   const curtainCount = isMobile ? 4 : 8;
   const curtains: WaterCurtain[] = [];
   for (let i = 0; i < curtainCount; i++) {
@@ -207,58 +123,60 @@ onMounted(() => {
     for (let k = 0; k < subCount; k++) {
       subStreams.push({
         offset: Math.random() * width,
-        width: Math.random() * 2.5 + 1.0,
+        width: Math.random() * 2.0 + 0.8,
         speedMult: Math.random() * 0.4 + 0.8
       });
     }
     curtains.push({
       x: (i / curtainCount) * (logicalW + 200) - 100 + (Math.random() - 0.5) * 80,
       width,
-      speed: Math.random() * 35 + 55,
+      speed: Math.random() * 30 + 50,
       phase: Math.random() * 1000,
-      opacity: Math.random() * 0.4 + 0.6,
+      opacity: Math.random() * 0.35 + 0.45,
       subStreams
     });
   }
 
-  // 3. Screen Streaming Rivulets (Water sliding down the lens)
-  const rivuletCount = isMobile ? 8 : 18;
+  // 2. Screen Streaming Rivulets (Water streaming down camera lens with crisp glints)
+  const rivuletCount = isMobile ? 8 : 16;
   const rivulets: Rivulet[] = [];
   for (let i = 0; i < rivuletCount; i++) {
     rivulets.push({
       x: Math.random() * logicalW,
       y: Math.random() * logicalH,
-      speed: Math.random() * 6 + 5,
-      length: Math.random() * 70 + 50,
-      width: Math.random() * 2.0 + 1.2,
+      speed: Math.random() * 5 + 4,
+      length: Math.random() * 65 + 45,
+      width: Math.random() * 1.8 + 1.2,
       wobble: Math.random() * 100
     });
   }
 
-  // 4. Kinetic Droplet Pool
-  const MAX_DROPS = isMobile ? 160 : 480;
+  // 3. Multi-Tier Rain Pools (Partly misty far veil, partly razor-sharp foreground)
+  const MAX_DROPS = isMobile ? 180 : 500;
   const drops: RainDrop[] = [];
 
   for (let i = 0; i < MAX_DROPS; i++) {
     const rand = Math.random();
-    let layer = 1;
+    let layer = 1; // 0 = misty veil, 1 = crisp mid, 2 = razor-sharp foreground
     let speed = Math.random() * 24 + 28;
     let length = Math.random() * 65 + 45;
-    let thickness = 3.5;
-    let opacity = 0.5;
+    let thickness = 1.4;
+    let opacity = 0.7;
 
-    if (rand < 0.25) {
+    if (rand < 0.35) {
+      // Layer 0: Misty / foggy distant veil (soft, low alpha, diffused)
       layer = 0;
-      speed = Math.random() * 18 + 32;
-      length = Math.random() * 45 + 30;
-      thickness = 2.2;
-      opacity = 0.35;
-    } else if (rand > 0.85) {
+      speed = Math.random() * 16 + 26;
+      length = Math.random() * 40 + 25;
+      thickness = 0.9;
+      opacity = 0.28;
+    } else if (rand > 0.82) {
+      // Layer 2: Foreground kinetic heavy rain (crystal-clear, razor-sharp, high-contrast)
       layer = 2;
-      speed = Math.random() * 26 + 42;
-      length = Math.random() * 100 + 75;
-      thickness = 5.0;
-      opacity = 0.85;
+      speed = Math.random() * 28 + 44;
+      length = Math.random() * 110 + 80;
+      thickness = 2.4;
+      opacity = 0.95;
     }
 
     drops.push({
@@ -272,21 +190,21 @@ onMounted(() => {
     });
   }
 
-  // 5. Explosive Ground Splashes
+  // 4. Explosive Ground Splashes
   const splashes: Splash[] = [];
   const MAX_SPLASHES = isMobile ? 60 : 160;
 
-  // 6. Ground Boiling Vapor & Mist Plumes
+  // 5. Ground Boiling Vapor & Mist Plumes
   const mistPuffs: MistPuff[] = [];
-  const MAX_PUFFS = isMobile ? 14 : 32;
+  const MAX_PUFFS = isMobile ? 14 : 30;
   for (let i = 0; i < MAX_PUFFS; i++) {
     mistPuffs.push({
       x: Math.random() * logicalW,
-      y: logicalH - Math.random() * 55,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: -Math.random() * 0.6 - 0.2, // boiling rising vapor
-      radius: Math.random() * 50 + 35,
-      alpha: Math.random() * 0.4 + 0.15
+      y: logicalH - Math.random() * 50,
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: -Math.random() * 0.6 - 0.2,
+      radius: Math.random() * 45 + 30,
+      alpha: Math.random() * 0.35 + 0.12
     });
   }
 
@@ -302,21 +220,16 @@ onMounted(() => {
 
     const currentInt = intensity.value;
 
-    // Completely idle if totally dry
+    // Completely clean canvas clear on every frame: NO smudging, NO muddy blur
+    ctx.clearRect(0, 0, logicalW, logicalH);
+
     if (currentInt <= 0) {
-      ctx.clearRect(0, 0, logicalW, logicalH);
       animId = requestAnimationFrame(animate);
       return;
     }
 
-    // Motion blur persistence clear
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = `rgba(0, 0, 0, ${0.40 + currentInt * 0.26})`;
-    ctx.fillRect(0, 0, logicalW, logicalH);
-    ctx.globalCompositeOperation = 'source-over';
-
     // ==============================================================
-    // PHASE A: Cascading Water Curtains (Heavy & Death Rain Sheets)
+    // PHASE A: Misty Cascading Downpour Curtains (Foggy background veil)
     // ==============================================================
     if (currentInt > 0.35) {
       const curtainStrength = Math.min(1.0, (currentInt - 0.35) / 0.65);
@@ -325,9 +238,9 @@ onMounted(() => {
         const c = curtains[i];
         c.phase += c.speed * dt * (0.8 + currentInt * 0.8);
 
-        // Soft vertical curtain band
+        // Soft, foggy vertical curtain band
         const grad = ctx.createLinearGradient(c.x, 0, c.x + c.width, 0);
-        const coreAlpha = c.opacity * curtainStrength * 0.12;
+        const coreAlpha = c.opacity * curtainStrength * 0.10;
         grad.addColorStop(0, 'rgba(180, 215, 235, 0)');
         grad.addColorStop(0.5, `rgba(195, 230, 252, ${coreAlpha})`);
         grad.addColorStop(1, 'rgba(180, 215, 235, 0)');
@@ -335,76 +248,103 @@ onMounted(() => {
         ctx.fillStyle = grad;
         ctx.fillRect(c.x, 0, c.width, logicalH);
 
-        // Streaming vertical cascading water rib-lines
-        ctx.strokeStyle = `rgba(220, 240, 255, ${c.opacity * curtainStrength * 0.22})`;
+        // Diffused vertical streaming water rib-lines
+        ctx.strokeStyle = `rgba(215, 235, 255, ${c.opacity * curtainStrength * 0.18})`;
         for (let k = 0; k < c.subStreams.length; k++) {
           const sub = c.subStreams[k];
           const streamX = c.x + sub.offset;
-          const yHead = ((c.phase * sub.speedMult * 40) % (logicalH + 300)) - 150;
+          const yHead = ((c.phase * sub.speedMult * 38) % (logicalH + 300)) - 150;
 
-          ctx.lineWidth = sub.width * (0.8 + currentInt * 0.5);
+          ctx.lineWidth = sub.width;
           ctx.beginPath();
           ctx.moveTo(streamX, yHead);
-          ctx.lineTo(streamX, yHead + 160 + currentInt * 120);
+          ctx.lineTo(streamX, yHead + 140 + currentInt * 100);
           ctx.stroke();
         }
       }
     }
 
     // ==============================================================
-    // PHASE B: Screen Streaming Rivulets (Water streaming down camera lens)
+    // PHASE B: Ground Boiling Vapor & Mist Plumes (Soft foggy steam)
     // ==============================================================
-    if (currentInt > 0.45) {
-      const rivuletAlpha = Math.min(0.5, (currentInt - 0.45) * 0.8);
-      for (let i = 0; i < rivulets.length; i++) {
-        const r = rivulets[i];
-        r.y += r.speed * (0.7 + currentInt * 0.8);
-        r.wobble += dt * 3;
+    if (currentInt > 0.25) {
+      for (let i = 0; i < mistPuffs.length; i++) {
+        const puff = mistPuffs[i];
+        const mistAlpha = puff.alpha * (currentInt - 0.2) * 0.16;
 
-        // Rivulet body with subtle sinusoidal trail
-        const wobX = r.x + Math.sin(r.y * 0.04 + r.wobble) * 3.5;
-        const rivGrad = ctx.createLinearGradient(wobX, r.y - r.length, wobX, r.y);
-        rivGrad.addColorStop(0, 'rgba(195, 225, 248, 0)');
-        rivGrad.addColorStop(0.7, `rgba(215, 238, 255, ${rivuletAlpha * 0.6})`);
-        rivGrad.addColorStop(1, `rgba(245, 252, 255, ${rivuletAlpha * 0.95})`);
+        const grad = ctx.createRadialGradient(puff.x, puff.y, 0, puff.x, puff.y, puff.radius * (0.8 + currentInt * 0.5));
+        grad.addColorStop(0, `rgba(220, 235, 255, ${mistAlpha})`);
+        grad.addColorStop(0.6, `rgba(200, 220, 245, ${mistAlpha * 0.4})`);
+        grad.addColorStop(1, 'rgba(220, 235, 255, 0)');
 
-        ctx.strokeStyle = rivGrad;
-        ctx.lineWidth = r.width;
-        ctx.lineCap = 'round';
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.moveTo(wobX, r.y - r.length);
-        ctx.lineTo(wobX, r.y);
-        ctx.stroke();
-
-        // Droplet accumulation node at tip
-        ctx.fillStyle = `rgba(255, 255, 255, ${rivuletAlpha * 0.9})`;
-        ctx.beginPath();
-        ctx.arc(wobX, r.y, r.width * 1.1, 0, Math.PI * 2);
+        ctx.arc(puff.x, puff.y, puff.radius * (0.8 + currentInt * 0.5), 0, Math.PI * 2);
         ctx.fill();
 
-        if (r.y - r.length > logicalH) {
-          r.y = -Math.random() * 60;
-          r.x = Math.random() * logicalW;
+        puff.x += puff.vx;
+        puff.y += puff.vy * (0.8 + currentInt * 1.2);
+
+        if (puff.y < logicalH - 85 || puff.x < -puff.radius || puff.x > logicalW + puff.radius) {
+          puff.x = Math.random() * logicalW;
+          puff.y = logicalH - Math.random() * 25;
         }
       }
     }
 
     // ==============================================================
-    // PHASE C: Kinetic Raindrops (Multi-Layer Sprites with Motion Blur)
+    // PHASE C: Raindrops (Layer 0 = Misty, Layer 1 & 2 = Razor-Sharp)
     // ==============================================================
-    const activeDrops = Math.max(3, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
+    const activeDrops = Math.max(4, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
     for (let i = 0; i < activeDrops; i++) {
       const drop = drops[i];
-      const speedMult = 0.7 + currentInt * 1.0;
+      const speedMult = 0.75 + currentInt * 0.95;
       const curSpeed = drop.speed * speedMult;
       const curLength = drop.length * (0.65 + currentInt * 0.85);
 
       drop.y += curSpeed;
 
-      const sprite = sprites[drop.layer];
-      const alpha = Math.min(0.95, drop.opacity * (0.35 + currentInt * 0.75));
-      ctx.globalAlpha = alpha;
-      ctx.drawImage(sprite, drop.x - drop.thickness / 2, drop.y - curLength, drop.thickness, curLength);
+      if (drop.layer === 0) {
+        // --- LAYER 0: Misty / Foggy Distant Rain (Soft, semi-translucent) ---
+        const alpha = drop.opacity * (0.3 + currentInt * 0.6);
+        ctx.strokeStyle = `rgba(200, 225, 250, ${alpha})`;
+        ctx.lineWidth = drop.thickness;
+        ctx.beginPath();
+        ctx.moveTo(drop.x, drop.y - curLength);
+        ctx.lineTo(drop.x, drop.y);
+        ctx.stroke();
+      } else if (drop.layer === 1) {
+        // --- LAYER 1: Midground Rain (Clean, bright, defined) ---
+        const alpha = Math.min(0.85, drop.opacity * (0.45 + currentInt * 0.55));
+        ctx.strokeStyle = `rgba(235, 245, 255, ${alpha})`;
+        ctx.lineWidth = drop.thickness;
+        ctx.beginPath();
+        ctx.moveTo(drop.x, drop.y - curLength);
+        ctx.lineTo(drop.x, drop.y);
+        ctx.stroke();
+
+        // Small sharp tip
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, 1.0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // --- LAYER 2: Foreground Crushing Rain (RAZOR-SHARP, brilliant white, crisp) ---
+        const alpha = Math.min(1.0, drop.opacity * (0.6 + currentInt * 0.4));
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.lineWidth = drop.thickness;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(drop.x, drop.y - curLength);
+        ctx.lineTo(drop.x, drop.y);
+        ctx.stroke();
+
+        // Intense specular droplet bead at the impact head
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Ground impact check
       if (drop.y >= logicalH - 8) {
@@ -416,7 +356,7 @@ onMounted(() => {
               y: logicalH - Math.random() * 6,
               vx: (Math.random() - 0.5) * (3.6 + currentInt * 3.6),
               vy: -Math.random() * (2.8 + currentInt * 4.2) - 1.2,
-              size: Math.random() * (drop.layer === 2 ? 2.2 : 1.4) + 0.6,
+              size: Math.random() * (drop.layer === 2 ? 2.0 : 1.2) + 0.7,
               life: 1.0,
               maxLife: Math.random() * 0.3 + 0.6
             });
@@ -427,15 +367,14 @@ onMounted(() => {
         drop.x = Math.random() * logicalW;
       }
     }
-    ctx.globalAlpha = 1.0;
 
     // ==============================================================
-    // PHASE D: Explosive Ground Splashes
+    // PHASE D: Explosive Ground Splashes (Sharp, bright droplets)
     // ==============================================================
     for (let i = splashes.length - 1; i >= 0; i--) {
       const s = splashes[i];
-      const splashAlpha = (s.life / s.maxLife) * (0.35 + currentInt * 0.6);
-      ctx.fillStyle = `rgba(225, 240, 255, ${splashAlpha})`;
+      const splashAlpha = (s.life / s.maxLife) * (0.45 + currentInt * 0.55);
+      ctx.fillStyle = `rgba(255, 255, 255, ${splashAlpha})`;
 
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -452,30 +391,37 @@ onMounted(() => {
     }
 
     // ==============================================================
-    // PHASE E: Ground Boiling Vapor & Mist Plumes (No water rising)
+    // PHASE E: Screen Streaming Rivulets (Clean refractive glass streams)
     // ==============================================================
-    if (currentInt > 0.25) {
-      for (let i = 0; i < mistPuffs.length; i++) {
-        const puff = mistPuffs[i];
-        const mistAlpha = puff.alpha * (currentInt - 0.2) * 0.18;
+    if (currentInt > 0.45) {
+      const rivuletAlpha = Math.min(0.55, (currentInt - 0.45) * 0.85);
+      for (let i = 0; i < rivulets.length; i++) {
+        const r = rivulets[i];
+        r.y += r.speed * (0.7 + currentInt * 0.8);
+        r.wobble += dt * 3;
 
-        const grad = ctx.createRadialGradient(puff.x, puff.y, 0, puff.x, puff.y, puff.radius * (0.8 + currentInt * 0.5));
-        grad.addColorStop(0, `rgba(220, 235, 255, ${mistAlpha})`);
-        grad.addColorStop(0.6, `rgba(200, 220, 245, ${mistAlpha * 0.4})`);
-        grad.addColorStop(1, 'rgba(220, 235, 255, 0)');
+        const wobX = r.x + Math.sin(r.y * 0.04 + r.wobble) * 3.5;
+        const rivGrad = ctx.createLinearGradient(wobX, r.y - r.length, wobX, r.y);
+        rivGrad.addColorStop(0, 'rgba(210, 235, 255, 0)');
+        rivGrad.addColorStop(0.7, `rgba(230, 245, 255, ${rivuletAlpha * 0.65})`);
+        rivGrad.addColorStop(1, `rgba(255, 255, 255, ${rivuletAlpha * 0.98})`);
 
-        ctx.fillStyle = grad;
+        ctx.strokeStyle = rivGrad;
+        ctx.lineWidth = r.width;
+        ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(puff.x, puff.y, puff.radius * (0.8 + currentInt * 0.5), 0, Math.PI * 2);
+        ctx.moveTo(wobX, r.y - r.length);
+        ctx.lineTo(wobX, r.y);
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${rivuletAlpha * 0.95})`;
+        ctx.beginPath();
+        ctx.arc(wobX, r.y, r.width * 1.1, 0, Math.PI * 2);
         ctx.fill();
 
-        puff.x += puff.vx;
-        puff.y += puff.vy * (0.8 + currentInt * 1.2); // rising steam vapor
-
-        // Respawn vapor near bottom
-        if (puff.y < logicalH - 90 || puff.x < -puff.radius || puff.x > logicalW + puff.radius) {
-          puff.x = Math.random() * logicalW;
-          puff.y = logicalH - Math.random() * 30;
+        if (r.y - r.length > logicalH) {
+          r.y = -Math.random() * 60;
+          r.x = Math.random() * logicalW;
         }
       }
     }
