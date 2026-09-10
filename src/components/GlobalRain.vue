@@ -9,32 +9,35 @@ let animId: number;
 
 const { intensity, cycleStage } = useRainCycle();
 
-// Rain World Atmospheric Color Grading: Gritty industrial desaturation & contrast wash
+// Rain World Atmospheric Color Grading: Gritty industrial desaturation, contrast wash & optical depth blur
 const atmosphereStyle = computed(() => {
   const int = intensity.value;
   if (int <= 0.03) {
     return {
       opacity: '0',
       backdropFilter: 'none',
+      WebkitBackdropFilter: 'none',
       backgroundColor: 'transparent'
     };
   }
 
-  // Desaturate progressively down to 0.42 (gritty slate/charcoal tone)
-  const sat = Math.max(0.42, 1.0 - int * 0.58);
+  // Desaturate progressively down to 0.40 (gritty slate/charcoal tone)
+  const sat = Math.max(0.40, 1.0 - int * 0.60);
   // Enhance contrast to deepen heavy shadows
   const contrast = 1.0 + Math.min(0.32, int * 0.32);
   // Pull down brightness for apocalyptic gloom
   const brightness = Math.max(0.72, 1.0 - int * 0.28);
-  // Subtle optical drenching blur at extreme death rain
-  const blur = int > 0.85 ? (int - 0.85) * 2.2 : 0;
+  // Atmospheric depth blur during storm: smooth optical softening in HEAVY (1px -> 3.6px in DEATH_RAIN)
+  const blur = int > 0.2 ? Math.min(3.6, (int - 0.2) * 4.5) : 0;
 
   // Dark industrial murky tint
   const overlayAlpha = Math.min(0.32, int * 0.32);
+  const filterStr = `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})${blur > 0.05 ? ` blur(${blur.toFixed(2)}px)` : ''}`;
 
   return {
     opacity: '1',
-    backdropFilter: `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})${blur > 0.1 ? ` blur(${blur.toFixed(1)}px)` : ''}`,
+    backdropFilter: filterStr,
+    WebkitBackdropFilter: filterStr,
     backgroundColor: `rgba(10, 20, 26, ${overlayAlpha.toFixed(2)})`
   };
 });
@@ -514,7 +517,7 @@ onUnmounted(() => {
   >
     <!-- Rain World Atmospheric Color Grading & Desaturation Filter -->
     <div 
-      class="absolute inset-0 pointer-events-none transition-all duration-700"
+      class="absolute inset-0 pointer-events-none transition-all duration-500 ease-out"
       :style="atmosphereStyle"
     ></div>
 
