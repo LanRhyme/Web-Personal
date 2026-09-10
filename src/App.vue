@@ -783,37 +783,6 @@ onUnmounted(() => {
   animation: shake-violent 0.08s infinite;
 }
 
-.shake-container.page-collapse {
-  animation: shake-violent 0.05s infinite;
-}
-
-@keyframes shake-total-collapse {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  3% { transform: translate(-80px, 40px) rotate(-4.5deg) scale(1.02); }
-  7% { transform: translate(60px, -70px) rotate(3.8deg) scale(0.98); }
-  11% { transform: translate(-50px, 75px) rotate(-3.2deg) scale(1.03); }
-  16% { transform: translate(75px, -35px) rotate(5deg) scale(0.97); }
-  21% { transform: translate(-40px, -65px) rotate(-4deg) scale(1.01); }
-  26% { transform: translate(65px, 55px) rotate(2.5deg) scale(1.04); }
-  31% { transform: translate(-70px, -40px) rotate(-5deg) scale(0.96); }
-  37% { transform: translate(45px, 60px) rotate(3.5deg) scale(1.02); }
-  43% { transform: translate(-60px, 30px) rotate(-2.8deg) scale(0.98); }
-  49% { transform: translate(70px, -75px) rotate(4.5deg) scale(1.05); }
-  55% { transform: translate(-55px, 50px) rotate(-3.5deg) scale(0.95); }
-  61% { transform: translate(80px, -45px) rotate(5deg) scale(1.03); }
-  67% { transform: translate(-75px, 65px) rotate(-4.2deg) scale(0.97); }
-  73% { transform: translate(50px, -60px) rotate(3deg) scale(1.04); }
-  79% { transform: translate(-65px, -50px) rotate(-5deg) scale(0.96); }
-  85% { transform: translate(55px, 70px) rotate(4deg) scale(1.02); }
-  91% { transform: translate(-80px, -30px) rotate(-3.8deg) scale(1.05); }
-  97% { transform: translate(70px, -55px) rotate(4.8deg) scale(0.97); }
-  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-}
-
-.shake-container.total-collapse {
-  animation: shake-total-collapse 0.04s infinite;
-}
-
 .pet-dark {
   border-color: #991b1b !important;
 }

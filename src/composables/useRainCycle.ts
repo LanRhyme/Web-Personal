@@ -105,6 +105,71 @@ const initAudio = () => {
   audioInitialized = true;
 };
 
+// Play electrical power-down pitch drop on extinction
+const playPowerDownSound = () => {
+  if (!audioCtx || audioCtx.state === 'suspended') return;
+  try {
+    const now = audioCtx.currentTime;
+    if (gainNode) gainNode.gain.setValueAtTime(0, now);
+    if (subGain) subGain.gain.setValueAtTime(0, now);
+
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(25, now + 0.38);
+
+    g.gain.setValueAtTime(0.3, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+    osc.connect(g);
+    g.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } catch (e) {
+    console.error('Failed to play power down sound:', e);
+  }
+};
+
+// Play crystal water droplet chime on dawn reawakening
+const playCrystalDropletSound = () => {
+  if (!audioCtx || audioCtx.state === 'suspended') return;
+  try {
+    const now = audioCtx.currentTime;
+
+    // Primary droplet tone (A5 -> E6 harmonic glide)
+    const osc1 = audioCtx.createOscillator();
+    const g1 = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, now);
+    osc1.frequency.exponentialRampToValueAtTime(1320, now + 0.08);
+
+    g1.gain.setValueAtTime(0.25, now);
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+    osc1.connect(g1);
+    g1.connect(audioCtx.destination);
+    osc1.start(now);
+    osc1.stop(now + 1.25);
+
+    // Ethereal sub-harmonic ripple
+    const osc2 = audioCtx.createOscillator();
+    const g2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(440, now);
+
+    g2.gain.setValueAtTime(0.12, now);
+    g2.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+    osc2.connect(g2);
+    g2.connect(audioCtx.destination);
+    osc2.start(now);
+    osc2.stop(now + 0.95);
+  } catch (e) {
+    console.error('Failed to play crystal droplet sound:', e);
+  }
+};
+
 const saveLockState = () => {
   try {
     localStorage.setItem(STORAGE_KEY_LOCKED, String(isLocked.value));
@@ -208,7 +273,10 @@ const startCycle = () => {
         if (intensity.value >= 11) {
           cycleStage.value = 'COLLAPSE';
           isCollapsed.value = true;
-          document.querySelector('.shake-container')?.classList.add('page-collapse');
+          document.querySelector('.shake-container')?.classList.remove('screen-shaking-violent');
+          document.querySelector('.shake-container')?.classList.remove('screen-shaking-light');
+
+          playPowerDownSound();
 
           triggerShatterEffect().then(cleanup => {
             shatterCleanup = cleanup;
@@ -217,24 +285,21 @@ const startCycle = () => {
       } else if (cycleStage.value === 'COLLAPSE') {
         intensity.value += dt;
 
-        if (intensity.value >= 15 && !document.querySelector('.shake-container')?.classList.contains('total-collapse')) {
-          document.querySelector('.shake-container')?.classList.remove('page-collapse');
-          document.querySelector('.shake-container')?.classList.add('total-collapse');
-        }
+        // 1.8s of silent blackout respite (intensity: 11 -> 12.8)
+        if (intensity.value >= 12.8) {
+          playCrystalDropletSound();
 
-        if (intensity.value >= 18) {
+          if (shatterCleanup) {
+            shatterCleanup();
+            shatterCleanup = null;
+          }
+
           intensity.value = 0.02;
           cycleStage.value = 'DRY';
           dryTimeLeft.value = dryTotalTime;
           isCollapsed.value = false;
           isShaking.value = false;
-          document.querySelector('.shake-container')?.classList.remove('page-collapse');
-          document.querySelector('.shake-container')?.classList.remove('total-collapse');
-          document.querySelector('.shake-container')?.classList.remove('screen-shaking-violent');
-          if (shatterCleanup) {
-            shatterCleanup();
-            shatterCleanup = null;
-          }
+          saveLockState();
         }
       }
     } else {
