@@ -293,9 +293,10 @@ onMounted(() => {
     }
 
     // ==============================================================
-    // PHASE C: Raindrops (Layer 0 = Misty, Layer 1 & 2 = Razor-Sharp)
+    // PHASE C: Raindrops (Layer 0 = Misty, Layer 1 = Sharp, Layer 2 = Heavy Rods)
     // ==============================================================
-    const activeDrops = Math.max(4, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
+    // Calm weather (DRY) drops scale down near-zero; heavy rain floods screen
+    const activeDrops = Math.max(1, Math.floor(MAX_DROPS * Math.pow(Math.max(0.001, currentInt), 1.6)));
     for (let i = 0; i < activeDrops; i++) {
       const drop = drops[i];
       const speedMult = 0.75 + currentInt * 0.95;
@@ -305,8 +306,8 @@ onMounted(() => {
       drop.y += curSpeed;
 
       if (drop.layer === 0) {
-        // --- LAYER 0: Misty / Foggy Distant Rain (Soft, semi-translucent) ---
-        const alpha = drop.opacity * (0.3 + currentInt * 0.6);
+        // --- LAYER 0: Misty Distant Rain (Soft, semi-translucent) ---
+        const alpha = drop.opacity * (currentInt < 0.2 ? currentInt * 0.9 : (0.15 + currentInt * 0.65));
         ctx.strokeStyle = `rgba(200, 225, 250, ${alpha})`;
         ctx.lineWidth = drop.thickness;
         ctx.beginPath();
@@ -314,41 +315,64 @@ onMounted(() => {
         ctx.lineTo(drop.x, drop.y);
         ctx.stroke();
       } else if (drop.layer === 1) {
-        // --- LAYER 1: Midground Rain (Clean, bright, defined) ---
-        const alpha = Math.min(0.85, drop.opacity * (0.45 + currentInt * 0.55));
-        ctx.strokeStyle = `rgba(235, 245, 255, ${alpha})`;
-        ctx.lineWidth = drop.thickness;
-        ctx.beginPath();
-        ctx.moveTo(drop.x, drop.y - curLength);
-        ctx.lineTo(drop.x, drop.y);
-        ctx.stroke();
+        // --- LAYER 1: Midground Rain (Clean, crisp) ---
+        if (currentInt < 0.25) {
+          // In calm/light drizzle, render as very subtle line with NO distracting bead
+          const alpha = drop.opacity * currentInt * 1.2;
+          ctx.strokeStyle = `rgba(220, 235, 255, ${alpha})`;
+          ctx.lineWidth = Math.min(drop.thickness, 0.9);
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y - curLength);
+          ctx.lineTo(drop.x, drop.y);
+          ctx.stroke();
+        } else {
+          const alpha = Math.min(0.85, drop.opacity * (0.25 + currentInt * 0.6));
+          ctx.strokeStyle = `rgba(235, 245, 255, ${alpha})`;
+          ctx.lineWidth = drop.thickness;
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y - curLength);
+          ctx.lineTo(drop.x, drop.y);
+          ctx.stroke();
 
-        // Small sharp tip
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
-        ctx.beginPath();
-        ctx.arc(drop.x, drop.y, 1.0, 0, Math.PI * 2);
-        ctx.fill();
+          // Small sharp tip
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+          ctx.beginPath();
+          ctx.arc(drop.x, drop.y, 1.0, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } else {
-        // --- LAYER 2: Foreground Crushing Rain (RAZOR-SHARP, brilliant white, crisp) ---
-        const alpha = Math.min(1.0, drop.opacity * (0.6 + currentInt * 0.4));
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.lineWidth = drop.thickness;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(drop.x, drop.y - curLength);
-        ctx.lineTo(drop.x, drop.y);
-        ctx.stroke();
+        // --- LAYER 2: Foreground Crushing Rain ---
+        if (currentInt < 0.35) {
+          // Suppress heavy rods and brilliant beads during calm state
+          const alpha = drop.opacity * currentInt * 1.4;
+          ctx.strokeStyle = `rgba(225, 240, 255, ${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y - curLength);
+          ctx.lineTo(drop.x, drop.y);
+          ctx.stroke();
+        } else {
+          // Heavy crushing rod with intense specular impact bead
+          const alpha = Math.min(1.0, drop.opacity * (0.35 + currentInt * 0.65));
+          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.lineWidth = drop.thickness;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y - curLength);
+          ctx.lineTo(drop.x, drop.y);
+          ctx.stroke();
 
-        // Intense specular droplet bead at the impact head
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(drop.x, drop.y, 1.5, 0, Math.PI * 2);
-        ctx.fill();
+          // Intense specular droplet bead at the impact head
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(drop.x, drop.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       // Ground impact check
       if (drop.y >= logicalH - 8) {
-        if (splashes.length < MAX_SPLASHES && Math.random() < currentInt * (drop.layer === 2 ? 0.85 : 0.4)) {
+        if (currentInt > 0.28 && splashes.length < MAX_SPLASHES && Math.random() < currentInt * (drop.layer === 2 ? 0.85 : 0.4)) {
           const splashBurst = drop.layer === 2 ? (isMobile ? 2 : 4) : (isMobile ? 1 : 2);
           for (let k = 0; k < splashBurst; k++) {
             splashes.push({

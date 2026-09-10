@@ -105,7 +105,7 @@ const initAudio = () => {
   audioInitialized = true;
 };
 
-// Play electrical power-down pitch drop on extinction
+// Play electrical power-down pitch drop and tear crackle on extinction
 const playPowerDownSound = () => {
   if (!audioCtx || audioCtx.state === 'suspended') return;
   try {
@@ -113,6 +113,27 @@ const playPowerDownSound = () => {
     if (gainNode) gainNode.gain.setValueAtTime(0, now);
     if (subGain) subGain.gain.setValueAtTime(0, now);
 
+    // 1. Visceral electrical tear crackle burst (140ms)
+    const crackleLength = Math.floor(audioCtx.sampleRate * 0.14);
+    const noiseBuf = audioCtx.createBuffer(1, crackleLength, audioCtx.sampleRate);
+    const output = noiseBuf.getChannelData(0);
+    for (let i = 0; i < crackleLength; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (crackleLength * 0.35));
+    }
+    const crackleSrc = audioCtx.createBufferSource();
+    crackleSrc.buffer = noiseBuf;
+    const crackleFilter = audioCtx.createBiquadFilter();
+    crackleFilter.type = 'highpass';
+    crackleFilter.frequency.value = 1400;
+    const crackleGain = audioCtx.createGain();
+    crackleGain.gain.setValueAtTime(0.28, now);
+    crackleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+    crackleSrc.connect(crackleFilter);
+    crackleFilter.connect(crackleGain);
+    crackleGain.connect(audioCtx.destination);
+    crackleSrc.start(now);
+
+    // 2. CRT power-down frequency drop
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     osc.type = 'sine';
