@@ -142,26 +142,31 @@ const animState = {
   glitch: 0.0
 };
 
-// Physics Inertia: Two-Tier Delayed Gravitational Glide
+// Physics Inertia: Calm Multi-Tier Delayed Gravitational Glide
 // Tier 1: Camera translation (1.6s power3.out)
 const cameraInertia = { x: 0, y: 0 };
 // Tier 2: Accretion disk orientation lag (2.6s power4.out)
 const diskInertia = { x: 0, y: 0 };
-// Fluid drag & ambient breathing
-const gyroscopicTilt = { x: 0, y: 0 };
-const scrollInertia = { value: 0 };
+
+// Deep Scroll Dynamics (Progress, Velocity Kinetic Surge, 3D Pitch & Elevation)
+const scrollDynamics = {
+  progress: 0,
+  velocity: 0,
+  pitch: 0,
+  elevation: 0
+};
+
 const celestialDrift = { x: 0, y: 0, rot: 0 };
 
-let lastMouseX = 0;
-let lastMouseY = 0;
-let lastMouseTime = performance.now();
+let lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+let lastScrollTime = performance.now();
 
-// Smooth GSAP QuickTo Setters with extended delay & heavy cubic easing
+// Smooth GSAP QuickTo Setters
 let quickCamX: ((value: number) => void) | null = null;
 let quickCamY: ((value: number) => void) | null = null;
 let quickDiskX: ((value: number) => void) | null = null;
 let quickDiskY: ((value: number) => void) | null = null;
-let quickScroll: ((value: number) => void) | null = null;
+let quickScrollProgress: ((value: number) => void) | null = null;
 
 // Route Warp Acceleration & Camera Morphing
 const transitionToRoute = (target: BlackHolePreset, duration = 2.0) => {
@@ -195,47 +200,15 @@ watch(
   }
 );
 
-// Mouse Movement: Multi-Tier Delayed Inertial Physics
+// Mouse Movement: Calm, silky delayed glide (No abrupt velocity twisting)
 const onMouseMove = (e: MouseEvent) => {
   const nx = (e.clientX / window.innerWidth) * 2 - 1;
   const ny = -(e.clientY / window.innerHeight) * 2 + 1;
 
-  const now = performance.now();
-  const dt = Math.max((now - lastMouseTime) * 0.001, 0.008);
-  const vx = (nx - lastMouseX) / dt;
-  const vy = (ny - lastMouseY) / dt;
-
-  lastMouseX = nx;
-  lastMouseY = ny;
-  lastMouseTime = now;
-
-  // Tier 1: Camera position follows with silky 1.6s power3 glide
   if (quickCamX) quickCamX(nx);
   if (quickCamY) quickCamY(ny);
-
-  // Tier 2: Accretion disk orientation lags behind with heavy 2.6s power4 inertia
   if (quickDiskX) quickDiskX(nx);
   if (quickDiskY) quickDiskY(ny);
-
-  // Spacetime fluid torque on quick cursor gestures with smooth decaying tail
-  const speed = Math.sqrt(vx * vx + vy * vy);
-  if (speed > 0.08) {
-    gsap.to(gyroscopicTilt, {
-      x: Math.max(-0.2, Math.min(0.2, vy * 0.04)),
-      y: Math.max(-0.28, Math.min(0.28, vx * 0.05)),
-      duration: 0.55,
-      ease: 'power2.out',
-      overwrite: 'auto',
-      onComplete: () => {
-        gsap.to(gyroscopicTilt, {
-          x: 0,
-          y: 0,
-          duration: 1.8,
-          ease: 'power3.out'
-        });
-      }
-    });
-  }
 };
 
 const onTouchMove = (e: TouchEvent) => {
@@ -249,10 +222,49 @@ const onTouchMove = (e: TouchEvent) => {
   }
 };
 
+// Deepened GSAP Page Scroll Dynamics
 const onScroll = () => {
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-  if (quickScroll) quickScroll(progress);
+  const curY = window.scrollY;
+  const progress = maxScroll > 0 ? Math.min(1.0, Math.max(0.0, curY / maxScroll)) : 0;
+
+  const now = performance.now();
+  const dt = Math.max((now - lastScrollTime) * 0.001, 0.008);
+  const v = (curY - lastScrollY) / dt; // pixels per second
+
+  lastScrollY = curY;
+  lastScrollTime = now;
+
+  // 1. Smooth scroll progress interpolation
+  if (quickScrollProgress) quickScrollProgress(progress);
+
+  // 2. Dynamic 3D elevation and inclination unfolding with GSAP power2.out
+  gsap.to(scrollDynamics, {
+    pitch: progress * 0.52,         // Rotates disk up to +0.52 rad (unfolds spiral arms)
+    elevation: progress * 0.95,     // Elevates camera vantage by +0.95
+    duration: 1.4,
+    ease: 'power2.out',
+    overwrite: 'auto'
+  });
+
+  // 3. Scroll Velocity Kinetic Energy Surge:
+  // Scrolling temporarily accelerates the accretion disk swirl, smoothly decaying back
+  const normVelocity = Math.min(Math.abs(v) / 1600.0, 1.6);
+  if (normVelocity > 0.05) {
+    gsap.to(scrollDynamics, {
+      velocity: normVelocity,
+      duration: 0.25,
+      ease: 'power1.out',
+      overwrite: 'auto',
+      onComplete: () => {
+        gsap.to(scrollDynamics, {
+          velocity: 0,
+          duration: 1.8,
+          ease: 'power2.out'
+        });
+      }
+    });
+  }
 };
 
 // Micro-interaction: Gravitational lens micro-tension on UI element hover
@@ -313,7 +325,6 @@ const initThree = () => {
       uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       uCamDrift: { value: new THREE.Vector2(0, 0) },
       uDiskLag: { value: new THREE.Vector2(0, 0) },
-      uGyro: { value: new THREE.Vector2(0, 0) },
       uDrift: { value: new THREE.Vector3(0, 0, 0) },
       uCamPos: { value: new THREE.Vector3(animState.camX, animState.camY, animState.camZ) },
       uIncl: { value: animState.incl },
@@ -322,7 +333,10 @@ const initThree = () => {
       uExposure: { value: animState.exposure },
       uBaseColor: { value: new THREE.Vector3(animState.colorR, animState.colorG, animState.colorB) },
       uGlitch: { value: 0.0 },
-      uScroll: { value: 0.0 }
+      uScrollProgress: { value: 0.0 },
+      uScrollVelocity: { value: 0.0 },
+      uScrollPitch: { value: 0.0 },
+      uScrollElevation: { value: 0.0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -338,7 +352,6 @@ const initThree = () => {
       uniform vec2 uResolution;
       uniform vec2 uCamDrift;
       uniform vec2 uDiskLag;
-      uniform vec2 uGyro;
       uniform vec3 uDrift;
       uniform vec3 uCamPos;
       uniform float uIncl;
@@ -347,7 +360,10 @@ const initThree = () => {
       uniform float uExposure;
       uniform vec3 uBaseColor;
       uniform float uGlitch;
-      uniform float uScroll;
+      uniform float uScrollProgress;
+      uniform float uScrollVelocity;
+      uniform float uScrollPitch;
+      uniform float uScrollElevation;
 
       varying vec2 vUv;
 
@@ -383,12 +399,12 @@ const initThree = () => {
           uv.x += sin(uTime * 45.0 + uv.y * 30.0) * 0.012;
         }
 
-        // Camera setup with Tier-1 delayed mouse glide (1.6s power3), celestial drift & scroll parallax
+        // Camera setup with Tier-1 delayed mouse glide (1.6s power3), celestial drift & GSAP scroll elevation
         vec2 camOffset = uCamDrift * 0.22;
         vec3 ro = vec3(
           uCamPos.x + camOffset.x + uDrift.x,
-          uCamPos.y + camOffset.y * 0.55 + uDrift.y + uScroll * 0.32,
-          uCamPos.z
+          uCamPos.y + camOffset.y * 0.55 + uDrift.y + uScrollElevation,
+          uCamPos.z + uScrollProgress * 0.55
         );
         vec3 target = vec3(0.0, 0.0, 0.0);
 
@@ -397,9 +413,9 @@ const initThree = () => {
         vec3 up = cross(right, fwd);
         vec3 rd = normalize(uv.x * right + uv.y * up + 1.75 * fwd);
 
-        // Rotation matrix: Base orientation + Tier-2 delayed disk tilt (2.6s power4) + gyroscopic fluid torque
-        float effIncl = uIncl + uDiskLag.y * 0.22 + uGyro.x + uScroll * 0.16;
-        float effRoll = uRoll + uDiskLag.x * 0.25 + uGyro.y + uDrift.z;
+        // Rotation matrix: Base orientation + Tier-2 delayed disk tilt + GSAP scroll pitch unfolding
+        float effIncl = uIncl + uDiskLag.y * 0.18 + uScrollPitch;
+        float effRoll = uRoll + uDiskLag.x * 0.22 + uDrift.z - uScrollProgress * 0.16;
 
         float ci = cos(effIncl), si = sin(effIncl);
         mat3 rotX = mat3(
@@ -426,6 +442,9 @@ const initThree = () => {
         vec3 color = vec3(0.0);
         float alpha = 0.0;
         bool captured = false;
+
+        // Effective disk speed boosted by scroll velocity kinetic surge
+        float effSpeed = uSpeed * (1.0 + uScrollVelocity * 1.5);
 
         // Raymarch through curved spacetime
         for (int i = 0; i < STEPS; i++) {
@@ -454,10 +473,10 @@ const initThree = () => {
             // Soft vertical exponential falloff
             float vertical = exp(-h * 12.0);
 
-            // Keplerian differential swirl: omega ~ r^-1.25
+            // Keplerian differential swirl: omega ~ r^-1.25 with scroll kinetic surge
             float phi = atan(rayPos.z, rayPos.x);
             float omega = 1.45 / pow(distXZ, 1.25);
-            float angle = phi - uTime * omega * uSpeed;
+            float angle = phi - uTime * omega * effSpeed;
 
             // Spiral dust filaments
             vec2 pUV = vec2(distXZ * 2.8, angle * 1.8);
@@ -511,8 +530,9 @@ const initThree = () => {
           }
         }
 
-        // Filmic ACES Tone Mapping
-        color *= uExposure;
+        // Filmic ACES Tone Mapping with scroll-adjusted exposure
+        float effExposure = uExposure * mix(1.0, 0.84, uScrollProgress);
+        color *= effExposure;
         color = color * (2.51 * color + 0.03) / (color * (2.43 * color + 0.59) + 0.14);
 
         // Edge vignette: clean contrast and pristine legibility
@@ -531,15 +551,13 @@ const initThree = () => {
   scene.add(planeMesh);
 
   // Two-Tier Delayed Gravitational QuickTo Setters:
-  // Camera translation: 1.6s duration with soft cubic deceleration
   quickCamX = gsap.quickTo(cameraInertia, 'x', { duration: 1.6, ease: 'power3.out' });
   quickCamY = gsap.quickTo(cameraInertia, 'y', { duration: 1.6, ease: 'power3.out' });
 
-  // Accretion disk angular tilt: 2.6s duration with heavy quartic deceleration for deep spatial mass
   quickDiskX = gsap.quickTo(diskInertia, 'x', { duration: 2.6, ease: 'power4.out' });
   quickDiskY = gsap.quickTo(diskInertia, 'y', { duration: 2.6, ease: 'power4.out' });
 
-  quickScroll = gsap.quickTo(scrollInertia, 'value', { duration: 1.0, ease: 'power2.out' });
+  quickScrollProgress = gsap.quickTo(scrollDynamics, 'progress', { duration: 1.2, ease: 'power2.out' });
 
   // Continuous Ambient Celestial Breathing (Smooth Lissajous float)
   gsap.to(celestialDrift, {
@@ -577,7 +595,6 @@ const animate = () => {
     mat.uniforms.uTime.value = time;
     mat.uniforms.uCamDrift.value.set(cameraInertia.x, cameraInertia.y);
     mat.uniforms.uDiskLag.value.set(diskInertia.x, diskInertia.y);
-    mat.uniforms.uGyro.value.set(gyroscopicTilt.x, gyroscopicTilt.y);
     mat.uniforms.uDrift.value.set(celestialDrift.x, celestialDrift.y, celestialDrift.rot);
     mat.uniforms.uCamPos.value.set(animState.camX, animState.camY, animState.camZ);
     mat.uniforms.uIncl.value = animState.incl;
@@ -586,7 +603,10 @@ const animate = () => {
     mat.uniforms.uExposure.value = animState.exposure;
     mat.uniforms.uBaseColor.value.set(animState.colorR, animState.colorG, animState.colorB);
     mat.uniforms.uGlitch.value = animState.glitch;
-    mat.uniforms.uScroll.value = scrollInertia.value;
+    mat.uniforms.uScrollProgress.value = scrollDynamics.progress;
+    mat.uniforms.uScrollVelocity.value = scrollDynamics.velocity;
+    mat.uniforms.uScrollPitch.value = scrollDynamics.pitch;
+    mat.uniforms.uScrollElevation.value = scrollDynamics.elevation;
   }
 
   renderer.render(scene, camera);
@@ -633,7 +653,7 @@ onUnmounted(() => {
 
 <template>
   <div class="fixed inset-0 pointer-events-none z-[-1] bg-[#050608] overflow-hidden">
-    <!-- Cinematic Gargantua Black Hole with Multi-Tier Delayed Inertia -->
+    <!-- Cinematic Gargantua Black Hole with Deep GSAP Scroll Dynamics -->
     <div ref="containerRef" class="absolute inset-0"></div>
   </div>
 </template>
