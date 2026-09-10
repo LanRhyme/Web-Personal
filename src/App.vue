@@ -536,7 +536,11 @@ onMounted(() => {
   if (petEyeRef.value) {
     petEyeRef.value.style.transform = `translateY(${Math.sin(eyeRotation) * 4}px)`;
   }
-  renderCursor();
+  
+  const isTouch = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+  if (!isTouch) {
+    renderCursor();
+  }
   
   setTimeout(() => {
     petTalking('你好呀主人！ヾ(•ω•`)o');
@@ -725,7 +729,7 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <!-- Rain World Global Heavy Rain (Outside app-root so shatter effect won't hide it) -->
+  <!-- Rain World Global Heavy Rain -->
   <GlobalRain />
 </template>
 

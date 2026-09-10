@@ -404,29 +404,50 @@ onMounted(async () => {
   nextTick(() => {
     triggerEntryAnimations();
 
-    // Repel Effect (Active on Desktop)
-    const glassElements = document.querySelectorAll('.cyber-glass');
-    const handleRepel = (e: MouseEvent) => {
+    // Repel Effect (Active on Desktop, with RAF throttle & cached rects)
+    const glassElements = Array.from(document.querySelectorAll('.cyber-glass')) as HTMLElement[];
+    let cachedCenters: { el: HTMLElement, x: number, y: number }[] = [];
+    
+    const updateCenters = () => {
       if (isMobile.value) return;
-      glassElements.forEach(el => {
+      cachedCenters = glassElements.map(el => {
         const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distX = e.clientX - centerX;
-        const distY = e.clientY - centerY;
-        const distance = Math.sqrt(distX * distX + distY * distY);
-        if (distance < 250) {
-          const force = (250 - distance) / 250;
-          const moveX = -(distX / distance) * force * 15;
-          const moveY = -(distY / distance) * force * 15;
-          anime({ targets: el, translateX: moveX, translateY: moveY, duration: 100, easing: 'easeOutQuad' });
-        } else {
-          anime({ targets: el, translateX: 0, translateY: 0, duration: 300, easing: 'easeOutElastic(1, .5)' });
+        return { el, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      });
+    };
+    updateCenters();
+    window.addEventListener('resize', updateCenters, { passive: true });
+
+    let repelPending = false;
+    const handleRepel = (e: MouseEvent) => {
+      if (isMobile.value || repelPending) return;
+      repelPending = true;
+      requestAnimationFrame(() => {
+        repelPending = false;
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        for (let i = 0; i < cachedCenters.length; i++) {
+          const item = cachedCenters[i];
+          const distX = mouseX - item.x;
+          const distY = mouseY - item.y;
+          const distSq = distX * distX + distY * distY;
+          if (distSq < 62500) { // 250 * 250
+            const distance = Math.sqrt(distSq);
+            const force = (250 - distance) / 250;
+            const moveX = -(distX / distance) * force * 12;
+            const moveY = -(distY / distance) * force * 12;
+            item.el.style.transform = `translate3d(${moveX.toFixed(1)}px, ${moveY.toFixed(1)}px, 0)`;
+          } else if (item.el.style.transform && item.el.style.transform !== 'translate3d(0px, 0px, 0px)') {
+            item.el.style.transform = 'translate3d(0px, 0px, 0px)';
+          }
         }
       });
     };
-    window.addEventListener('mousemove', handleRepel);
-    (window as any)._cleanupRepel = () => window.removeEventListener('mousemove', handleRepel);
+    window.addEventListener('mousemove', handleRepel, { passive: true });
+    (window as any)._cleanupRepel = () => {
+      window.removeEventListener('mousemove', handleRepel);
+      window.removeEventListener('resize', updateCenters);
+    };
   });
 });
 

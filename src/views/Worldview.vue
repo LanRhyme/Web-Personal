@@ -188,9 +188,12 @@ const handleMouseDown = () => {
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.z = 15;
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+  const isMobile = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.75);
+
+  renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(dpr);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
   canvasContainer.value.appendChild(renderer.domElement);
@@ -198,9 +201,10 @@ const handleMouseDown = () => {
   // Post-processing
   const renderScene = new RenderPass(scene, camera);
   
-  bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+  const bloomRes = isMobile ? new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5) : new THREE.Vector2(window.innerWidth, window.innerHeight);
+  bloomPass = new UnrealBloomPass(bloomRes, isMobile ? 1.0 : 1.5, 0.4, 0.85);
   bloomPass.threshold = 0.2;
-  bloomPass.strength = 1.5; // Base glow
+  bloomPass.strength = isMobile ? 1.0 : 1.5; // Base glow
   bloomPass.radius = 0.5;
 
   glitchPass = new GlitchPass();

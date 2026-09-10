@@ -18,9 +18,10 @@ onMounted(() => {
   let dpr = 1;
   let logicalW = window.innerWidth;
   let logicalH = window.innerHeight;
+  const isMobile = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
 
   const resize = () => {
-    dpr = window.devicePixelRatio || 1;
+    dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.5);
     logicalW = window.innerWidth;
     logicalH = window.innerHeight;
     canvas.width = logicalW * dpr;
@@ -35,7 +36,6 @@ onMounted(() => {
   const drops: {x: number, y: number, speed: number, length: number, thickness: number}[] = [];
   const splashes: {x: number, y: number, vx: number, vy: number, life: number}[] = [];
 
-  const isMobile = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
   const MAX_DROPS = isMobile ? 120 : 450;
   for(let i = 0; i < MAX_DROPS; i++) {
     drops.push({
