@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRainCycle } from '../composables/useRainCycle';
 
 const rainCanvasRef = ref<HTMLCanvasElement | null>(null);
@@ -9,6 +9,36 @@ let animId: number;
 
 const { intensity, cycleStage } = useRainCycle();
 
+// Rain World Atmospheric Color Grading: Gritty industrial desaturation & contrast wash
+const atmosphereStyle = computed(() => {
+  const int = intensity.value;
+  if (int <= 0.03) {
+    return {
+      opacity: '0',
+      backdropFilter: 'none',
+      backgroundColor: 'transparent'
+    };
+  }
+
+  // Desaturate progressively down to 0.42 (gritty slate/charcoal tone)
+  const sat = Math.max(0.42, 1.0 - int * 0.58);
+  // Enhance contrast to deepen heavy shadows
+  const contrast = 1.0 + Math.min(0.32, int * 0.32);
+  // Pull down brightness for apocalyptic gloom
+  const brightness = Math.max(0.72, 1.0 - int * 0.28);
+  // Subtle optical drenching blur at extreme death rain
+  const blur = int > 0.85 ? (int - 0.85) * 2.2 : 0;
+
+  // Dark industrial murky tint
+  const overlayAlpha = Math.min(0.32, int * 0.32);
+
+  return {
+    opacity: '1',
+    backdropFilter: `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})${blur > 0.1 ? ` blur(${blur.toFixed(1)}px)` : ''}`,
+    backgroundColor: `rgba(10, 20, 26, ${overlayAlpha.toFixed(2)})`
+  };
+});
+
 interface RainDrop {
   x: number;
   y: number;
@@ -17,6 +47,24 @@ interface RainDrop {
   thickness: number;
   layer: number; // 0 = far, 1 = mid, 2 = near
   opacity: number;
+}
+
+interface WaterCurtain {
+  x: number;
+  width: number;
+  speed: number;
+  phase: number;
+  opacity: number;
+  subStreams: { offset: number; width: number; speedMult: number }[];
+}
+
+interface Rivulet {
+  x: number;
+  y: number;
+  speed: number;
+  length: number;
+  width: number;
+  wobble: number;
 }
 
 interface Splash {
@@ -33,6 +81,7 @@ interface MistPuff {
   x: number;
   y: number;
   vx: number;
+  vy: number;
   radius: number;
   alpha: number;
 }
@@ -61,11 +110,11 @@ onMounted(() => {
   resize();
   window.addEventListener('resize', resize);
 
-  // Pre-rendered Raindrop Sprites with Optical Motion Blur & Droplet Beads
+  // 1. Pre-rendered Raindrop Sprites with Optical Motion Blur & Droplet Beads
   const createRainSprites = () => {
     const sprites: HTMLCanvasElement[] = [];
 
-    // Layer 0: Far background drizzle veil (fine, semi-translucent, soft motion stretch)
+    // Layer 0: Far background drizzle veil
     {
       const c = document.createElement('canvas');
       c.width = 6;
@@ -86,7 +135,7 @@ onMounted(() => {
       sprites.push(c);
     }
 
-    // Layer 1: Midground driving rain (balanced motion blur, refractive water tint, droplet bead)
+    // Layer 1: Midground driving rain
     {
       const c = document.createElement('canvas');
       c.width = 8;
@@ -106,7 +155,6 @@ onMounted(() => {
       sCtx.lineTo(4, 107);
       sCtx.stroke();
 
-      // Soft circular droplet bead at bottom
       sCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       sCtx.beginPath();
       sCtx.arc(4, 106, 1.2, 0, Math.PI * 2);
@@ -114,7 +162,7 @@ onMounted(() => {
       sprites.push(c);
     }
 
-    // Layer 2: Foreground kinetic heavy rain (heavy volume, tapered streak, luminous droplet head)
+    // Layer 2: Foreground kinetic heavy rain rods
     {
       const c = document.createElement('canvas');
       c.width = 10;
@@ -134,7 +182,6 @@ onMounted(() => {
       sCtx.lineTo(5, 145);
       sCtx.stroke();
 
-      // Luminous droplet head
       sCtx.fillStyle = 'rgba(255, 255, 255, 0.98)';
       sCtx.beginPath();
       sCtx.arc(5, 144, 1.8, 0, Math.PI * 2);
@@ -147,8 +194,46 @@ onMounted(() => {
 
   const sprites = createRainSprites();
 
-  // Multi-Layer Rain Pools (Rain World 3-Tier Kinetic Weather)
-  const MAX_DROPS = isMobile ? 160 : 520;
+  // 2. Cascading Downpour Curtains (Rain World Torrential Waterfall Sheets)
+  const curtainCount = isMobile ? 4 : 8;
+  const curtains: WaterCurtain[] = [];
+  for (let i = 0; i < curtainCount; i++) {
+    const width = Math.random() * 140 + 100;
+    const subCount = Math.floor(Math.random() * 4) + 3;
+    const subStreams = [];
+    for (let k = 0; k < subCount; k++) {
+      subStreams.push({
+        offset: Math.random() * width,
+        width: Math.random() * 2.5 + 1.0,
+        speedMult: Math.random() * 0.4 + 0.8
+      });
+    }
+    curtains.push({
+      x: (i / curtainCount) * (logicalW + 200) - 100 + (Math.random() - 0.5) * 80,
+      width,
+      speed: Math.random() * 35 + 55,
+      phase: Math.random() * 1000,
+      opacity: Math.random() * 0.4 + 0.6,
+      subStreams
+    });
+  }
+
+  // 3. Screen Streaming Rivulets (Water sliding down the lens)
+  const rivuletCount = isMobile ? 8 : 18;
+  const rivulets: Rivulet[] = [];
+  for (let i = 0; i < rivuletCount; i++) {
+    rivulets.push({
+      x: Math.random() * logicalW,
+      y: Math.random() * logicalH,
+      speed: Math.random() * 6 + 5,
+      length: Math.random() * 70 + 50,
+      width: Math.random() * 2.0 + 1.2,
+      wobble: Math.random() * 100
+    });
+  }
+
+  // 4. Kinetic Droplet Pool
+  const MAX_DROPS = isMobile ? 160 : 480;
   const drops: RainDrop[] = [];
 
   for (let i = 0; i < MAX_DROPS; i++) {
@@ -160,14 +245,12 @@ onMounted(() => {
     let opacity = 0.5;
 
     if (rand < 0.25) {
-      // Layer 0: Background dense veil (fast, fine, semi-transparent)
       layer = 0;
       speed = Math.random() * 18 + 32;
       length = Math.random() * 45 + 30;
       thickness = 2.2;
       opacity = 0.35;
     } else if (rand > 0.85) {
-      // Layer 2: Foreground massive crushing rods (thick, heavy kinetic energy)
       layer = 2;
       speed = Math.random() * 26 + 42;
       length = Math.random() * 100 + 75;
@@ -186,57 +269,135 @@ onMounted(() => {
     });
   }
 
-  // Explosive ground splashes
+  // 5. Explosive Ground Splashes
   const splashes: Splash[] = [];
-  const MAX_SPLASHES = isMobile ? 60 : 150;
+  const MAX_SPLASHES = isMobile ? 60 : 160;
 
-  // Ground rolling mist particles
+  // 6. Ground Boiling Vapor & Mist Plumes
   const mistPuffs: MistPuff[] = [];
-  const MAX_PUFFS = isMobile ? 12 : 28;
+  const MAX_PUFFS = isMobile ? 14 : 32;
   for (let i = 0; i < MAX_PUFFS; i++) {
     mistPuffs.push({
       x: Math.random() * logicalW,
-      y: logicalH - Math.random() * 45,
-      vx: (Math.random() - 0.5) * 0.9,
-      radius: Math.random() * 45 + 35,
-      alpha: Math.random() * 0.4 + 0.1
+      y: logicalH - Math.random() * 55,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: -Math.random() * 0.6 - 0.2, // boiling rising vapor
+      radius: Math.random() * 50 + 35,
+      alpha: Math.random() * 0.4 + 0.15
     });
   }
 
   let lightningFlash = 0;
+  let lastFrameTime = performance.now();
 
   const animate = () => {
     if (!canvas) return;
 
+    const now = performance.now();
+    const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+    lastFrameTime = now;
+
     const currentInt = intensity.value;
 
-    // Performance optimization: completely clear and idle if totally dry
+    // Completely idle if totally dry
     if (currentInt <= 0) {
       ctx.clearRect(0, 0, logicalW, logicalH);
       animId = requestAnimationFrame(animate);
       return;
     }
 
-    // Motion blur persistence: clearing with destination-out creates authentic camera shutter persistence
+    // Motion blur persistence clear
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = `rgba(0, 0, 0, ${0.42 + currentInt * 0.28})`;
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.40 + currentInt * 0.26})`;
     ctx.fillRect(0, 0, logicalW, logicalH);
     ctx.globalCompositeOperation = 'source-over';
 
-    // Active drop count scales with rain cycle intensity
-    const activeDrops = Math.max(3, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
+    // ==============================================================
+    // PHASE A: Cascading Water Curtains (Heavy & Death Rain Sheets)
+    // ==============================================================
+    if (currentInt > 0.35) {
+      const curtainStrength = Math.min(1.0, (currentInt - 0.35) / 0.65);
 
-    // 1. Draw Rain Droplets (Vertical with true optical motion blur & translucent water refraction)
+      for (let i = 0; i < curtains.length; i++) {
+        const c = curtains[i];
+        c.phase += c.speed * dt * (0.8 + currentInt * 0.8);
+
+        // Soft vertical curtain band
+        const grad = ctx.createLinearGradient(c.x, 0, c.x + c.width, 0);
+        const coreAlpha = c.opacity * curtainStrength * 0.12;
+        grad.addColorStop(0, 'rgba(180, 215, 235, 0)');
+        grad.addColorStop(0.5, `rgba(195, 230, 252, ${coreAlpha})`);
+        grad.addColorStop(1, 'rgba(180, 215, 235, 0)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(c.x, 0, c.width, logicalH);
+
+        // Streaming vertical cascading water rib-lines
+        ctx.strokeStyle = `rgba(220, 240, 255, ${c.opacity * curtainStrength * 0.22})`;
+        for (let k = 0; k < c.subStreams.length; k++) {
+          const sub = c.subStreams[k];
+          const streamX = c.x + sub.offset;
+          const yHead = ((c.phase * sub.speedMult * 40) % (logicalH + 300)) - 150;
+
+          ctx.lineWidth = sub.width * (0.8 + currentInt * 0.5);
+          ctx.beginPath();
+          ctx.moveTo(streamX, yHead);
+          ctx.lineTo(streamX, yHead + 160 + currentInt * 120);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // ==============================================================
+    // PHASE B: Screen Streaming Rivulets (Water streaming down camera lens)
+    // ==============================================================
+    if (currentInt > 0.45) {
+      const rivuletAlpha = Math.min(0.5, (currentInt - 0.45) * 0.8);
+      for (let i = 0; i < rivulets.length; i++) {
+        const r = rivulets[i];
+        r.y += r.speed * (0.7 + currentInt * 0.8);
+        r.wobble += dt * 3;
+
+        // Rivulet body with subtle sinusoidal trail
+        const wobX = r.x + Math.sin(r.y * 0.04 + r.wobble) * 3.5;
+        const rivGrad = ctx.createLinearGradient(wobX, r.y - r.length, wobX, r.y);
+        rivGrad.addColorStop(0, 'rgba(195, 225, 248, 0)');
+        rivGrad.addColorStop(0.7, `rgba(215, 238, 255, ${rivuletAlpha * 0.6})`);
+        rivGrad.addColorStop(1, `rgba(245, 252, 255, ${rivuletAlpha * 0.95})`);
+
+        ctx.strokeStyle = rivGrad;
+        ctx.lineWidth = r.width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(wobX, r.y - r.length);
+        ctx.lineTo(wobX, r.y);
+        ctx.stroke();
+
+        // Droplet accumulation node at tip
+        ctx.fillStyle = `rgba(255, 255, 255, ${rivuletAlpha * 0.9})`;
+        ctx.beginPath();
+        ctx.arc(wobX, r.y, r.width * 1.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (r.y - r.length > logicalH) {
+          r.y = -Math.random() * 60;
+          r.x = Math.random() * logicalW;
+        }
+      }
+    }
+
+    // ==============================================================
+    // PHASE C: Kinetic Raindrops (Multi-Layer Sprites with Motion Blur)
+    // ==============================================================
+    const activeDrops = Math.max(3, Math.floor(MAX_DROPS * Math.min(1.0, currentInt * 1.15)));
     for (let i = 0; i < activeDrops; i++) {
       const drop = drops[i];
       const speedMult = 0.7 + currentInt * 1.0;
       const curSpeed = drop.speed * speedMult;
       const curLength = drop.length * (0.65 + currentInt * 0.85);
 
-      // Rain falls straight down vertically (zero angle slant)
       drop.y += curSpeed;
 
-      // Draw motion-blurred sprite with soft fading tail and droplet tip
       const sprite = sprites[drop.layer];
       const alpha = Math.min(0.95, drop.opacity * (0.35 + currentInt * 0.75));
       ctx.globalAlpha = alpha;
@@ -259,14 +420,15 @@ onMounted(() => {
           }
         }
 
-        // Reset drop to top with vertical offset
         drop.y = -curLength - Math.random() * 40;
         drop.x = Math.random() * logicalW;
       }
     }
     ctx.globalAlpha = 1.0;
 
-    // 2. Render Explosive Ground Splashes
+    // ==============================================================
+    // PHASE D: Explosive Ground Splashes
+    // ==============================================================
     for (let i = splashes.length - 1; i >= 0; i--) {
       const s = splashes[i];
       const splashAlpha = (s.life / s.maxLife) * (0.35 + currentInt * 0.6);
@@ -278,7 +440,7 @@ onMounted(() => {
 
       s.x += s.vx;
       s.y += s.vy;
-      s.vy += 0.38; // Earth gravity pulling splash droplets back down
+      s.vy += 0.38;
       s.life -= 0.052;
 
       if (s.life <= 0) {
@@ -286,14 +448,17 @@ onMounted(() => {
       }
     }
 
-    // 3. Render Ground Volumetric Rolling Mist (Torrential Ground Fog)
+    // ==============================================================
+    // PHASE E: Ground Boiling Vapor & Mist Plumes (No water rising)
+    // ==============================================================
     if (currentInt > 0.25) {
       for (let i = 0; i < mistPuffs.length; i++) {
         const puff = mistPuffs[i];
-        const mistAlpha = puff.alpha * (currentInt - 0.2) * 0.16;
+        const mistAlpha = puff.alpha * (currentInt - 0.2) * 0.18;
 
         const grad = ctx.createRadialGradient(puff.x, puff.y, 0, puff.x, puff.y, puff.radius * (0.8 + currentInt * 0.5));
         grad.addColorStop(0, `rgba(220, 235, 255, ${mistAlpha})`);
+        grad.addColorStop(0.6, `rgba(200, 220, 245, ${mistAlpha * 0.4})`);
         grad.addColorStop(1, 'rgba(220, 235, 255, 0)');
 
         ctx.fillStyle = grad;
@@ -302,28 +467,32 @@ onMounted(() => {
         ctx.fill();
 
         puff.x += puff.vx;
-        if (puff.x < -puff.radius) {
-          puff.x = logicalW + puff.radius;
-        } else if (puff.x > logicalW + puff.radius) {
-          puff.x = -puff.radius;
+        puff.y += puff.vy * (0.8 + currentInt * 1.2); // rising steam vapor
+
+        // Respawn vapor near bottom
+        if (puff.y < logicalH - 90 || puff.x < -puff.radius || puff.x > logicalW + puff.radius) {
+          puff.x = Math.random() * logicalW;
+          puff.y = logicalH - Math.random() * 30;
         }
       }
     }
 
-    // 4. Apocalyptic Lightning Flash (Peak Death Rain)
+    // ==============================================================
+    // PHASE F: Apocalyptic Lightning Flash (Peak Death Rain)
+    // ==============================================================
     if (currentInt >= 0.95 && Math.random() > 0.985) {
       lightningFlash = Math.random() * 0.22 + 0.1;
     }
     if (lightningFlash > 0.01) {
       ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash})`;
       ctx.fillRect(0, 0, logicalW, logicalH);
-      lightningFlash *= 0.65; // Quick flash decay
+      lightningFlash *= 0.65;
     }
 
-    // Update DOM storm vignette opacity for peripheral atmospheric pressure
+    // Update DOM storm vignette opacity
     if (stormVignetteRef.value) {
       const isTorrential = cycleStage.value === 'HEAVY' || cycleStage.value === 'DEATH_RAIN';
-      const vignetteOpacity = isTorrential ? (0.45 + currentInt * 0.4) : (currentInt * 0.25);
+      const vignetteOpacity = isTorrential ? (0.45 + currentInt * 0.4) : (currentInt * 0.22);
       stormVignetteRef.value.style.opacity = String(vignetteOpacity);
     }
 
@@ -343,14 +512,21 @@ onUnmounted(() => {
     ref="containerRef"
     class="fixed inset-0 z-[99998] pointer-events-none overflow-hidden"
   >
+    <!-- Rain World Atmospheric Color Grading & Desaturation Filter -->
+    <div 
+      class="absolute inset-0 pointer-events-none transition-all duration-700"
+      :style="atmosphereStyle"
+    ></div>
+
     <!-- Rain World Atmospheric Storm Vignette (Tightens during HEAVY & DEATH_RAIN) -->
     <div 
       ref="stormVignetteRef"
       class="absolute inset-0 transition-opacity duration-700 pointer-events-none"
-      style="background: radial-gradient(circle at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.65) 75%, rgba(0, 0, 0, 0.92) 100%); opacity: 0;"
+      style="background: radial-gradient(circle at 50% 45%, transparent 35%, rgba(10, 18, 22, 0.7) 75%, rgba(4, 8, 10, 0.94) 100%); opacity: 0;"
     ></div>
 
-    <!-- Multi-Layer Canvas Rain & Explosive Splash Engine -->
+    <!-- Multi-Layer Canvas Rain, Downpour Curtains, Water Rivulets & Splash Engine -->
     <canvas ref="rainCanvasRef" class="pointer-events-none"></canvas>
   </div>
 </template>
+
