@@ -13,6 +13,20 @@
     "source_url": "https://github.com/LanRhyme/MicYou"
   },
   {
+    "image": "/img-projects/reveriepaint.png",
+    "title": "ReveriePaint",
+    "description": "基于 Krita 核心引擎与 Jetpack Compose 的 Android 原生数字绘画应用",
+    "tags": [
+      "Android",
+      "Kotlin",
+      "C++",
+      "Krita 引擎",
+      "Compose"
+    ],
+    "live_url": "",
+    "source_url": "https://github.com/LanRhyme/ReveriePaint"
+  },
+  {
     "image": "/img-projects/1782147274305-screenshot.png",
     "title": "DeskZero",
     "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
