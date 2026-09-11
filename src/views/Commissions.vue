@@ -243,7 +243,7 @@
         @click.self="closeImageModal"
       >
         <div class="relative max-w-[95%] max-h-[95%]">
-          <button @click="closeImageModal" class="absolute -top-5 -right-5 w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-sm border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-colors z-10 cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+          <button @click="closeImageModal" class="absolute top-2 right-2 sm:-top-5 sm:-right-5 w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-sm border border-[var(--color-brand)] text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-colors z-10 cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.3)]">
             <i class="fas fa-times text-lg"></i>
           </button>
           <img :src="modalImageUrl" loading="lazy" decoding="async" class="block max-w-full max-h-[90vh] object-contain border border-[var(--color-border)] shadow-[0_0_50px_rgba(0,0,0,1)]" alt="Enlarged">

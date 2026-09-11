@@ -19,11 +19,11 @@ const { pipsCount, isShaking, cycleStage, isCollapsed, intensity, isLocked, togg
     ></div>
     
     <!-- Pips Wrapper: Horizontal on mobile, Bottom-to-Top on desktop -->
-    <div class="flex flex-row md:flex-col-reverse gap-2">
+    <div class="flex flex-row md:flex-col-reverse gap-1.5 md:gap-2">
       <div 
         v-for="i in 12" 
         :key="i"
-        class="w-2.5 h-2.5 rounded-sm transition-all duration-[1000ms] ease-out border relative z-10"
+        class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-sm transition-all duration-[1000ms] ease-out border relative z-10"
         :class="[
           i <= pipsCount 
             ? (isShaking || cycleStage === 'DEATH_RAIN' ? 'bg-[#ff3333] border-[#ff3333] shadow-[0_0_10px_#ff3333]' : 'bg-white border-white shadow-[0_0_10px_rgba(255,255,255,0.8)]')
@@ -34,10 +34,10 @@ const { pipsCount, isShaking, cycleStage, isCollapsed, intensity, isLocked, togg
     
     <!-- Icon/Text -->
     <div 
-      class="mt-0 ml-2 md:mt-2 md:ml-0 font-mono font-bold tracking-tighter transition-colors duration-500" 
+      class="mt-0 ml-1.5 md:mt-2 md:ml-0 font-mono font-bold tracking-tighter transition-colors duration-500" 
       :class="isShaking || cycleStage === 'DEATH_RAIN' ? 'text-[#ff3333]' : (isLocked ? 'text-[var(--color-brand)]' : 'text-white')"
     >
-      <span class="text-[10px]">{{ isLocked ? 'LOCK' : (cycleStage === 'DRY' ? pipsCount : (isShaking ? 'ERR' : '...')) }}</span>
+      <span class="text-[9px] md:text-[10px]">{{ isLocked ? 'LOCK' : (cycleStage === 'DRY' ? pipsCount : (isShaking ? 'ERR' : '...')) }}</span>
     </div>
   </div>
 </template>

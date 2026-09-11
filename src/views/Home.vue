@@ -481,6 +481,9 @@ onUnmounted(() => {
         <div class="w-full max-w-[320px] mb-2 -ml-2 anime-fade-up cursor-pointer no-cursor-snap active:scale-[0.98] transition-transform" @click="triggerShake">
           <ParticleText text="LanRhyme." />
         </div>
+        <p class="font-mono text-[11px] text-[var(--color-text-dim)] tracking-[0.2em] mt-2 uppercase opacity-70">
+          [ DIGITAL RUINS &amp; HOLOGRAPHIC SYSTEMS ]
+        </p>
       </div>
 
       <!-- HUD Layout: Other components arranged at the bottom corners -->
@@ -691,8 +694,9 @@ onUnmounted(() => {
                   <div class="absolute left-0 top-0 w-1 h-full bg-[var(--color-brand)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div class="flex justify-between items-center">
                     <span class="font-art font-bold text-lg md:text-xl group-hover:text-[var(--color-brand)] transition-colors duration-300">{{ item.title }}</span>
-                    <span class="opacity-0 group-hover:opacity-100 text-xs tracking-widest font-mono text-[var(--color-brand)] transition-all duration-500 translate-x-4 group-hover:translate-x-0 hidden sm:block">
-                      [CONNECT]
+                    <span class="opacity-70 md:opacity-0 md:group-hover:opacity-100 text-[11px] sm:text-xs tracking-widest font-mono text-[var(--color-brand)] transition-all duration-300 translate-x-0 md:translate-x-4 md:group-hover:translate-x-0 flex items-center gap-1.5">
+                      <span class="hidden sm:inline">[CONNECT]</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                     </span>
                   </div>
                   <div class="text-xs md:text-sm opacity-50 mt-1 font-sans tracking-wide">{{ item.description }}</div>

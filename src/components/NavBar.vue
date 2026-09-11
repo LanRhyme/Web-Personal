@@ -155,7 +155,7 @@ onUnmounted(() => {
   </div>
 
   <!-- Mobile Floating Action Button (FAB) -->
-  <div class="fixed bottom-6 left-6 z-[60] lg:hidden">
+  <div class="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-6 z-[60] lg:hidden">
     <button 
       @click="toggleMenu" 
       class="w-12 h-12 rounded-none border border-[var(--color-brand)] bg-[var(--color-bg)]/80 backdrop-blur-md flex items-center justify-center text-[var(--color-brand)] hover:bg-[var(--color-brand)]/20 active:bg-[var(--color-brand)]/40 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] glitch-hover group"

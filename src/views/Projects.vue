@@ -188,30 +188,30 @@ const handleProjectClick = (index: number) => {
               :src="getImageUrl(project.image)"
               :alt="project.title"
               className="w-full h-full"
-              imgClass="transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
+              imgClass="transition-transform duration-700 group-hover:scale-105 filter grayscale-0 md:grayscale md:group-hover:grayscale-0"
             />
             
             <!-- Overlay Actions -->
-            <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2 z-20">
+            <div class="absolute bottom-3 right-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2 z-20">
               <a
                 v-if="project.live_url"
                 :href="project.live_url"
                 target="_blank"
-                class="btn-terminal !px-3 !py-1.5 !text-[10px] !bg-black/80 !backdrop-blur-md hover:!bg-[var(--color-brand)] hover:!text-black transition-colors"
+                class="btn-terminal !px-3 !py-1.5 !text-[11px] md:!text-[10px] !bg-black/90 !backdrop-blur-md !border-[var(--color-brand)]/60 text-[var(--color-brand)] hover:!bg-[var(--color-brand)] hover:!text-black transition-all shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
                 title="预览"
                 @click.stop
               >
-                [ RUN.EXE ]
+                <i class="fa-solid fa-play text-[9px] mr-1"></i>[ RUN.EXE ]
               </a>
               <a
                 v-if="project.source_url"
                 :href="project.source_url"
                 target="_blank"
-                class="btn-terminal !px-3 !py-1.5 !text-[10px] !bg-black/80 !backdrop-blur-md hover:!bg-white hover:!text-black transition-colors"
+                class="btn-terminal !px-3 !py-1.5 !text-[11px] md:!text-[10px] !bg-black/90 !backdrop-blur-md !border-white/30 text-white hover:!bg-white hover:!text-black transition-all shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
                 title="源码"
                 @click.stop
               >
-                [ SOURCE ]
+                <i class="fa-brands fa-github text-[10px] mr-1"></i>[ SOURCE ]
               </a>
             </div>
           </div>

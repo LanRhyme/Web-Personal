@@ -83,7 +83,7 @@
               :src="getImageUrl(portfolio.thumbnail)" 
               :alt="portfolio.title" 
               className="w-full h-auto min-h-[160px] relative z-0"
-              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale-0 md:grayscale md:group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             />
             
             <div class="p-5 border-t border-[var(--color-border)] bg-[var(--color-bg)]/95 relative z-10 group-hover:bg-black/90 backdrop-blur-md transition-colors duration-300">
@@ -92,7 +92,7 @@
                   <span class="text-[var(--color-brand)] text-xs opacity-0 group-hover:opacity-100 transition-opacity animate-pulse">></span>
                   <span>{{ portfolio.title }}</span>
                 </div>
-                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] opacity-0 group-hover:opacity-80 transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] opacity-80 md:opacity-0 md:group-hover:opacity-80 transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
               </div>
               <div class="text-[11px] text-[var(--color-text-dim)] font-sans leading-relaxed group-hover:text-[var(--color-text)] transition-colors">{{ portfolio.description }}</div>
             </div>
@@ -138,10 +138,10 @@
               :src="getImageUrl(work.image)" 
               :alt="work.title" 
               className="w-full h-auto min-h-[160px] relative z-0"
-              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              imgClass="scale-100 group-hover:scale-[1.08] filter grayscale-0 md:grayscale md:group-hover:grayscale-0 group-hover:brightness-105 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             />
             
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/85 to-transparent p-5 pt-16 text-[var(--color-text)] opacity-0 transition-all duration-300 group-hover:opacity-100 z-10 backdrop-blur-[2px] transform translate-y-2 group-hover:translate-y-0">
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/85 to-transparent p-3 sm:p-5 pt-10 sm:pt-16 text-[var(--color-text)] opacity-100 md:opacity-0 transition-all duration-300 md:group-hover:opacity-100 z-10 backdrop-blur-[2px] transform translate-y-0 md:translate-y-2 md:group-hover:translate-y-0">
               <!-- Decode Glitch Effect Container -->
               <div class="relative overflow-hidden">
                 <div class="font-art font-bold text-base mb-1 text-[var(--color-brand)] tracking-wider flex items-center gap-2 group-hover:animate-[glitch-decode_0.5s_ease-out]">
@@ -149,7 +149,7 @@
                 </div>
                 <div class="text-[10px] opacity-70 font-mono tracking-widest uppercase group-hover:animate-[glitch-decode_0.6s_ease-out] flex justify-between items-center">
                   <span>{{ work.description || 'Illustration Log' }}</span>
-                  <span class="text-[8px] text-[var(--color-brand)] opacity-60">[ ZOOM ]</span>
+                  <span class="text-[8px] text-[var(--color-brand)] opacity-80 md:opacity-60">[ ZOOM ]</span>
                 </div>
               </div>
               
@@ -253,36 +253,36 @@
         @click.self="closeLightbox"
       >
         <!-- Top Status Bar & Close -->
-        <div class="absolute top-6 inset-x-6 md:inset-x-12 flex justify-between items-center z-30 pointer-events-none">
-          <div class="font-mono text-xs text-[var(--color-brand)] tracking-[0.25em] flex items-center gap-3">
+        <div class="absolute top-4 inset-x-4 md:top-6 md:inset-x-12 flex justify-between items-center z-30 pointer-events-none">
+          <div class="font-mono text-[10px] md:text-xs text-[var(--color-brand)] tracking-[0.2em] md:tracking-[0.25em] flex items-center gap-2 md:gap-3">
             <span class="w-2 h-2 bg-[var(--color-brand)] animate-pulse"></span>
             <span>IMAGE_VIEWER // [ {{ lightbox.index + 1 }} / {{ lightbox.works.length }} ]</span>
           </div>
           
           <button 
-            class="pointer-events-auto btn-terminal !px-3 !py-1.5 !text-xs !bg-black/80 hover:!border-red-500 hover:!text-red-400 transition-colors"
+            class="pointer-events-auto btn-terminal !px-2.5 md:!px-3 !py-1 md:!py-1.5 !text-[11px] md:!text-xs !bg-black/80 hover:!border-red-500 hover:!text-red-400 transition-colors"
             @click="closeLightbox"
             title="Close (Esc)"
           >
-            [ ESC // CLOSE ]
+            [ <span class="hidden sm:inline">ESC // </span>CLOSE ]
           </button>
         </div>
 
         <!-- Navigation Buttons -->
         <button 
-          class="absolute top-1/2 left-4 md:left-8 -translate-y-1/2 btn-terminal !p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
+          class="absolute top-1/2 left-2 md:left-8 -translate-y-1/2 btn-terminal !p-2.5 md:!p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
           @click="prevImage"
           title="Previous (Left Arrow)"
         >
-          <i class="fa-solid fa-chevron-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+          <i class="fa-solid fa-chevron-left text-xs md:text-sm group-hover:-translate-x-0.5 transition-transform"></i>
         </button>
         
         <button 
-          class="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 btn-terminal !p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
+          class="absolute top-1/2 right-2 md:right-8 -translate-y-1/2 btn-terminal !p-2.5 md:!p-3.5 !bg-black/60 hover:!bg-[var(--color-brand)] hover:!text-black transition-all z-30 group"
           @click="nextImage"
           title="Next (Right Arrow)"
         >
-          <i class="fa-solid fa-chevron-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
+          <i class="fa-solid fa-chevron-right text-xs md:text-sm group-hover:translate-x-0.5 transition-transform"></i>
         </button>
         
         <!-- Center Image Stage -->
@@ -764,6 +764,15 @@ onMounted(() => {
 @media (max-width: 1400px) { .gallery-grid { column-count: 3; } }
 @media (max-width: 1024px) { .gallery-grid { column-count: 3; } }
 @media (max-width: 768px) { .gallery-grid { column-count: 2; } }
+@media (max-width: 640px) { 
+  .gallery-grid { 
+    column-count: 2; 
+    column-gap: 0.75rem; 
+  } 
+  .gallery-grid .mb-6 { 
+    margin-bottom: 0.75rem; 
+  } 
+}
 @media (max-width: 500px) { .gallery-grid { column-count: 2; } }
 
 .gallery-transition-container {

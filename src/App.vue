@@ -597,20 +597,20 @@ onUnmounted(() => {
     </div>
 
     <!-- Rain World Cycle Indicator (Left Side on Desktop, Bottom on Mobile) -->
-    <div class="fixed z-50 pointer-events-auto bottom-3 left-1/2 -translate-x-1/2 translate-y-0 top-auto scale-90 md:scale-100 md:bottom-auto md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
+    <div class="fixed z-50 pointer-events-auto bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 translate-y-0 top-auto scale-90 md:scale-100 md:bottom-auto md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0">
       <CycleIndicator v-if="!isAdmin" />
     </div>
 
     <!-- AI Companion (LanPet Refactor) -->
     <div 
       v-if="!isAdmin && !isWorldview" 
-      class="fixed z-50 pointer-events-auto flex items-end gap-3 md:gap-6 bottom-4 right-4 md:bottom-[30px] md:right-[30px]"
+      class="fixed z-50 pointer-events-auto flex items-end gap-3 md:gap-6 bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 md:bottom-[30px] md:right-[30px]"
     >
       <div class="lanpet-container flex flex-col select-none font-mono items-end">
         <transition name="page">
           <div 
             v-if="bubbleText" 
-            class="bubble-text cyber-glass !px-2.5 !py-1 mb-2 text-[10px] sm:text-xs bg-black/80 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase max-w-[200px] sm:max-w-[260px] text-right"
+            class="bubble-text cyber-glass !px-2.5 !py-1 mb-2 text-[10px] sm:text-xs bg-black/80 border border-[var(--color-brand)] text-[var(--color-brand)] font-bold tracking-widest relative uppercase max-w-[170px] sm:max-w-[260px] text-right"
           >
             > {{ bubbleText }} <span class="animate-pulse">_</span>
           </div>

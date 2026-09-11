@@ -243,7 +243,7 @@ onMounted(async () => {
         // {{ article.config.summary }}
       </div>
 
-      <div class="blog-content text-[var(--color-text)] text-[18px] md:text-[20px] leading-loose" style="font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;" v-html="marked(article.markdown)"></div>
+      <div class="blog-content text-[var(--color-text)] text-[16px] md:text-[20px] leading-relaxed md:leading-loose" style="font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;" v-html="marked(article.markdown)"></div>
 
       <!-- ARG Hidden Text -->
       <div 
@@ -418,6 +418,20 @@ onMounted(async () => {
   cursor: pointer;
   font-size: 0.75rem;
   transition: all 0.2s;
+}
+
+.blog-content {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.blog-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
 }
 
 .blog-content pre .copy-btn:hover {
