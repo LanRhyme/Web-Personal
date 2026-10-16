@@ -12,7 +12,7 @@
       <div class="w-full relative mb-12 md:mb-16 flex flex-col pt-8 md:pt-0 border-b border-[var(--color-border)] pb-4 md:pb-6">
         <!-- Parallax Background Watermark -->
         <div 
-          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[60px] md:text-[120px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75"
+          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[60px] md:text-[120px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap will-change-transform"
           :style="{ transform: `translateX(${scrollY * 0.1}px)` }"
         >
           COMMISSION
@@ -303,7 +303,16 @@ const closeImageModal = () => {
 };
 
 const scrollY = ref(0);
-const handleScroll = () => { scrollY.value = window.scrollY; };
+let scrollTicking = false;
+const handleScroll = () => {
+  if (!scrollTicking) {
+    requestAnimationFrame(() => {
+      scrollY.value = window.scrollY;
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
+};
 
 useScrollReveal();
 

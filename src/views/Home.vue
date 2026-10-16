@@ -81,8 +81,15 @@ const handleResize = () => {
   isMobile.value = window.innerWidth < 768;
 };
 
+let scrollTicking = false;
 const handleScroll = () => {
-  scrollY.value = window.scrollY;
+  if (!scrollTicking) {
+    requestAnimationFrame(() => {
+      scrollY.value = window.scrollY;
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
 };
 
 // Rain World Heavy Rain Canvas for Footer
@@ -466,8 +473,9 @@ onUnmounted(() => {
       
       <!-- TITLE ONLY: Absolutely Centered (Vertically & Horizontally) -->
       <div 
-        class="absolute top-[45%] left-1/2 z-20 flex flex-col items-center w-full pointer-events-none hidden md:flex"
-        :style="{ transform: `translate(calc(-50% + 55px), calc(-50% + ${scrollY * 0.3}px)) scale(${1 + scrollY * 0.0005})`, opacity: Math.max(0, 1 - scrollY / 400), filter: `blur(${scrollY * 0.015}px)` }"
+        v-if="!isMobile"
+        class="absolute top-[45%] left-1/2 z-20 flex flex-col items-center w-full pointer-events-none"
+        :style="{ transform: `translate(calc(-50% + 55px), calc(-50% + ${scrollY * 0.3}px)) scale(${1 + scrollY * 0.0005})`, opacity: Math.max(0, 1 - scrollY / 400), filter: scrollY > 0 ? `blur(${Math.min(4, scrollY * 0.015)}px)` : 'none' }"
       >
         <div class="anime-fade-up">
           <h1 class="w-full max-w-[850px] m-0 p-0 pointer-events-auto cursor-pointer no-cursor-snap transition-transform hover:scale-[1.02] active:scale-[0.98]" @click="triggerShake">
@@ -476,8 +484,8 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Mobile Title (Hidden on md) -->
-      <div class="w-full md:hidden flex flex-col items-center text-center absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+      <!-- Mobile Title (Rendered only on mobile) -->
+      <div v-else class="w-full flex flex-col items-center text-center absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
         <div class="w-full max-w-[320px] mb-2 -ml-2 anime-fade-up cursor-pointer no-cursor-snap active:scale-[0.98] transition-transform" @click="triggerShake">
           <ParticleText text="LanRhyme." />
         </div>
@@ -564,7 +572,7 @@ onUnmounted(() => {
       
       <!-- Corrupted Topology Lines Background (Iterator Neuromatrix) -->
       <div 
-        class="absolute inset-0 pointer-events-none z-0 opacity-20 transition-transform duration-75"
+        class="absolute inset-0 pointer-events-none z-0 opacity-20 will-change-transform"
         :style="{ transform: isMobile ? 'none' : `translateY(${scrollY * 0.15}px)` }"
       >
         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -599,7 +607,7 @@ onUnmounted(() => {
         
         <!-- Identity & Modules (Scattered on Desktop) -->
         <div 
-          class="w-full md:w-[30%] flex flex-col gap-6 md:gap-8 md:mt-24 z-20 transition-transform duration-75"
+          class="w-full md:w-[30%] flex flex-col gap-6 md:gap-8 md:mt-24 z-20 will-change-transform"
           :style="{ transform: isMobile ? 'none' : `translateY(${Math.max(0, scrollY - 300) * 0.08}px)` }"
         >
           <div class="reveal-left"><div class="cyber-glass p-1 transform md:-rotate-1 hover:rotate-0 transition-all duration-500"><MeCard /></div></div>
@@ -613,7 +621,7 @@ onUnmounted(() => {
           
           <!-- Route Buttons as Holographic Terminals -->
           <div class="flex flex-col gap-6 relative">
-            <div class="absolute -top-12 -left-8 font-art text-[60px] md:text-[100px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75" :style="{ transform: `translateX(${scrollY * 0.05}px)` }">
+            <div class="absolute -top-12 -left-8 font-art text-[60px] md:text-[100px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap will-change-transform" :style="{ transform: `translateX(${scrollY * 0.05}px)` }">
               ARCHIVE_NODE
             </div>
 

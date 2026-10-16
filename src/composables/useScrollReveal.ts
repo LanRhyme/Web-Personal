@@ -11,9 +11,8 @@ export function useScrollReveal() {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
         } else {
-          const rect = entry.target.getBoundingClientRect();
-          // Remove class when element goes below the viewport to allow re-triggering animation when scrolling down again
-          if (rect.top > window.innerHeight * 0.8) {
+          // Use precomputed boundingClientRect from observer entry to avoid synchronous layout reflow
+          if (entry.boundingClientRect.top > window.innerHeight * 0.8) {
             entry.target.classList.remove('is-visible');
           }
         }

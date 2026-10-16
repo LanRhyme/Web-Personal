@@ -22,35 +22,36 @@ export const preloadOtherPages = () => {
   let shouldPreload = false;
 
   if (connection) {
-    // 开启省流量模式则取消预加载
     if (connection.saveData) {
       return;
     }
-    // 如果明确为 wifi，或在不支持 type 时通过 effectiveType 判定为 4g (包含桌面宽带环境)
     if (connection.type === 'wifi' || connection.effectiveType === '4g') {
       shouldPreload = true;
     }
   } else {
-    // 如果不支持网络状态 API，默认进行预加载
     shouldPreload = true;
   }
 
   if (shouldPreload) {
-    const componentsToPreload = [
-      Projects, Works, Commissions, Admin, Games, Articles, ArticleDetail, TerminalView, PhysicalView, WorldviewPortal, Worldview, WorldviewCloud
-    ];
+    // Only preload the most likely next pages in priority order
+    const priorityComponents = [Projects, Works, Articles];
 
     const load = () => {
-      componentsToPreload.forEach(importFn => {
-        importFn().catch(() => {});
+      // Stagger imports by 800ms so network queue isn't flooded
+      priorityComponents.forEach((importFn, idx) => {
+        setTimeout(() => {
+          importFn().catch(() => {});
+        }, idx * 800);
       });
     };
 
-    // 优先使用 requestIdleCallback 在浏览器空闲时加载，不影响主流程渲染
+    // Delay preloading by 3.5s so initial home page load, styles, and hero assets settle first
     if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => load());
+      (window as any).requestIdleCallback(() => {
+        setTimeout(load, 3500);
+      });
     } else {
-      setTimeout(load, 2000);
+      setTimeout(load, 4500);
     }
   }
 };

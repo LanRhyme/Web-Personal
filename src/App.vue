@@ -34,7 +34,7 @@ const handlePreloaderComplete = () => {
     sessionStorage.setItem('has_shown_epilepsy_warning', 'true');
     setTimeout(() => {
       showEpilepsyWarning.value = false;
-    }, 5000);
+    }, 2000);
   }
 };
 
@@ -47,7 +47,7 @@ const cursorFrameRef = ref<HTMLElement | null>(null);
 
 let rawMouseX = window.innerWidth / 2;
 let rawMouseY = window.innerHeight / 2;
-let latestEventTarget: HTMLElement | null = null;
+let currentClickableEl: HTMLElement | null = null;
 
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
@@ -125,8 +125,6 @@ let eyeRotation = 0;
 const petEyeRef = ref<HTMLElement | null>(null);
 let lastHoveredElement: HTMLElement | null = null;
 let lastHoveredRect: DOMRect | null = null;
-let lastMouseX = -1;
-let lastMouseY = -1;
 
 let animationFrameId: number;
 const renderCursor = () => {
@@ -140,47 +138,33 @@ const renderCursor = () => {
   }
 
   // 3. Process hover and snap logic once per frame
-  if (latestEventTarget && latestEventTarget.isConnected) {
-    const isExcluded = latestEventTarget.closest('.no-cursor-snap');
-    const clickable = !isExcluded && (latestEventTarget.closest('a') || latestEventTarget.closest('button') || latestEventTarget.closest('.cursor-pointer') || latestEventTarget.closest('.nav-link'));
+  if (currentClickableEl && currentClickableEl.isConnected) {
+    const hoverEl = currentClickableEl;
     
-    if (clickable) {
-      const hoverEl = clickable as HTMLElement;
-      
-      // Cache getBoundingClientRect to avoid layout thrashing
-      if (hoverEl !== lastHoveredElement || !lastHoveredRect) {
-        lastHoveredRect = hoverEl.getBoundingClientRect();
-        lastHoveredElement = hoverEl;
-      }
-      
-      const rect = lastHoveredRect;
-      // Check if mouse is still in reasonable vicinity of the hovered bounding box
-      const isInside = mouseX >= rect.left - 20 && mouseX <= rect.right + 20 && mouseY >= rect.top - 20 && mouseY <= rect.bottom + 20;
+    // Cache getBoundingClientRect to avoid layout thrashing
+    if (hoverEl !== lastHoveredElement || !lastHoveredRect) {
+      lastHoveredRect = hoverEl.getBoundingClientRect();
+      lastHoveredElement = hoverEl;
+    }
+    
+    const rect = lastHoveredRect;
+    // Check if mouse is still in reasonable vicinity of the hovered bounding box
+    const isInside = mouseX >= rect.left - 20 && mouseX <= rect.right + 20 && mouseY >= rect.top - 20 && mouseY <= rect.bottom + 20;
 
-      if (isInside) {
-        isHovering.value = true;
-        hoveredElement = hoverEl;
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        // Magnetic Pull (Parallax effect)
-        const pullX = (mouseX - centerX) * 0.2;
-        const pullY = (mouseY - centerY) * 0.2;
-        
-        targetX = centerX + pullX;
-        targetY = centerY + pullY;
-        targetW = rect.width + 16;
-        targetH = rect.height + 16;
-      } else {
-        isHovering.value = false;
-        hoveredElement = null;
-        lastHoveredElement = null;
-        lastHoveredRect = null;
-        targetX = mouseX;
-        targetY = mouseY;
-        targetW = 24;
-        targetH = 24;
-      }
+    if (isInside) {
+      isHovering.value = true;
+      hoveredElement = hoverEl;
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // Magnetic Pull (Parallax effect)
+      const pullX = (mouseX - centerX) * 0.2;
+      const pullY = (mouseY - centerY) * 0.2;
+      
+      targetX = centerX + pullX;
+      targetY = centerY + pullY;
+      targetW = rect.width + 16;
+      targetH = rect.height + 16;
     } else {
       isHovering.value = false;
       hoveredElement = null;
@@ -226,12 +210,9 @@ const renderCursor = () => {
     petEyeRef.value.style.transform = `translateY(${Math.sin(eyeRotation) * 4}px)`;
   }
 
-  // 7. Update glowing spotlight backdrop CSS variables only when coordinates shift
-  if (Math.abs(mouseX - lastMouseX) > 1 || Math.abs(mouseY - lastMouseY) > 1) {
-    document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
-    document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
-    lastMouseX = mouseX;
-    lastMouseY = mouseY;
+  if (document.hidden) {
+    animationFrameId = 0;
+    return;
   }
 
   animationFrameId = requestAnimationFrame(renderCursor);
@@ -240,7 +221,13 @@ const renderCursor = () => {
 const updateMouse = (e: MouseEvent) => {
   rawMouseX = e.clientX;
   rawMouseY = e.clientY;
-  latestEventTarget = e.target as HTMLElement;
+  const target = e.target as HTMLElement | null;
+  if (target && target.isConnected) {
+    const isExcluded = target.closest('.no-cursor-snap');
+    currentClickableEl = !isExcluded ? (target.closest('a, button, .cursor-pointer, .nav-link') as HTMLElement | null) : null;
+  } else {
+    currentClickableEl = null;
+  }
 };
 
 const idleDialogues = [
@@ -441,7 +428,7 @@ const handleMouseLeave = () => {
   hoveredElement = null;
   lastHoveredElement = null;
   lastHoveredRect = null;
-  latestEventTarget = null;
+  currentClickableEl = null;
 };
 
 let idleTimer: number | null = null;
@@ -484,7 +471,7 @@ onMounted(() => {
 
   const lenis = new Lenis({
     autoRaf: true,
-    duration: 1.5,
+    duration: 1.0,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
   });
   
@@ -542,12 +529,26 @@ onMounted(() => {
     renderCursor();
   }
   
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+    } else {
+      if (!isTouch && !animationFrameId) {
+        animationFrameId = requestAnimationFrame(renderCursor);
+      }
+    }
+  };
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
   setTimeout(() => {
     petTalking('你好呀主人！ヾ(•ω•`)o');
   }, 1500);
 
   idleTimer = window.setInterval(() => {
-    if (petState.value === 'idle' && !bubbleText.value && Math.random() > 0.4) {
+    if (petState.value === 'idle' && !bubbleText.value && Math.random() > 0.4 && !document.hidden) {
       petTalking(getRandomText(idleDialogues));
     }
   }, 8000);
@@ -560,6 +561,7 @@ onUnmounted(() => {
   document.removeEventListener('mousemove', updateMouse);
   document.removeEventListener('mouseleave', handleMouseLeave);
   document.removeEventListener('keydown', handleKeyDown);
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   if (idleTimer) clearInterval(idleTimer);
   if (petTalkTimer) clearTimeout(petTalkTimer);
@@ -571,11 +573,12 @@ onUnmounted(() => {
 <template>
   <Preloader v-if="!isAdmin" @complete="handlePreloaderComplete" />
   
-  <!-- Global Photosensitive Epilepsy Warning Overlay (Shows for 5s after entering the site) -->
+  <!-- Global Photosensitive Epilepsy Warning Overlay (Shows for 2s after entering the site, or click to dismiss) -->
   <transition name="warning-fade">
     <div 
       v-if="showEpilepsyWarning && !isAdmin" 
-      class="fixed inset-0 z-[99999] bg-[#09090b]/90 backdrop-blur-md flex flex-col justify-center items-center select-none font-mono"
+      @click="showEpilepsyWarning = false"
+      class="fixed inset-0 z-[99999] bg-[#09090b]/95 flex flex-col justify-center items-center select-none font-mono cursor-pointer"
     >
       <div class="text-[6vw] font-black tracking-[0.2em] text-white uppercase text-center leading-none animate-pulse mb-8">
         [ 警告 // WARNING ]
@@ -585,6 +588,9 @@ onUnmounted(() => {
       </div>
       <div class="text-[1.2vw] font-bold tracking-[0.3em] text-white text-center mt-6 max-w-[85%] uppercase leading-relaxed opacity-70">
         PHOTOSENSITIVE EPILEPSY WARNING: THIS SITE CONTAINS FLASHING LIGHTS AND INTENSE MOTION/SHAKING EFFECTS. VIEW WITH CAUTION.
+      </div>
+      <div class="mt-8 text-[12px] tracking-[0.3em] text-white/50 border border-white/20 px-4 py-2 hover:border-white/60 hover:text-white transition-colors">
+        [ 点击任意处进入 // CLICK ANYWHERE TO ENTER ]
       </div>
     </div>
   </transition>

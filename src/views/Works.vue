@@ -12,7 +12,7 @@
       <section class="w-full relative mb-16 md:mb-24 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 pt-12 md:pt-0" id="works-intro" v-show="currentView === 'all'">
         <!-- Parallax Background Watermark -->
         <div 
-          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[80px] md:text-[140px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap transition-transform duration-75"
+          class="absolute -top-10 md:-top-20 -left-4 md:-left-8 font-art text-[80px] md:text-[140px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap will-change-transform"
           :style="{ transform: `translateX(${scrollY * 0.1}px)` }"
         >
           GALLERY
@@ -331,7 +331,16 @@ import ContentLoader from '../components/ContentLoader.vue';
 import CyberImage from '../components/CyberImage.vue';
 
 const scrollY = ref(0);
-const handleScroll = () => { scrollY.value = window.scrollY; };
+let scrollTicking = false;
+const handleScroll = () => {
+  if (!scrollTicking) {
+    requestAnimationFrame(() => {
+      scrollY.value = window.scrollY;
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
+};
 
 useScrollReveal();
 

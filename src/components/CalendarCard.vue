@@ -45,23 +45,56 @@ const updateNoise = () => {
     }
 };
 
-onMounted(() => {
+const startTimer = (ms = 1000) => {
+    if (timer) clearInterval(timer);
     timer = window.setInterval(() => {
         now.value = new Date();
         updateNoise();
-    }, 100); 
+    }, ms);
+};
+
+const stopTimer = () => {
+    if (timer) {
+        clearInterval(timer);
+        timer = null;
+    }
+};
+
+const onMouseEnter = () => {
+    isHovering.value = true;
+    startTimer(100);
+};
+
+const onMouseLeave = () => {
+    isHovering.value = false;
+    startTimer(1000);
+};
+
+const handleVisibilityChange = () => {
+    if (document.hidden) {
+        stopTimer();
+    } else {
+        now.value = new Date();
+        startTimer(isHovering.value ? 100 : 1000);
+    }
+};
+
+onMounted(() => {
+    startTimer(1000);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
-    clearInterval(timer);
+    stopTimer();
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 
 <template>
   <div 
     class="terminal-border p-3 md:p-4 font-mono text-[var(--color-text)] flex flex-col text-xs sm:text-sm group relative overflow-hidden transition-all duration-300 hover:border-[var(--color-brand)] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] cursor-crosshair"
-    @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
   >
     <div class="border-b border-[var(--color-border)] pb-2 mb-2 flex justify-between relative z-10 transition-colors duration-300">
         <span class="opacity-50 group-hover:text-[var(--color-brand)] group-hover:opacity-100 transition-all">SYS.DATE</span>

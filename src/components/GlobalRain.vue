@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRainCycle } from '../composables/useRainCycle';
 
 const rainCanvasRef = ref<HTMLCanvasElement | null>(null);
@@ -27,12 +27,9 @@ const atmosphereStyle = computed(() => {
   const contrast = 1.0 + Math.min(0.30, int * 0.30);
   // Pull down brightness for apocalyptic gloom
   const brightness = Math.max(0.74, 1.0 - int * 0.26);
-  // Slight background optical blur during heavy rain (0px -> 1.8px max, keeping text readable)
-  const blur = int > 0.25 ? Math.min(1.8, (int - 0.25) * 2.4) : 0;
-
   // Dark industrial murky tint
   const overlayAlpha = Math.min(0.30, int * 0.30);
-  const filterStr = `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})${blur > 0.05 ? ` blur(${blur.toFixed(2)}px)` : ''}`;
+  const filterStr = `saturate(${sat.toFixed(2)}) contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)})`;
 
   return {
     opacity: '1',
@@ -101,7 +98,7 @@ onMounted(() => {
   const isMobile = window.innerWidth < 640 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
 
   const resize = () => {
-    dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = 1.0;
     logicalW = window.innerWidth;
     logicalH = window.innerHeight;
     canvas.width = logicalW * dpr;
@@ -307,8 +304,8 @@ onMounted(() => {
     // Completely clean canvas clear on every frame: NO smudging, NO muddy blur
     ctx.clearRect(0, 0, logicalW, logicalH);
 
-    if (currentInt <= 0) {
-      animId = requestAnimationFrame(animate);
+    if (currentInt <= 0 && splashes.length === 0) {
+      animId = 0;
       return;
     }
 
@@ -493,14 +490,46 @@ onMounted(() => {
       stormVignetteRef.value.style.opacity = String(vignetteOpacity);
     }
 
-    animId = requestAnimationFrame(animate);
+    if (!isPaused) {
+      animId = requestAnimationFrame(animate);
+    } else {
+      animId = 0;
+    }
   };
 
-  animate();
+  let isPaused = false;
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      isPaused = true;
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = 0;
+      }
+    } else {
+      if (isPaused) {
+        isPaused = false;
+        lastFrameTime = performance.now();
+        if (!animId) {
+          animId = requestAnimationFrame(animate);
+        }
+      }
+    }
+  };
+
+  watch(intensity, (newVal) => {
+    if (newVal > 0 && !animId && !isPaused) {
+      lastFrameTime = performance.now();
+      animId = requestAnimationFrame(animate);
+    }
+  });
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  animId = requestAnimationFrame(animate);
 });
 
 onUnmounted(() => {
   if (animId) cancelAnimationFrame(animId);
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 

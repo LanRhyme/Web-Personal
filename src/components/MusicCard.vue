@@ -91,6 +91,9 @@ const onPlay = () => {
   if (!isScrambling.value) {
     displayTitle.value = currentTrack.value.title;
   }
+  if (!animationId && analyser) {
+    updateVisualizer();
+  }
 };
 const onPause = () => isPlaying.value = false;
 const onEnded = () => {
@@ -182,9 +185,8 @@ const initAudioContext = () => {
 const updateVisualizer = () => {
   if (!analyser || !dataArray) return;
   
-  animationId = requestAnimationFrame(updateVisualizer);
-  
   if (isPlaying.value) {
+    animationId = requestAnimationFrame(updateVisualizer);
     analyser.getByteFrequencyData(dataArray);
     const newBars = [];
     const step = Math.floor(dataArray.length / 16);
@@ -199,8 +201,16 @@ const updateVisualizer = () => {
     for (let i = 0; i < 4; i++) bassSum += newBars[i];
     dotRhythm.value = bassSum / 4;
   } else {
-    visualizerBars.value = visualizerBars.value.map(val => Math.max(0, val - 0.05));
-    dotRhythm.value = Math.max(0, dotRhythm.value - 0.05);
+    const hasRemaining = visualizerBars.value.some(val => val > 0.01) || dotRhythm.value > 0.01;
+    if (hasRemaining) {
+      animationId = requestAnimationFrame(updateVisualizer);
+      visualizerBars.value = visualizerBars.value.map(val => Math.max(0, val - 0.05));
+      dotRhythm.value = Math.max(0, dotRhythm.value - 0.05);
+    } else {
+      visualizerBars.value = Array(16).fill(0);
+      dotRhythm.value = 0;
+      animationId = 0;
+    }
   }
 };
 
@@ -241,15 +251,30 @@ const runFakeVisualizer = () => {
   }
 };
 
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = 0;
+    }
+  } else {
+    if (isPlaying.value && !animationId && analyser) {
+      updateVisualizer();
+    }
+  }
+};
+
 onMounted(() => {
   displayTitle.value = currentTrack.value.title;
   fakeVisInterval = window.setInterval(runFakeVisualizer, 200);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
   if (fakeVisInterval) clearInterval(fakeVisInterval);
   if (audioContext) audioContext.close();
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 
 // Calculate true 3D Roulette transform

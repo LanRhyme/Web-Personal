@@ -93,7 +93,7 @@ onMounted(() => {
       targets: endObj,
       val: 100,
       round: 1,
-      duration: 300,
+      duration: 150,
       easing: 'easeOutQuad',
       update: () => {
         progress.value = Math.round(endObj.val);
@@ -103,7 +103,7 @@ onMounted(() => {
         isClosing.value = true;
         setTimeout(() => {
           isDone.value = true;
-        }, 1200);
+        }, 500);
       }
     });
   };
@@ -115,23 +115,23 @@ onMounted(() => {
   bgImg.onerror = () => {
     isImageLoaded = true;
   };
-  bgImg.src = '/bg-image.png';
+  bgImg.src = '/img/avatar.png';
   if (bgImg.complete) {
     isImageLoaded = true;
   }
 
-  // Safety fallback: force completion after 2.2s no matter what
+  // Safety fallback: force completion after 800ms
   setTimeout(() => {
     isImageLoaded = true;
     finishLoading();
-  }, 2200);
+  }, 800);
 
   const progObj = { val: 0 };
   anime({
     targets: progObj,
     val: 99,
     round: 1,
-    duration: 1600,
+    duration: 500,
     easing: 'easeOutQuint',
     update: () => {
       progress.value = Math.round(progObj.val);
@@ -145,7 +145,7 @@ onMounted(() => {
             clearInterval(checkInterval);
             finishLoading();
           }
-        }, 100);
+        }, 40);
       }
     }
   });
@@ -155,8 +155,8 @@ onMounted(() => {
 <template>
   <div 
     v-if="!isDone"
-    class="fixed inset-0 z-[99999] bg-[var(--color-bg)] flex flex-col justify-center items-center overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
-    :class="{ 'opacity-0 scale-[1.05] pointer-events-none blur-[10px]': isClosing }"
+    class="fixed inset-0 z-[99999] bg-[var(--color-bg)] flex flex-col justify-center items-center overflow-hidden transition-all duration-[500ms] ease-[cubic-bezier(0.77,0,0.175,1)]"
+    :class="{ 'opacity-0 scale-[1.03] pointer-events-none': isClosing }"
   >
     <!-- Background Watermark: Photosensitive Epilepsy Warning -->
     <div class="absolute inset-0 z-0 flex flex-col justify-center items-center pointer-events-none opacity-[0.03] select-none font-mono">

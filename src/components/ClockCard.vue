@@ -2,11 +2,32 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const now = ref(new Date());
-let timer: number;
+let timer: number | null = null;
 const isHovering = ref(false);
 
 const updateTime = () => {
     now.value = new Date();
+};
+
+const startTimer = () => {
+    if (timer !== null) return;
+    timer = window.setInterval(updateTime, 65);
+};
+
+const stopTimer = () => {
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+};
+
+const handleVisibilityChange = () => {
+    if (document.hidden) {
+        stopTimer();
+    } else {
+        updateTime();
+        startTimer();
+    }
 };
 
 const displayTime = computed(() => {
@@ -25,11 +46,13 @@ const progress = computed(() => {
 });
 
 onMounted(() => {
-    timer = setInterval(updateTime, 47);
+    startTimer();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
-    clearInterval(timer);
+    stopTimer();
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 

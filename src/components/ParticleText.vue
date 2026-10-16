@@ -254,15 +254,62 @@ const animate = () => {
     }
   });
 
+  if (!isVisible || document.hidden) {
+    rafId = 0;
+    return;
+  }
+
   rafId = requestAnimationFrame(animate);
 };
 
+let isVisible = true;
+let observer: IntersectionObserver | null = null;
+
+const startAnimation = () => {
+  if (!rafId && isVisible && !document.hidden) {
+    rafId = requestAnimationFrame(animate);
+  }
+};
+
+const stopAnimation = () => {
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+};
+
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    stopAnimation();
+  } else {
+    startAnimation();
+  }
+};
+
 onMounted(() => {
-  animate();
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  if (wrapperRef.value && typeof IntersectionObserver !== 'undefined') {
+    observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible) {
+        startAnimation();
+      } else {
+        stopAnimation();
+      }
+    }, { threshold: 0.05 });
+    observer.observe(wrapperRef.value);
+  } else {
+    startAnimation();
+  }
 });
 
 onUnmounted(() => {
-  cancelAnimationFrame(rafId);
+  stopAnimation();
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
   if (scrambleInterval) clearInterval(scrambleInterval);
   if (decodeInterval) clearInterval(decodeInterval);
   if (audioCtx) audioCtx.close().catch(() => {});

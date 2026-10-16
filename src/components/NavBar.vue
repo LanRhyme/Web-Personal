@@ -6,20 +6,13 @@ const route = useRoute();
 let currentTime = '';
 const timeRefDesktop = ref<HTMLElement | null>(null);
 const timeRefMobile = ref<HTMLElement | null>(null);
-const mouseCoords = ref({ x: 0, y: 0 });
 const isMenuOpen = ref(false);
-
-let timeInterval: number;
 
 const updateTime = () => {
   const now = new Date();
   currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + Math.floor(now.getMilliseconds() / 100).toString();
   if (timeRefDesktop.value) timeRefDesktop.value.textContent = 'T: ' + currentTime;
   if (timeRefMobile.value) timeRefMobile.value.textContent = 'T: ' + currentTime;
-};
-
-const handleMouseMove = (e: MouseEvent) => {
-  mouseCoords.value = { x: e.clientX, y: e.clientY };
 };
 
 const navItems = ref([
@@ -73,36 +66,66 @@ const scrambleText = (event: MouseEvent) => {
   }, 30);
 };
 
-let garbleInterval: number;
+let timeInterval: number | null = null;
+let garbleInterval: number | null = null;
+
+const startTimers = () => {
+  if (!timeInterval) {
+    updateTime();
+    timeInterval = window.setInterval(updateTime, 100);
+  }
+  
+  if (!garbleInterval) {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+    let cachedTargets: HTMLElement[] | null = null;
+    
+    garbleInterval = window.setInterval(() => {
+      let garbled = "";
+      for (let i = 0; i < 10; i++) {
+        garbled += letters[Math.floor(Math.random() * letters.length)];
+      }
+      
+      if (!cachedTargets || cachedTargets.length === 0 || !cachedTargets[0].isConnected) {
+        cachedTargets = [
+          ...Array.from(document.querySelectorAll('.group\\/link[data-value="0xERR_&$#@"] .scramble-target')),
+          ...Array.from(document.querySelectorAll('nav.relative.z-10 a[href$="/worldview"] span.relative.z-10'))
+        ] as HTMLElement[];
+      }
+      
+      for (let i = 0; i < cachedTargets.length; i++) {
+        cachedTargets[i].textContent = garbled;
+      }
+    }, 80);
+  }
+};
+
+const stopTimers = () => {
+  if (timeInterval) {
+    clearInterval(timeInterval);
+    timeInterval = null;
+  }
+  if (garbleInterval) {
+    clearInterval(garbleInterval);
+    garbleInterval = null;
+  }
+};
+
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    stopTimers();
+  } else {
+    startTimers();
+  }
+};
 
 onMounted(() => {
-  updateTime();
-  timeInterval = window.setInterval(updateTime, 100);
-  window.addEventListener('mousemove', handleMouseMove);
-  
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
-  garbleInterval = window.setInterval(() => {
-    let garbled = "";
-    for (let i = 0; i < 10; i++) {
-      garbled += letters[Math.floor(Math.random() * letters.length)];
-    }
-    
-    // Update Desktop Nav
-    document.querySelectorAll('.group\\/link[data-value="0xERR_&$#@"] .scramble-target').forEach(el => {
-      if (el) el.textContent = garbled;
-    });
-    
-    // Update Mobile Nav
-    document.querySelectorAll('nav.relative.z-10 a[href$="/worldview"] span.relative.z-10').forEach(el => {
-      if (el) el.textContent = garbled;
-    });
-  }, 80);
+  startTimers();
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
-  clearInterval(timeInterval);
-  clearInterval(garbleInterval);
-  window.removeEventListener('mousemove', handleMouseMove);
+  stopTimers();
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
   document.body.classList.remove('menu-open');
 });
 </script>

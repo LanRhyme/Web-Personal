@@ -5,14 +5,17 @@ import CyberImage from './CyberImage.vue';
 const githubInfo = ref('WAITING...');
 
 const fetchGithubInfo = async () => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3500);
+
   try {
-    const userRes = await fetch('https://api.github.com/users/LanRhyme');
+    const userRes = await fetch('https://api.github.com/users/LanRhyme', { signal: controller.signal });
     if (!userRes.ok) throw new Error('API Error');
     const userData = await userRes.json();
     
     let totalStars = 0;
     try {
-      const reposRes = await fetch('https://api.github.com/users/LanRhyme/repos?per_page=100');
+      const reposRes = await fetch('https://api.github.com/users/LanRhyme/repos?per_page=100', { signal: controller.signal });
       if (reposRes.ok) {
         const reposData = await reposRes.json();
         totalStars = reposData.reduce((acc: number, repo: any) => acc + repo.stargazers_count, 0);
@@ -24,6 +27,8 @@ const fetchGithubInfo = async () => {
     githubInfo.value = `FLW:${userData.followers} / STR:${totalStars}`;
   } catch (e) {
     githubInfo.value = 'OFFLINE';
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
