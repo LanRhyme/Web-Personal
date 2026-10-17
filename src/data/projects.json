@@ -1,6 +1,6 @@
 [
   {
-    "image": "/img-projects/1780042801920-e0f1c209-3555-4450-bb8a-4da6d29a6bac.png",
+    "image": "/img-projects/1780042801920-e0f1c209-3555-4450-bb8a-4da6d29a6bac.webp",
     "title": "MicYou",
     "description": "一款多平台的麦克风串流软件",
     "tags": [
@@ -13,7 +13,7 @@
     "source_url": "https://github.com/LanRhyme/MicYou"
   },
   {
-    "image": "/img-projects/reveriepaint.png",
+    "image": "/img-projects/reveriepaint.webp",
     "title": "ReveriePaint",
     "description": "基于 Krita 核心引擎与 Jetpack Compose 的 Android 原生数字绘画应用",
     "tags": [
@@ -27,7 +27,7 @@
     "source_url": "https://github.com/LanRhyme/ReveriePaint"
   },
   {
-    "image": "/img-projects/1782147274305-screenshot.png",
+    "image": "/img-projects/1782147274305-screenshot.webp",
     "title": "DeskZero",
     "description": "将您的 Windows 桌面变为一个全新的、可高度自定义的工作区",
     "tags": [
@@ -41,7 +41,7 @@
     "source_url": "https://github.com/LanRhyme/DeskZero"
   },
   {
-    "image": "/img-projects/dotfiles.png",
+    "image": "/img-projects/dotfiles.webp",
     "title": "dotfiles",
     "description": "基于 chezmoi 的 CachyOS 个人配置集：莫兰迪动态主题引擎、2 小时自动同步、一键恢复工作流",
     "tags": [
@@ -53,7 +53,7 @@
     "source_url": "https://github.com/LanRhyme/dotfiles"
   },
   {
-    "image": "/img-projects/krita-plugins.png",
+    "image": "/img-projects/krita-plugins.webp",
     "title": "Krita 插件系列",
     "description": "6 款 Krita 插件合集：莫兰迪主题 UI 重设计、SAI 风格取色器、HSV 滑条、Folio 图层管理、无限画布、TVP 时间轴（Krita 5.x/6.x）",
     "tags": [
@@ -66,7 +66,7 @@
     "source_url": "https://github.com/search?q=user%3ALanRhyme+Krita&type=repositories"
   },
   {
-    "image": "/img-projects/geminichat.png",
+    "image": "/img-projects/geminichat.webp",
     "title": "GeminiChatPlugin",
     "description": "GeminiChatPlugin 是一个基于 Paper 1.21 的 Minecraft 服务器插件，允许玩家通过聊天与 Gemini AI 进行交互。插件支持预设配置，玩家可以切换不同的预设以改变 AI 的行为",
     "tags": [
@@ -79,7 +79,7 @@
     "source_url": "https://github.com/LanRhyme/GeminiChatPlugin"
   },
   {
-    "image": "/img-projects/rainworld-keyoverlay.png",
+    "image": "/img-projects/rainworld-keyoverlay.webp",
     "title": "RainWorld-KeyOverlay",
     "description": "雨世界按键显示 Mod：像素风格按键覆盖层，支持键盘与手柄输入显示",
     "tags": [
@@ -91,7 +91,7 @@
     "source_url": "https://github.com/LanRhyme/RainWorld-KeyOverlay"
   },
   {
-    "image": "/img-projects/pi-neostudio.png",
+    "image": "/img-projects/pi-neostudio.webp",
     "title": "pi-neostudio",
     "description": "pi coding agent 的 Web UI：流式对话、会话浏览、技能管理、插件对话框全链路、Electron 桌面版跨平台打包",
     "tags": [
@@ -104,7 +104,7 @@
     "source_url": "https://github.com/LanRhyme/pi-neostudio"
   },
   {
-    "image": "/img-projects/bilibili-danmaku.png",
+    "image": "/img-projects/bilibili-danmaku.webp",
     "title": "bilibili-pixel-danmaku",
     "description": "莫兰迪像素风 B 站直播弹幕助手：实时弹幕、礼物、醒目留言监听，Cookie 鉴权，主题随壁纸动态同步",
     "tags": [
@@ -117,7 +117,7 @@
     "source_url": "https://github.com/LanRhyme/bilibili-pixel-danmaku"
   },
   {
-    "image": "/img-projects/viod.png",
+    "image": "/img-projects/viod.webp",
     "title": "VoidFallProtectionPlugin",
     "description": "VoidFallProtection 是一个用于 Minecraft 服务器的插件，旨在保护玩家免受虚空掉落造成的伤害",
     "tags": [

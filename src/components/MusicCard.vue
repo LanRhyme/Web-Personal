@@ -25,6 +25,7 @@ const currentTrackIndex = ref(0);
 const currentTrack = computed(() => playlist[currentTrackIndex.value]);
 
 const audioRef = ref<HTMLAudioElement | null>(null);
+const rootRef = ref<HTMLElement | null>(null);
 const isPlaying = ref(false);
 const progress = ref(0);
 const duration = ref(0);
@@ -244,7 +245,11 @@ const handleVisMouseLeave = () => {
 };
 
 let fakeVisInterval: number;
+let cardObserver: IntersectionObserver | null = null;
+let isCardVisible = true;
 const runFakeVisualizer = () => {
+  // 卡片滚出视口后不要再每秒 5 次触发组件重渲染
+  if (!isCardVisible || document.hidden) return;
   if (!isPlaying.value && !audioContext) {
     visualizerBars.value = visualizerBars.value.map(() => Math.random() * 0.3);
     dotRhythm.value = Math.random() * 0.3;
@@ -268,12 +273,20 @@ onMounted(() => {
   displayTitle.value = currentTrack.value.title;
   fakeVisInterval = window.setInterval(runFakeVisualizer, 200);
   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  if (typeof IntersectionObserver !== 'undefined' && rootRef.value) {
+    cardObserver = new IntersectionObserver(([entry]) => {
+      isCardVisible = entry.isIntersecting;
+    }, { threshold: 0.05 });
+    cardObserver.observe(rootRef.value);
+  }
 });
 
 onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
   if (fakeVisInterval) clearInterval(fakeVisInterval);
   if (audioContext) audioContext.close();
+  if (cardObserver) cardObserver.disconnect();
   document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 
@@ -340,7 +353,7 @@ const handleSwipe = () => {
 </script>
 
 <template>
-  <div class="terminal-border p-3 md:p-4 w-full relative min-h-[180px] font-mono text-[var(--color-text)] transition-all group overflow-hidden" :class="{ 'glitch-container': isGlitching }">
+  <div ref="rootRef" class="terminal-border p-3 md:p-4 w-full relative min-h-[180px] font-mono text-[var(--color-text)] transition-all group overflow-hidden" :class="{ 'glitch-container': isGlitching }">
     
     <!-- Audio Element -->
     <audio 

@@ -13,6 +13,64 @@ let renderer: THREE.WebGLRenderer;
 let planeMesh: THREE.Mesh;
 let animationId: number;
 
+// --- 自适应渲染分辨率 ---
+let baseDpr = 1;
+let renderScale = 0.72;
+const MIN_RENDER_SCALE = 0.5;
+let drawingSize = new THREE.Vector2();
+
+let frameCount = 0;
+let frameAccum = 0;
+let lastFrameTs = 0;
+let lastAdaptTs = 0;
+
+const applyRenderScale = () => {
+  if (!renderer || !planeMesh) return;
+  renderer.setPixelRatio(renderScale);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.getDrawingBufferSize(drawingSize);
+  const mat = planeMesh.material as THREE.ShaderMaterial;
+  mat.uniforms.uResolution.value.copy(drawingSize);
+};
+
+/**
+ * 每 30 帧看一次平均帧时间：
+ * 掉到 50fps 以下就降分辨率，稳定跑到 90fps 以上再慢慢升回去。
+ * 分辨率变化对这张布满噪声的星云几乎没有视觉差异，但能救回一半的 GPU 时间。
+ */
+const adaptResolution = (now: number) => {
+  if (!lastFrameTs) {
+    lastFrameTs = now;
+    return;
+  }
+  const dt = now - lastFrameTs;
+  lastFrameTs = now;
+  if (dt <= 0 || dt > 200) return;
+
+  frameAccum += dt;
+  frameCount++;
+  if (frameCount < 30) return;
+
+  const avg = frameAccum / frameCount;
+  frameAccum = 0;
+  frameCount = 0;
+
+  if (now - lastAdaptTs < 1200) return;
+
+  let next = renderScale;
+  if (avg > 21 && renderScale > MIN_RENDER_SCALE) {
+    next = Math.max(MIN_RENDER_SCALE, renderScale * 0.88);
+  } else if (avg < 11 && renderScale < baseDpr) {
+    next = Math.min(baseDpr, renderScale * 1.06);
+  }
+
+  if (Math.abs(next - renderScale) > 0.01) {
+    renderScale = next;
+    applyRenderScale();
+    lastAdaptTs = now;
+  }
+};
+
 const startTime = performance.now() * 0.001;
 const getTime = () => performance.now() * 0.001 - startTime;
 
@@ -329,17 +387,22 @@ const initThree = () => {
   camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   camera.position.z = 1;
 
-  const dpr = isMobile ? 0.75 : Math.min(window.devicePixelRatio || 1, 1.0) * 0.85;
+  // 这个 shader 每像素要做 26~34 步 raymarch + 多次 fbm 噪声，
+  // 分辨率是唯一的性能杠杆。先给一个偏保守的初始比例，
+  // 运行时再按实际帧时间自适应升降（黑球本身是模糊的，降采样几乎看不出来）。
+  baseDpr = isMobile ? 0.75 : Math.min(window.devicePixelRatio || 1, 1.0) * 0.85;
+  renderScale = Math.min(baseDpr, 0.72);
+
   renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance'
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(dpr);
+  renderer.setPixelRatio(renderScale);
   containerRef.value.appendChild(renderer.domElement);
 
-  const drawingSize = new THREE.Vector2();
+  drawingSize = new THREE.Vector2();
   renderer.getDrawingBufferSize(drawingSize);
 
   const geometry = new THREE.PlaneGeometry(2, 2);
@@ -657,6 +720,8 @@ const animate = () => {
   if (isPaused) return;
   animationId = requestAnimationFrame(animate);
 
+  adaptResolution(performance.now());
+
   const time = getTime();
 
   if (planeMesh) {
@@ -683,13 +748,7 @@ const animate = () => {
 
 const onWindowResize = () => {
   if (!renderer || !planeMesh) return;
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  renderer.setSize(w, h);
-  const drawingSize = new THREE.Vector2();
-  renderer.getDrawingBufferSize(drawingSize);
-  const mat = planeMesh.material as THREE.ShaderMaterial;
-  mat.uniforms.uResolution.value.copy(drawingSize);
+  applyRenderScale();
   updateMaxScroll();
 };
 

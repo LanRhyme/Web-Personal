@@ -124,7 +124,7 @@ onMounted(() => {
   setTimeout(() => {
     isImageLoaded = true;
     finishLoading();
-  }, 800);
+  }, 550);
 
   const progObj = { val: 0 };
   anime({

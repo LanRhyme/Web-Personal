@@ -31,7 +31,7 @@ const isCollapsed = ref(false);
 const isLocked = ref(initialData.locked);
 let shatterCleanup: (() => void) | null = null;
 
-let cycleInterval: ReturnType<typeof setInterval> | null = null;
+let cycleTimer: ReturnType<typeof setTimeout> | null = null;
 let lastTickTime = 0;
 
 let audioCtx: AudioContext | null = null;
@@ -242,7 +242,7 @@ const accelerateCycle = () => {
 };
 
 const startCycle = () => {
-  if (cycleInterval) return;
+  if (cycleTimer) return;
 
   window.addEventListener('click', initAudio);
   window.addEventListener('keydown', initAudio);
@@ -258,7 +258,9 @@ const startCycle = () => {
 
   lastTickTime = Date.now();
 
-  cycleInterval = setInterval(() => {
+  // 频率随状态自适应：下雨时需要 20Hz 平滑推进强度，
+  // DRY 阶段只是个倒计时，5Hz 足够，避免全站常驻 20Hz 定时器。
+  const runTick = () => {
     const now = Date.now();
     const dt = (now - lastTickTime) / 1000;
     lastTickTime = now;
@@ -352,11 +354,15 @@ const startCycle = () => {
         subGain.gain.value += (targetSubGain - subGain.gain.value) * 0.1;
       }
     }
-  }, 50);
+
+    cycleTimer = setTimeout(runTick, cycleStage.value === 'DRY' ? 200 : 50);
+  };
+
+  runTick();
 };
 
 export function useRainCycle() {
-  if (!cycleInterval) {
+  if (!cycleTimer) {
     startCycle();
   }
 

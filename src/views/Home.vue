@@ -55,7 +55,46 @@ const latestArticle = computed(() => {
 });
 
 const asciiAvatar = ref(asciiAvatarData?.ascii || '');
-const scrollY = ref(0);
+
+// 滚动视差：不放进响应式系统。整页 template 上有 6 处 :style 依赖 scrollY，
+// 每帧改 ref 会让 Home 整个组件重新 diff 一遍，滚动时主线程被白白吃掉。
+// 这里改成 rAF 里直接写 DOM，视觉效果完全一致。
+let scrollYRaw = 0;
+const heroTitleRef = ref<HTMLElement | null>(null);
+const heroHudRef = ref<HTMLElement | null>(null);
+const scrollHintRef = ref<HTMLElement | null>(null);
+const topologyRef = ref<HTMLElement | null>(null);
+const leftColRef = ref<HTMLElement | null>(null);
+const archiveNodeRef = ref<HTMLElement | null>(null);
+
+const applyScrollStyles = () => {
+  const y = scrollYRaw;
+
+  if (heroTitleRef.value) {
+    const el = heroTitleRef.value;
+    el.style.transform = `translate(calc(-50% + 55px), calc(-50% + ${y * 0.3}px)) scale(${1 + y * 0.0005})`;
+    el.style.opacity = String(Math.max(0, 1 - y / 400));
+    el.style.filter = y > 0 ? `blur(${Math.min(4, y * 0.015)}px)` : 'none';
+  }
+
+  if (heroHudRef.value) {
+    heroHudRef.value.style.transform = `translateY(${y * 0.15}px)`;
+    heroHudRef.value.style.opacity = String(Math.max(0, 1 - y / 600));
+  }
+
+  if (scrollHintRef.value) {
+    const hidden = y > 50;
+    scrollHintRef.value.classList.toggle('opacity-0', hidden);
+    scrollHintRef.value.classList.toggle('pointer-events-none', hidden);
+    scrollHintRef.value.classList.toggle('opacity-30', !hidden);
+  }
+
+  if (!isMobile.value) {
+    if (topologyRef.value) topologyRef.value.style.transform = `translateY(${y * 0.15}px)`;
+    if (leftColRef.value) leftColRef.value.style.transform = `translateY(${Math.max(0, y - 300) * 0.08}px)`;
+    if (archiveNodeRef.value) archiveNodeRef.value.style.transform = `translateX(${y * 0.05}px)`;
+  }
+};
 
 const openLink = (link: string) => {
     if (link) {
@@ -78,14 +117,26 @@ const loadArticles = async () => {
 
 const isMobile = ref(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 const handleResize = () => {
-  isMobile.value = window.innerWidth < 768;
+  const next = window.innerWidth < 768;
+  if (next !== isMobile.value) {
+    isMobile.value = next;
+    if (next) {
+      // 移动端不做视差，清掉桌面端残留的 transform
+      [topologyRef.value, leftColRef.value, archiveNodeRef.value].forEach((el) => {
+        if (el) el.style.transform = '';
+      });
+    } else {
+      applyScrollStyles();
+    }
+  }
 };
 
 let scrollTicking = false;
 const handleScroll = () => {
   if (!scrollTicking) {
     requestAnimationFrame(() => {
-      scrollY.value = window.scrollY;
+      scrollYRaw = window.scrollY;
+      applyScrollStyles();
       scrollTicking = false;
     });
     scrollTicking = true;
@@ -474,8 +525,9 @@ onUnmounted(() => {
       <!-- TITLE ONLY: Absolutely Centered (Vertically & Horizontally) -->
       <div 
         v-if="!isMobile"
-        class="absolute top-[45%] left-1/2 z-20 flex flex-col items-center w-full pointer-events-none"
-        :style="{ transform: `translate(calc(-50% + 55px), calc(-50% + ${scrollY * 0.3}px)) scale(${1 + scrollY * 0.0005})`, opacity: Math.max(0, 1 - scrollY / 400), filter: scrollY > 0 ? `blur(${Math.min(4, scrollY * 0.015)}px)` : 'none' }"
+        ref="heroTitleRef"
+        class="absolute top-[45%] left-1/2 z-20 flex flex-col items-center w-full pointer-events-none will-change-transform"
+        style="transform: translate(calc(-50% + 55px), -50%);"
       >
         <div class="anime-fade-up">
           <h1 class="w-full max-w-[850px] m-0 p-0 pointer-events-auto cursor-pointer no-cursor-snap transition-transform hover:scale-[1.02] active:scale-[0.98]" @click="triggerShake">
@@ -496,8 +548,8 @@ onUnmounted(() => {
 
       <!-- HUD Layout: Other components arranged at the bottom corners -->
       <div 
-        class="absolute bottom-8 md:bottom-12 w-full max-w-[1400px] px-4 md:px-12 flex flex-col md:flex-row justify-between items-end z-10"
-        :style="{ transform: `translateY(${scrollY * 0.15}px)`, opacity: Math.max(0, 1 - scrollY / 600) }"
+        ref="heroHudRef"
+        class="absolute bottom-8 md:bottom-12 w-full max-w-[1400px] px-4 md:px-12 flex flex-col md:flex-row justify-between items-end z-10 will-change-transform"
       >
         <!-- Left: Subtitle & Iterator Status -->
         <div class="flex flex-col gap-6 w-full md:w-1/2">
@@ -546,8 +598,8 @@ onUnmounted(() => {
       
       <!-- Scroll Indicator -->
       <div 
+        ref="scrollHintRef"
         class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 transition-opacity duration-500"
-        :class="scrollY > 50 ? 'opacity-0 pointer-events-none' : 'opacity-30'"
       >
         <div class="text-[10px] font-mono tracking-[0.3em] text-[var(--color-brand)] animate-pulse">DESCEND</div>
         <div class="w-[1px] h-12 bg-gradient-to-b from-[var(--color-brand)] to-transparent"></div>
@@ -572,8 +624,8 @@ onUnmounted(() => {
       
       <!-- Corrupted Topology Lines Background (Iterator Neuromatrix) -->
       <div 
+        ref="topologyRef"
         class="absolute inset-0 pointer-events-none z-0 opacity-20 will-change-transform"
-        :style="{ transform: isMobile ? 'none' : `translateY(${scrollY * 0.15}px)` }"
       >
         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -607,8 +659,8 @@ onUnmounted(() => {
         
         <!-- Identity & Modules (Scattered on Desktop) -->
         <div 
+          ref="leftColRef"
           class="w-full md:w-[30%] flex flex-col gap-6 md:gap-8 md:mt-24 z-20 will-change-transform"
-          :style="{ transform: isMobile ? 'none' : `translateY(${Math.max(0, scrollY - 300) * 0.08}px)` }"
         >
           <div class="reveal-left"><div class="cyber-glass p-1 transform md:-rotate-1 hover:rotate-0 transition-all duration-500"><MeCard /></div></div>
           <div class="reveal-left" style="transition-delay: 100ms;"><div class="cyber-glass p-1 transform md:rotate-2 hover:rotate-0 transition-all duration-500 md:ml-[-10%]"><ClockCard /></div></div>
@@ -621,7 +673,7 @@ onUnmounted(() => {
           
           <!-- Route Buttons as Holographic Terminals -->
           <div class="flex flex-col gap-6 relative">
-            <div class="absolute -top-12 -left-8 font-art text-[60px] md:text-[100px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap will-change-transform" :style="{ transform: `translateX(${scrollY * 0.05}px)` }">
+            <div ref="archiveNodeRef" class="absolute -top-12 -left-8 font-art text-[60px] md:text-[100px] leading-none opacity-[0.03] text-[var(--color-text)] pointer-events-none z-[-1] tracking-tighter whitespace-nowrap will-change-transform">
               ARCHIVE_NODE
             </div>
 

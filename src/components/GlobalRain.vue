@@ -7,6 +7,9 @@ const containerRef = ref<HTMLElement | null>(null);
 const stormVignetteRef = ref<HTMLElement | null>(null);
 let animId: number;
 
+// 低于这个强度就当“没下雨”，整块画布停止渲染
+const DRY_THRESHOLD = 0.035;
+
 const { intensity, cycleStage } = useRainCycle();
 
 // Rain World Atmospheric Color Grading: Gritty industrial desaturation, contrast wash & slight background blur
@@ -304,7 +307,10 @@ onMounted(() => {
     // Completely clean canvas clear on every frame: NO smudging, NO muddy blur
     ctx.clearRect(0, 0, logicalW, logicalH);
 
-    if (currentInt <= 0 && splashes.length === 0) {
+    // DRY 阶段（intensity 停在下限 0.02）几乎没有雨滴，没必要每秒重绘 60 次全屏画布：
+    // 清空一次后直接停机，等 intensity 涨上来再由 watch 唤醒。
+    if (currentInt <= DRY_THRESHOLD && splashes.length === 0) {
+      if (stormVignetteRef.value) stormVignetteRef.value.style.opacity = '0';
       animId = 0;
       return;
     }
@@ -517,14 +523,17 @@ onMounted(() => {
   };
 
   watch(intensity, (newVal) => {
-    if (newVal > 0 && !animId && !isPaused) {
+    if (newVal > DRY_THRESHOLD && !animId && !isPaused) {
       lastFrameTime = performance.now();
       animId = requestAnimationFrame(animate);
     }
   });
 
+  // DRY 阶段画布是静止的，挂载时不必启动循环
   document.addEventListener('visibilitychange', handleVisibilityChange);
-  animId = requestAnimationFrame(animate);
+  if (intensity.value > DRY_THRESHOLD) {
+    animId = requestAnimationFrame(animate);
+  }
 });
 
 onUnmounted(() => {
