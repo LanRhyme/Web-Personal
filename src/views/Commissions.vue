@@ -221,13 +221,13 @@
             <div class="text-center group">
               <p class="text-xs font-mono font-bold mb-3 text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors">> WECHAT</p>
               <div class="p-2 border border-[var(--color-border)] group-hover:border-[var(--color-brand)] transition-colors bg-white">
-                 <img alt="WeChat Pay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/wx.jpg">
+                 <img alt="WeChat Pay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/wx.webp">
               </div>
             </div>
             <div class="text-center group">
               <p class="text-xs font-mono font-bold mb-3 text-[var(--color-text-dim)] group-hover:text-[var(--color-brand)] transition-colors">> ALIPAY</p>
               <div class="p-2 border border-[var(--color-border)] group-hover:border-[var(--color-brand)] transition-colors bg-white">
-                 <img alt="Alipay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/zfb.jpg">
+                 <img alt="Alipay" class="w-full h-auto" loading="lazy" decoding="async" src="/img/zfb.webp">
               </div>
             </div>
           </div>

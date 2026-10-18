@@ -276,23 +276,20 @@ const onScroll = () => {
 };
 
 // Micro-interaction: Gravitational lens micro-tension on UI hover
+let wasHovering = false;
 const onMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement | null;
-  if (target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea')) {
-    gsap.to(animState, {
-      exposure: (ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95) * 1.08,
-      duration: 0.45,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-  } else {
-    gsap.to(animState, {
-      exposure: ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95,
-      duration: 0.75,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-  }
+  const isInteractive = !!(target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea'));
+  if (isInteractive === wasHovering) return;
+  wasHovering = isInteractive;
+
+  const baseExposure = ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95;
+  gsap.to(animState, {
+    exposure: isInteractive ? baseExposure * 1.08 : baseExposure,
+    duration: isInteractive ? 0.45 : 0.75,
+    ease: 'power2.out',
+    overwrite: 'auto'
+  });
 };
 
 const handleGlitch = (e: Event) => {
@@ -628,6 +625,22 @@ const onWindowResize = () => {
   renderer.setSize(w, h);
 };
 
+let isTabHidden = false;
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    isTabHidden = true;
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = 0;
+    }
+  } else if (isTabHidden) {
+    isTabHidden = false;
+    if (!animationId) {
+      animationId = requestAnimationFrame(animate);
+    }
+  }
+};
+
 onMounted(() => {
   initThree();
   window.addEventListener('resize', onWindowResize, { passive: true });
@@ -636,6 +649,7 @@ onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('mouseover', onMouseOver, { passive: true });
   window.addEventListener('global-glitch', handleGlitch);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
@@ -646,6 +660,7 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScroll);
   window.removeEventListener('mouseover', onMouseOver);
   window.removeEventListener('global-glitch', handleGlitch);
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 
   if (renderer && containerRef.value) {
     containerRef.value.removeChild(renderer.domElement);

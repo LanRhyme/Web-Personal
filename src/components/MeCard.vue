@@ -51,7 +51,7 @@ onMounted(() => {
         <!-- Minimalist Avatar Frame -->
         <div class="w-14 h-14 bg-transparent flex items-center justify-center border border-[var(--color-brand)] overflow-hidden relative">
           <CyberImage 
-            src="/img/avatar.png" 
+            src="/img/avatar.webp" 
             alt="Avatar" 
             :showLoadingText="false"
             className="w-full h-full"

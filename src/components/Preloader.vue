@@ -115,7 +115,7 @@ onMounted(() => {
   bgImg.onerror = () => {
     isImageLoaded = true;
   };
-  bgImg.src = '/img/avatar.png';
+  bgImg.src = '/img/avatar.webp';
   if (bgImg.complete) {
     isImageLoaded = true;
   }
