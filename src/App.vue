@@ -15,9 +15,6 @@ import { useRainCycle } from './composables/useRainCycle';
 import { argDialogues } from './data/arg-dialogues';
 
 const isLoaded = ref(false);
-// 3D 背景（three.js ~500KB + 全屏 raymarch shader）延后到首屏渲染完成后再挂载，
-// 避免和首屏关键资源抢带宽、抢主线程（WebGL 初始化会阻塞布局）。
-const showBackground3D = ref(false);
 const showEpilepsyWarning = ref(false);
 const router = useRouter();
 const route = useRoute();
@@ -30,7 +27,6 @@ const showAsciiOverlay = ref(false);
 
 const handlePreloaderComplete = () => {
   isLoaded.value = true;
-  scheduleBackground3D();
   // Show photosensitive epilepsy warning on top of homepage/site content for 5 seconds only on the first visit of the session
   const hasShown = sessionStorage.getItem('has_shown_epilepsy_warning');
   if (!hasShown) {
@@ -39,31 +35,6 @@ const handlePreloaderComplete = () => {
     setTimeout(() => {
       showEpilepsyWarning.value = false;
     }, 2000);
-  }
-};
-
-let bgScheduled = false;
-const scheduleBackground3D = () => {
-  if (bgScheduled || showBackground3D.value) return;
-  bgScheduled = true;
-
-  const mount = () => { showBackground3D.value = true; };
-  const idleMount = () => {
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(mount, { timeout: 2000 });
-    } else {
-      setTimeout(mount, 300);
-    }
-  };
-
-  // 先让字体落地：字体换上后会触发整页文字重排（也就是 LCP 候选更新），
-  // 如果这时候 three.js 的 500KB chunk 正在抢带宽，LCP 会被硬生生推后。
-  const fonts = (document as any).fonts as FontFaceSet | undefined;
-  if (fonts && typeof fonts.ready?.then === 'function') {
-    fonts.ready.then(idleMount).catch(idleMount);
-    setTimeout(idleMount, 2500); // 字体接口异常时的兜底
-  } else {
-    idleMount();
   }
 };
 
@@ -488,7 +459,6 @@ onMounted(() => {
   // Guaranteed render fallback
   setTimeout(() => {
     isLoaded.value = true;
-    scheduleBackground3D();
   }, 2500);
 
   document.addEventListener('contextmenu', (e: MouseEvent) => {
@@ -522,7 +492,7 @@ onMounted(() => {
 
   const lenis = new Lenis({
     autoRaf: true,
-    duration: 1.0,
+    duration: 1.5,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
   });
   
@@ -740,7 +710,7 @@ onUnmounted(() => {
     </div>
 
     <!-- 3D Fluid Geometry Background -->
-    <Background3D v-if="showBackground3D" />
+    <Background3D />
 
     <!-- Minimalist HUD Corner Accents & Scroll Tracker -->
     <div v-if="!isAdmin && !isWorldview" class="fixed top-0 left-0 w-full h-full pointer-events-none z-20">

@@ -13,64 +13,6 @@ let renderer: THREE.WebGLRenderer;
 let planeMesh: THREE.Mesh;
 let animationId: number;
 
-// --- 自适应渲染分辨率 ---
-let baseDpr = 1;
-let renderScale = 0.72;
-const MIN_RENDER_SCALE = 0.5;
-let drawingSize = new THREE.Vector2();
-
-let frameCount = 0;
-let frameAccum = 0;
-let lastFrameTs = 0;
-let lastAdaptTs = 0;
-
-const applyRenderScale = () => {
-  if (!renderer || !planeMesh) return;
-  renderer.setPixelRatio(renderScale);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.getDrawingBufferSize(drawingSize);
-  const mat = planeMesh.material as THREE.ShaderMaterial;
-  mat.uniforms.uResolution.value.copy(drawingSize);
-};
-
-/**
- * 每 30 帧看一次平均帧时间：
- * 掉到 50fps 以下就降分辨率，稳定跑到 90fps 以上再慢慢升回去。
- * 分辨率变化对这张布满噪声的星云几乎没有视觉差异，但能救回一半的 GPU 时间。
- */
-const adaptResolution = (now: number) => {
-  if (!lastFrameTs) {
-    lastFrameTs = now;
-    return;
-  }
-  const dt = now - lastFrameTs;
-  lastFrameTs = now;
-  if (dt <= 0 || dt > 200) return;
-
-  frameAccum += dt;
-  frameCount++;
-  if (frameCount < 30) return;
-
-  const avg = frameAccum / frameCount;
-  frameAccum = 0;
-  frameCount = 0;
-
-  if (now - lastAdaptTs < 1200) return;
-
-  let next = renderScale;
-  if (avg > 21 && renderScale > MIN_RENDER_SCALE) {
-    next = Math.max(MIN_RENDER_SCALE, renderScale * 0.88);
-  } else if (avg < 11 && renderScale < baseDpr) {
-    next = Math.min(baseDpr, renderScale * 1.06);
-  }
-
-  if (Math.abs(next - renderScale) > 0.01) {
-    renderScale = next;
-    applyRenderScale();
-    lastAdaptTs = now;
-  }
-};
-
 const startTime = performance.now() * 0.001;
 const getTime = () => performance.now() * 0.001 - startTime;
 
@@ -253,15 +195,6 @@ const transitionToRoute = (target: BlackHolePreset, duration = 2.2) => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath.startsWith('/worldview') || newPath.startsWith('/admin')) {
-      isPaused = true;
-      stopAnimation();
-      return;
-    }
-    if (isPaused && !document.hidden) {
-      isPaused = false;
-      startAnimation();
-    }
     const target = ROUTE_PRESETS[getRouteKey(newPath)] || ROUTE_PRESETS.home;
     transitionToRoute(target);
   }
@@ -291,83 +224,75 @@ const onTouchMove = (e: TouchEvent) => {
 };
 
 // Deep GSAP Scroll Dynamics: Multi-Axis Orbital Flight & Sweeping Trajectory
-let scrollTicking = false;
-let cachedMaxScroll = 0;
-const updateMaxScroll = () => {
-  cachedMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-};
-
 const onScroll = () => {
-  if (scrollTicking) return;
-  scrollTicking = true;
-  requestAnimationFrame(() => {
-    scrollTicking = false;
-    if (!cachedMaxScroll) updateMaxScroll();
-    const curY = window.scrollY;
-    const progress = Math.min(1.0, Math.max(0.0, curY / cachedMaxScroll));
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const curY = window.scrollY;
+  const progress = maxScroll > 0 ? Math.min(1.0, Math.max(0.0, curY / maxScroll)) : 0;
 
-    const now = performance.now();
-    const dt = Math.max((now - lastScrollTime) * 0.001, 0.008);
-    const v = (curY - lastScrollY) / dt;
+  const now = performance.now();
+  const dt = Math.max((now - lastScrollTime) * 0.001, 0.008);
+  const v = (curY - lastScrollY) / dt;
 
-    lastScrollY = curY;
-    lastScrollTime = now;
+  lastScrollY = curY;
+  lastScrollTime = now;
 
-    scrollDynamics.progress = progress;
+  scrollDynamics.progress = progress;
 
-    // Orbital curved trajectory: Sweeps horizontally & ascends/descends in space
-    // Scaled moderately on mobile portrait screens to keep the black hole elegantly in frame
-    const orbitMult = isMobile ? 0.35 : 1.0;
-    const orbitX = (Math.sin(progress * Math.PI) * 0.58 + progress * 0.28) * orbitMult;
-    const orbitY = (Math.sin(progress * Math.PI * 0.85) * 0.72) * orbitMult;
-    const orbitZ = (progress * 0.48) * orbitMult;
+  // Orbital curved trajectory: Sweeps horizontally & ascends/descends in space
+  // Scaled moderately on mobile portrait screens to keep the black hole elegantly in frame
+  const orbitMult = isMobile ? 0.35 : 1.0;
+  const orbitX = (Math.sin(progress * Math.PI) * 0.58 + progress * 0.28) * orbitMult;
+  const orbitY = (Math.sin(progress * Math.PI * 0.85) * 0.72) * orbitMult;
+  const orbitZ = (progress * 0.48) * orbitMult;
 
-    gsap.to(scrollDynamics, {
-      shiftX: orbitX,                 // Sweeping lateral travel across the screen
-      shiftY: orbitY,                 // Vertical swooping flight
-      shiftZ: orbitZ,                 // Depth translation
-      pitch: progress * 0.56,         // Unfolding disk tilt
-      roll: -progress * 0.28,         // Banking roll angle
-      duration: 1.4,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-
-    // Scroll Velocity Surge:
-    const normVelocity = Math.min(Math.abs(v) / 1600.0, 1.6);
-    if (normVelocity > 0.05) {
-      gsap.to(scrollDynamics, {
-        velocity: normVelocity,
-        duration: 0.25,
-        ease: 'power1.out',
-        overwrite: 'auto',
-        onComplete: () => {
-          gsap.to(scrollDynamics, {
-            velocity: 0,
-            duration: 1.8,
-            ease: 'power2.out'
-          });
-        }
-      });
-    }
-  });
-};
-
-// Micro-interaction: Gravitational lens micro-tension on UI hover
-let wasHoveringInteractive = false;
-const onMouseOver = (e: MouseEvent) => {
-  const target = e.target as HTMLElement | null;
-  const isInteractive = !!(target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea'));
-  if (isInteractive === wasHoveringInteractive) return;
-  wasHoveringInteractive = isInteractive;
-
-  const baseExposure = ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95;
-  gsap.to(animState, {
-    exposure: isInteractive ? baseExposure * 1.08 : baseExposure,
-    duration: isInteractive ? 0.45 : 0.75,
+  gsap.to(scrollDynamics, {
+    shiftX: orbitX,                 // Sweeping lateral travel across the screen
+    shiftY: orbitY,                 // Vertical swooping flight
+    shiftZ: orbitZ,                 // Depth translation
+    pitch: progress * 0.56,         // Unfolding disk tilt
+    roll: -progress * 0.28,         // Banking roll angle
+    duration: 1.4,
     ease: 'power2.out',
     overwrite: 'auto'
   });
+
+  // Scroll Velocity Surge:
+  const normVelocity = Math.min(Math.abs(v) / 1600.0, 1.6);
+  if (normVelocity > 0.05) {
+    gsap.to(scrollDynamics, {
+      velocity: normVelocity,
+      duration: 0.25,
+      ease: 'power1.out',
+      overwrite: 'auto',
+      onComplete: () => {
+        gsap.to(scrollDynamics, {
+          velocity: 0,
+          duration: 1.8,
+          ease: 'power2.out'
+        });
+      }
+    });
+  }
+};
+
+// Micro-interaction: Gravitational lens micro-tension on UI hover
+const onMouseOver = (e: MouseEvent) => {
+  const target = e.target as HTMLElement | null;
+  if (target && target.closest('a, button, [role="button"], .cyber-glass, input, textarea')) {
+    gsap.to(animState, {
+      exposure: (ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95) * 1.08,
+      duration: 0.45,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+  } else {
+    gsap.to(animState, {
+      exposure: ROUTE_PRESETS[getRouteKey(route.path)]?.exposure || 0.95,
+      duration: 0.75,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+  }
 };
 
 const handleGlitch = (e: Event) => {
@@ -387,33 +312,25 @@ const initThree = () => {
   camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   camera.position.z = 1;
 
-  // 这个 shader 每像素要做 26~34 步 raymarch + 多次 fbm 噪声，
-  // 分辨率是唯一的性能杠杆。先给一个偏保守的初始比例，
-  // 运行时再按实际帧时间自适应升降（黑球本身是模糊的，降采样几乎看不出来）。
-  baseDpr = isMobile ? 0.75 : Math.min(window.devicePixelRatio || 1, 1.0) * 0.85;
-  renderScale = Math.min(baseDpr, 0.72);
-
+  const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.25);
   renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance'
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(renderScale);
+  renderer.setPixelRatio(dpr);
   containerRef.value.appendChild(renderer.domElement);
-
-  drawingSize = new THREE.Vector2();
-  renderer.getDrawingBufferSize(drawingSize);
 
   const geometry = new THREE.PlaneGeometry(2, 2);
 
-  const nSteps = isMobile ? 26 : 34;
-  const dtStep = isMobile ? '0.180' : '0.145';
+  const nSteps = isMobile ? 45 : 40;
+  const dtStep = isMobile ? '0.140' : '0.135';
 
   const shaderMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uResolution: { value: drawingSize },
+      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       uCamDrift: { value: new THREE.Vector2(0, 0) },
       uDiskLag: { value: new THREE.Vector2(0, 0) },
       uDrift: { value: new THREE.Vector3(0, 0, 0) },
@@ -476,16 +393,10 @@ const initThree = () => {
 
       float fbm(vec2 p) {
         float v = 0.0;
-        v += 0.55 * noise(p); p *= 2.04;
-        v += 0.30 * noise(p); p *= 2.02;
-        v += 0.15 * noise(p);
-        return v;
-      }
-
-      float fbmFast(vec2 p) {
-        float v = 0.0;
-        v += 0.65 * noise(p); p *= 2.04;
-        v += 0.35 * noise(p);
+        v += 0.520 * noise(p); p *= 2.04;
+        v += 0.260 * noise(p); p *= 2.02;
+        v += 0.130 * noise(p); p *= 2.03;
+        v += 0.065 * noise(p);
         return v;
       }
 
@@ -555,11 +466,6 @@ const initThree = () => {
             break;
           }
 
-          // Early exit: ray has passed outer disk influence and is heading away into deep space
-          if (r > 2.85 && dot(rayPos, rayDir) > 0.0) {
-            break;
-          }
-
           // Smooth gravitational bending toward singularity
           float invR3 = 1.0 / (r * r * r + 0.08);
           vec3 bend = (-rayPos) * invR3 * 0.15;
@@ -583,7 +489,7 @@ const initThree = () => {
             // Spiral dust filaments
             vec2 pUV = vec2(distXZ * 2.8, angle * 1.8);
             float n1 = fbm(pUV);
-            float n2 = fbmFast(pUV * 2.2 + vec2(n1 * 1.1, -uTime * 0.14));
+            float n2 = fbm(pUV * 2.2 + vec2(n1 * 1.1, -uTime * 0.14));
             float streaks = n1 * 0.65 + n2 * 0.35;
 
             float density = radial * vertical * (streaks * 0.75 + 0.25);
@@ -607,11 +513,9 @@ const initThree = () => {
 
           // Delicate photon ring glow around the shadow
           float photonDist = abs(r - ssRadius * 1.25);
-          if (photonDist < 0.35) {
-            float photonGlow = exp(-photonDist * 16.0) * 0.25;
-            color += (1.0 - alpha) * vec3(1.0, 0.95, 0.9) * photonGlow;
-            alpha += (1.0 - alpha) * photonGlow * 0.2;
-          }
+          float photonGlow = exp(-photonDist * 16.0) * 0.25;
+          color += (1.0 - alpha) * vec3(1.0, 0.95, 0.9) * photonGlow;
+          alpha += (1.0 - alpha) * photonGlow * 0.2;
 
           if (alpha > 0.96) break;
         }
@@ -685,42 +589,11 @@ const initThree = () => {
     }
   );
 
-  startAnimation();
-};
-
-let isPaused = false;
-
-const startAnimation = () => {
-  if (!animationId && !isPaused) {
-    animationId = requestAnimationFrame(animate);
-  }
-};
-
-const stopAnimation = () => {
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = 0;
-  }
-};
-
-const handleVisibilityChange = () => {
-  if (document.hidden) {
-    isPaused = true;
-    stopAnimation();
-  } else {
-    // Only restart if not on an obscured route
-    if (!route.path.startsWith('/worldview') && !route.path.startsWith('/admin')) {
-      isPaused = false;
-      startAnimation();
-    }
-  }
+  animate();
 };
 
 const animate = () => {
-  if (isPaused) return;
   animationId = requestAnimationFrame(animate);
-
-  adaptResolution(performance.now());
 
   const time = getTime();
 
@@ -748,31 +621,31 @@ const animate = () => {
 
 const onWindowResize = () => {
   if (!renderer || !planeMesh) return;
-  applyRenderScale();
-  updateMaxScroll();
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const mat = planeMesh.material as THREE.ShaderMaterial;
+  mat.uniforms.uResolution.value.set(w, h);
+  renderer.setSize(w, h);
 };
 
 onMounted(() => {
   initThree();
-  updateMaxScroll();
   window.addEventListener('resize', onWindowResize, { passive: true });
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   window.addEventListener('touchmove', onTouchMove, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('mouseover', onMouseOver, { passive: true });
   window.addEventListener('global-glitch', handleGlitch);
-  document.addEventListener('visibilitychange', handleVisibilityChange);
 });
 
 onUnmounted(() => {
-  stopAnimation();
+  if (animationId) cancelAnimationFrame(animationId);
   window.removeEventListener('resize', onWindowResize);
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('touchmove', onTouchMove);
   window.removeEventListener('scroll', onScroll);
   window.removeEventListener('mouseover', onMouseOver);
   window.removeEventListener('global-glitch', handleGlitch);
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
 
   if (renderer && containerRef.value) {
     containerRef.value.removeChild(renderer.domElement);
