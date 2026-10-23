@@ -35,12 +35,12 @@ interface BlackHolePreset {
 }
 
 const ROUTE_PRESETS: Record<string, BlackHolePreset> = {
-  // Home: Right-side hero anchor, classic cinematic angle
+  // Home: Centered, balanced cinematic perspective
   home: {
-    camX: isMobile ? 0.0 : 0.45,
-    camY: isMobile ? 0.65 : 1.15,
-    camZ: isMobile ? 4.3 : 4.8,
-    incl: isMobile ? 0.38 : 0.32,
+    camX: 0.0,
+    camY: isMobile ? 0.95 : 1.15,
+    camZ: isMobile ? 4.8 : 4.8,
+    incl: isMobile ? 0.35 : 0.32,
     roll: -0.15,
     speed: 0.38,
     exposure: isMobile ? 1.05 : 0.95,
@@ -319,6 +319,9 @@ const initThree = () => {
   renderer.setPixelRatio(dpr);
   containerRef.value.appendChild(renderer.domElement);
 
+  const drawingSize = new THREE.Vector2();
+  renderer.getDrawingBufferSize(drawingSize);
+
   const geometry = new THREE.PlaneGeometry(2, 2);
 
   const nSteps = isMobile ? 45 : 40;
@@ -327,7 +330,7 @@ const initThree = () => {
   const shaderMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uResolution: { value: drawingSize },
       uCamDrift: { value: new THREE.Vector2(0, 0) },
       uDiskLag: { value: new THREE.Vector2(0, 0) },
       uDrift: { value: new THREE.Vector3(0, 0, 0) },
@@ -480,7 +483,7 @@ const initThree = () => {
 
             // Keplerian differential swirl with scroll kinetic surge
             float phi = atan(rayPos.z, rayPos.x);
-            float omega = 1.45 / pow(distXZ, 1.25);
+            float omega = 1.45 / pow(max(distXZ, 0.001), 1.25);
             float angle = phi - uTime * omega * effSpeed;
 
             // Spiral dust filaments
@@ -499,7 +502,7 @@ const initThree = () => {
             vec3 colInner = vec3(1.0, 0.94, 0.88);
             vec3 colMid = uBaseColor;
             vec3 colOuter = vec3(0.55, 0.36, 0.22);
-            vec3 tempCol = mix(colOuter, mix(colMid, colInner, pow(radial, 1.3)), radial);
+            vec3 tempCol = mix(colOuter, mix(colMid, colInner, pow(max(radial, 0.0001), 1.3)), radial);
 
             vec3 sampleCol = tempCol * doppler;
 
@@ -620,9 +623,11 @@ const onWindowResize = () => {
   if (!renderer || !planeMesh) return;
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const mat = planeMesh.material as THREE.ShaderMaterial;
-  mat.uniforms.uResolution.value.set(w, h);
   renderer.setSize(w, h);
+  const drawingSize = new THREE.Vector2();
+  renderer.getDrawingBufferSize(drawingSize);
+  const mat = planeMesh.material as THREE.ShaderMaterial;
+  mat.uniforms.uResolution.value.copy(drawingSize);
 };
 
 let isTabHidden = false;
@@ -674,7 +679,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed inset-0 pointer-events-none z-[-1] bg-[#050608] overflow-hidden">
+  <div class="fixed inset-0 pointer-events-none z-0 bg-[#050608] overflow-hidden">
     <!-- Cinematic Gargantua Black Hole with 3D Orbital Flight Path -->
     <div ref="containerRef" class="absolute inset-0"></div>
   </div>
